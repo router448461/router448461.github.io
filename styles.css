@@ -1,25 +1,7 @@
 body {
     background-color: blue;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.circle {
-    background-color: red;
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 h1 {
-    z-index: 1;
+    color: red;
 }
