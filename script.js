@@ -18,7 +18,7 @@ d3.json("geoip.json", function(error, geoip) {
 });
 
 // Setup WebSocket connection for real-time data
-var socket = new WebSocket("ws://yourserver:yourport");
+var socket = new WebSocket("ws://router448461.com");
 
 socket.onmessage = function(event) {
   var data = JSON.parse(event.data);
