@@ -1,13 +1,14 @@
-@keyframes scroll {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
 iframe {
     position: absolute;
     top: 0;
     left: 0;
-    width: 900px;
-    height: 900px;
-    animation: scroll 20s linear infinite;
+    width: 100%;
+    height: 100%;
 }
