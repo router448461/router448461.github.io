@@ -1,13 +1,15 @@
-body {
-    background-image: url('images/black.jpg');
-    background-size: cover;
+#cursor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: red;
+    font-weight: bold;
+    font-size: 15px;
+    animation: blink 1s infinite;
 }
 
-#display-area {
-    color: red;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
 }
