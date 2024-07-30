@@ -1,3 +1,7 @@
 [build]
-command = "npm run build"
-pulish = "dish"
+  command = ""
+  functions = "netlify/functions"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
