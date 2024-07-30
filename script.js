@@ -8,7 +8,7 @@ window.onload = function() {
                     `IPv6 for router448461.com: <br> <span style="color:red">${data.ipv6}</span>`;
             })
             .catch(error => console.error('Error:', error));
-    }, 1000);  // Delay of 5 seconds
+    }, 3000);  // Delay of 5 seconds
 
     setTimeout(function() {
         fetch('https://api64.ipify.org?format=json')
@@ -19,5 +19,5 @@ window.onload = function() {
                     `IPv6 for bonjour.router448461.com: <br> <span style="color:red">${data.ipv6}</span>`;
             })
             .catch(error => console.error('Error:', error));
-    }, 1000);  // Delay of 5 seconds
+    }, 3000);  // Delay of 5 seconds
 }
