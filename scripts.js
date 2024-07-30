@@ -1,5 +1,23 @@
-var map = L.map('map').setView([-33.8688, 151.2093], 20);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-}).addTo(map);
+var map = d3.geoPath().projection(projection);
+
+// Load GeoIP data (you'll need to supply this)
+d3.json("geoip.json", function(error, geoip) {
+  if (error) throw error;
+
+  // Draw map
+  svg.append("g")
+    .attr("class", "countries")
+    .selectAll("path")
+    .data(topojson.feature(geoip, geoip.objects.countries).features)
+    .enter().append("path")
+    .attr("d", map);
+});
+
+// Setup WebSocket connection for real-time data
+var socket = new WebSocket("ws://yourserver:yourport");
+
+socket.onmessage = function(event) {
+  var data = JSON.parse(event.data);
+
+  // Update map based on data
+  // ...
