@@ -1,10 +1,10 @@
 #cursor, #display-area {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 1;
+    right: 1;
     color: red;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 24px;
 }
 
 #cursor, #display-area {
