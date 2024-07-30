@@ -1,5 +1,6 @@
 // Create a projection
 var projection = d3.geoMercator();
+console.log(projection([0, 0]));
 
 // Initialize map using D3.js and TopoJSON
 var map = d3.geoPath().projection(projection);
