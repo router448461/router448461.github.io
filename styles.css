@@ -1,10 +1,13 @@
-#cursor {
+#cursor, #display-area {
     position: absolute;
     top: 0;
     right: 0;
     color: red;
     font-weight: bold;
     font-size: 15px;
+}
+
+#cursor, #display-area {
     animation: blink 1s infinite;
 }
 
