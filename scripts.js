@@ -1,3 +1,4 @@
+// Initialize map using D3.js and TopoJSON
 var map = d3.geoPath().projection(projection);
 
 // Load GeoIP data (you'll need to supply this)
@@ -21,3 +22,4 @@ socket.onmessage = function(event) {
 
   // Update map based on data
   // ...
+};
