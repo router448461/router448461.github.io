@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
-        fetch('https://your-api-url-here')
+        fetch('https://api64.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('ip1').innerHTML = 
@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     `IPv6 for router448461.com: <br> <span style="color:red">${data.ipv6}</span>`;
             })
             .catch(error => console.error('Error:', error));
-    }, 5000);  // Delay of 5 seconds
+    }, 9000);  // Delay of 5 seconds
 
     setTimeout(function() {
-        fetch('https://your-api-url-here')
+        fetch('https://api64.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('ip2').innerHTML = 
@@ -19,5 +19,5 @@ document.addEventListener("DOMContentLoaded", function() {
                     `IPv6 for bonjour.router448461.com: <br> <span style="color:red">${data.ipv6}</span>`;
             })
             .catch(error => console.error('Error:', error));
-    }, 5000);  // Delay of 5 seconds
+    }, 9000);  // Delay of 5 seconds
 });
