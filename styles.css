@@ -11,7 +11,7 @@ body {
     color: #F73718;
     font-weight: bold;
     font-size: 24px;
-    animation: blink 60s infinite;
+    animation: blink 1s infinite;
 }
 
 @keyframes blink {
