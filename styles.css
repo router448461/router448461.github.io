@@ -1,7 +1,5 @@
 body {
-    background-image: url('black.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: black; /* Set the background color to black */
     font-family: 'Consolas', monospace;
 }
 
@@ -10,7 +8,6 @@ body {
     top: 24px;
     right: 24px;
     color: #F73718;
-    font-weight: bold;
     font-size: 24px;
     animation: blink 1s infinite;
     font-variant-numeric: tabular-nums;
