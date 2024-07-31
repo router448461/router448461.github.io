@@ -5,7 +5,8 @@ window.onload = function() {
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
-            displayArea.innerHTML = '' + data.ip;
+            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            displayArea.innerHTML = ip;
         })
         .catch(error => {
             console.error('Error:', error);
@@ -13,7 +14,11 @@ window.onload = function() {
 
     setInterval(function() {
         var date = new Date();
-        var time = date.getHours() + ":" + date.getMinutes() + ":" + ("0" + date.getSeconds()).slice(-2);
+        var hours = ("000" + date.getHours()).slice(-3);
+        var minutes = ("000" + date.getMinutes()).slice(-3);
+        var seconds = ("000" + date.getSeconds()).slice(-3);
+        var milliseconds = ("000" + date.getMilliseconds()).slice(-3);
+        var time = hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
         
         if(repeatCount < 3) {
             displayArea.innerHTML += '<br>' + time;
