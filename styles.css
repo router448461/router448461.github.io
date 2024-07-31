@@ -1,4 +1,10 @@
-#display-area {
+body {
+    background-image: url('images/black.jpg'); /* Add your background image here */
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#display-area, #location-area {
     position: absolute;
     top: 24px;
     right: 24px;
