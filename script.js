@@ -4,7 +4,7 @@ window.onload = function() {
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
-            displayArea.innerHTML = 'IP: ' + data.ip;
+            displayArea.innerHTML = '' + data.ip;
         })
         .catch(error => {
             console.error('Error:', error);
@@ -13,6 +13,6 @@ window.onload = function() {
     setInterval(function() {
         var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        displayArea.innerHTML += '<br>Time: ' + time;
+        displayArea.innerHTML += '<br>' + time;
     }, 1000);
 };
