@@ -1,5 +1,6 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
+    var repeatCount = 0;
 
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
@@ -12,7 +13,14 @@ window.onload = function() {
 
     setInterval(function() {
         var date = new Date();
-        var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        displayArea.innerHTML += '<br>' + time;
+        var time = date.getHours() + ":" + date.getMinutes() + ":" + ("0" + date.getSeconds()).slice(-2);
+        
+        if(repeatCount < 3) {
+            displayArea.innerHTML += '<br>' + time;
+            repeatCount++;
+        } else {
+            displayArea.innerHTML = displayArea.innerHTML.split('<br>')[0] + '<br>' + time;
+            repeatCount = 1;
+        }
     }, 1000);
 };
