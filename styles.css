@@ -1,7 +1,8 @@
-body {
+bbody {
     background-image: url('black.jpg'); /* Add your background image here */
     background-repeat: no-repeat;
     background-size: cover;
+    font-family: 'Consolas', monospace;
 }
 
 #display-area, #location-area {
@@ -12,6 +13,7 @@ body {
     font-weight: bold;
     font-size: 24px;
     animation: blink 1s infinite;
+    font-variant-numeric: tabular-nums; /* Ensures digits are rendered at the same width */
 }
 
 @keyframes blink {
