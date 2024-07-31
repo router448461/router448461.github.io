@@ -21,6 +21,7 @@ window.onload = function() {
         } else {
             displayArea.innerHTML = displayArea.innerHTML.split('<br>')[0] + '<br>' + time;
             repeatCount = 1;
+            location.reload();
         }
     }, 1000);
 };
