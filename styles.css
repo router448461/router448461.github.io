@@ -32,6 +32,7 @@ body {
     height: 100%;
     background-color: red;
     transform: translateX(-50%);
+    opacity: 1;
     z-index: 3;
     animation: lineMoveVertical 30s linear;
 }
@@ -44,33 +45,17 @@ body {
     height: 12px;
     background-color: red;
     transform: translateY(-50%);
+    opacity: 1;
     z-index: 3;
     animation: lineMoveHorizontal 30s linear;
 }
 
-#line-diagonal {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    background-color: red;
-    transform: rotate(45deg);
-    z-index: 3;
-    animation: lineMoveDiagonal 30s linear;
-}
-
 @keyframes lineMoveVertical {
-    0% { top: 0; }
-    100% { top: 100%; }
+    0% { top: 0; opacity: 1; }
+    100% { top: 100%; opacity: 1; }
 }
 
 @keyframes lineMoveHorizontal {
-    0% { left: 0; }
-    100% { left: 100%; }
-}
-
-@keyframes lineMoveDiagonal {
-    0% { top: 0; left: 0; }
-    100% { top: 100%; left: 100%; }
+    0% { left: 0; opacity: 1; }
+    100% { left: 100%; opacity: 1; }
 }
