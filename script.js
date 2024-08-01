@@ -1,6 +1,6 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
+    var map = L.map('map', { zoomControl: false, dragging: false }).setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -30,7 +30,7 @@ window.onload = function() {
             setInterval(function() {
                 counter++;
                 var latlngs = polyline.getLatLngs();
-                var newLatLngs = latlngs.slice(0, counter % latlngs.length + 1);
+                var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
             }, 1000);
         })
