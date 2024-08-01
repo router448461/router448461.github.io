@@ -2,7 +2,7 @@ window.onload = function() {
     var displayArea = document.getElementById('display-area');
     var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 3);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: ''
     }).addTo(map);
 
@@ -54,8 +54,6 @@ window.onload = function() {
     lineVertical.style.animation = 'lineMoveVertical 30s linear';
     var lineHorizontal = document.getElementById('line-horizontal');
     lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear';
-    var lineDiagonal = document.getElementById('line-diagonal');
-    lineDiagonal.style.animation = 'lineMoveDiagonal 30s linear';
     setTimeout(function() {
         location.reload();
     }, 30000);
