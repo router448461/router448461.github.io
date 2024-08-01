@@ -1,15 +1,23 @@
 body {
-    background-color: black; /* Set the background color to black */
+    background-image: url('spacegreypro.png');
     font-family: 'Consolas', monospace;
 }
 
-#display-area, #location-area {
+#display-area {
     position: absolute;
     top: 24px;
     right: 24px;
-    color: #F73718;
+    color: #4B5320;
     font-size: 24px;
-    animation: blink 1s infinite;
+    font-variant-numeric: tabular-nums;
+}
+
+#location-area {
+    position: absolute;
+    top: 48px;
+    right: 24px;
+    color: #4B5320;
+    font-size: 12px;
     font-variant-numeric: tabular-nums;
 }
 
