@@ -1,5 +1,5 @@
 body {
-    background-image: url('spacegreypro.png');
+    background-image: url('spacegreypro.png'); /* Set the background image */
     font-family: 'Consolas', monospace;
 }
 
@@ -21,8 +21,24 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
+#line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 12px;
+    height: 100%;
+    background-color: white;
+    transform: translateX(-50%);
+    opacity: 0;
+}
+
 @keyframes blink {
     0% { opacity: 1; }
     50% { opacity: 0; }
     100% { opacity: 1; }
+}
+
+@keyframes lineMove {
+    0% { top: 0; opacity: 1; }
+    100% { top: 100%; opacity: 1; }
 }
