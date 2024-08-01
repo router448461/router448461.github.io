@@ -20,3 +20,19 @@ body {
     font-size: 24px;
     font-variant-numeric: tabular-nums;
 }
+
+#line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 12px;
+    height: 100%;
+    background-color: red;
+    transform: translateX(-50%);
+    opacity: 1;
+}
+
+@keyframes lineMove {
+    0% { top: 0; opacity: 1; }
+    100% { top: 100%; opacity: 1; }
+}
