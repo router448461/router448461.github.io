@@ -36,17 +36,9 @@ window.onload = function() {
 
             var counter = 0;
             setInterval(function() {
-                counter++;
                 var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
-                var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
+                var newLatLngs = latlngs.slice(0, Math.min(counter + 1, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
-
-                // Display each address sequentially
-                var displayText = '';
-                for (var i = 0; i < Math.min(counter, addresses.length); i++) {
-                    displayText += addresses[i] + '<br>';
-                }
-                displayArea.innerHTML = `<span id="ip-display">${displayText}</span>`;
 
                 // Flash IP address and traceroute line
                 var ipDisplay = document.getElementById('ip-display');
@@ -59,7 +51,14 @@ window.onload = function() {
                     dots[i].style.opacity = (counter % 2 === 0) ? 1 : 0;
                 }
 
-                if (counter >= latlngs.length) {
+                // Display each address sequentially
+                if (counter % 2 === 0) {
+                    var displayText = addresses[Math.floor(counter / 2)] + '<br>';
+                    displayArea.innerHTML = `<span id="ip-display">${displayText}</span>`;
+                }
+
+                counter++;
+                if (counter >= latlngs.length * 2) {
                     counter = 0;
                 }
             }, 1000);
