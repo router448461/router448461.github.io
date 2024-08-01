@@ -12,15 +12,6 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-#location-area {
-    position: absolute;
-    top: 48px;
-    right: 24px;
-    color: #4B5320;
-    font-size: 24px;
-    font-variant-numeric: tabular-nums;
-}
-
 #line {
     position: absolute;
     top: 0;
@@ -29,13 +20,7 @@ body {
     height: 100%;
     background-color: white;
     transform: translateX(-50%);
-    opacity: 0;
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0; }
-    100% { opacity: 1; }
+    opacity: 1;
 }
 
 @keyframes lineMove {
