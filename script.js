@@ -10,6 +10,9 @@ window.onload = function() {
         map.setZoom(3);
     });
 
+    // Disable mouse wheel scroll
+    map.scrollWheelZoom.disable();
+
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
