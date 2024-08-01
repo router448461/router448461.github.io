@@ -34,7 +34,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVertical 30s linear;
+    animation: lineMoveVertical 15s linear; /* Changed duration to 15s */
 }
 
 #line-horizontal {
@@ -47,15 +47,27 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontal 30s linear;
+    animation: lineMoveHorizontal 15s linear; /* Changed duration to 15s */
+}
+
+#white-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0;
+    z-index: 4;
+    transition: opacity 0.5s;
 }
 
 @keyframes lineMoveVertical {
     0% { top: 0; opacity: 1; }
-    100% { top: 100%; opacity: 1; }
+    100% { top: 50%; opacity: 1; } /* Stop at the middle */
 }
 
 @keyframes lineMoveHorizontal {
     0% { left: 0; opacity: 1; }
-    100% { left: 100%; opacity: 1; }
+    100% { left: 50%; opacity: 1; } /* Stop at the middle */
 }
