@@ -50,8 +50,10 @@ window.onload = function() {
             console.error('Error:', error);
         });
 
-    var line = document.getElementById('line');
-    line.style.animation = 'lineMove 30s linear';
+    var lineVertical = document.getElementById('line-vertical');
+    lineVertical.style.animation = 'lineMoveVertical 30s linear';
+    var lineHorizontal = document.getElementById('line-horizontal');
+    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear';
     setTimeout(function() {
         location.reload();
     }, 30000);
