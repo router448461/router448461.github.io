@@ -1,15 +1,13 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 4); // Set initial zoom level to 4
+    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 3);
 
-    // Use a dark mode tile layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '',
-        maxZoom: 19 // Increase max zoom level
+        attribution: ''
     }).addTo(map);
 
     map.on('zoomend', function() {
-        map.setZoom(Math.min(map.getZoom(), 4)); // Limit zoom level to 4
+        map.setZoom(3);
     });
 
     // Disable mouse wheel scroll
@@ -53,7 +51,10 @@ window.onload = function() {
         });
 
     var lineVertical = document.getElementById('line-vertical');
-    lineVertical.style.animation = 'lineMoveVertical 30s linear';
+    lineVertical.style.animation = 'lineMoveVertical 30s linear forwards';
     var lineHorizontal = document.getElementById('line-horizontal');
-    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear forwards';
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
 };
