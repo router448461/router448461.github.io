@@ -6,6 +6,10 @@ window.onload = function() {
         attribution: ''
     }).addTo(map);
 
+    map.on('zoomend', function() {
+        map.setZoom(3);
+    });
+
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
@@ -29,9 +33,10 @@ window.onload = function() {
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
-                // Flash IP address
+                // Flash IP address and traceroute line
                 var ipDisplay = document.getElementById('ip-display');
                 ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
+                polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
             }, 1000);
         })
         .catch(error => {
