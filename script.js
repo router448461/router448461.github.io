@@ -48,7 +48,9 @@ window.onload = function() {
                 }
                 displayArea.innerHTML = `<span id="ip-display">${displayText}</span>`;
 
-                // Flash traceroute line
+                // Flash IP address and traceroute line
+                var ipDisplay = document.getElementById('ip-display');
+                ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
                 polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
 
                 // Flash green dots
