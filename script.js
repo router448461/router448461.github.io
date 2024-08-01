@@ -50,6 +50,15 @@ window.onload = function() {
                     counter = 0;
                 }
             }, 1000);
+
+            // Add flashing green dots for IP and DNS coordinates
+            var coords = [ipCoords, dns1Coords, dns2Coords, googleDns1Coords, googleDns2Coords];
+            coords.forEach(function(coord) {
+                var dot = L.divIcon({
+                    className: 'flashing-dot'
+                });
+                L.marker(coord, { icon: dot }).addTo(map);
+            });
         })
         .catch(error => {
             console.error('Error:', error);
