@@ -1,6 +1,6 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false }).setView([0, 0], 3);
+    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false }).setView([0, 0], 3);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: ''
