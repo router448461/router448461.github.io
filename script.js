@@ -1,14 +1,10 @@
-window.onload = function() {
+wwindow.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false, dragging: false }).setView([0, 0], 2);
+    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false }).setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: ''
     }).addTo(map);
-
-    var line = document.createElement('div');
-    line.id = 'line';
-    document.body.appendChild(line);
 
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
@@ -38,8 +34,10 @@ window.onload = function() {
             console.error('Error:', error);
         });
 
+    var line = document.getElementById('line');
     line.style.animation = 'lineMove 30s linear';
     setTimeout(function() {
         location.reload();
     }, 30000);
 };
+
