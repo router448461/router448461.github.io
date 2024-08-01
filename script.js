@@ -1,6 +1,6 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false }).setView([0, 0], 2);
+    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false }).setView([0, 0], 3);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: ''
@@ -12,7 +12,7 @@ window.onload = function() {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns1 = '1.1.1.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span style="color: red;">${ip}<br>${dns1}<br>${dns2}</span>`;
+            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}</span>`;
 
             // Example coordinates for IP and DNS servers
             // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
@@ -28,6 +28,10 @@ window.onload = function() {
                 var latlngs = polyline.getLatLngs();
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
+
+                // Flash IP address
+                var ipDisplay = document.getElementById('ip-display');
+                ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
             }, 1000);
         })
         .catch(error => {
