@@ -18,7 +18,7 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
-    color: green;
+    color: red;
     font-size: 24px;
     font-variant-numeric: tabular-nums;
     z-index: 2;
