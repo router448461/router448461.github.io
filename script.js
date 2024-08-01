@@ -38,14 +38,13 @@ window.onload = function() {
             var counter = 0;
             var interval = 30000 / latlngs.length; // Calculate interval based on 30 seconds
 
-            setInterval(function() {
+            var drawInterval = setInterval(function() {
                 if (counter < latlngs.length) {
                     var newLatLngs = latlngs.slice(0, counter + 1);
                     polyline.setLatLngs(newLatLngs);
                     counter++;
                 } else {
-                    counter = 0;
-                    polyline.setLatLngs([]);
+                    clearInterval(drawInterval);
                 }
             }, interval);
         })
