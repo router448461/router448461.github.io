@@ -1,6 +1,5 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var locationArea = document.getElementById('location-area');
     var line = document.createElement('div');
     line.id = 'line';
     document.body.appendChild(line);
@@ -9,22 +8,16 @@ window.onload = function() {
         .then(response => response.json())
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = ip;
+            var dns1 = '1.1.1.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            displayArea.innerHTML = ip + '<br>' + dns1 + '<br>' + dns2;
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
-    var counter = 0;
-    setInterval(function() {
-        counter++;
-        var dots = '.'.repeat(counter % 3 + 1);
-        locationArea.innerHTML = 'connected' + dots;
-
-        line.style.animation = 'lineMove 30s linear';
-
-        if (counter % 3 === 0) {
-            location.reload();
-        }
-    }, 10000);
+    line.style.animation = 'lineMove 30s linear';
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
 };
