@@ -32,21 +32,24 @@ window.onload = function() {
             var googleDns1Coords = [37.3861, -122.0839]; // Replace with actual Google DNS1 coordinates
             var googleDns2Coords = [37.3861, -122.0839]; // Replace with actual Google DNS2 coordinates
 
-            var polyline = L.polyline([], {color: 'red'}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords], {color: 'red'}).addTo(map);
 
-            var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
             var counter = 0;
-            var interval = 30000 / latlngs.length; // Calculate interval based on 30 seconds
+            setInterval(function() {
+                counter++;
+                var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
+                var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
+                polyline.setLatLngs(newLatLngs);
 
-            var drawInterval = setInterval(function() {
-                if (counter < latlngs.length) {
-                    var newLatLngs = latlngs.slice(0, counter + 1);
-                    polyline.setLatLngs(newLatLngs);
-                    counter++;
-                } else {
-                    clearInterval(drawInterval);
+                // Flash IP address and traceroute line
+                var ipDisplay = document.getElementById('ip-display');
+                ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
+                polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
+
+                if (counter >= latlngs.length) {
+                    counter = 0;
                 }
-            }, interval);
+            }, 1000);
         })
         .catch(error => {
             console.error('Error:', error);
