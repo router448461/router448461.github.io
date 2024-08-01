@@ -20,20 +20,24 @@ window.onload = function() {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns1 = '1.1.1.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}</span>`;
+            var googleDns1 = '8.8.8.8'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            var googleDns2 = '8.8.4.4'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}<br>${googleDns1}<br>${googleDns2}</span>`;
 
             // Example coordinates for IP and DNS servers
             // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
             var ipCoords = [37.7749, -122.4194]; // Replace with actual IP coordinates
             var dns1Coords = [33.6844, -117.8265]; // Replace with actual DNS1 coordinates
             var dns2Coords = [40.7128, -74.0060]; // Replace with actual DNS2 coordinates
+            var googleDns1Coords = [37.3861, -122.0839]; // Replace with actual Google DNS1 coordinates
+            var googleDns2Coords = [37.3861, -122.0839]; // Replace with actual Google DNS2 coordinates
 
-            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords], {color: 'red'}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords], {color: 'red'}).addTo(map);
 
             var counter = 0;
             setInterval(function() {
                 counter++;
-                var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords];
+                var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
