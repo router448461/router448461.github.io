@@ -22,7 +22,7 @@ window.onload = function() {
             var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var googleDns1 = '8.8.8.8'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var googleDns2 = '8.8.4.4'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}<br>${googleDns1}<br>${googleDns2}</span>`;
+            var addresses = [ip, dns1, dns2, googleDns1, googleDns2];
 
             // Example coordinates for IP and DNS servers
             // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
@@ -41,9 +41,14 @@ window.onload = function() {
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
-                // Flash IP address and traceroute line
-                var ipDisplay = document.getElementById('ip-display');
-                ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
+                // Display each address sequentially
+                var displayText = '';
+                for (var i = 0; i < Math.min(counter, addresses.length); i++) {
+                    displayText += addresses[i] + '<br>';
+                }
+                displayArea.innerHTML = `<span id="ip-display">${displayText}</span>`;
+
+                // Flash traceroute line
                 polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
 
                 // Flash green dots
@@ -87,3 +92,4 @@ window.onload = function() {
         }, 500); // Flash duration
     }, 15000); // Flash at 15 seconds
 };
+
