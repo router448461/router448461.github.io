@@ -52,10 +52,19 @@ window.onload = function() {
         });
 
     var lineVertical = document.getElementById('line-vertical');
-    lineVertical.style.animation = 'lineMoveVertical 30s linear';
+    lineVertical.style.animation = 'lineMoveVertical 15s linear'; // Changed duration to 15s
     var lineHorizontal = document.getElementById('line-horizontal');
-    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear'; // Changed duration to 15s
     setTimeout(function() {
         location.reload();
     }, 30000);
+
+    // Flash the screen white at 15 seconds
+    var whiteFlash = document.getElementById('white-flash');
+    setTimeout(function() {
+        whiteFlash.style.opacity = 1;
+        setTimeout(function() {
+            whiteFlash.style.opacity = 0;
+        }, 500); // Flash duration
+    }, 15000); // Flash at 15 seconds
 };
