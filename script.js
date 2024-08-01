@@ -51,9 +51,9 @@ window.onload = function() {
         });
 
     var lineVertical = document.getElementById('line-vertical');
-    lineVertical.style.animation = 'lineMoveVertical 30s linear forwards';
+    lineVertical.style.animation = 'lineMoveVertical 30s linear';
     var lineHorizontal = document.getElementById('line-horizontal');
-    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 30s linear';
     setTimeout(function() {
         location.reload();
     }, 30000);
