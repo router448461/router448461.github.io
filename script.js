@@ -18,12 +18,12 @@ window.onload = function() {
     setInterval(function() {
         locationArea.style.fontSize = '12px';
         locationArea.style.animation = 'blink 1s infinite';
-        locationArea.innerHTML = 'Connected';
+        locationArea.innerHTML = 'connected...';
 
-        // Start the line animation
+        
         line.style.animation = 'lineMove 1s linear';
         
-        // Reload the page after the animation
+        
         setTimeout(function() {
             location.reload();
         }, 1000);
