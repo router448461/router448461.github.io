@@ -46,6 +46,12 @@ window.onload = function() {
                 ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
                 polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
 
+                // Flash green dots
+                var dots = document.getElementsByClassName('flashing-dot');
+                for (var i = 0; i < dots.length; i++) {
+                    dots[i].style.opacity = (counter % 2 === 0) ? 1 : 0;
+                }
+
                 if (counter >= latlngs.length) {
                     counter = 0;
                 }
