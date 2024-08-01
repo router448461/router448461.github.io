@@ -92,4 +92,3 @@ window.onload = function() {
         }, 500); // Flash duration
     }, 15000); // Flash at 15 seconds
 };
-
