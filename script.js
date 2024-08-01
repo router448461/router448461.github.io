@@ -12,7 +12,7 @@ window.onload = function() {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns1 = '1.1.1.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = ip + '<br>' + dns1 + '<br>' + dns2;
+            displayArea.innerHTML = `<span style="color: red;">${ip}<br>${dns1}<br>${dns2}</span>`;
 
             // Example coordinates for IP and DNS servers
             // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
