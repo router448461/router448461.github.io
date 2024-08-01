@@ -1,6 +1,6 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false }).setView([0, 0], 3);
+    var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 3);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: ''
@@ -29,7 +29,7 @@ window.onload = function() {
             var counter = 0;
             setInterval(function() {
                 counter++;
-                var latlngs = polyline.getLatLngs();
+                var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords];
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
@@ -37,6 +37,10 @@ window.onload = function() {
                 var ipDisplay = document.getElementById('ip-display');
                 ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
                 polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
+
+                if (counter >= latlngs.length) {
+                    counter = 0;
+                }
             }, 1000);
         })
         .catch(error => {
