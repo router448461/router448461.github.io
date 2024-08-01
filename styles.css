@@ -2,6 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Consolas', monospace;
+    overflow: hidden; /* Disable scrolling */
 }
 
 #map {
@@ -33,6 +34,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
+    animation: lineMove 30s linear;
 }
 
 @keyframes lineMove {
