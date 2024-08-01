@@ -1,10 +1,14 @@
 window.onload = function() {
     var displayArea = document.getElementById('display-area');
-    var map = L.map('map').setView([0, 0], 2);
+    var map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    var line = document.createElement('div');
+    line.id = 'line';
+    document.body.appendChild(line);
 
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
@@ -20,12 +24,21 @@ window.onload = function() {
             var dns1Coords = [33.6844, -117.8265]; // Replace with actual DNS1 coordinates
             var dns2Coords = [40.7128, -74.0060]; // Replace with actual DNS2 coordinates
 
-            L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords], {color: 'white'}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords], {color: 'red'}).addTo(map);
+
+            var counter = 0;
+            setInterval(function() {
+                counter++;
+                var latlngs = polyline.getLatLngs();
+                var newLatLngs = latlngs.slice(0, counter % latlngs.length + 1);
+                polyline.setLatLngs(newLatLngs);
+            }, 1000);
         })
         .catch(error => {
             console.error('Error:', error);
         });
 
+    line.style.animation = 'lineMove 30s linear';
     setTimeout(function() {
         location.reload();
     }, 30000);
