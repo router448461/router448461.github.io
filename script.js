@@ -15,17 +15,16 @@ window.onload = function() {
             console.error('Error:', error);
         });
 
+    var counter = 0;
     setInterval(function() {
-        locationArea.style.fontSize = '12px';
-        locationArea.style.animation = 'blink 1s infinite';
-        locationArea.innerHTML = 'connected...';
+        counter++;
+        var dots = '.'.repeat(counter % 3 + 1);
+        locationArea.innerHTML = 'connected' + dots;
 
-        
-        line.style.animation = 'lineMove 1s linear';
-        
-        
-        setTimeout(function() {
+        line.style.animation = 'lineMove 30s linear';
+
+        if (counter % 3 === 0) {
             location.reload();
-        }, 1000);
-    }, 1000);
+        }
+    }, 10000);
 };
