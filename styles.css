@@ -10,6 +10,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
 }
 
 #display-area {
@@ -19,6 +20,7 @@ body {
     color: #4B5320;
     font-size: 24px;
     font-variant-numeric: tabular-nums;
+    z-index: 2;
 }
 
 #line {
@@ -30,6 +32,7 @@ body {
     background-color: red;
     transform: translateX(-50%);
     opacity: 1;
+    z-index: 3;
 }
 
 @keyframes lineMove {
