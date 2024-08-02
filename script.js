@@ -19,6 +19,7 @@ window.onload = function() {
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
+            var hobartCoords = [-42.8821, 147.3272];
 
             var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
@@ -48,6 +49,17 @@ window.onload = function() {
                 });
                 L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split('.').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
             });
+
+            var hobartMarker = L.circleMarker(hobartCoords, {
+                radius: 5,
+                color: 'green',
+                fillColor: 'green',
+                fillOpacity: 1
+            }).addTo(map);
+
+            setInterval(function() {
+                hobartMarker.setStyle({ fillOpacity: hobartMarker.options.fillOpacity === 1 ? 0 : 1 });
+            }, 1000);
         })
         .catch(error => {
             console.error('Error:', error);
