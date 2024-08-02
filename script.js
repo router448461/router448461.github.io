@@ -22,21 +22,7 @@ window.onload = function() {
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
 
-            var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
-
-            var latlngs = [ipCoords, dns2Coords];
-            var totalDuration = 15000; // 15 seconds
-            var interval = totalDuration / latlngs.length;
-            var counter = 0;
-
-            var drawLine = setInterval(function() {
-                if (counter < latlngs.length) {
-                    polyline.addLatLng(latlngs[counter]);
-                    counter++;
-                } else {
-                    clearInterval(drawLine);
-                }
-            }, interval);
+            var polyline = L.polyline([ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
 
             var coords = [ipCoords, dns2Coords];
             coords.forEach(function(coord) {
