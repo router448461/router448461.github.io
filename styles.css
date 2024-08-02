@@ -18,7 +18,7 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
-    color: green;
+    color: yellow;
     font-size: 24px;
     font-variant-numeric: tabular-nums;
     z-index: 2;
@@ -113,28 +113,10 @@ body {
 }
 
 .flashing-dot {
-    width: 12px;
-    height: 12px;
-    background-color: green;
+    width: 2px;
+    height: 2px;
+    background-color: yellow;
     border-radius: 50%;
     opacity: 1;
     transition: opacity 0.5s;
-}
-
-.red-line {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: red;
-    opacity: 1;
-    z-index: 3;
-    animation: redLineMove 15s linear forwards;
-    animation-fill-mode: forwards;
-}
-
-@keyframes redLineMove {
-    0% { width: 0; opacity: 1; }
-    100% { width: 100%; opacity: 1; }
 }
