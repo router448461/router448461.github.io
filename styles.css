@@ -117,4 +117,5 @@ body {
     box-shadow: none;
     font-size: 12px;
     text-align: center;
+    white-space: pre;
 }
