@@ -42,12 +42,13 @@ window.onload = function() {
             }, interval);
 
             var coords = [ipCoords, dns2Coords];
-            coords.forEach(function(coord) {
+            var ips = [ip, dns2];
+            coords.forEach(function(coord, index) {
                 var dot = L.divIcon({
                     className: 'dot',
                     html: '<div style="background-color: red; width: 1px; height: 1px; border-radius: 50%;"></div>'
                 });
-                L.marker(coord, { icon: dot }).addTo(map);
+                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index], { permanent: true, direction: 'right' });
             });
         })
         .catch(error => {
