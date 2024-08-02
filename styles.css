@@ -34,7 +34,6 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVertical 15s linear forwards; /* Changed duration to 15s */
     animation-fill-mode: forwards; /* Ensure the line stays visible */
 }
 
@@ -48,7 +47,6 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontal 15s linear forwards; /* Changed duration to 15s */
     animation-fill-mode: forwards; /* Ensure the line stays visible */
 }
 
@@ -62,7 +60,6 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVerticalBottom 15s linear forwards; /* Changed duration to 15s */
     animation-fill-mode: forwards; /* Ensure the line stays visible */
 }
 
@@ -76,7 +73,6 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontalRight 15s linear forwards; /* Changed duration to 15s */
     animation-fill-mode: forwards; /* Ensure the line stays visible */
 }
 
@@ -97,26 +93,4 @@ body {
     100% { height: 50%; opacity: 1; } /* Stop at the middle */
 }
 
-@keyframes lineMoveHorizontal {
-    0% { width: 0; opacity: 1; }
-    100% { width: 50%; opacity: 1; } /* Stop at the middle */
-}
-
-@keyframes lineMoveVerticalBottom {
-    0% { height: 0; opacity: 1; }
-    100% { height: 50%; opacity: 1; } /* Stop at the middle */
-}
-
-@keyframes lineMoveHorizontalRight {
-    0% { width: 0; opacity: 1; }
-    100% { width: 50%; opacity: 1; } /* Stop at the middle */
-}
-
-.flashing-dot {
-    width: 12px;
-    height: 12px;
-    background-color: green;
-    border-radius: 50%;
-    opacity: 1;
-    transition: opacity 0.5s;
-}
+@keyframes lineMoveHorizontal
