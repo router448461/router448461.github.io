@@ -16,23 +16,19 @@ window.onload = function() {
         .then(response => response.json())
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var dns1 = '1.1.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var googleDns1 = '8.8.8.8'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${googleDns1}<br>${dns2}</span>`;
+            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns2}</span>`;
 
             var ipCoords = [37.7749, -122.4194];
-            var dns1Coords = [33.6844, -117.8265];
-            var googleDns1Coords = [37.3861, -122.0839];
             var dns2Coords = [40.7128, -74.0060];
 
-            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, googleDns1Coords, ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
 
             var counter = 0;
             var interval = 15000 / (polyline.getLatLngs().length - 1);
             setInterval(function() {
                 counter++;
-                var latlngs = [ipCoords, dns1Coords, ipCoords, googleDns1Coords, ipCoords, dns2Coords];
+                var latlngs = [ipCoords, dns2Coords];
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
@@ -50,7 +46,7 @@ window.onload = function() {
                 }
             }, interval);
 
-            var coords = [ipCoords, dns1Coords, googleDns1Coords, dns2Coords];
+            var coords = [ipCoords, dns2Coords];
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
                     className: 'flashing-dot'
