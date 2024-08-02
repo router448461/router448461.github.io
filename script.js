@@ -25,7 +25,8 @@ window.onload = function() {
             var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
             var latlngs = [ipCoords, dns2Coords];
-            var interval = 15000 / latlngs.length;
+            var totalDuration = 15000; // 15 seconds
+            var interval = totalDuration / latlngs.length;
             var counter = 0;
 
             var drawLine = setInterval(function() {
