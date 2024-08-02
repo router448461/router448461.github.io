@@ -17,7 +17,7 @@ body {
 #display-area {
     position: absolute;
     top: 24px;
-    right: 24px;
+    left: 24px;
     color: white;
     font-size: 24px;
     font-variant-numeric: tabular-nums;
@@ -115,7 +115,7 @@ body {
 .dot {
     width: 1px;
     height: 1px;
-    background-color: yellow;
+    background-color: red;
     border-radius: 50%;
     opacity: 1;
 }
