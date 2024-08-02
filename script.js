@@ -71,19 +71,24 @@ window.onload = function() {
         });
 
     var lineVertical = document.getElementById('line-vertical');
-    lineVertical.style.animation = 'lineMoveVertical 15s linear'; // Changed duration to 15s
     var lineHorizontal = document.getElementById('line-horizontal');
-    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear'; // Changed duration to 15s
-    setTimeout(function() {
-        location.reload();
-    }, 30000);
-
-    // Flash the screen white at 15 seconds
+    var lineVerticalBottom = document.getElementById('line-vertical-bottom');
+    var lineHorizontalRight = document.getElementById('line-horizontal-right');
     var whiteFlash = document.getElementById('white-flash');
+
+    lineVertical.style.animation = 'lineMoveVertical 15s linear forwards'; // Changed duration to 15s
+    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear forwards'; // Changed duration to 15s
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 15s linear forwards'; // Changed duration to 15s
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 15s linear forwards'; // Changed duration to 15s
+
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
         setTimeout(function() {
             whiteFlash.style.opacity = 0;
         }, 500); // Flash duration
     }, 15000); // Flash at 15 seconds
+
+    setTimeout(function() {
+        location.reload();
+    }, 30000); // Refresh at 30 seconds
 };
