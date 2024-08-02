@@ -29,6 +29,7 @@ window.onload = function() {
             var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, googleDns1Coords, ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
 
             var counter = 0;
+            var interval = 15000 / (polyline.getLatLngs().length - 1);
             setInterval(function() {
                 counter++;
                 var latlngs = [ipCoords, dns1Coords, ipCoords, googleDns1Coords, ipCoords, dns2Coords];
@@ -47,7 +48,7 @@ window.onload = function() {
                 if (counter >= latlngs.length) {
                     counter = 0;
                 }
-            }, 1000);
+            }, interval);
 
             var coords = [ipCoords, dns1Coords, googleDns1Coords, dns2Coords];
             coords.forEach(function(coord) {
