@@ -120,3 +120,21 @@ body {
     opacity: 1;
     transition: opacity 0.5s;
 }
+
+.red-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: red;
+    opacity: 1;
+    z-index: 3;
+    animation: redLineMove 15s linear forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes redLineMove {
+    0% { width: 0; opacity: 1; }
+    100% { width: 100%; opacity: 1; }
+}
