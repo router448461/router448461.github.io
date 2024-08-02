@@ -1,5 +1,4 @@
 window.onload = function() {
-    var displayArea = document.getElementById('display-area');
     var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 3);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
@@ -17,7 +16,6 @@ window.onload = function() {
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display" style="color: white;">${ip}<br>${dns2}</span>`;
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
@@ -48,7 +46,7 @@ window.onload = function() {
                     className: 'dot',
                     html: '<div style="background-color: red; width: 1px; height: 1px; border-radius: 50%;"></div>'
                 });
-                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index], { permanent: true, direction: 'right' });
+                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split('.').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
             });
         })
         .catch(error => {
