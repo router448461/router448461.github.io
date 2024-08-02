@@ -17,7 +17,7 @@ window.onload = function() {
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display" style="color: yellow;">${ip}<br>${dns2}</span>`;
+            displayArea.innerHTML = `<span id="ip-display" style="color: white;">${ip}<br>${dns2}</span>`;
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
@@ -41,8 +41,8 @@ window.onload = function() {
             var coords = [ipCoords, dns2Coords];
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
-                    className: 'flashing-dot',
-                    html: '<div style="background-color: yellow; width: 2px; height: 2px; border-radius: 50%;"></div>'
+                    className: 'dot',
+                    html: '<div style="background-color: yellow; width: 1px; height: 1px; border-radius: 50%;"></div>'
                 });
                 L.marker(coord, { icon: dot }).addTo(map);
             });
