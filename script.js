@@ -2,7 +2,6 @@ window.onload = function() {
     var displayArea = document.getElementById('display-area');
     var map = L.map('map', { zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([0, 0], 3);
 
-    // Use a dark mode tile layer with no labels
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: ''
     }).addTo(map);
@@ -11,7 +10,6 @@ window.onload = function() {
         map.setZoom(3);
     });
 
-    // Disable mouse wheel scroll
     map.scrollWheelZoom.disable();
 
     fetch('https://api.ipify.org?format=json')
@@ -24,13 +22,11 @@ window.onload = function() {
             var googleDns2 = '8.8.4.4'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}<br>${googleDns1}<br>${googleDns2}</span>`;
 
-            // Example coordinates for IP and DNS servers
-            // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
-            var ipCoords = [37.7749, -122.4194]; // Replace with actual IP coordinates
-            var dns1Coords = [33.6844, -117.8265]; // Replace with actual DNS1 coordinates
-            var dns2Coords = [40.7128, -74.0060]; // Replace with actual DNS2 coordinates
-            var googleDns1Coords = [37.3861, -122.0839]; // Replace with actual Google DNS1 coordinates
-            var googleDns2Coords = [37.3861, -122.0839]; // Replace with actual Google DNS2 coordinates
+            var ipCoords = [37.7749, -122.4194];
+            var dns1Coords = [33.6844, -117.8265];
+            var dns2Coords = [40.7128, -74.0060];
+            var googleDns1Coords = [37.3861, -122.0839];
+            var googleDns2Coords = [37.3861, -122.0839];
 
             var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords], {color: 'red'}).addTo(map);
 
@@ -41,12 +37,10 @@ window.onload = function() {
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
-                // Flash IP address and traceroute line
                 var ipDisplay = document.getElementById('ip-display');
                 ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
                 polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
 
-                // Flash green dots
                 var dots = document.getElementsByClassName('flashing-dot');
                 for (var i = 0; i < dots.length; i++) {
                     dots[i].style.opacity = (counter % 2 === 0) ? 1 : 0;
@@ -57,7 +51,6 @@ window.onload = function() {
                 }
             }, 1000);
 
-            // Add flashing green dots for IP and DNS coordinates
             var coords = [ipCoords, dns1Coords, dns2Coords, googleDns1Coords, googleDns2Coords];
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
@@ -76,19 +69,19 @@ window.onload = function() {
     var lineHorizontalRight = document.getElementById('line-horizontal-right');
     var whiteFlash = document.getElementById('white-flash');
 
-    lineVertical.style.animation = 'lineMoveVertical 15s linear forwards'; // Changed duration to 15s
-    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear forwards'; // Changed duration to 15s
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 15s linear forwards'; // Changed duration to 15s
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 15s linear forwards'; // Changed duration to 15s
+    lineVertical.style.animation = 'lineMoveVertical 15s linear forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear forwards';
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 15s linear forwards';
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 15s linear forwards';
 
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
         setTimeout(function() {
             whiteFlash.style.opacity = 0;
-        }, 500); // Flash duration
-    }, 15000); // Flash at 15 seconds
+        }, 500);
+    }, 15000);
 
     setTimeout(function() {
         location.reload();
-    }, 30000); // Refresh at 30 seconds
+    }, 30000);
 };
