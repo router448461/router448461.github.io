@@ -28,9 +28,9 @@ body {
     position: absolute;
     top: 0;
     left: 50%;
-    width: 12px;
+    width: 6px; /* Changed width to 6px */
     height: 100%;
-    background-color: red;
+    background-color: white; /* Changed color to white */
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
@@ -42,8 +42,8 @@ body {
     top: 50%;
     left: 0;
     width: 100%;
-    height: 12px;
-    background-color: red;
+    height: 6px; /* Changed height to 6px */
+    background-color: white; /* Changed color to white */
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
