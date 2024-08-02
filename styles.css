@@ -50,6 +50,32 @@ body {
     animation: lineMoveHorizontal 15s linear; /* Changed duration to 15s */
 }
 
+#line-vertical-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 6px; /* Changed width to 6px */
+    height: 100%;
+    background-color: white; /* Changed color to white */
+    transform: translateX(-50%);
+    opacity: 1;
+    z-index: 3;
+    animation: lineMoveVerticalBottom 15s linear; /* Changed duration to 15s */
+}
+
+#line-horizontal-right {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 100%;
+    height: 6px; /* Changed height to 6px */
+    background-color: white; /* Changed color to white */
+    transform: translateY(-50%);
+    opacity: 1;
+    z-index: 3;
+    animation: lineMoveHorizontalRight 15s linear; /* Changed duration to 15s */
+}
+
 #white-flash {
     position: absolute;
     top: 0;
@@ -70,6 +96,16 @@ body {
 @keyframes lineMoveHorizontal {
     0% { left: 0; opacity: 1; }
     100% { left: 50%; opacity: 1; } /* Stop at the middle */
+}
+
+@keyframes lineMoveVerticalBottom {
+    0% { bottom: 0; opacity: 1; }
+    100% { bottom: 50%; opacity: 1; } /* Stop at the middle */
+}
+
+@keyframes lineMoveHorizontalRight {
+    0% { right: 0; opacity: 1; }
+    100% { right: 50%; opacity: 1; } /* Stop at the middle */
 }
 
 .flashing-dot {
