@@ -22,7 +22,7 @@ window.onload = function() {
             var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var googleDns1 = '8.8.8.8'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var googleDns2 = '8.8.4.4'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var addresses = [ip, dns1, dns2, googleDns1, googleDns2];
+            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}<br>${googleDns1}<br>${googleDns2}</span>`;
 
             // Example coordinates for IP and DNS servers
             // You will need to replace the example coordinates with the actual coordinates of the IP address and DNS servers.
@@ -32,12 +32,13 @@ window.onload = function() {
             var googleDns1Coords = [37.3861, -122.0839]; // Replace with actual Google DNS1 coordinates
             var googleDns2Coords = [37.3861, -122.0839]; // Replace with actual Google DNS2 coordinates
 
-            var polyline = L.polyline([], {color: 'red'}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords], {color: 'red'}).addTo(map);
 
             var counter = 0;
             setInterval(function() {
+                counter++;
                 var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
-                var newLatLngs = latlngs.slice(0, Math.min(counter + 1, latlngs.length));
+                var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
                 // Flash IP address and traceroute line
@@ -51,14 +52,7 @@ window.onload = function() {
                     dots[i].style.opacity = (counter % 2 === 0) ? 1 : 0;
                 }
 
-                // Display each address sequentially
-                if (counter % 2 === 0) {
-                    var displayText = addresses[Math.floor(counter / 2)] + '<br>';
-                    displayArea.innerHTML = `<span id="ip-display">${displayText}</span>`;
-                }
-
-                counter++;
-                if (counter >= latlngs.length * 2) {
+                if (counter >= latlngs.length) {
                     counter = 0;
                 }
             }, 1000);
