@@ -17,17 +17,32 @@ window.onload = function() {
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns2}</span>`;
+            displayArea.innerHTML = `<span id="ip-display" style="color: yellow;">${ip}<br>${dns2}</span>`;
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
 
-            var polyline = L.polyline([ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
+            var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
+
+            var latlngs = [ipCoords, dns2Coords];
+            var totalDuration = 15000; // 15 seconds
+            var interval = totalDuration / latlngs.length;
+            var counter = 0;
+
+            var drawLine = setInterval(function() {
+                if (counter < latlngs.length) {
+                    polyline.addLatLng(latlngs[counter]);
+                    counter++;
+                } else {
+                    clearInterval(drawLine);
+                }
+            }, interval);
 
             var coords = [ipCoords, dns2Coords];
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
-                    className: 'flashing-dot'
+                    className: 'flashing-dot',
+                    html: '<div style="background-color: yellow; width: 2px; height: 2px; border-radius: 50%;"></div>'
                 });
                 L.marker(coord, { icon: dot }).addTo(map);
             });
