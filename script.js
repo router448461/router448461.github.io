@@ -14,8 +14,8 @@ window.onload = function() {
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
-            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
+            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
@@ -47,7 +47,7 @@ window.onload = function() {
                     className: 'dot',
                     html: '<div style="background-color: red; width: 1px; height: 1px; border-radius: 50%;"></div>'
                 });
-                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split('.').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
+                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
             });
 
             var hobartMarker = L.circleMarker(hobartCoords, {
