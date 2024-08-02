@@ -16,24 +16,20 @@ window.onload = function() {
         .then(response => response.json())
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var dns1 = '1.1.1.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var dns2 = '1.0.0.3'.split('.').map(num => ("000" + num).slice(-3)).join('.');
+            var dns1 = '1.1.1.1'.split('.').map(num => ("000" + num).slice(-3)).join('.');
             var googleDns1 = '8.8.8.8'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            var googleDns2 = '8.8.4.4'.split('.').map(num => ("000" + num).slice(-3)).join('.');
-            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${dns2}<br>${googleDns1}<br>${googleDns2}</span>`;
+            displayArea.innerHTML = `<span id="ip-display">${ip}<br>${dns1}<br>${googleDns1}</span>`;
 
             var ipCoords = [37.7749, -122.4194];
             var dns1Coords = [33.6844, -117.8265];
-            var dns2Coords = [40.7128, -74.0060];
             var googleDns1Coords = [37.3861, -122.0839];
-            var googleDns2Coords = [37.3861, -122.0839];
 
-            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords], {color: 'red'}).addTo(map);
+            var polyline = L.polyline([ipCoords, dns1Coords, ipCoords, googleDns1Coords], {color: 'red', weight: 1}).addTo(map);
 
             var counter = 0;
             setInterval(function() {
                 counter++;
-                var latlngs = [ipCoords, dns1Coords, ipCoords, dns2Coords, ipCoords, googleDns1Coords, ipCoords, googleDns2Coords];
+                var latlngs = [ipCoords, dns1Coords, ipCoords, googleDns1Coords];
                 var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
                 polyline.setLatLngs(newLatLngs);
 
@@ -51,7 +47,7 @@ window.onload = function() {
                 }
             }, 1000);
 
-            var coords = [ipCoords, dns1Coords, dns2Coords, googleDns1Coords, googleDns2Coords];
+            var coords = [ipCoords, dns1Coords, googleDns1Coords];
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
                     className: 'flashing-dot'
