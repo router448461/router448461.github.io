@@ -14,16 +14,6 @@ body {
     z-index: 1;
 }
 
-#display-area {
-    position: absolute;
-    top: 24px;
-    left: 24px;
-    color: white;
-    font-size: 24px;
-    font-variant-numeric: tabular-nums;
-    z-index: 2;
-}
-
 #line-vertical {
     position: absolute;
     top: 0;
@@ -118,4 +108,13 @@ body {
     background-color: red;
     border-radius: 50%;
     opacity: 1;
+}
+
+.custom-tooltip {
+    background-color: transparent;
+    color: red;
+    border: none;
+    box-shadow: none;
+    font-size: 12px;
+    text-align: center;
 }
