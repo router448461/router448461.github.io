@@ -22,27 +22,18 @@ window.onload = function() {
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
 
-            var polyline = L.polyline([ipCoords, dns2Coords], {color: 'red', weight: 1}).addTo(map);
+            var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
+            var latlngs = [ipCoords, dns2Coords];
+            var interval = 15000 / latlngs.length;
             var counter = 0;
-            var interval = 15000 / (polyline.getLatLngs().length - 1);
-            setInterval(function() {
-                counter++;
-                var latlngs = [ipCoords, dns2Coords];
-                var newLatLngs = latlngs.slice(0, Math.min(counter, latlngs.length));
-                polyline.setLatLngs(newLatLngs);
 
-                var ipDisplay = document.getElementById('ip-display');
-                ipDisplay.style.visibility = (counter % 2 === 0) ? 'visible' : 'hidden';
-                polyline.setStyle({ opacity: (counter % 2 === 0) ? 1 : 0 });
-
-                var dots = document.getElementsByClassName('flashing-dot');
-                for (var i = 0; i < dots.length; i++) {
-                    dots[i].style.opacity = (counter % 2 === 0) ? 1 : 0;
-                }
-
-                if (counter >= latlngs.length) {
-                    counter = 0;
+            var drawLine = setInterval(function() {
+                if (counter < latlngs.length) {
+                    polyline.addLatLng(latlngs[counter]);
+                    counter++;
+                } else {
+                    clearInterval(drawLine);
                 }
             }, interval);
 
