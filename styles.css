@@ -28,7 +28,7 @@ body {
     position: absolute;
     top: 0;
     left: 50%;
-    width: 6px; /* Changed width to 6px */
+    width: 1px; /* Changed width to 1px */
     height: 0; /* Start with height 0 */
     background-color: white; /* Changed color to white */
     transform: translateX(-50%);
@@ -42,7 +42,7 @@ body {
     top: 50%;
     left: 0;
     width: 0; /* Start with width 0 */
-    height: 6px; /* Changed height to 6px */
+    height: 1px; /* Changed height to 1px */
     background-color: white; /* Changed color to white */
     transform: translateY(-50%);
     opacity: 1;
@@ -54,7 +54,7 @@ body {
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 6px; /* Changed width to 6px */
+    width: 1px; /* Changed width to 1px */
     height: 0; /* Start with height 0 */
     background-color: white; /* Changed color to white */
     transform: translateX(-50%);
@@ -68,7 +68,7 @@ body {
     top: 50%;
     right: 0;
     width: 0; /* Start with width 0 */
-    height: 6px; /* Changed height to 6px */
+    height: 1px; /* Changed height to 1px */
     background-color: white; /* Changed color to white */
     transform: translateY(-50%);
     opacity: 1;
