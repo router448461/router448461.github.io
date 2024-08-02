@@ -22,7 +22,7 @@ window.onload = function() {
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
 
-            var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
+            var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
             var latlngs = [ipCoords, dns2Coords];
             var totalDuration = 15000; // 15 seconds
@@ -45,7 +45,7 @@ window.onload = function() {
             coords.forEach(function(coord) {
                 var dot = L.divIcon({
                     className: 'dot',
-                    html: '<div style="background-color: yellow; width: 1px; height: 1px; border-radius: 50%;"></div>'
+                    html: '<div style="background-color: red; width: 1px; height: 1px; border-radius: 50%;"></div>'
                 });
                 L.marker(coord, { icon: dot }).addTo(map);
             });
