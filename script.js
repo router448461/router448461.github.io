@@ -26,13 +26,16 @@ window.onload = function() {
 
             var latlngs = [ipCoords, dns2Coords];
             var totalDuration = 15000; // 15 seconds
-            var interval = totalDuration / latlngs.length;
-            var counter = 0;
+            var steps = 100; // Number of steps for the animation
+            var interval = totalDuration / steps;
+            var step = 0;
 
             var drawLine = setInterval(function() {
-                if (counter < latlngs.length) {
-                    polyline.addLatLng(latlngs[counter]);
-                    counter++;
+                if (step <= steps) {
+                    var lat = ipCoords[0] + (dns2Coords[0] - ipCoords[0]) * (step / steps);
+                    var lng = ipCoords[1] + (dns2Coords[1] - ipCoords[1]) * (step / steps);
+                    polyline.addLatLng([lat, lng]);
+                    step++;
                 } else {
                     clearInterval(drawLine);
                 }
