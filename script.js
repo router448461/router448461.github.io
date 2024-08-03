@@ -21,24 +21,38 @@ window.onload = function() {
             var dns2Coords = [40.7128, -74.0060];
             var doverCoords = [-43.3167, 147.0167]; // Coordinates for Dover, Tasmania
 
+            var nameServerCoords = [
+                [51.5074, -0.1278], // ns8.dynu.com
+                [48.8566, 2.3522],  // ns9.dynu.com
+                [52.5200, 13.4050], // ns7.dynu.com
+                [34.0522, -118.2437], // ns1.dynu.com
+                [35.6895, 139.6917], // ns5.dynu.com
+                [55.7558, 37.6173], // ns2.dynu.com
+                [40.730610, -73.935242], // ns4.dynu.com
+                [39.9042, 116.4074], // ns3.dynu.com
+                [28.6139, 77.2090], // ns6.dynu.com
+                [37.5665, 126.9780], // ns12.dynu.com
+                [31.2304, 121.4737], // ns10.dynu.com
+                [22.3964, 114.1095] // ns11.dynu.com
+            ];
+
             var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
-            var latlngs = [ipCoords, dns2Coords];
+            var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords);
             var totalDuration = 30000; // 30 seconds
             var steps = 100; // Number of steps for the animation
             var interval = totalDuration / steps;
             var step = 0;
 
             var drawLine = setInterval(function() {
-                if (step <= steps / 2) {
-                    var lat = ipCoords[0] + (dns2Coords[0] - ipCoords[0]) * (step / (steps / 2));
-                    var lng = ipCoords[1] + (dns2Coords[1] - ipCoords[1]) * (step / (steps / 2));
-                    polyline.addLatLng([lat, lng]);
-                    step++;
-                } else if (step <= steps) {
-                    var lat = dns2Coords[0] + (doverCoords[0] - dns2Coords[0]) * ((step - steps / 2) / (steps / 2));
-                    var lng = dns2Coords[1] + (doverCoords[1] - dns2Coords[1]) * ((step - steps / 2) / (steps / 2));
-                    polyline.addLatLng([lat, lng]);
+                if (step < steps) {
+                    var currentIndex = Math.floor(step / (steps / latlngs.length));
+                    var nextIndex = currentIndex + 1;
+                    if (nextIndex < latlngs.length) {
+                        var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                        var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                        polyline.addLatLng([lat, lng]);
+                    }
                     step++;
                 } else {
                     clearInterval(drawLine);
@@ -48,11 +62,11 @@ window.onload = function() {
             var ipInfo = document.getElementById('ip-info');
             ipInfo.innerHTML = `IP: ${ip}<br>DNS: ${dns2}`;
 
-            var coords = [ipCoords, dns2Coords];
-            coords.forEach(function(coord) {
+            var coords = [ipCoords, dns2Coords].concat(nameServerCoords);
+            coords.forEach(function(coord, index) {
                 var dot = L.divIcon({
                     className: 'dot',
-                    html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+                    html: `<div style="background-color: ${index < 2 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
                 });
                 L.marker(coord, { icon: dot }).addTo(map);
             });
