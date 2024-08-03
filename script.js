@@ -54,7 +54,8 @@ window.onload = function() {
                 radius: 5,
                 color: 'green',
                 fillColor: 'green',
-                fillOpacity: 1
+                fillOpacity: 1,
+                className: 'dot'
             }).addTo(map);
 
             setInterval(function() {
