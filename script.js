@@ -91,7 +91,14 @@ window.onload = function() {
     }, 15000);
 
     setTimeout(function() {
+        whiteFlash.style.opacity = 1;
+        setTimeout(function() {
+            whiteFlash.style.opacity = 0;
+            location.reload();
+        }, 500);
+    }, 30000);
+
+    setTimeout(function() {
         location.reload();
     }, 33000);
 };
-
