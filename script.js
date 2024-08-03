@@ -87,24 +87,16 @@ window.onload = function() {
     var lineHorizontalRight = document.getElementById('line-horizontal-right');
     var whiteFlash = document.getElementById('white-flash');
 
-    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards';
+    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
 
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
         setTimeout(function() {
             whiteFlash.style.opacity = 0;
         }, 500);
-    }, 7500);
-
-    setTimeout(function() {
-        var lines = [lineVertical, lineHorizontal, lineVerticalBottom, lineHorizontalRight];
-        lines.forEach(function(line) {
-            line.style.animation = 'moveToDover 7.5s linear forwards';
-            line.style.backgroundColor = 'red';
-        });
     }, 7500);
 
     setTimeout(function() {
