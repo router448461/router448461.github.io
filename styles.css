@@ -108,8 +108,8 @@ body {
 }
 
 .dot {
-    width: 1px;
-    height: 1px;
+    width: 5px;
+    height: 5px;
     background-color: red;
     border-radius: 50%;
     opacity: 1;
@@ -118,15 +118,3 @@ body {
 
 @keyframes blink {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.custom-tooltip {
-    background-color: transparent;
-    color: red;
-    border: none;
-    box-shadow: none;
-    font-size: 12px;
-    text-align: center;
-    white-space: pre;
-}
