@@ -116,5 +116,5 @@ window.onload = function() {
 
     setTimeout(function() {
         location.reload();
-    }, 33000);
+    }, 60000);
 };
