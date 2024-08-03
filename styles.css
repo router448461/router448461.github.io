@@ -24,7 +24,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVertical 15s linear forwards;
+    animation: lineMoveVertical 7.5s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -38,7 +38,7 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontal 15s linear forwards;
+    animation: lineMoveHorizontal 7.5s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -52,7 +52,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVerticalBottom 15s linear forwards;
+    animation: lineMoveVerticalBottom 7.5s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -66,7 +66,7 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontalRight 15s linear forwards;
+    animation: lineMoveHorizontalRight 7.5s linear forwards;
     animation-fill-mode: forwards;
 }
 
