@@ -127,6 +127,7 @@ body {
     background-color: green;
     border-radius: 50%;
     opacity: 1;
+    animation: blink 1s infinite;
 }
 
 @keyframes blink {
