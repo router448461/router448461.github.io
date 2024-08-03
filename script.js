@@ -52,14 +52,9 @@ window.onload = function() {
 
             var hobartMarker = L.divIcon({
                 className: 'dot',
-                html: '<div style="background-color: green; width: 5px; height: 5px; border-radius: 50%;"></div>'
+                html: '<div style="background-color: green; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
             });
             L.marker(hobartCoords, { icon: hobartMarker }).addTo(map);
-
-            setInterval(function() {
-                hobartMarker.options.html = hobartMarker.options.html.includes('opacity: 1') ? hobartMarker.options.html.replace('opacity: 1', 'opacity: 0') : hobartMarker.options.html.replace('opacity: 0', 'opacity: 1');
-                L.marker(hobartCoords, { icon: hobartMarker }).addTo(map);
-            }, 1000);
         })
         .catch(error => {
             console.error('Error:', error);
