@@ -103,11 +103,17 @@ body {
 }
 
 .dot {
-    width: 1px;
-    height: 1px;
+    width: 5px;
+    height: 5px;
     background-color: red;
     border-radius: 50%;
     opacity: 1;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .custom-tooltip {
@@ -119,3 +125,4 @@ body {
     text-align: center;
     white-space: pre;
 }
+
