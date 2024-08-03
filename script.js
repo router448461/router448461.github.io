@@ -36,7 +36,7 @@ window.onload = function() {
                 [22.3964, 114.1095]
             ];
 
-            var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
+            var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
 
             var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
             var totalDuration = 30000; // 30 seconds
@@ -60,7 +60,8 @@ window.onload = function() {
             }, interval);
 
             var ipInfo = document.getElementById('ip-info');
-            ipInfo.innerHTML = `IP: ${ip}<br>DNS: ${dns2}<br>NS8: ns8.dynu.com<br>NS9: ns9.dynu.com<br>NS7: ns7.dynu.com<br>NS1: ns1.dynu.com<br>NS5: ns5.dynu.com<br>NS2: ns2.dynu.com<br>NS4: ns4.dynu.com<br>NS3: ns3.dynu.com<br>NS6: ns6.dynu.com<br>NS12: ns12.dynu.com<br>NS10: ns10.dynu.com<br>NS11: ns11.dynu.com`;
+            ipInfo.innerHTML = `${ip}<br>${dns2}<br>ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
+            ipInfo.style.color = 'blue';
 
             var coords = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
             coords.forEach(function(coord, index) {
