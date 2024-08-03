@@ -11,36 +11,59 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
-    var doverCoords = [-43.3167, 147.0167]; // Coordinates for Dover, Tasmania
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
+            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
 
-    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
+            var ipCoords = [37.7749, -122.4194];
+            var dns2Coords = [40.7128, -74.0060];
+            var doverCoords = [-43.3167, 147.0167]; // Coordinates for Dover, Tasmania
 
-    var totalDuration = 30000; // 30 seconds
-    var steps = 100; // Number of steps for the animation
-    var interval = totalDuration / steps;
-    var step = 0;
+            var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
-    var drawLine = setInterval(function() {
-        if (step <= steps / 2) {
-            var lat = 0 + (doverCoords[0] - 0) * (step / (steps / 2));
-            var lng = 0 + (doverCoords[1] - 0) * (step / (steps / 2));
-            polyline.addLatLng([lat, lng]);
-            step++;
-        } else if (step <= steps) {
-            var lat = doverCoords[0];
-            var lng = doverCoords[1];
-            polyline.addLatLng([lat, lng]);
-            step++;
-        } else {
-            clearInterval(drawLine);
-        }
-    }, interval);
+            var latlngs = [ipCoords, dns2Coords];
+            var totalDuration = 30000; // 30 seconds
+            var steps = 100; // Number of steps for the animation
+            var interval = totalDuration / steps;
+            var step = 0;
 
-    var greenDot = L.divIcon({
-        className: 'dot',
-        html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
-    });
-    L.marker(doverCoords, { icon: greenDot }).addTo(map);
+            var drawLine = setInterval(function() {
+                if (step <= steps / 2) {
+                    var lat = 0 + (doverCoords[0] - 0) * (step / (steps / 2));
+                    var lng = 0 + (doverCoords[1] - 0) * (step / (steps / 2));
+                    polyline.addLatLng([lat, lng]);
+                    step++;
+                } else if (step <= steps) {
+                    var lat = doverCoords[0];
+                    var lng = doverCoords[1];
+                    polyline.addLatLng([lat, lng]);
+                    step++;
+                } else {
+                    clearInterval(drawLine);
+                }
+            }, interval);
+
+            var coords = [ipCoords, dns2Coords];
+            var ips = [ip, dns2];
+            coords.forEach(function(coord, index) {
+                var dot = L.divIcon({
+                    className: 'dot',
+                    html: '<div style="background-color: red; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+                });
+                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
+            });
+
+            var greenDot = L.divIcon({
+                className: 'dot',
+                html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+            });
+            L.marker(doverCoords, { icon: greenDot }).addTo(map);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 
     var lineVertical = document.getElementById('line-vertical');
     var lineHorizontal = document.getElementById('line-horizontal');
@@ -58,6 +81,13 @@ window.onload = function() {
         setTimeout(function() {
             whiteFlash.style.opacity = 0;
         }, 500);
+    }, 15000);
+
+    setTimeout(function() {
+        var lines = [lineVertical, lineHorizontal, lineVerticalBottom, lineHorizontalRight];
+        lines.forEach(function(line) {
+            line.style.animation = 'moveToDover 15s linear forwards';
+        });
     }, 15000);
 
     setTimeout(function() {
