@@ -122,8 +122,8 @@ body {
 }
 
 .dot {
-    width: 1px;
-    height: 1px;
+    width: 6px;
+    height: 6px;
     background-color: green;
     border-radius: 50%;
     opacity: 1;
