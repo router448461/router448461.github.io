@@ -57,7 +57,7 @@ window.onload = function() {
 
             var greenDot = L.divIcon({
                 className: 'dot',
-                html: '<div style="background-color: green; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+                html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
             });
             L.marker(doverCoords, { icon: greenDot }).addTo(map);
         })
@@ -92,5 +92,6 @@ window.onload = function() {
 
     setTimeout(function() {
         location.reload();
-    }, 30000);
+    }, 33000);
 };
+
