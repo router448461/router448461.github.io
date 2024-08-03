@@ -102,4 +102,3 @@ window.onload = function() {
         location.reload();
     }, 33000);
 };
-
