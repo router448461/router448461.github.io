@@ -45,7 +45,7 @@ window.onload = function() {
             coords.forEach(function(coord, index) {
                 var dot = L.divIcon({
                     className: 'dot',
-                    html: '<div style="background-color: red; width: 1px; height: 1px; border-radius: 50%;"></div>'
+                    html: '<div style="background-color: red; width: 5px; height: 5px; border-radius: 50%;"></div>'
                 });
                 L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
             });
