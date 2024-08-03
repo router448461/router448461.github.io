@@ -102,6 +102,11 @@ body {
     100% { width: 50%; opacity: 1; }
 }
 
+@keyframes moveToDover {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-43.3167px, 147.0167px); }
+}
+
 .dot {
     width: 1px;
     height: 1px;
