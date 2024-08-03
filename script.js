@@ -19,28 +19,28 @@ window.onload = function() {
 
             var ipCoords = [37.7749, -122.4194];
             var dns2Coords = [40.7128, -74.0060];
-            var doverCoords = [-43.3167, 147.0167]; // Coordinates for Dover, Tasmania
+            var doverCoords = [-43.3167, 147.0167];
 
             var nameServerCoords = [
-                [51.5074, -0.1278], // ns8.dynu.com
-                [48.8566, 2.3522],  // ns9.dynu.com
-                [52.5200, 13.4050], // ns7.dynu.com
-                [34.0522, -118.2437], // ns1.dynu.com
-                [35.6895, 139.6917], // ns5.dynu.com
-                [55.7558, 37.6173], // ns2.dynu.com
-                [40.730610, -73.935242], // ns4.dynu.com
-                [39.9042, 116.4074], // ns3.dynu.com
-                [28.6139, 77.2090], // ns6.dynu.com
-                [37.5665, 126.9780], // ns12.dynu.com
-                [31.2304, 121.4737], // ns10.dynu.com
-                [22.3964, 114.1095] // ns11.dynu.com
+                [51.5074, -0.1278],
+                [48.8566, 2.3522],
+                [52.5200, 13.4050],
+                [34.0522, -118.2437],
+                [35.6895, 139.6917],
+                [55.7558, 37.6173],
+                [40.730610, -73.935242],
+                [39.9042, 116.4074],
+                [28.6139, 77.2090],
+                [37.5665, 126.9780],
+                [31.2304, 121.4737],
+                [22.3964, 114.1095]
             ];
 
             var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
             var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords);
-            var totalDuration = 30000; // 30 seconds
-            var steps = 100; // Number of steps for the animation
+            var totalDuration = 30000;
+            var steps = 100;
             var interval = totalDuration / steps;
             var step = 0;
 
