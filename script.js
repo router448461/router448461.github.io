@@ -11,47 +11,36 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
-    fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
-            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
+    var doverCoords = [-43.3167, 147.0167]; // Coordinates for Dover, Tasmania
 
-            var ipCoords = [37.7749, -122.4194];
-            var dns2Coords = [40.7128, -74.0060];
+    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
-            var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
+    var totalDuration = 30000; // 30 seconds
+    var steps = 100; // Number of steps for the animation
+    var interval = totalDuration / steps;
+    var step = 0;
 
-            var latlngs = [ipCoords, dns2Coords];
-            var totalDuration = 15000; // 15 seconds
-            var steps = 100; // Number of steps for the animation
-            var interval = totalDuration / steps;
-            var step = 0;
+    var drawLine = setInterval(function() {
+        if (step <= steps / 2) {
+            var lat = 0 + (doverCoords[0] - 0) * (step / (steps / 2));
+            var lng = 0 + (doverCoords[1] - 0) * (step / (steps / 2));
+            polyline.addLatLng([lat, lng]);
+            step++;
+        } else if (step <= steps) {
+            var lat = doverCoords[0];
+            var lng = doverCoords[1];
+            polyline.addLatLng([lat, lng]);
+            step++;
+        } else {
+            clearInterval(drawLine);
+        }
+    }, interval);
 
-            var drawLine = setInterval(function() {
-                if (step <= steps) {
-                    var lat = ipCoords[0] + (dns2Coords[0] - ipCoords[0]) * (step / steps);
-                    var lng = ipCoords[1] + (dns2Coords[1] - ipCoords[1]) * (step / steps);
-                    polyline.addLatLng([lat, lng]);
-                    step++;
-                } else {
-                    clearInterval(drawLine);
-                }
-            }, interval);
-
-            var coords = [ipCoords, dns2Coords];
-            var ips = [ip, dns2];
-            coords.forEach(function(coord, index) {
-                var dot = L.divIcon({
-                    className: 'dot',
-                    html: '<div style="background-color: red; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
-                });
-                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    var greenDot = L.divIcon({
+        className: 'dot',
+        html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+    });
+    L.marker(doverCoords, { icon: greenDot }).addTo(map);
 
     var lineVertical = document.getElementById('line-vertical');
     var lineHorizontal = document.getElementById('line-horizontal');
