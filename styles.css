@@ -108,16 +108,12 @@ body {
 }
 
 .dot {
-    width: 5px;
-    height: 5px;
-    background-color: red;
+    width: 1px;
+    height: 1px;
+    background-color: green;
     border-radius: 50%;
     opacity: 1;
     animation: blink 1s infinite;
-}
-
-.dot.green {
-    background-color: green;
 }
 
 @keyframes blink {
