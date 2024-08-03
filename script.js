@@ -31,13 +31,13 @@ window.onload = function() {
 
             var drawLine = setInterval(function() {
                 if (step <= steps / 2) {
-                    var lat = 0 + (doverCoords[0] - 0) * (step / (steps / 2));
-                    var lng = 0 + (doverCoords[1] - 0) * (step / (steps / 2));
+                    var lat = ipCoords[0] + (dns2Coords[0] - ipCoords[0]) * (step / (steps / 2));
+                    var lng = ipCoords[1] + (dns2Coords[1] - ipCoords[1]) * (step / (steps / 2));
                     polyline.addLatLng([lat, lng]);
                     step++;
                 } else if (step <= steps) {
-                    var lat = doverCoords[0];
-                    var lng = doverCoords[1];
+                    var lat = dns2Coords[0] + (doverCoords[0] - dns2Coords[0]) * ((step - steps / 2) / (steps / 2));
+                    var lng = dns2Coords[1] + (doverCoords[1] - dns2Coords[1]) * ((step - steps / 2) / (steps / 2));
                     polyline.addLatLng([lat, lng]);
                     step++;
                 } else {
@@ -57,7 +57,7 @@ window.onload = function() {
 
             var greenDot = L.divIcon({
                 className: 'dot',
-                html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+                html: '<div style="background-color: green; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
             });
             L.marker(doverCoords, { icon: greenDot }).addTo(map);
         })
