@@ -38,8 +38,8 @@ window.onload = function() {
 
             var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
-            var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords);
-            var totalDuration = 15000; // 15 seconds
+            var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
+            var totalDuration = 30000; // 30 seconds
             var steps = 100; // Number of steps for the animation
             var interval = totalDuration / steps;
             var step = 0;
@@ -62,7 +62,7 @@ window.onload = function() {
             var ipInfo = document.getElementById('ip-info');
             ipInfo.innerHTML = `IP: ${ip}<br>DNS: ${dns2}<br>NS8: ns8.dynu.com<br>NS9: ns9.dynu.com<br>NS7: ns7.dynu.com<br>NS1: ns1.dynu.com<br>NS5: ns5.dynu.com<br>NS2: ns2.dynu.com<br>NS4: ns4.dynu.com<br>NS3: ns3.dynu.com<br>NS6: ns6.dynu.com<br>NS12: ns12.dynu.com<br>NS10: ns10.dynu.com<br>NS11: ns11.dynu.com`;
 
-            var coords = [ipCoords, dns2Coords].concat(nameServerCoords);
+            var coords = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
             coords.forEach(function(coord, index) {
                 var dot = L.divIcon({
                     className: 'dot',
@@ -103,6 +103,18 @@ window.onload = function() {
         var lines = [lineVertical, lineHorizontal, lineVerticalBottom, lineHorizontalRight];
         lines.forEach(function(line) {
             line.style.animation = 'moveToDover 7.5s linear forwards';
+            line.style.backgroundColor = 'red';
         });
     }, 7500);
+
+    setTimeout(function() {
+        whiteFlash.style.opacity = 1;
+        setTimeout(function() {
+            whiteFlash.style.opacity = 0;
+        }, 500);
+    }, 30000);
+
+    setTimeout(function() {
+        location.reload();
+    }, 33000);
 };
