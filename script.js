@@ -45,14 +45,16 @@ window.onload = function() {
                 }
             }, interval);
 
+            var ipInfo = document.getElementById('ip-info');
+            ipInfo.innerHTML = `IP: ${ip}<br>DNS: ${dns2}`;
+
             var coords = [ipCoords, dns2Coords];
-            var ips = [ip, dns2];
-            coords.forEach(function(coord, index) {
+            coords.forEach(function(coord) {
                 var dot = L.divIcon({
                     className: 'dot',
-                    html: '<div style="background-color: red; width: 5px; height: 5px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+                    html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
                 });
-                L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
+                L.marker(coord, { icon: dot }).addTo(map);
             });
 
             var greenDot = L.divIcon({
