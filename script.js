@@ -17,24 +17,23 @@ window.onload = function() {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
             var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
 
-            // Fixed coordinates for each IP address
             var ipCoords = [37.7749, -122.4194];
-            var dns2Coords = [37.7749, -122.4195];
-            var doverCoords = [37.7749, -122.4196];
+            var dns2Coords = [37.7749, -122.4195]; // Adjusted to be closer
+            var doverCoords = [37.7749, -122.4196]; // Adjusted to be closer
 
             var nameServerCoords = [
-                [37.7749, -122.4197],
-                [37.7749, -122.4198],
-                [37.7749, -122.4199],
-                [37.7749, -122.4200],
-                [37.7749, -122.4201],
-                [37.7749, -122.4202],
-                [37.7749, -122.4203],
-                [37.7749, -122.4204],
-                [37.7749, -122.4205],
-                [37.7749, -122.4206],
-                [37.7749, -122.4207],
-                [37.7749, -122.4208]
+                [37.7749, -122.4197], // Adjusted to be closer
+                [37.7749, -122.4198], // Adjusted to be closer
+                [37.7749, -122.4199], // Adjusted to be closer
+                [37.7749, -122.4200], // Adjusted to be closer
+                [37.7749, -122.4201], // Adjusted to be closer
+                [37.7749, -122.4202], // Adjusted to be closer
+                [37.7749, -122.4203], // Adjusted to be closer
+                [37.7749, -122.4204], // Adjusted to be closer
+                [37.7749, -122.4205], // Adjusted to be closer
+                [37.7749, -122.4206], // Adjusted to be closer
+                [37.7749, -122.4207], // Adjusted to be closer
+                [37.7749, -122.4208]  // Adjusted to be closer
             ];
 
             var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
