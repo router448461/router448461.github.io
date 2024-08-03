@@ -14,12 +14,12 @@ window.onload = function() {
     fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
-            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
-            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
+            var ip = data.ip.split('.').map(num => num.padStart(3, '0')).join(':');
+            var dns2 = '111.220.1.1'.split('.').map(num => num.padStart(3, '0')).join(':');
 
-            var ipCoords = [37.7749, -122.4194];
-            var dns2Coords = [40.7128, -74.0060];
-            var doverCoords = [-43.3167, 147.0167];
+            var ipCoords = [37.774929, -122.419416];
+            var dns2Coords = [40.712776, -74.005974];
+            var doverCoords = [-43.316667, 147.016667];
 
             var nameServerCoords = [
                 [51.5074, -0.1278],
@@ -81,16 +81,7 @@ window.onload = function() {
             console.error('Error:', error);
         });
 
-    var lineVertical = document.getElementById('line-vertical');
-    var lineHorizontal = document.getElementById('line-horizontal');
-    var lineVerticalBottom = document.getElementById('line-vertical-bottom');
-    var lineHorizontalRight = document.getElementById('line-horizontal-right');
     var whiteFlash = document.getElementById('white-flash');
-
-    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
 
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
