@@ -129,13 +129,3 @@ body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-
-.custom-tooltip {
-    background-color: transparent;
-    color: red;
-    border: none;
-    box-shadow: none;
-    font-size: 12px;
-    text-align: center;
-    white-space: pre;
-}
