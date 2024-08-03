@@ -50,16 +50,15 @@ window.onload = function() {
                 L.marker(coord, { icon: dot }).addTo(map).bindTooltip(ips[index].split(':').join('<br>'), { permanent: true, direction: 'right', className: 'custom-tooltip' });
             });
 
-            var hobartMarker = L.circleMarker(hobartCoords, {
-                radius: 5,
-                color: 'green',
-                fillColor: 'green',
-                fillOpacity: 1,
-                className: 'dot'
-            }).addTo(map);
+            var hobartMarker = L.divIcon({
+                className: 'dot',
+                html: '<div style="background-color: green; width: 5px; height: 5px; border-radius: 50%;"></div>'
+            });
+            L.marker(hobartCoords, { icon: hobartMarker }).addTo(map);
 
             setInterval(function() {
-                hobartMarker.setStyle({ fillOpacity: hobartMarker.options.fillOpacity === 1 ? 0 : 1 });
+                hobartMarker.options.html = hobartMarker.options.html.includes('opacity: 1') ? hobartMarker.options.html.replace('opacity: 1', 'opacity: 0') : hobartMarker.options.html.replace('opacity: 0', 'opacity: 1');
+                L.marker(hobartCoords, { icon: hobartMarker }).addTo(map);
             }, 1000);
         })
         .catch(error => {
