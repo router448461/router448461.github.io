@@ -15,10 +15,8 @@ window.onload = function() {
         .then(response => response.json())
         .then(data => {
             var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
-            var dns2 = '111.220.1.1'.split('.').map(num => ("000" + num).slice(-3)).join(':');
 
             var ipCoords = [37.7749, -122.4194];
-            var dns2Coords = [40.7128, -74.0060];
             var doverCoords = [-43.3167, 147.0167];
 
             var nameServerCoords = [
@@ -38,7 +36,7 @@ window.onload = function() {
 
             var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
 
-            var latlngs = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
+            var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
             var totalDuration = 30000; // 30 seconds
             var steps = 100; // Number of steps for the animation
             var interval = totalDuration / steps;
@@ -60,14 +58,14 @@ window.onload = function() {
             }, interval);
 
             var ipInfo = document.getElementById('ip-info');
-            ipInfo.innerHTML = `${ip}<br>${dns2}<br>ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
+            ipInfo.innerHTML = `${ip}<br>ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
             ipInfo.style.color = 'blue';
 
-            var coords = [ipCoords, dns2Coords].concat(nameServerCoords).concat([doverCoords]);
+            var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
             coords.forEach(function(coord, index) {
                 var dot = L.divIcon({
                     className: 'dot',
-                    html: `<div style="background-color: ${index < 2 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+                    html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
                 });
                 L.marker(coord, { icon: dot }).addTo(map);
             });
@@ -88,10 +86,10 @@ window.onload = function() {
     var lineHorizontalRight = document.getElementById('line-horizontal-right');
     var whiteFlash = document.getElementById('white-flash');
 
-    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
 
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
