@@ -119,7 +119,7 @@ window.onload = function() {
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
         setTimeout(function() {
-            whiteFlash.style.opacity = 0);
+            whiteFlash.style.opacity = 0;
         }, 500);
     }, 30000);
 
