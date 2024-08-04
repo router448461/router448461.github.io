@@ -14,60 +14,46 @@ body {
     z-index: 1;
 }
 
-#line-vertical {
+.line {
     position: absolute;
-    top: 0;
-    left: 50%;
-    width: 1px;
-    height: 0;
     background-color: red;
-    transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
     animation-fill-mode: forwards;
+}
+
+#line-vertical, #line-vertical-bottom {
+    width: 1px;
+    height: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#line-horizontal, #line-horizontal-right {
+    width: 0;
+    height: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#line-vertical {
+    top: 0;
+    animation: lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
 }
 
 #line-horizontal {
-    position: absolute;
-    top: 50%;
     left: 0;
-    width: 0;
-    height: 1px;
-    background-color: red;
-    transform: translateY(-50%);
-    opacity: 1;
-    z-index: 3;
     animation: lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
-    animation-fill-mode: forwards;
 }
 
 #line-vertical-bottom {
-    position: absolute;
     bottom: 0;
-    left: 50%;
-    width: 1px;
-    height: 0;
-    background-color: red;
-    transform: translateX(-50%);
-    opacity: 1;
-    z-index: 3;
     animation: lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
-    animation-fill-mode: forwards;
 }
 
 #line-horizontal-right {
-    position: absolute;
-    top: 50%;
     right: 0;
-    width: 0;
-    height: 1px;
-    background-color: red;
-    transform: translateY(-50%);
-    opacity: 1;
-    z-index: 3;
     animation: lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
-    animation-fill-mode: forwards;
 }
 
 #white-flash {
