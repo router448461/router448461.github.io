@@ -58,8 +58,8 @@ window.onload = function() {
             }, interval);
 
             var ipInfo = document.getElementById('ip-info');
-            ipInfo.innerHTML = `${ip}<br>ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
-            ipInfo.style.color = 'blue';
+            ipInfo.innerHTML = `${ip}`;
+            ipInfo.style.color = 'white';
 
             var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
             coords.forEach(function(coord, index) {
@@ -108,4 +108,9 @@ window.onload = function() {
     setTimeout(function() {
         location.reload();
     }, 60000);
+
+    // Add the red triangle at the center
+    var triangle = document.createElement('div');
+    triangle.id = 'triangle';
+    document.body.appendChild(triangle);
 };
