@@ -14,6 +14,21 @@ window.onload = function() {
     var ipCoords = [37.7749, -122.4194];
     var doverCoords = [-43.3167, 147.0167];
 
+    var nameServers = [
+        'ns8.dynu.com',
+        'ns9.dynu.com',
+        'ns7.dynu.com',
+        'ns1.dynu.com',
+        'ns5.dynu.com',
+        'ns2.dynu.com',
+        'ns4.dynu.com',
+        'ns3.dynu.com',
+        'ns6.dynu.com',
+        'ns12.dynu.com',
+        'ns10.dynu.com',
+        'ns11.dynu.com'
+    ];
+
     var nameServerCoords = [
         [51.5074, -0.1278],
         [48.8566, 2.3522],
@@ -53,8 +68,20 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.innerHTML = `ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
     ipInfo.style.color = 'white';
+
+    // Function to convert name servers to IP addresses
+    function getIP(nameServer) {
+        return fetch(`https://dns.google/resolve?name=${nameServer}`)
+            .then(response => response.json())
+            .then(data => data.Answer[0].data)
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Convert name servers to IP addresses and display them
+    Promise.all(nameServers.map(getIP)).then(ipAddresses => {
+        ipInfo.innerHTML = ipAddresses.join('<br>');
+    });
 
     var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
     coords.forEach(function(coord, index) {
