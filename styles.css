@@ -89,6 +89,9 @@ body {
     color: white;
     font-size: 14px;
     z-index: 5;
+    background-color: rgba(0, 0, 0, 0.5); /* Added background for better visibility */
+    padding: 5px; /* Added padding for better readability */
+    border-radius: 5px; /* Added border radius for better aesthetics */
 }
 
 @keyframes lineMoveVertical {
