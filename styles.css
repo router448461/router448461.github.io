@@ -24,7 +24,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -38,7 +38,7 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -52,7 +52,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -66,7 +66,7 @@ body {
     transform: translateY(-50%);
     opacity: 1;
     z-index: 3;
-    animation: lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards;
     animation-fill-mode: forwards;
 }
 
@@ -111,9 +111,9 @@ body {
     100% { width: 50%; opacity: 1; }
 }
 
-@keyframes moveToDover {
+@keyframes createTriangle {
     0% { transform: translate(0, 0); }
-    100% { transform: translate(-43.3167px, 147.0167px); }
+    100% { transform: translate(-10px, -10px); }
 }
 
 @keyframes stayVisible {
