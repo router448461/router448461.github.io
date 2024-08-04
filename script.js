@@ -74,7 +74,7 @@ window.onload = function() {
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => data.Answer[0].data)
+            .then(data => `${nameServer}: ${data.Answer[0].data}`)
             .catch(error => console.error('Error:', error));
     }
 
@@ -119,7 +119,7 @@ window.onload = function() {
     setTimeout(function() {
         whiteFlash.style.opacity = 1;
         setTimeout(function() {
-            whiteFlash.style.opacity = 0;
+            whiteFlash.style.opacity = 0);
         }, 500);
     }, 30000);
 
