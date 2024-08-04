@@ -10,14 +10,14 @@ window.onload = function() {
         worldCopyJump: false, // Prevent repeated parts of the world
         maxBounds: [[-90, -180], [90, 180]], // Set bounds to prevent repeated parts
         maxBoundsViscosity: 1.0 // Ensure the map stays within bounds
-    }).setView([0, 0], 3);
+    }).setView([20, 0], 2); // Adjusted zoom level to fit the world map
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: ''
     }).addTo(map);
 
     map.on('zoomend', function() {
-        map.setZoom(3);
+        map.setZoom(2); // Adjusted zoom level to fit the world map
     });
 
     map.scrollWheelZoom.disable();
