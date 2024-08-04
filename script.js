@@ -11,74 +11,65 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
-    fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-            var ip = data.ip.split('.').map(num => ("000" + num).slice(-3)).join(':');
+    var ipCoords = [37.7749, -122.4194];
+    var doverCoords = [-43.3167, 147.0167];
 
-            var ipCoords = [37.7749, -122.4194];
-            var doverCoords = [-43.3167, 147.0167];
+    var nameServerCoords = [
+        [51.5074, -0.1278],
+        [48.8566, 2.3522],
+        [52.5200, 13.4050],
+        [34.0522, -118.2437],
+        [35.6895, 139.6917],
+        [55.7558, 37.6173],
+        [40.730610, -73.935242],
+        [39.9042, 116.4074],
+        [28.6139, 77.2090],
+        [37.5665, 126.9780],
+        [31.2304, 121.4737],
+        [22.3964, 114.1095]
+    ];
 
-            var nameServerCoords = [
-                [51.5074, -0.1278],
-                [48.8566, 2.3522],
-                [52.5200, 13.4050],
-                [34.0522, -118.2437],
-                [35.6895, 139.6917],
-                [55.7558, 37.6173],
-                [40.730610, -73.935242],
-                [39.9042, 116.4074],
-                [28.6139, 77.2090],
-                [37.5665, 126.9780],
-                [31.2304, 121.4737],
-                [22.3964, 114.1095]
-            ];
+    var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
 
-            var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
+    var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
+    var totalDuration = 30000; // 30 seconds
+    var steps = 100; // Number of steps for the animation
+    var interval = totalDuration / steps;
+    var step = 0;
 
-            var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
-            var totalDuration = 30000; // 30 seconds
-            var steps = 100; // Number of steps for the animation
-            var interval = totalDuration / steps;
-            var step = 0;
+    var drawLine = setInterval(function() {
+        if (step < steps) {
+            var currentIndex = Math.floor(step / (steps / latlngs.length));
+            var nextIndex = currentIndex + 1;
+            if (nextIndex < latlngs.length) {
+                var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                polyline.addLatLng([lat, lng]);
+            }
+            step++;
+        } else {
+            clearInterval(drawLine);
+        }
+    }, interval);
 
-            var drawLine = setInterval(function() {
-                if (step < steps) {
-                    var currentIndex = Math.floor(step / (steps / latlngs.length));
-                    var nextIndex = currentIndex + 1;
-                    if (nextIndex < latlngs.length) {
-                        var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                        var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                        polyline.addLatLng([lat, lng]);
-                    }
-                    step++;
-                } else {
-                    clearInterval(drawLine);
-                }
-            }, interval);
+    var ipInfo = document.getElementById('ip-info');
+    ipInfo.innerHTML = `ns8.dynu.com<br>ns9.dynu.com<br>ns7.dynu.com<br>ns1.dynu.com<br>ns5.dynu.com<br>ns2.dynu.com<br>ns4.dynu.com<br>ns3.dynu.com<br>ns6.dynu.com<br>ns12.dynu.com<br>ns10.dynu.com<br>ns11.dynu.com`;
+    ipInfo.style.color = 'white';
 
-            var ipInfo = document.getElementById('ip-info');
-            ipInfo.innerHTML = `${ip}`;
-            ipInfo.style.color = 'white';
-
-            var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
-            coords.forEach(function(coord, index) {
-                var dot = L.divIcon({
-                    className: 'dot',
-                    html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
-                });
-                L.marker(coord, { icon: dot }).addTo(map);
-            });
-
-            var greenDot = L.divIcon({
-                className: 'dot',
-                html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
-            });
-            L.marker(doverCoords, { icon: greenDot }).addTo(map);
-        })
-        .catch(error => {
-            console.error('Error:', error);
+    var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
+    coords.forEach(function(coord, index) {
+        var dot = L.divIcon({
+            className: 'dot',
+            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
         });
+        L.marker(coord, { icon: dot }).addTo(map);
+    });
+
+    var greenDot = L.divIcon({
+        className: 'dot',
+        html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
+    });
+    L.marker(doverCoords, { icon: greenDot }).addTo(map);
 
     var lineVertical = document.getElementById('line-vertical');
     var lineHorizontal = document.getElementById('line-horizontal');
