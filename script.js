@@ -94,7 +94,6 @@ window.onload = function() {
         location.reload();
     }, 60000);
 
-    // Add resize event listener
     window.addEventListener('resize', function() {
         map.invalidateSize();
     });
