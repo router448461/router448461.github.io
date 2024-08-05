@@ -127,7 +127,6 @@ body {
     100% { opacity: 1; }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     #ip-info {
         font-size: 12px;
