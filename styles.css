@@ -38,22 +38,22 @@ body {
 
 #line-vertical {
     top: 0;
-    animation: lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-horizontal {
     left: 0;
-    animation: lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-vertical-bottom {
     bottom: 0;
-    animation: lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-horizontal-right {
     right: 0;
-    animation: lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
+    animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #ip-info {
