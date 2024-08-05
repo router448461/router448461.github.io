@@ -69,7 +69,7 @@ window.onload = function() {
     coords.forEach(function(coord, index) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+            html: `<div style="background-color: ${index < 1 ? 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
