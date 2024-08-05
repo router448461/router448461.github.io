@@ -7,7 +7,7 @@ window.onload = function() {
         doubleClickZoom: false,
         boxZoom: false,
         keyboard: false,
-        worldCopyJump: true, // Enable world copy jump
+        worldCopyJump: true,
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0
     }).setView([20, 0], 2);
@@ -93,3 +93,4 @@ window.onload = function() {
         location.reload();
     }, 60000);
 };
+//
