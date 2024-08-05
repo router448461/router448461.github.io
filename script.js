@@ -98,4 +98,3 @@ window.onload = function() {
         map.invalidateSize();
     });
 };
-
