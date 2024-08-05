@@ -7,7 +7,7 @@ window.onload = function() {
         doubleClickZoom: false,
         boxZoom: false,
         keyboard: false,
-        worldCopyJump: false,
+        worldCopyJump: true, // Enable world copy jump
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0
     }).setView([20, 0], 2);
@@ -78,12 +78,6 @@ window.onload = function() {
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
-
-    var greenDot = L.divIcon({
-        className: 'dot',
-        html: '<div style="background-color: green; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>'
-    });
-    L.marker(doverCoords, { icon: greenDot }).addTo(map);
 
     var lineVertical = document.getElementById('line-vertical');
     var lineHorizontal = document.getElementById('line-horizontal');
