@@ -28,7 +28,7 @@ window.onload = function() {
         [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
-    var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: 'green', weight: 1}).addTo(map);
 
     var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
     var totalDuration = 30000;
@@ -69,7 +69,7 @@ window.onload = function() {
     coords.forEach(function(coord, index) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: ${index < 1 ? 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+            html: `<div style="background-color: ${index < 1 ? 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
