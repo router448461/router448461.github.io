@@ -93,4 +93,3 @@ window.onload = function() {
         location.reload();
     }, 60000);
 };
-//
