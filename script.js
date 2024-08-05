@@ -1,4 +1,4 @@
-wwindow.onload = function() {
+window.onload = function() {
     var map = L.map('map', {
         zoomControl: false,
         dragging: false,
