@@ -54,6 +54,7 @@ body, html {
     height: 1px;
     border-radius: 50%;
     background-color: red;
+    animation: blink 1s infinite;
 }
 
 @keyframes blink {
