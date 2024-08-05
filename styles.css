@@ -10,8 +10,8 @@ body, html {
 }
 
 #map {
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     position: absolute;
     top: 0;
     left: 0;
@@ -20,12 +20,12 @@ body, html {
 
 .line {
     position: absolute;
-    background-color: red; /* Changed from white to red */
+    background-color: white;
     z-index: 1000;
 }
 
 #line-vertical {
-    width: 7px; /* Updated from 1px to 7px */
+    width: 1px;
     height: 100%;
     top: 0;
     left: 50%;
@@ -33,13 +33,13 @@ body, html {
 
 #line-horizontal {
     width: 100%;
-    height: 7px; /* Updated from 1px to 7px */
+    height: 1px;
     top: 50%;
     left: 0;
 }
 
 #line-vertical-bottom {
-    width: 7px; /* Updated from 1px to 7px */
+    width: 1px;
     height: 100%;
     top: 0;
     left: 50%;
@@ -47,7 +47,7 @@ body, html {
 
 #line-horizontal-right {
     width: 100%;
-    height: 7px; /* Updated from 1px to 7px */
+    height: 1px;
     top: 50%;
     left: 0;
 }
