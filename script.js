@@ -7,13 +7,14 @@ window.onload = function() {
         doubleClickZoom: false,
         boxZoom: false,
         keyboard: false,
-        worldCopyJump: true,
+        worldCopyJump: true, // Enable world copy jump
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0
     }).setView([20, 0], 2);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-        attribution: ''
+        attribution: '',
+        noWrap: true // Prevent the map from repeating
     }).addTo(map);
 
     map.on('zoomend', function() {
