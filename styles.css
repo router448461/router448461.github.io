@@ -16,7 +16,7 @@ body {
 
 .line {
     position: absolute;
-    background-color: blue; /* Change this to your desired color */
+    background-color: blue;
     opacity: 1;
     z-index: 3;
     animation-fill-mode: forwards;
@@ -128,3 +128,4 @@ body {
         height: 8px;
     }
 }
+/* */
