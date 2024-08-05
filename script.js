@@ -58,8 +58,8 @@ window.onload = function() {
     var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
 
     var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
-    var totalDuration = 30000; // 30 seconds
-    var steps = 100; // Number of steps for the animation
+    var totalDuration = 30000;
+    var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
 
@@ -81,7 +81,6 @@ window.onload = function() {
     var ipInfo = document.getElementById('ip-info');
     ipInfo.style.color = 'white';
 
-    // Function to convert name servers to IP addresses
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
@@ -89,7 +88,6 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    // Convert name servers to IP addresses and display them
     Promise.all(nameServers.map(getIP)).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
@@ -123,7 +121,6 @@ window.onload = function() {
         location.reload();
     }, 60000);
 
-    // Add the red triangle at the center
     var triangle = document.createElement('div');
     triangle.id = 'triangle';
     document.body.appendChild(triangle);
