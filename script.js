@@ -112,16 +112,12 @@ window.onload = function() {
     var lineVerticalBottom = document.getElementById('line-vertical-bottom');
     var lineHorizontalRight = document.getElementById('line-horizontal-right');
 
-    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineVertical.style.animation = 'lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards';
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards';
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards';
 
     setTimeout(function() {
         location.reload();
     }, 60000);
-
-    var triangle = document.createElement('div');
-    triangle.id = 'triangle';
-    document.body.appendChild(triangle);
 };
