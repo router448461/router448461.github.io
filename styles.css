@@ -16,7 +16,7 @@ body {
 
 .line {
     position: absolute;
-    background-color: red;
+    background-color: blue; /* Change this to your desired color */
     opacity: 1;
     z-index: 3;
     animation-fill-mode: forwards;
@@ -107,26 +107,6 @@ body {
     50% { opacity: 0; }
 }
 
-#triangle {
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 10px solid red;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    z-index: 3;
-    animation: showTriangle 1s forwards 15s;
-}
-
-@keyframes showTriangle {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
 @media (max-width: 768px) {
     #ip-info {
         font-size: 12px;
@@ -135,12 +115,6 @@ body {
     .dot {
         width: 12px;
         height: 12px;
-    }
-
-    #triangle {
-        border-left: 3px solid transparent;
-        border-right: 3px solid transparent;
-        border-bottom: 6px solid red;
     }
 }
 
@@ -153,11 +127,4 @@ body {
         width: 8px;
         height: 8px;
     }
-
-    #triangle {
-        border-left: 2px solid transparent;
-        border-right: 2px solid transparent;
-        border-bottom: 4px solid red;
-    }
 }
-
