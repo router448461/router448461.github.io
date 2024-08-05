@@ -24,14 +24,28 @@ body, html {
     z-index: 1000;
 }
 
-#line-vertical, #line-vertical-bottom {
+#line-vertical {
     width: 7px;
     height: 100%;
     top: 0;
     left: 50%;
 }
 
-#line-horizontal, #line-horizontal-right {
+#line-horizontal {
+    width: 100%;
+    height: 7px;
+    top: 50%;
+    left: 0;
+}
+
+#line-vertical-bottom {
+    width: 7px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+}
+
+#line-horizontal-right {
     width: 100%;
     height: 7px;
     top: 50%;
@@ -39,8 +53,8 @@ body, html {
 }
 
 .dot {
-    width: 10px;
-    height: 10px;
+    width: 1px;
+    height: 1px;
     border-radius: 50%;
     background-color: red;
     animation: blink 1s infinite;
