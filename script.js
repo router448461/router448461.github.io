@@ -1,4 +1,4 @@
-window.onload = function() {
+wwindow.onload = function() {
     var map = L.map('map', {
         zoomControl: false,
         dragging: false,
@@ -7,17 +7,17 @@ window.onload = function() {
         doubleClickZoom: false,
         boxZoom: false,
         keyboard: false,
-        worldCopyJump: false, // Prevent repeated parts of the world
-        maxBounds: [[-90, -180], [90, 180]], // Set bounds to prevent repeated parts
-        maxBoundsViscosity: 1.0 // Ensure the map stays within bounds
-    }).setView([20, 0], 2); // Adjusted zoom level to fit the world map
+        worldCopyJump: false,
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 1.0
+    }).setView([20, 0], 2);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: ''
     }).addTo(map);
 
     map.on('zoomend', function() {
-        map.setZoom(2); // Adjusted zoom level to fit the world map
+        map.setZoom(2);
     });
 
     map.scrollWheelZoom.disable();
@@ -113,26 +113,11 @@ window.onload = function() {
     var lineHorizontal = document.getElementById('line-horizontal');
     var lineVerticalBottom = document.getElementById('line-vertical-bottom');
     var lineHorizontalRight = document.getElementById('line-horizontal-right');
-    var whiteFlash = document.getElementById('white-flash');
 
-    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards, createTriangle 30s linear forwards';
-
-    setTimeout(function() {
-        whiteFlash.style.opacity = 1;
-        setTimeout(function() {
-            whiteFlash.style.opacity = 0;
-        }, 500);
-    }, 7500);
-
-    setTimeout(function() {
-        whiteFlash.style.opacity = 1;
-        setTimeout(function() {
-            whiteFlash.style.opacity = 0;
-        }, 500);
-    }, 30000);
+    lineVertical.style.animation = 'lineMoveVertical 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineHorizontal.style.animation = 'lineMoveHorizontal 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
+    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards';
 
     setTimeout(function() {
         location.reload();
