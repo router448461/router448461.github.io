@@ -56,6 +56,18 @@ body {
     animation: lineMoveHorizontalRight 7.5s linear forwards, stayVisible 7.5s linear 7.5s forwards;
 }
 
+#white-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0;
+    z-index: 4;
+    transition: opacity 0.5s;
+}
+
 #ip-info {
     position: absolute;
     top: 10px;
