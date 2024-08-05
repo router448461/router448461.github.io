@@ -17,12 +17,6 @@ window.onload = function() {
         noWrap: true
     }).addTo(map);
 
-    map.on('zoomend', function() {
-        map.setZoom(2);
-    });
-
-    map.scrollWheelZoom.disable();
-
     var ipCoords = [37.7749, -122.4194];
     var doverCoords = [-43.3167, 147.0167];
 
@@ -75,7 +69,7 @@ window.onload = function() {
     coords.forEach(function(coord, index) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
