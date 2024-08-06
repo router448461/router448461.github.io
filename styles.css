@@ -22,6 +22,7 @@ html, body {
     height: 100%;
     left: 50%;
     top: 0;
+    animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-horizontal {
@@ -29,6 +30,7 @@ html, body {
     width: 100%;
     top: 50%;
     left: 0;
+    animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-vertical-bottom {
@@ -36,6 +38,7 @@ html, body {
     height: 100%;
     left: 50%;
     bottom: 0;
+    animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #line-horizontal-right {
@@ -43,6 +46,7 @@ html, body {
     width: 100%;
     top: 50%;
     right: 0;
+    animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #ip-info {
@@ -53,4 +57,34 @@ html, body {
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes lineMoveVertical {
+    from { left: 0; }
+    to { left: 50%; }
+}
+
+@keyframes lineMoveHorizontal {
+    from { top: 0; }
+    to { top: 50%; }
+}
+
+@keyframes lineMoveVerticalBottom {
+    from { left: 100%; }
+    to { left: 50%; }
+}
+
+@keyframes lineMoveHorizontalRight {
+    from { top: 100%; }
+    to { top: 50%; }
+}
+
+@keyframes stayVisible {
+    from { opacity: 1; }
+    to { opacity: 1; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
