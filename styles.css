@@ -90,8 +90,3 @@ html, body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-
-.dot {
-    animation: blink 0.5s infinite;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
