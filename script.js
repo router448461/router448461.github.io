@@ -17,12 +17,6 @@ window.onload = function() {
         noWrap: true
     }).addTo(map);
 
-    // Add Leaflet.Perspective plugin for 3D view
-    L.perspective(map, {
-        pitch: 45,
-        bearing: 0
-    });
-
     map.on('zoomend', function() {
         map.setZoom(2);
     });
