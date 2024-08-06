@@ -75,20 +75,10 @@ window.onload = function() {
     coords.forEach(function(coord, index) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 1px; height: 1px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
-
-    var lineVertical = document.getElementById('line-vertical');
-    var lineHorizontal = document.getElementById('line-horizontal');
-    var lineVerticalBottom = document.getElementById('line-vertical-bottom');
-    var lineHorizontalRight = document.getElementById('line-horizontal-right');
-
-    lineVertical.style.animation = 'lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards';
-    lineHorizontal.style.animation = 'lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards';
-    lineVerticalBottom.style.animation = 'lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards';
-    lineHorizontalRight.style.animation = 'lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards';
 
     setTimeout(function() {
         location.reload();
