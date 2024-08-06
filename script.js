@@ -36,7 +36,7 @@ window.onload = function() {
 
     var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
 
-    var latlngs = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
+    var latlngs = [doverCoords].concat(nameServerCoords.reverse()).concat([ipCoords]);
     var totalDuration = 30000;
     var steps = 100;
     var interval = totalDuration / steps;
@@ -71,11 +71,11 @@ window.onload = function() {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    var coords = [ipCoords].concat(nameServerCoords).concat([doverCoords]);
-    coords.forEach(function(coord, index) {
+    var coords = [doverCoords].concat(nameServerCoords).concat([ipCoords]);
+    coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: ${index < 1 ? 'green' : 'red'}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
+            html: `<div style="background-color: red; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"></div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
