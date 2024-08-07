@@ -1,6 +1,16 @@
 window.onload = function() {
     var map = L.map('map', {
-        zoomControl: false, dragging: false, attributionControl: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, worldCopyJump: true, maxBounds: [[-90, -180], [90, 180]], maxBoundsViscosity: 1.0
+        zoomControl: false,
+        dragging: false,
+        attributionControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        worldCopyJump: true,
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 1.0,
+        touchZoom: false // Disable pinch and zoom on mobile devices
     }).setView([20, 0], 2);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
