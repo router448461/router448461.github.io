@@ -1,33 +1,65 @@
 html, body {
-    height: 100%; width: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: purple; /* Set background color to purple */
 }
 
 #map {
-    height: 100vh; width: 100vw;
+    height: 100vh;
+    width: 100vw;
 }
 
 .line {
-    position: absolute; background-color: red; z-index: 1000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 #line-vertical {
-    width: 2px; height: 100%; left: 50%; top: 0; animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
+    width: 10px; /* Change width to 10px */
+    height: 100%;
+    left: 50%;
+    top: 0;
+    animation: lineMoveVertical 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
 }
 
 #line-horizontal {
-    height: 2px; width: 100%; top: 50%; left: 0; animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
+    height: 10px; /* Change height to 10px */
+    width: 100%;
+    top: 50%;
+    left: 0;
+    animation: lineMoveHorizontal 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
 }
 
 #line-vertical-bottom {
-    width: 2px; height: 100%; left: 50%; bottom: 0; animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
+    width: 10px; /* Change width to 10px */
+    height: 100%;
+    left: 50%;
+    bottom: 0;
+    animation: lineMoveVerticalBottom 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
 }
 
 #line-horizontal-right {
-    height: 2px; width: 100%; top: 50%; right: 0; animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
+    height: 10px; /* Change height to 10px */
+    width: 100%;
+    top: 50%;
+    right: 0;
+    animation: lineMoveHorizontalRight 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
 }
 
 #ip-info {
-    position: absolute; top: 10px; right: 10px; background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); color: black;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black;
 }
 
 @keyframes lineMoveVertical {
