@@ -1,6 +1,4 @@
-html, body {
-    height: 100%;
-    width: 100%;
+body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -91,4 +89,13 @@ html, body {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+@keyframes flashRed {
+    0% { background-color: red; }
+    100% { background-color: transparent; }
+}
+
+.flash-red {
+    animation: flashRed 1s forwards;
 }
