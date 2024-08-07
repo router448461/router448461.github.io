@@ -4,7 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: purple; /* Set background color to purple */
+    background-color: purple;
 }
 
 #map {
@@ -20,35 +20,35 @@ html, body {
 }
 
 #line-vertical {
-    width: 10px; /* Change width to 10px */
+    width: 10px;
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
+    animation: lineMoveVertical 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-horizontal {
-    height: 10px; /* Change height to 10px */
+    height: 10px;
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
+    animation: lineMoveHorizontal 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-vertical-bottom {
-    width: 10px; /* Change width to 10px */
+    width: 10px;
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
+    animation: lineMoveVerticalBottom 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-horizontal-right {
-    height: 10px; /* Change height to 10px */
+    height: 10px;
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 30s linear forwards, stayVisible 30s linear 30s forwards; /* Change duration to 30s */
+    animation: lineMoveHorizontalRight 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #ip-info {
