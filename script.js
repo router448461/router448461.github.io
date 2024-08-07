@@ -28,7 +28,7 @@ window.onload = function() {
     var doverCoords = [-43.3167, 147.0167];
 
     var nameServers = [
-        'ns8.dynu.com'     , 'ns9.dynu.com ', 'ns7.dynu.com ', 'ns1.dynu.com ', 'ns5.dynu.com ', 'ns2.dynu.com ', 'ns4.dynu.com ', 'ns3.dynu.com ', 'ns6.dynu.com ', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
+        'ns8.dynu.com', 'ns9.dynu.com', 'ns7.dynu.com', 'ns1.dynu.com', 'ns5.dynu.com', 'ns2.dynu.com', 'ns4.dynu.com', 'ns3.dynu.com', 'ns6.dynu.com', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
     ];
 
     var nameServerCoords = [
@@ -37,7 +37,25 @@ window.onload = function() {
 
     var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
-    var latlngs = [doverCoords].concat(nameServerCoords.reverse()).concat([ipCoords]);
+    var latlngs = [
+        doverCoords,
+        nameServerCoords[0], // NS8
+        nameServerCoords[1], // NS9
+        nameServerCoords[2], // NS7
+        [doverCoords[0], 180], // Move to the right edge
+        [doverCoords[0], -180], // Appear on the left edge
+        nameServerCoords[3], // NS1
+        nameServerCoords[4], // NS5
+        nameServerCoords[5], // NS2
+        nameServerCoords[6], // NS4
+        nameServerCoords[7], // NS3
+        nameServerCoords[8], // NS6
+        nameServerCoords[9], // NS12
+        nameServerCoords[10], // NS10
+        nameServerCoords[11], // NS11
+        ipCoords
+    ];
+
     var totalDuration = 30000; // 30 seconds
     var steps = 100;
     var interval = totalDuration / steps;
@@ -93,4 +111,9 @@ window.onload = function() {
     setTimeout(function() {
         map.invalidateSize();
     }, 100);
+
+    // Flash the screen red at 30 seconds
+    setTimeout(function() {
+        document.body.classList.add('flash-red');
+    }, 30000);
 };
