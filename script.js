@@ -38,7 +38,7 @@ window.onload = function() {
     var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
     var latlngs = [doverCoords].concat(nameServerCoords.reverse()).concat([ipCoords]);
-    var totalDuration = 60000;
+    var totalDuration = 30000; // 30 seconds
     var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
@@ -69,7 +69,7 @@ window.onload = function() {
     }
 
     Promise.all(nameServers.map(getIP)).then(ipAddresses => {
-        ipAddresses.unshift('Dover: 10.0.0.1');
+        ipAddresses.unshift('PO Box 7117 Tasmania Australia: 10.0.0.1');
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
@@ -77,7 +77,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
@@ -94,4 +94,3 @@ window.onload = function() {
         map.invalidateSize();
     }, 100);
 };
-
