@@ -61,6 +61,16 @@ body {
     box-shadow: none;
 }
 
+#flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 2000;
+}
+
 @keyframes lineMoveVertical {
     from { left: 0; }
     to { left: 50%; }
