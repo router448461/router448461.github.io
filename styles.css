@@ -19,8 +19,12 @@ html, body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
+    width: 1px;
+    height: 1px;
+}
+
 #line-vertical {
-    width: 10px;
     height: 100%;
     left: 50%;
     top: 0;
@@ -28,7 +32,6 @@ html, body {
 }
 
 #line-horizontal {
-    height: 10px;
     width: 100%;
     top: 50%;
     left: 0;
@@ -36,7 +39,6 @@ html, body {
 }
 
 #line-vertical-bottom {
-    width: 10px;
     height: 100%;
     left: 50%;
     bottom: 0;
@@ -44,7 +46,6 @@ html, body {
 }
 
 #line-horizontal-right {
-    height: 10px;
     width: 100%;
     top: 50%;
     right: 0;
@@ -60,6 +61,7 @@ html, body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     color: black;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 @keyframes lineMoveVertical {
@@ -91,3 +93,4 @@ html, body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
+
