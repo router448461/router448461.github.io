@@ -59,7 +59,7 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = 'white';
+    ipInfo.style.color = 'black';
 
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
@@ -69,6 +69,7 @@ window.onload = function() {
     }
 
     Promise.all(nameServers.map(getIP)).then(ipAddresses => {
+        ipAddresses.unshift('Dover: 10.0.0.1');
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
