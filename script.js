@@ -114,6 +114,7 @@ window.onload = function() {
 
     // Flash the screen red at 30 seconds
     setTimeout(function() {
+        console.log('Flash triggered'); // Debug message
         document.body.classList.add('flash-red');
     }, 30000);
 };
