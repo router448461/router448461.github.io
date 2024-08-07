@@ -25,14 +25,14 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var ipCoords = [37.7749, -122.4194];
-    var doverCoords = [10.0.0.1, -43.3167, 147.0167];
+    var doverCoords = [-43.3167, 147.0167];
 
     var nameServers = [
-        '10.0.0.1', 'ns8.dynu.com', 'ns9.dynu.com', 'ns7.dynu.com', 'ns1.dynu.com', 'ns5.dynu.com', 'ns2.dynu.com', 'ns4.dynu.com', 'ns3.dynu.com', 'ns6.dynu.com', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
+        'ns8.dynu.com', 'ns9.dynu.com', 'ns7.dynu.com', 'ns1.dynu.com', 'ns5.dynu.com', 'ns2.dynu.com', 'ns4.dynu.com', 'ns3.dynu.com', 'ns6.dynu.com', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
     ];
 
     var nameServerCoords = [
-        [10.0.0.1, -43.3167, 147.0167], [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
+        [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
     var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
@@ -93,3 +93,4 @@ window.onload = function() {
         map.invalidateSize();
     }, 100);
 };
+
