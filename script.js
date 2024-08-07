@@ -88,4 +88,10 @@ window.onload = function() {
     window.addEventListener('resize', function() {
         map.invalidateSize();
     });
+
+    // Invalidate map size after the page loads
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 100);
 };
+
