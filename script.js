@@ -10,7 +10,7 @@ window.onload = function() {
         worldCopyJump: true,
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0,
-        touchZoom: false // Disable pinch and zoom on mobile devices
+        touchZoom: false,
     }).setView([20, 0], 2);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
@@ -89,7 +89,6 @@ window.onload = function() {
         map.invalidateSize();
     });
 
-    // Invalidate map size after the page loads
     setTimeout(function() {
         map.invalidateSize();
     }, 100);
