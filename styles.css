@@ -104,3 +104,12 @@ body {
 .flash-white {
     animation: flashWhite 3s forwards;
 }
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.dot {
+    animation: blink 1s infinite;
+}
