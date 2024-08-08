@@ -69,7 +69,7 @@ window.onload = function() {
         return item.coords;
     })).concat([ipCoords]);
 
-    var polyline = L.polyline([], {color: 'white', weight: 3}).addTo(map);
+    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -118,7 +118,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 60px; height: 60px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: green; width: 15px; height: 15px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
