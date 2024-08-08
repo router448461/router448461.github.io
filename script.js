@@ -132,3 +132,4 @@ window.onload = function() {
         document.getElementById('flash').classList.add('flash-white');
     }, 30000);
 };
+
