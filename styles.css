@@ -16,8 +16,8 @@ body {
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 3px;
-    height: 3px;
+    width: 1px;
+    height: 1px;
 }
 
 #line-vertical {
@@ -55,8 +55,6 @@ body {
     padding: 0px;
     color: green;
     font-family: 'Courier New', Courier, monospace;
-    background-color: transparent;
-    box-shadow: none;
     font-size: 15px;
 }
 
