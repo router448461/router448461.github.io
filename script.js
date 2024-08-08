@@ -32,15 +32,15 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [34.0522, -118.2437], // ns1.dynu.com (Los Angeles, US)
-        [33.4484, -112.0740], // ns2.dynu.com (Phoenix, US)
-        [33.7490, -84.3880],  // ns3.dynu.com (Atlanta, US)
-        [32.7767, -96.7970],  // ns4.dynu.com (Dallas, US)
-        [47.6062, -122.3321], // ns5.dynu.com (Seattle, US)
-        [40.0583, -74.4057],  // ns6.dynu.com (New Jersey, US)
-        [35.6895, 139.6917],  // ns7.dynu.com (Tokyo, JP)
-        [-33.8688, 151.2093], // ns8.dynu.com (Sydney, AU)
-        [1.3521, 103.8198],   // ns9.dynu.com (Singapore, SG)
+        [34.0522, -118.2437], // ns01.dynu.com (Los Angeles, US)
+        [33.4484, -112.0740], // ns02.dynu.com (Phoenix, US)
+        [33.7490, -84.3880],  // ns03.dynu.com (Atlanta, US)
+        [32.7767, -96.7970],  // ns04.dynu.com (Dallas, US)
+        [47.6062, -122.3321], // ns05.dynu.com (Seattle, US)
+        [40.0583, -74.4057],  // ns06.dynu.com (New Jersey, US)
+        [35.6895, 139.6917],  // ns07.dynu.com (Tokyo, JP)
+        [-33.8688, 151.2093], // ns08.dynu.com (Sydney, AU)
+        [1.3521, 103.8198],   // ns09.dynu.com (Singapore, SG)
         [52.3676, 4.9041],    // ns10.dynu.com (Amsterdam, NL)
         [50.1109, 8.6821],    // ns11.dynu.com (Frankfurt, DE)
         [51.5074, -0.1278]    // ns12.dynu.com (London, UK)
@@ -69,7 +69,7 @@ window.onload = function() {
         return item.coords;
     })).concat([ipCoords]);
 
-    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: 'white', weight: 3}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -118,7 +118,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);"> </div>`
+            html: `<div style="background-color: green; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
