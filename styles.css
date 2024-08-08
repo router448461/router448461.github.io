@@ -1,83 +1,111 @@
-html, body, #map {
-    height: 100%;
+body {
     margin: 0;
     padding: 0;
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
 }
 
 .line {
     position: absolute;
     background-color: red;
-    animation: scroll-in 30s linear infinite;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
+    width: 3px;
+    height: 3px;
 }
 
 #line-vertical {
-    width: 2px;
     height: 100%;
     left: 50%;
     top: 0;
+    animation: lineMoveVertical 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-horizontal {
-    height: 2px;
     width: 100%;
     top: 50%;
     left: 0;
+    animation: lineMoveHorizontal 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-vertical-bottom {
-    width: 2px;
     height: 100%;
     left: 50%;
     bottom: 0;
+    animation: lineMoveVerticalBottom 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #line-horizontal-right {
-    height: 2px;
     width: 100%;
     top: 50%;
     right: 0;
-}
-
-#flash {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-}
-
-.dot {
-    background-color: green;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    animation: blink 1s infinite;
+    animation: lineMoveHorizontalRight 30s linear forwards, stayVisible 30s linear 30s forwards;
 }
 
 #ip-info {
     position: absolute;
-    left: 10px;
     top: 10px;
+    left: 10px;
+    padding: 10px;
     color: green;
     font-family: 'Courier New', Courier, monospace;
+    background-color: transparent;
+    box-shadow: none;
+    animation: blink 1s infinite;
+    font-size: 24px;
 }
 
-@keyframes scroll-in {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
+#flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 2000;
+}
+
+@keyframes lineMoveVertical {
+    from { left: 0; }
+    to { left: 50%; }
+}
+
+@keyframes lineMoveHorizontal {
+    from { top: 0; }
+    to { top: 50%; }
+}
+
+@keyframes lineMoveVerticalBottom {
+    from { left: 100%; }
+    to { left: 50%; }
+}
+
+@keyframes lineMoveHorizontalRight {
+    from { top: 100%; }
+    to { top: 50%; }
+}
+
+@keyframes stayVisible {
+    from { opacity: 1; }
+    to { opacity: 1; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes flashWhite {
+    0% { background-color: white; }
+    100% { background-color: transparent; }
 }
 
 .flash-white {
-    animation: flash 1s infinite;
-}
-
-@keyframes flash {
-    0%, 100% {
-        background-color: white;
-    }
-    50% {
-        background-color: transparent;
-    }
+    animation: flashWhite 1s forwards;
 }
