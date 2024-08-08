@@ -110,17 +110,19 @@ window.onload = function() {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
-    });
 
-    var coords = [doverCoords].concat(distances.map(function(item) {
-        return item.coords;
-    })).concat([ipCoords]);
-    coords.forEach(function(coord) {
-        var dot = L.divIcon({
-            className: 'dot',
-            html: `<div style="background-color: green; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+        var coords = [doverCoords].concat(distances.map(function(item, index) {
+            return { coords: item.coords, ip: ipAddresses[index] };
+        })).concat([{ coords: ipCoords, ip: 'User IP' }]);
+
+        coords.forEach(function(item) {
+            var dot = L.divIcon({
+                className: 'dot',
+                html: `<div style="background-color: ${item.ip === 'User IP' ? 'yellow' : 'green'}; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            });
+            var marker = L.marker(item.coords, { icon: dot }).addTo(map);
+            marker.bindPopup(item.ip);
         });
-        L.marker(coord, { icon: dot }).addTo(map);
     });
 
     setTimeout(function() {
