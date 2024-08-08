@@ -28,16 +28,15 @@ window.onload = function() {
     var doverCoords = [-43.3167, 147.0167];
 
     var nameServers = [
-        'ns8.dynu.com', 'ns9.dynu.com', 'ns7.dynu.com', 'ns1.dynu.com', 'ns5.dynu.com', 'ns2.dynu.com', 'ns4.dynu.com', 'ns3.dynu.com', 'ns6.dynu.com', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
+        'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
     ];
 
     var nameServerCoords = [
         [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
-    // Function to calculate the distance between two coordinates using the Haversine formula
     function haversineDistance(coords1, coords2) {
-        var R = 6371; // Radius of the Earth in kilometers
+        var R = 6371;
         var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
         var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -47,7 +46,6 @@ window.onload = function() {
         return R * c;
     }
 
-    // Calculate distances from Dover to each name server and sort by distance
     var distances = nameServerCoords.map(function(coords, index) {
         return { coords: coords, distance: haversineDistance(doverCoords, coords), nameServer: nameServers[index] };
     });
@@ -56,7 +54,6 @@ window.onload = function() {
         return a.distance - b.distance;
     });
 
-    // Create a new latlngs array based on the sorted distances
     var latlngs = [doverCoords].concat(distances.map(function(item) {
         return item.coords;
     })).concat([ipCoords]);
