@@ -55,10 +55,11 @@ body {
     top: 10px;
     left: 10px;
     padding: 10px;
-    color: black;
+    color: green;
     font-family: 'Courier New', Courier, monospace;
     background-color: transparent;
     box-shadow: none;
+    animation: blink 1s infinite;
 }
 
 #flash {
