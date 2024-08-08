@@ -71,19 +71,14 @@ window.onload = function() {
         return ip.split('.').map(num => num.padStart(3, '0')).join('.');
     }
 
-    function formatNameServer(nameServer) {
-        return nameServer.replace(/ns(\d)\./, 'ns0$1.');
-    }
-
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => `${formatNameServer(nameServer)}: ${formatIP(data.Answer[0].data)}`)
+            .then(data => formatIP(data.Answer[0].data))
             .catch(error => console.error('Error:', error));
     }
 
     Promise.all(nameServers.map(getIP)).then(ipAddresses => {
-        ipAddresses.unshift('router448461.com: 010.000.000.001');
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
@@ -113,3 +108,4 @@ window.onload = function() {
         document.getElementById('flash').classList.add('flash-red');
     }, 30000);
 };
+
