@@ -69,7 +69,7 @@ window.onload = function() {
         return item.coords;
     })).concat([ipCoords]);
 
-    var polyline = L.polyline([], {color: 'white', weight: 3}).addTo(map);
+    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -110,19 +110,17 @@ window.onload = function() {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
+    });
 
-        var coords = [doverCoords].concat(distances.map(function(item, index) {
-            return { coords: item.coords, ip: ipAddresses[index] };
-        })).concat([{ coords: ipCoords, ip: 'User IP' }]);
-
-        coords.forEach(function(item) {
-            var dot = L.divIcon({
-                className: 'dot',
-                html: `<div style="background-color: ${item.ip === 'User IP' ? 'yellow' : 'green'}; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
-            });
-            var marker = L.marker(item.coords, { icon: dot }).addTo(map);
-            marker.bindPopup(item.ip);
+    var coords = [doverCoords].concat(distances.map(function(item) {
+        return item.coords;
+    })).concat([ipCoords]);
+    coords.forEach(function(coord) {
+        var dot = L.divIcon({
+            className: 'dot',
+            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);"> </div>`
         });
+        L.marker(coord, { icon: dot }).addTo(map);
     });
 
     setTimeout(function() {
