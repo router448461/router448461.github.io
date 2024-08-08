@@ -18,8 +18,8 @@ body {
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 1px;
-    height: 1px;
+    width: 3px;
+    height: 3px;
 }
 
 #line-vertical {
