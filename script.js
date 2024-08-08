@@ -39,8 +39,9 @@ window.onload = function() {
         [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
+    // Function to calculate the distance between two coordinates using the Haversine formula
     function haversineDistance(coords1, coords2) {
-        var R = 6371;
+        var R = 6371; // Radius of the Earth in kilometers
         var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
         var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -50,6 +51,7 @@ window.onload = function() {
         return R * c;
     }
 
+    // Calculate distances from Dover to each name server and sort by distance
     var distances = nameServerCoords.map(function(coords, index) {
         return { coords: coords, distance: haversineDistance(doverCoords, coords), nameServer: nameServers[index] };
     });
@@ -58,6 +60,7 @@ window.onload = function() {
         return a.distance - b.distance;
     });
 
+    // Create a new latlngs array based on the sorted distances
     var latlngs = [doverCoords].concat(distances.map(function(item) {
         return item.coords;
     })).concat([ipCoords]);
