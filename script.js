@@ -105,6 +105,6 @@ window.onload = function() {
 
     setTimeout(function() {
         console.log('Flash triggered');
-        document.getElementById('flash').classList.add('flash-red');
+        document.getElementById('flash').classList.add('flash-white');
     }, 30000);
 };
