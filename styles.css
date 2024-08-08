@@ -1,6 +1,8 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: purple;
 }
 
 #map {
@@ -10,7 +12,7 @@ body {
 
 .line {
     position: absolute;
-    background-color: white;
+    background-color: red;
     z-index: 1000;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
