@@ -108,3 +108,4 @@ window.onload = function() {
         document.getElementById('flash').classList.add('flash-red');
     }, 30000);
 };
+
