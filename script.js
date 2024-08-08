@@ -28,15 +28,11 @@ window.onload = function() {
     var doverCoords = [-43.3167, 147.0167];
 
     var nameServers = [
-        'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 
-        'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 
-        'ns11.dynu.com', 'ns12.dynu.com'
+        'ns8.dynu.com', 'ns9.dynu.com', 'ns7.dynu.com', 'ns1.dynu.com', 'ns5.dynu.com', 'ns2.dynu.com', 'ns4.dynu.com', 'ns3.dynu.com', 'ns6.dynu.com', 'ns12.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com'
     ];
 
     var nameServerCoords = [
-        [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], 
-        [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], 
-        [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
+        [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
     // Function to calculate the distance between two coordinates using the Haversine formula
@@ -106,9 +102,6 @@ window.onload = function() {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
-    }).catch(error => {
-        ipInfo.innerHTML = 'Error fetching IP addresses';
-        console.error('Error:', error);
     });
 
     var coords = [doverCoords].concat(distances.map(function(item) {
@@ -117,7 +110,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: green; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
