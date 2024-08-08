@@ -50,9 +50,9 @@ body {
 
 #ip-info {
     position: absolute;
-    top: 3px;
-    left: 3px;
-    padding: 3px;
+    top: 0px;
+    left: 0px;
+    padding: 0px;
     color: green;
     font-family: 'Courier New', Courier, monospace;
     background-color: transparent;
