@@ -65,15 +65,20 @@ window.onload = function() {
 
     var ipInfo = document.getElementById('ip-info');
     ipInfo.style.color = 'green';
+    ipInfo.style.fontFamily = 'Courier New, Courier, monospace'; // Use a fixed-width font
 
     function formatIP(ip) {
         return ip.split('.').map(num => num.padStart(3, '0')).join('.');
     }
 
+    function formatNameServer(nameServer) {
+        return nameServer.replace(/ns(\d)\./, 'ns0$1.');
+    }
+
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => `${nameServer}: ${formatIP(data.Answer[0].data)}`)
+            .then(data => `${formatNameServer(nameServer)}: ${formatIP(data.Answer[0].data)}`)
             .catch(error => console.error('Error:', error));
     }
 
@@ -108,3 +113,4 @@ window.onload = function() {
         document.getElementById('flash').classList.add('flash-red');
     }, 30000);
 };
+
