@@ -38,21 +38,7 @@ window.onload = function() {
     var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
     var latlngs = [
-        doverCoords,
-        nameServerCoords[0],
-        nameServerCoords[1],
-        nameServerCoords[2],
-        [doverCoords[0], 180],
-        [doverCoords[0], -180],
-        nameServerCoords[3],
-        nameServerCoords[4],
-        nameServerCoords[5],
-        nameServerCoords[6],
-        nameServerCoords[7],
-        nameServerCoords[8],
-        nameServerCoords[9],
-        nameServerCoords[10],
-        nameServerCoords[11],
+        doverCoords, nameServerCoords[0], nameServerCoords[1], nameServerCoords[2], [doverCoords[0], 180], [doverCoords[0], -180], nameServerCoords[3], nameServerCoords[4], nameServerCoords[5], nameServerCoords[6], nameServerCoords[7], nameServerCoords[8], nameServerCoords[9], nameServerCoords[10], nameServerCoords[11],
         ipCoords
     ];
 
@@ -77,17 +63,21 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = 'black';
+    ipInfo.style.color = 'green';
+
+    function formatIP(ip) {
+        return ip.split('.').map(num => num.padStart(3, '0')).join('.');
+    }
 
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => `${nameServer}: ${data.Answer[0].data}`)
+            .then(data => `${nameServer}: ${formatIP(data.Answer[0].data)}`)
             .catch(error => console.error('Error:', error));
     }
 
     Promise.all(nameServers.map(getIP)).then(ipAddresses => {
-        ipAddresses.unshift('router448461.com: 10.0.0.1');
+        ipAddresses.unshift('router448461.com: 010.000.000.001');
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
