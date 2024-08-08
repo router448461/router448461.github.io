@@ -35,13 +35,33 @@ window.onload = function() {
         [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
     ];
 
-    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
+    // Function to calculate the distance between two coordinates using the Haversine formula
+    function haversineDistance(coords1, coords2) {
+        var R = 6371; // Radius of the Earth in kilometers
+        var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+        var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
 
-    var latlngs = [
-        doverCoords,
-        nameServerCoords[0], nameServerCoords[1], nameServerCoords[2], [doverCoords[0], 180], [doverCoords[0], -180], nameServerCoords[3], nameServerCoords[4], nameServerCoords[5], nameServerCoords[6], nameServerCoords[7], nameServerCoords[8], nameServerCoords[9], nameServerCoords[10], nameServerCoords[11],
-        ipCoords
-    ];
+    // Calculate distances from Dover to each name server and sort by distance
+    var distances = nameServerCoords.map(function(coords, index) {
+        return { coords: coords, distance: haversineDistance(doverCoords, coords), nameServer: nameServers[index] };
+    });
+
+    distances.sort(function(a, b) {
+        return a.distance - b.distance;
+    });
+
+    // Create a new latlngs array based on the sorted distances
+    var latlngs = [doverCoords].concat(distances.map(function(item) {
+        return item.coords;
+    })).concat([ipCoords]);
+
+    var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -78,11 +98,15 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    Promise.all(nameServers.map(getIP)).then(ipAddresses => {
+    Promise.all(distances.map(function(item) {
+        return getIP(item.nameServer);
+    })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    var coords = [doverCoords].concat(nameServerCoords).concat([ipCoords]);
+    var coords = [doverCoords].concat(distances.map(function(item) {
+        return item.coords;
+    })).concat([ipCoords]);
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
