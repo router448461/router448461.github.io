@@ -8,7 +8,7 @@ window.onload = function() {
         boxZoom: false,
         keyboard: false,
         worldCopyJump: true,
-        maxBounds: [[-90, -180], [90, 180]],
+        maxBounds: [[-90, -180]], [90, 180]],
         maxBoundsViscosity: 1.0,
         touchZoom: false,
     }).setView([20, 0], 2);
@@ -101,7 +101,19 @@ window.onload = function() {
     Promise.all(distances.map(function(item) {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
-        ipInfo.innerHTML = ipAddresses.join('<br>');
+        ipInfo.innerHTML = ipAddresses.map(ip => `<span class="ip-address">${ip}</span>`).join('<br>');
+
+        // Add click event listeners to each IP address
+        document.querySelectorAll('.ip-address').forEach(function(element) {
+            element.addEventListener('click', function() {
+                var ip = element.textContent;
+                navigator.clipboard.writeText(ip).then(function() {
+                    console.log('IP address copied to clipboard:', ip);
+                }).catch(function(error) {
+                    console.error('Error copying IP address:', error);
+                });
+            });
+        });
     });
 
     var coords = [doverCoords].concat(distances.map(function(item) {
