@@ -32,7 +32,18 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [51.5074, -0.1278], [48.8566, 2.3522], [52.5200, 13.4050], [34.0522, -118.2437], [35.6895, 139.6917], [55.7558, 37.6173], [40.730610, -73.935242], [39.9042, 116.4074], [28.6139, 77.2090], [37.5665, 126.9780], [31.2304, 121.4737], [22.3964, 114.1095]
+        [34.0522, -118.2437], // ns1.dynu.com (Los Angeles, US)
+        [33.4484, -112.0740], // ns2.dynu.com (Phoenix, US)
+        [33.7490, -84.3880],  // ns3.dynu.com (Atlanta, US)
+        [32.7767, -96.7970],  // ns4.dynu.com (Dallas, US)
+        [47.6062, -122.3321], // ns5.dynu.com (Seattle, US)
+        [40.0583, -74.4057],  // ns6.dynu.com (New Jersey, US)
+        [35.6895, 139.6917],  // ns7.dynu.com (Tokyo, JP)
+        [-33.8688, 151.2093], // ns8.dynu.com (Sydney, AU)
+        [1.3521, 103.8198],   // ns9.dynu.com (Singapore, SG)
+        [52.3676, 4.9041],    // ns10.dynu.com (Amsterdam, NL)
+        [50.1109, 8.6821],    // ns11.dynu.com (Frankfurt, DE)
+        [51.5074, -0.1278]    // ns12.dynu.com (London, UK)
     ];
 
     function haversineDistance(coords1, coords2) {
