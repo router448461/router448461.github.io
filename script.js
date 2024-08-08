@@ -65,7 +65,7 @@ window.onload = function() {
 
     var ipInfo = document.getElementById('ip-info');
     ipInfo.style.color = 'green';
-    ipInfo.style.fontFamily = 'Courier New, Courier, monospace'; // Use a fixed-width font
+    ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
 
     function formatIP(ip) {
         return ip.split('.').map(num => num.padStart(3, '0')).join('.');
@@ -113,4 +113,3 @@ window.onload = function() {
         document.getElementById('flash').classList.add('flash-red');
     }, 30000);
 };
-
