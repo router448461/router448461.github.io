@@ -38,7 +38,8 @@ window.onload = function() {
     var polyline = L.polyline([], {color: 'red', weight: 1}).addTo(map);
 
     var latlngs = [
-        doverCoords, nameServerCoords[0], nameServerCoords[1], nameServerCoords[2], [doverCoords[0], 180], [doverCoords[0], -180], nameServerCoords[3], nameServerCoords[4], nameServerCoords[5], nameServerCoords[6], nameServerCoords[7], nameServerCoords[8], nameServerCoords[9], nameServerCoords[10], nameServerCoords[11],
+        doverCoords,
+        nameServerCoords[0], nameServerCoords[1], nameServerCoords[2], [doverCoords[0], 180], [doverCoords[0], -180], nameServerCoords[3], nameServerCoords[4], nameServerCoords[5], nameServerCoords[6], nameServerCoords[7], nameServerCoords[8], nameServerCoords[9], nameServerCoords[10], nameServerCoords[11],
         ipCoords
     ];
 
