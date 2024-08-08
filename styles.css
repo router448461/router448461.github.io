@@ -109,3 +109,13 @@ body {
 .flash-white {
     animation: flashWhite 1s forwards;
 }
+
+.ip-address {
+    cursor: pointer;
+    color: green;
+    text-decoration: underline;
+}
+
+.ip-address:hover {
+    color: darkgreen;
+}
