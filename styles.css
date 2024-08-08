@@ -60,6 +60,7 @@ body {
     background-color: transparent;
     box-shadow: none;
     animation: blink 1s infinite;
+    font-size: 24px;
 }
 
 #flash {
@@ -102,11 +103,12 @@ body {
     50% { opacity: 0; }
 }
 
-@keyframes flashRed {
-    0% { background-color: red; }
+@keyframes flashWhite {
+    0% { background-color: white; }
     100% { background-color: transparent; }
 }
 
-.flash-red {
-    animation: flashRed 1s forwards;
+.flash-white {
+    animation: flashWhite 1s forwards;
 }
+
