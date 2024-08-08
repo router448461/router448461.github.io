@@ -69,7 +69,7 @@ window.onload = function() {
         return item.coords;
     })).concat([ipCoords]);
 
-    var polyline = L.polyline([], {color: 'white', weight: 0.3}).addTo(map);
+    var polyline = L.polyline([], {color: 'white', weight: 3}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
