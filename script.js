@@ -15,7 +15,7 @@ window.onload = function() {
 
     var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
-        noWrap: true,
+        noWrap: false, // Allow wrapping to show the entire world
         errorTileUrl: 'path/to/fallback-tile.png'
     }).addTo(map);
 
