@@ -125,9 +125,4 @@ window.onload = function() {
     setTimeout(function() {
         map.invalidateSize();
     }, 100);
-
-    setTimeout(function() {
-        console.log('Flash triggered');
-        document.getElementById('flash').classList.add('flash-white');
-    }, 30000);
 };
