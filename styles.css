@@ -96,9 +96,9 @@ body, html {
 }
 
 @keyframes flashWhite {
-    0% { background-color: white; }
-    50% { background-color: white; }
-    100% { background-color: transparent; }
+    0% { background-color: white; opacity: 1; }
+    50% { background-color: white; opacity: 0.5; }
+    100% { background-color: transparent; opacity: 0; }
 }
 
 .flash-white {
