@@ -13,11 +13,16 @@ window.onload = function() {
         touchZoom: false,
     }).setView([20, 0], 2);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
+    var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
         noWrap: true,
         errorTileUrl: 'path/to/fallback-tile.png' // Add a fallback tile URL
     }).addTo(map);
+
+    tileLayer.on('tileerror', function(error, tile) {
+        console.error('Tile loading error:', error);
+        console.error('Failed tile:', tile);
+    });
 
     map.on('zoomend', function() {
         map.setZoom(2);
@@ -119,7 +124,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 9px; height: 9px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: green; width: 15px; height: 15px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
