@@ -33,6 +33,10 @@ window.onload = function() {
     var ipCoords = [37.7749, -122.4194];
     var doverCoords = [-43.3167, 147.0167];
 
+    var nameServers = [
+        'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
+    ];
+
     var nameServerCoords = [
         [34.0522, -118.2437], // NS1.DYNU.COM (LOS ANGELES, US)
         [33.4484, -112.0740], // NS2.DYNU.COM (PHOENIX, US)
@@ -48,7 +52,28 @@ window.onload = function() {
         [51.5074, -0.1278]    // NS12.DYNU.COM (LONDON, UK)
     ];
 
-    var latlngs = [doverCoords].concat(nameServerCoords).concat([ipCoords]);
+    function haversineDistance(coords1, coords2) {
+        var R = 6371;
+        var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+        var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    var distances = nameServerCoords.map(function(coords, index) {
+        return { coords: coords, distance: haversineDistance(doverCoords, coords), nameServer: nameServers[index] };
+    });
+
+    distances.sort(function(a, b) {
+        return a.distance - b.distance;
+    });
+
+    var latlngs = [doverCoords].concat(distances.map(function(item) {
+        return item.coords;
+    })).concat([ipCoords]);
 
     var polyline = L.polyline([], {color: 'white', weight: 1}).addTo(map);
 
@@ -87,13 +112,16 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    Promise.all(nameServerCoords.map(function(coords, index) {
-        return getIP(nameServers[index]);
+    Promise.all(distances.map(function(item) {
+        return getIP(item.nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    nameServerCoords.forEach(function(coord) {
+    var coords = [doverCoords].concat(distances.map(function(item) {
+        return item.coords;
+    })).concat([ipCoords]);
+    coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
             html: `<div style="background-color: green; width: 15px; height: 15px; border-radius: 50%; animation: blink 1s infinite;"> </div>` // Adjusted size
