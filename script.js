@@ -11,11 +11,11 @@ window.onload = function() {
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0,
         touchZoom: false,
-    }).setView([0, 0], 2); // Centered on [0, 0] to display the whole world
+    }).setView([0, 0], 2);
 
     var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
-        noWrap: false, // Allow wrapping to show the entire world
+        noWrap: false,
         errorTileUrl: 'path/to/fallback-tile.png'
     }).addTo(map);
 
@@ -30,7 +30,7 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
-    var hobartCoords = [-42.8821, 147.3272]; // Hobart, Tasmania, Australia
+    var hobartCoords = [-42.8821, 147.3272];
 
     var nameServers = [
         'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
@@ -52,7 +52,7 @@ window.onload = function() {
     ];
 
     function haversineDistance(coords1, coords2) {
-        var R = 6371; // Radius of the Earth in kilometers
+        var R = 6371;
         var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
         var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -72,9 +72,9 @@ window.onload = function() {
 
     var latlngs = [hobartCoords].concat(distances.map(function(item) {
         return item.coords;
-    })).concat([hobartCoords]); // End at Hobart
+    })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: 'blue', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: '#4b5320', weight: 1}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -97,7 +97,7 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = 'green';
+    ipInfo.style.color = '#324a6e';
     ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
 
     function formatIP(ip) {
@@ -119,11 +119,11 @@ window.onload = function() {
 
     var coords = [hobartCoords].concat(distances.map(function(item) {
         return item.coords;
-    })).concat([hobartCoords]); // End at Hobart
+    })).concat([hobartCoords]);
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: green; width: 9px; height: 9px; border-radius: 50%; animation: blink 1s infinite;"> </div>` // Adjusted size
+            html: `<div style="background-color: #ff0000; width: 9px; height: 9px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
