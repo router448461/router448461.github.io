@@ -123,7 +123,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 9px; height: 9px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: #ff0000; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
