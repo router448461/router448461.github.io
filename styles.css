@@ -53,13 +53,14 @@ body, html {
 #ip-info {
     position: absolute;
     top: 50%;
-    left: 0;
+    left: 10px; /* Adjusted to be inside the map */
     transform: translateY(-50%);
     padding: 0px;
     color: green;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
     animation: blink 1s infinite;
+    z-index: 1001; /* Ensure it is above the map */
 }
 
 @keyframes lineMoveVertical {
