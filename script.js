@@ -11,7 +11,7 @@ window.onload = function() {
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0,
         touchZoom: false,
-    }).setView([20, 0], 2);
+    }).setView([0, 0], 2); // Centered on [0, 0] to display the whole world
 
     var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
