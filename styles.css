@@ -18,8 +18,8 @@ body, html {
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 2px;
-    height: 2px;
+    width: 13px;
+    height: 13px;
 }
 
 #line-vertical {
@@ -53,12 +53,12 @@ body, html {
 #ip-info {
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 0px;
     transform: translateY(-50%);
     padding: 0px;
     color: green;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 15px;
+    font-size: 13px;
     animation: blink 1s infinite;
     z-index: 1001;
 }
