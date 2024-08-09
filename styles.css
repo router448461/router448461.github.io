@@ -1,6 +1,8 @@
-body {
+body, html {
+    height: 100%;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
 }
 
 #map {
@@ -10,7 +12,7 @@ body {
 
 .line {
     position: absolute;
-    background-color: red;
+    background-color: white; /* Changed to white */
     z-index: 1000;
     animation-timing-function: ease-in-out;
 }
