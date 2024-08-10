@@ -53,13 +53,12 @@ body, html {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -45%);
     padding: 0px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
     animation: blink 1s infinite;
     z-index: 1001;
-    user-select: none; /* Prevent text selection */
 }
 
 @keyframes lineMoveVertical {
@@ -96,7 +95,6 @@ body, html {
     animation: blink 1s infinite;
 }
 
-/* Ensure the cursor remains default for all elements */
 * {
     cursor: default;
 }
