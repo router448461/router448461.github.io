@@ -51,8 +51,6 @@ body, html {
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
     z-index: 1001;
-    user-select: none; /* Prevent text selection */
-    animation: none; /* Remove blinking effect */
 }
 
 @keyframes lineMoveVertical {
@@ -62,12 +60,12 @@ body, html {
 
 @keyframes lineMoveBottomLeft {
     from { height: 0; }
-    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
+    to { height: 100%; }
 }
 
 @keyframes lineMoveBottomRight {
     from { height: 0; }
-    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
+    to { height: 100%; }
 }
 
 @keyframes stayVisible {
@@ -81,10 +79,9 @@ body, html {
 }
 
 .dot {
-    animation: blink 1s infinite; /* Keep the dot animation */
+    animation: blink 1s infinite;
 }
 
-/* Ensure the cursor remains default for all elements */
 * {
     cursor: default;
 }
