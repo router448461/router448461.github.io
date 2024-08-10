@@ -60,12 +60,12 @@ body, html {
 
 @keyframes lineMoveBottomLeft {
     from { height: 0; }
-    to { height: 100%; }
+    to { height: 50vh; } /* Adjusted to reach the center */
 }
 
 @keyframes lineMoveBottomRight {
     from { height: 0; }
-    to { height: 100%; }
+    to { height: 50vh; } /* Adjusted to reach the center */
 }
 
 @keyframes stayVisible {
