@@ -17,8 +17,8 @@ body, html {
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 2px;
-    height: 2px;
+    width: 1px;
+    height: 1px;
 }
 
 #line-vertical {
@@ -57,8 +57,8 @@ body, html {
     padding: 0px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
-    color: #ff0000;
     animation: blink 1s infinite;
+    z-index: 1001;
 }
 
 @keyframes lineMoveVertical {
