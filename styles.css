@@ -29,7 +29,6 @@ body, html {
     height: 0;
     left: 0;
     bottom: 0;
-    transform: rotate(45deg);
     transform-origin: bottom left;
     animation: lineMoveBottomLeft 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
@@ -39,7 +38,6 @@ body, html {
     height: 0;
     right: 0;
     bottom: 0;
-    transform: rotate(-45deg);
     transform-origin: bottom right;
     animation: lineMoveBottomRight 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
@@ -64,12 +62,12 @@ body, html {
 
 @keyframes lineMoveBottomLeft {
     from { height: 0; }
-    to { height: 50%; } /* Adjusted to ensure it meets the center */
+    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
 }
 
 @keyframes lineMoveBottomRight {
     from { height: 0; }
-    to { height: 50%; } /* Adjusted to ensure it meets the center */
+    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
 }
 
 @keyframes stayVisible {
