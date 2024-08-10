@@ -74,12 +74,27 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#51534e', weight: 2}).addTo(map);
+    var polyline = L.polyline([], {color: '#51534e', weight: 1}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
+
+    var drawLine = setInterval(function() {
+        if (step < steps) {
+            var currentIndex = Math.floor(step / (steps / latlngs.length));
+            var nextIndex = currentIndex + 1;
+            if (nextIndex < latlngs.length) {
+                var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
+                polyline.addLatLng([lat, lng]);
+            }
+            step++;
+        } else {
+            clearInterval(drawLine);
+        }
+    }, interval);
 
     var ipInfo = document.getElementById('ip-info');
     ipInfo.style.color = '#ff0000';
@@ -99,26 +114,7 @@ window.onload = function() {
     Promise.all(distances.map(function(item) {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
-        var currentIPIndex = 0;
-
-        var drawLine = setInterval(function() {
-            if (step < steps) {
-                var currentIndex = Math.floor(step / (steps / latlngs.length));
-                var nextIndex = currentIndex + 1;
-                if (nextIndex < latlngs.length) {
-                    var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                    var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                    polyline.addLatLng([lat, lng]);
-                }
-                if (step % (steps / latlngs.length) === 0 && currentIPIndex < ipAddresses.length) {
-                    ipInfo.innerHTML += ipAddresses[currentIPIndex] + '<br>';
-                    currentIPIndex++;
-                }
-                step++;
-            } else {
-                clearInterval(drawLine);
-            }
-        }, interval);
+        ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
     var coords = [hobartCoords].concat(distances.map(function(item) {
