@@ -16,37 +16,32 @@ body, html {
     animation-timing-function: ease-in-out;
 }
 
-#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 1px;
-    height: 1px;
-}
-
 #line-vertical {
-    height: 50%;
+    width: 1px;
+    height: 100%;
     left: 50%;
     top: 0;
     animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
-#line-horizontal {
-    width: 50%;
-    top: 50%;
+#line-bottom-left {
+    width: 1px;
+    height: 100%;
     left: 0;
-    animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
-}
-
-#line-vertical-bottom {
-    height: 50%;
-    left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
+    transform: rotate(45deg);
+    transform-origin: bottom left;
+    animation: lineMoveBottomLeft 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
-#line-horizontal-right {
-    width: 50%;
-    top: 50%;
+#line-bottom-right {
+    width: 1px;
+    height: 100%;
     right: 0;
-    animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
+    bottom: 0;
+    transform: rotate(-45deg);
+    transform-origin: bottom right;
+    animation: lineMoveBottomRight 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #ip-info {
@@ -63,23 +58,18 @@ body, html {
 }
 
 @keyframes lineMoveVertical {
-    from { top: -50%; }
-    to { top: 50%; }
+    from { height: 0; }
+    to { height: 100%; }
 }
 
-@keyframes lineMoveHorizontal {
-    from { left: -50%; }
-    to { left: 50%; }
+@keyframes lineMoveBottomLeft {
+    from { height: 0; }
+    to { height: 100%; }
 }
 
-@keyframes lineMoveVerticalBottom {
-    from { bottom: -50%; }
-    to { bottom: 50%; }
-}
-
-@keyframes lineMoveHorizontalRight {
-    from { right: -50%; }
-    to { right: 50%; }
+@keyframes lineMoveBottomRight {
+    from { height: 0; }
+    to { height: 100%; }
 }
 
 @keyframes stayVisible {
