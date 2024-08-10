@@ -76,7 +76,7 @@ window.onload = function() {
 
     var polyline = L.polyline([], {color: '#51534e', weight: 1}).addTo(map);
 
-    var totalDuration = 30000;
+    var totalDuration = 15000;
     var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
