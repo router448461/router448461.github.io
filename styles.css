@@ -7,6 +7,7 @@ body, html {
 #map {
     height: 100vh;
     width: 100vw;
+    position: relative;
 }
 
 .line {
@@ -27,7 +28,7 @@ body, html {
 #line-bottom-left {
     width: 1px;
     height: 0;
-    left: 0;
+    left: 50%;
     bottom: 0;
     transform-origin: bottom left;
     animation: lineMoveBottomLeft 15s linear forwards, stayVisible 15s linear 15s forwards;
@@ -36,7 +37,7 @@ body, html {
 #line-bottom-right {
     width: 1px;
     height: 0;
-    right: 0;
+    right: 50%;
     bottom: 0;
     transform-origin: bottom right;
     animation: lineMoveBottomRight 15s linear forwards, stayVisible 15s linear 15s forwards;
@@ -60,12 +61,12 @@ body, html {
 
 @keyframes lineMoveBottomLeft {
     from { height: 0; }
-    to { height: 50vh; } /* Adjusted to reach the center */
+    to { height: 50vh; }
 }
 
 @keyframes lineMoveBottomRight {
     from { height: 0; }
-    to { height: 50vh; } /* Adjusted to reach the center */
+    to { height: 50vh; }
 }
 
 @keyframes stayVisible {
