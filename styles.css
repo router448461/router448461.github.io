@@ -17,8 +17,8 @@ body, html {
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 10px;
-    height: 10px;
+    width: 2px;
+    height: 2px;
 }
 
 #line-vertical {
