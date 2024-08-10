@@ -74,7 +74,7 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#4b5320', weight: 3}).addTo(map);
+    var polyline = L.polyline([], {color: '#ff0000', weight: 2}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -97,7 +97,7 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = '#324a6e';
+    ipInfo.style.color = '#51534e';
     ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
 
     function formatIP(ip) {
@@ -123,7 +123,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 13px; height: 13px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: #4b5320; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
