@@ -115,7 +115,6 @@ window.onload = function() {
         return getIP(item.nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
-        alignLinesWithIP(ipAddresses);
     });
 
     var coords = [hobartCoords].concat(distances.map(function(item) {
@@ -140,22 +139,4 @@ window.onload = function() {
     setTimeout(function() {
         map.invalidateSize();
     }, 100);
-
-    function alignLinesWithIP(ipAddresses) {
-        var ipElement = document.getElementById('ip-info');
-        var ipText = ipElement.innerText;
-        var secondDotIndex = ipText.indexOf('.', ipText.indexOf('.') + 1);
-        var ipWidth = ipElement.offsetWidth;
-        var dotPosition = (secondDotIndex / ipText.length) * ipWidth;
-
-        var verticalLine = document.getElementById('line-vertical');
-        var horizontalLine = document.getElementById('line-horizontal');
-        var verticalLineBottom = document.getElementById('line-vertical-bottom');
-        var horizontalLineRight = document.getElementById('line-horizontal-right');
-
-        verticalLine.style.left = `calc(50% + ${dotPosition}px)`;
-        horizontalLine.style.width = `calc(50% + ${dotPosition}px)`;
-        verticalLineBottom.style.left = `calc(50% + ${dotPosition}px)`;
-        horizontalLineRight.style.width = `calc(50% + ${dotPosition}px)`;
-    }
 };
