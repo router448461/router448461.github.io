@@ -64,12 +64,12 @@ body, html {
 
 @keyframes lineMoveBottomLeft {
     from { height: 0; }
-    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
+    to { height: 50%; } /* Adjusted to ensure it meets the center */
 }
 
 @keyframes lineMoveBottomRight {
     from { height: 0; }
-    to { height: 70.7%; } /* Adjusted to ensure it meets the center */
+    to { height: 50%; } /* Adjusted to ensure it meets the center */
 }
 
 @keyframes stayVisible {
