@@ -74,7 +74,7 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#ff0000', weight: 2}).addTo(map);
+    var polyline = L.polyline([], {color: '#51534e', weight: 2}).addTo(map);
 
     var totalDuration = 30000;
     var steps = 100;
@@ -97,7 +97,7 @@ window.onload = function() {
     }, interval);
 
     var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = '#51534e';
+    ipInfo.style.color = '#ff0000';
     ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
 
     function formatIP(ip) {
