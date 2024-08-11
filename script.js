@@ -74,7 +74,7 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#41424c', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: '#51534e', weight: 1}).addTo(map);
 
     var totalDuration = 15000;
     var steps = 100;
@@ -123,7 +123,7 @@ window.onload = function() {
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div class="dot"></div>`
         });
         L.marker(coord, { icon: dot }).addTo(map);
     });
