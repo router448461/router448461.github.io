@@ -2,14 +2,11 @@ body, html {
     height: 100%;
     margin: 0;
     padding: 0;
-    user-select: none; /* Disable text selection */
-    pointer-events: none; /* Disable pointer events */
 }
 
 #map {
     height: 100vh;
     width: 100vw;
-    pointer-events: none; /* Disable pointer events */
 }
 
 .line {
@@ -17,7 +14,6 @@ body, html {
     background-color: #ff0000;
     z-index: 1000;
     animation-timing-function: ease-in-out;
-    pointer-events: none; /* Disable pointer events */
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
@@ -62,8 +58,6 @@ body, html {
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
     z-index: 1001;
-    user-select: none; /* Disable text selection */
-    pointer-events: none; /* Disable pointer events */
 }
 
 @keyframes lineMoveVertical {
@@ -102,12 +96,4 @@ body, html {
     height: 10px;
     border-radius: 50%;
     animation: blink 1s infinite;
-    pointer-events: none; /* Disable pointer events */
-}
-
-/* Apply to all elements */
-* {
-    cursor: default;
-    user-select: none; /* Disable text selection */
-    pointer-events: none; /* Disable pointer events */
 }
