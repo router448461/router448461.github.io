@@ -2,6 +2,8 @@ body, html {
     height: 100%;
     margin: 0;
     padding: 0;
+    user-select: none;
+    pointer-events: none;
 }
 
 #map {
@@ -57,9 +59,7 @@ body, html {
     padding: 0px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
-    animation: blink 1s infinite;
     z-index: 1001;
-    user-select: none;
 }
 
 @keyframes lineMoveVertical {
@@ -93,9 +93,19 @@ body, html {
 }
 
 .dot {
+    background-color: green;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { background-color: #ff0000; }
 }
 
 * {
     cursor: default;
+    user-select: none;
+    pointer-events: none;
 }
