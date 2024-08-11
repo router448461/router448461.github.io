@@ -7,7 +7,6 @@ body, html {
 #map {
     height: 100vh;
     width: 100vw;
-    position: relative;
 }
 
 .line {
@@ -17,56 +16,70 @@ body, html {
     animation-timing-function: ease-in-out;
 }
 
-#line-vertical {
+#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
     width: 1px;
-    height: 0;
+    height: 1px;
+}
+
+#line-vertical {
+    height: 100%;
     left: 50%;
     top: 0;
     animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
-#line-bottom-left {
-    width: 1px;
-    height: 0;
-    left: 50%;
-    bottom: 0;
-    transform-origin: bottom left;
-    animation: lineMoveBottomLeft 15s linear forwards, stayVisible 15s linear 15s forwards;
+#line-horizontal {
+    width: 100%;
+    top: 50%;
+    left: 0;
+    animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
-#line-bottom-right {
-    width: 1px;
-    height: 0;
-    right: 50%;
+#line-vertical-bottom {
+    height: 100%;
+    left: 50%;
     bottom: 0;
-    transform-origin: bottom right;
-    animation: lineMoveBottomRight 15s linear forwards, stayVisible 15s linear 15s forwards;
+    animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
+}
+
+#line-horizontal-right {
+    width: 100%;
+    top: 50%;
+    right: 0;
+    animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
 }
 
 #ip-info {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: calc(50% - 1px);
     transform: translate(-50%, -50%);
     padding: 0px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
+    animation: blink 1s infinite;
     z-index: 1001;
+    user-select: none;
 }
 
 @keyframes lineMoveVertical {
-    from { height: 0; }
-    to { height: 50%; }
+    from { left: 0; }
+    to { left: 50%; }
 }
 
-@keyframes lineMoveBottomLeft {
-    from { height: 0; }
-    to { height: 50vh; }
+@keyframes lineMoveHorizontal {
+    from { top: 0; }
+    to { top: 50%; }
 }
 
-@keyframes lineMoveBottomRight {
-    from { height: 0; }
-    to { height: 50vh; }
+@keyframes lineMoveVerticalBottom {
+    from { left: 100%; }
+    to { left: 50%; }
+}
+
+@keyframes lineMoveHorizontalRight {
+    from { top: 100%; }
+    to { top: 50%; }
 }
 
 @keyframes stayVisible {
