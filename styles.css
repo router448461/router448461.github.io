@@ -25,28 +25,28 @@ body, html {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 15s linear forwards, stayVisible 15s linear 15s forwards;
+    animation: lineMoveVertical 10s linear forwards, stayVisible 10s linear 10s forwards;
 }
 
 #line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 15s linear forwards, stayVisible 15s linear 15s forwards;
+    animation: lineMoveHorizontal 10s linear forwards, stayVisible 10s linear 10s forwards;
 }
 
 #line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 15s linear forwards, stayVisible 15s linear 15s forwards;
+    animation: lineMoveVerticalBottom 10s linear forwards, stayVisible 10s linear 10s forwards;
 }
 
 #line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 15s linear forwards, stayVisible 15s linear 15s forwards;
+    animation: lineMoveHorizontalRight 10s linear forwards, stayVisible 10s linear 10s forwards;
 }
 
 #ip-info {
@@ -86,12 +86,12 @@ body, html {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; } /* Fully visible at the start and end */
-    50% { opacity: 0; } /* Invisible in the middle */
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .dot {
-    background-color: #ff0000; /* Red color */
+    background-color: #ff0000;
     width: 10px;
     height: 10px;
     border-radius: 50%;
