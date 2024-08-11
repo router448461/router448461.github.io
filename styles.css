@@ -92,7 +92,6 @@ body, html {
 }
 
 .dot {
-    background-color: green;
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -100,6 +99,7 @@ body, html {
 }
 
 @keyframes blink {
+    0%, 100% { background-color: transparent;
     50% { background-color: #ff0000; }
 }
 
