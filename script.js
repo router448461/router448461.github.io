@@ -37,18 +37,18 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [34.0522, -118.2437], // NS 1.DYNU.COM (US, LOS ANGELES)
-        [33.4484, -112.0740], // NS 2.DYNU.COM (US, PHOENIX)
-        [33.7490, -84.3880],  // NS 3.DYNU.COM (US, ATLANTA)
-        [32.7767, -96.7970],  // NS 4.DYNU.COM (US, DALLAS)
-        [47.6062, -122.3321], // NS 5.DYNU.COM (US, SEATTLE)
-        [40.0583, -74.4057],  // NS 6.DYNU.COM (US, NEW JERSEY)
-        [35.6895, 139.6917],  // NS 7.DYNU.COM (JP, TOKYO)
-        [-33.8688, 151.2093], // NS 8.DYNU.COM (AU, SYDNEY)
-        [1.3521, 103.8198],   // NS 9.DYNU.COM (SG, SINGAPORE)
-        [52.3676, 4.9041],    // NS10.DYNU.COM (NL, AMSTERDAM)
-        [50.1109, 8.6821],    // NS11.DYNU.COM (DE, FRANKFURT)
-        [51.5074, -0.1278]    // NS12.DYNU.COM (UK, LONDON)
+        [34.0522, -118.2437], // NS1.DYNU.COM (LOS ANGELES, US)
+        [33.4484, -112.0740], // NS2.DYNU.COM (PHOENIX, US)
+        [33.7490, -84.3880],  // NS3.DYNU.COM (ATLANTA, US)
+        [32.7767, -96.7970],  // NS4.DYNU.COM (DALLAS, US)
+        [47.6062, -122.3321], // NS5.DYNU.COM (SEATTLE, US)
+        [40.0583, -74.4057],  // NS6.DYNU.COM (NEW JERSEY, US)
+        [35.6895, 139.6917],  // NS7.DYNU.COM (TOKYO, JP)
+        [-33.8688, 151.2093], // NS8.DYNU.COM (SYDNEY, AU)
+        [1.3521, 103.8198],   // NS9.DYNU.COM (SINGAPORE, SG)
+        [52.3676, 4.9041],    // NS10.DYNU.COM (AMSTERDAM, NL)
+        [50.1109, 8.6821],    // NS11.DYNU.COM (FRANKFURT, DE)
+        [51.5074, -0.1278]    // NS12.DYNU.COM (LONDON, UK)
     ];
 
     function haversineDistance(coords1, coords2) {
@@ -74,7 +74,7 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: '#51534e', weight: 1}).addTo(map);
 
     var totalDuration = 15000;
     var steps = 100;
