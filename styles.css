@@ -98,9 +98,9 @@ body, html {
 
 .dot {
     animation: blink 1s infinite;
-    pointer-events: none; /* Ensure dots are not clickable */
+    user-select: none;
 }
 
 .leaflet-interactive {
-    pointer-events: none; /* Ensure polyline is not clickable */
+    user-select: none;
 }
