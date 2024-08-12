@@ -1,3 +1,9 @@
+* {
+    user-select: none;
+    pointer-events: none;
+    cursor: default;
+}
+
 window.onload = function() {
     var map = L.map('map', {
         zoomControl: false,
