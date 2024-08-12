@@ -76,7 +76,7 @@ window.onload = function() {
 
     var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
 
-    var totalDuration = 03000;
+    var totalDuration = 3000;
     var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
@@ -89,6 +89,7 @@ window.onload = function() {
                 var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
                 var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
                 polyline.addLatLng([lat, lng]);
+                console.log([lat, lng]); // Log the coordinates being added
             }
             step++;
         } else {
