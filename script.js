@@ -74,9 +74,9 @@ window.onload = function() {
         return item.coords;
     })).concat([hobartCoords]);
 
-    var polyline = L.polyline([], {color: '#8db600', weight: 1}).addTo(map);
+    var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
 
-    var totalDuration = 3000;
+    var totalDuration = 03000;
     var steps = 100;
     var interval = totalDuration / steps;
     var step = 0;
