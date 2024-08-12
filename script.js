@@ -51,56 +51,6 @@ window.onload = function() {
         [51.0000, -0.0000]    // NS12.DYNU.COM (LONDON, UK)
     ];
 
-    function haversineDistance(coords1, coords2) {
-        var R = 6371;
-        var dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
-        var dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
-                Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    var distances = nameServerCoords.map(function(coords, index) {
-        return { coords: coords, distance: haversineDistance(uluruCoords, coords), nameServer: nameServers[index] };
-    });
-
-    distances.sort(function(a, b) {
-        return a.distance - b.distance;
-    });
-
-    var latlngs = distances.map(function(item) {
-        return item.coords;
-    }).concat([uluruCoords]);
-
-    var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
-
-    var totalDuration = 30000;
-    var steps = 100;
-    var interval = totalDuration / steps;
-    var step = 0;
-
-    var drawLine = setInterval(function() {
-        if (step < steps) {
-            var currentIndex = Math.floor(step / (steps / latlngs.length));
-            var nextIndex = currentIndex + 1;
-            if (nextIndex < latlngs.length) {
-                var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
-                
-                if (lng < -180) lng += 360;
-                if (lng > 180) lng -= 360;
-
-                polyline.addLatLng([lat, lng]);
-                console.log([lat, lng]);
-            }
-            step++;
-        } else {
-            clearInterval(drawLine);
-        }
-    }, interval);
-
     var ipInfo = document.getElementById('ip-info');
     ipInfo.style.color = '#ff0000';
     ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
@@ -116,16 +66,13 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    Promise.all(distances.map(function(item) {
-        return getIP(item.nameServer);
+    Promise.all(nameServers.map(function(nameServer) {
+        return getIP(nameServer);
     })).then(ipAddresses => {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    var coords = distances.map(function(item) {
-        return item.coords;
-    }).concat([uluruCoords]);
-    coords.forEach(function(coord) {
+    nameServerCoords.concat([uluruCoords]).forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
             html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
@@ -145,4 +92,3 @@ window.onload = function() {
         map.invalidateSize();
     }, 100);
 };
-
