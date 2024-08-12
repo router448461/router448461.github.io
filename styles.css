@@ -95,12 +95,3 @@ body, html {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-
-.dot {
-    animation: blink 1s infinite;
-    user-select: none;
-}
-
-.leaflet-interactive {
-    user-select: none;
-}
