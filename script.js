@@ -70,9 +70,9 @@ window.onload = function() {
         return a.distance - b.distance;
     });
 
-    var latlngs = [uluruCoords].concat(distances.map(function(item) {
+    var latlngs = distances.map(function(item) {
         return item.coords;
-    })).concat([uluruCoords]);
+    }).concat([uluruCoords]);
 
     var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
 
@@ -118,9 +118,9 @@ window.onload = function() {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    var coords = [uluruCoords].concat(distances.map(function(item) {
+    var coords = distances.map(function(item) {
         return item.coords;
-    })).concat([uluruCoords]);
+    }).concat([uluruCoords]);
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
@@ -141,3 +141,4 @@ window.onload = function() {
         map.invalidateSize();
     }, 100);
 };
+
