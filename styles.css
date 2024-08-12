@@ -1,6 +1,7 @@
 * {
     user-select: none;
     pointer-events: none;
+    cursor: default;
 }
 
 body, html {
@@ -62,7 +63,6 @@ body, html {
     padding: 0px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
-    animation: blink 1s infinite;
     z-index: 1001;
 }
 
@@ -91,15 +91,11 @@ body, html {
     to { opacity: 1; }
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
 .dot {
     animation: blink 1s infinite;
 }
 
-* {
-    cursor: default;
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
