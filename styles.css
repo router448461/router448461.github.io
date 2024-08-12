@@ -1,3 +1,8 @@
+* {
+    user-select: none;
+    pointer-events: none;
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -59,7 +64,6 @@ body, html {
     font-size: 15px;
     animation: blink 1s infinite;
     z-index: 1001;
-    user-select: none;
 }
 
 @keyframes lineMoveVertical {
