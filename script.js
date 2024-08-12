@@ -82,7 +82,7 @@ window.onload = function() {
 
     setTimeout(function() {
         location.reload();
-    }, 60000);
+    }, 30000);
 
     window.addEventListener('resize', function() {
         map.invalidateSize();
