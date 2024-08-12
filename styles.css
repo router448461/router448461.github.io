@@ -51,10 +51,12 @@ body, html {
 
 #ip-info {
     position: absolute;
-    top: 50%;
-    left: calc(50% - 1px);
-    transform: translate(-50%, -50%);
-    padding: 0px;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 15px;
     z-index: 1001;
@@ -88,4 +90,13 @@ body, html {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+@keyframes flashScreen {
+    0% { background-color: #ffffff; }
+    100% { background-color: transparent; }
+}
+
+body.flash {
+    animation: flashScreen 1s linear;
 }
