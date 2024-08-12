@@ -13,7 +13,6 @@ body, html {
     position: absolute;
     background-color: #ff0000;
     z-index: 1000;
-    animation-timing-function: ease-in-out;
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
