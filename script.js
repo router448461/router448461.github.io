@@ -30,25 +30,25 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
-    var hobartCoords = [-42.8821, 147.3272];
+    var uluruCoords = [-25.3444, 131.0369];
 
     var nameServers = [
         'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
     ];
 
     var nameServerCoords = [
-        [34.0522, -118.2437], // NS1.DYNU.COM (LOS ANGELES, US)
-        [33.4484, -112.0740], // NS2.DYNU.COM (PHOENIX, US)
-        [33.7490, -84.3880],  // NS3.DYNU.COM (ATLANTA, US)
-        [32.7767, -96.7970],  // NS4.DYNU.COM (DALLAS, US)
-        [47.6062, -122.3321], // NS5.DYNU.COM (SEATTLE, US)
-        [40.0583, -74.4057],  // NS6.DYNU.COM (NEW JERSEY, US)
-        [35.6895, 139.6917],  // NS7.DYNU.COM (TOKYO, JP)
-        [-33.8688, 151.2093], // NS8.DYNU.COM (SYDNEY, AU)
-        [1.3521, 103.8198],   // NS9.DYNU.COM (SINGAPORE, SG)
-        [52.3676, 4.9041],    // NS10.DYNU.COM (AMSTERDAM, NL)
-        [50.1109, 8.6821],    // NS11.DYNU.COM (FRANKFURT, DE)
-        [51.5074, -0.1278]    // NS12.DYNU.COM (LONDON, UK)
+        [34.0522, -118.2437], 
+        [33.4484, -112.0740], 
+        [33.7490, -84.3880],  
+        [32.7767, -96.7970],  
+        [47.6062, -122.3321], 
+        [40.0583, -74.4057],  
+        [35.6895, 139.6917],  
+        [-33.8688, 151.2093], 
+        [1.3521, 103.8198],   
+        [52.3676, 4.9041],    
+        [50.1109, 8.6821],    
+        [51.5074, -0.1278]    
     ];
 
     function haversineDistance(coords1, coords2) {
@@ -63,16 +63,16 @@ window.onload = function() {
     }
 
     var distances = nameServerCoords.map(function(coords, index) {
-        return { coords: coords, distance: haversineDistance(hobartCoords, coords), nameServer: nameServers[index] };
+        return { coords: coords, distance: haversineDistance(uluruCoords, coords), nameServer: nameServers[index] };
     });
 
     distances.sort(function(a, b) {
         return a.distance - b.distance;
     });
 
-    var latlngs = [hobartCoords].concat(distances.map(function(item) {
+    var latlngs = [uluruCoords].concat(distances.map(function(item) {
         return item.coords;
-    })).concat([hobartCoords]);
+    })).concat([uluruCoords]);
 
     var polyline = L.polyline([], {color: '#ffffff', weight: 1}).addTo(map);
 
@@ -89,7 +89,7 @@ window.onload = function() {
                 var lat = latlngs[currentIndex][0] + (latlngs[nextIndex][0] - latlngs[currentIndex][0]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
                 var lng = latlngs[currentIndex][1] + (latlngs[nextIndex][1] - latlngs[currentIndex][1]) * ((step % (steps / latlngs.length)) / (steps / latlngs.length));
                 polyline.addLatLng([lat, lng]);
-                console.log([lat, lng]); // Log the coordinates being added
+                console.log([lat, lng]);
             }
             step++;
         } else {
@@ -118,9 +118,9 @@ window.onload = function() {
         ipInfo.innerHTML = ipAddresses.join('<br>');
     });
 
-    var coords = [hobartCoords].concat(distances.map(function(item) {
+    var coords = [uluruCoords].concat(distances.map(function(item) {
         return item.coords;
-    })).concat([hobartCoords]);
+    })).concat([uluruCoords]);
     coords.forEach(function(coord) {
         var dot = L.divIcon({
             className: 'dot',
