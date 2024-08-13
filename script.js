@@ -98,4 +98,9 @@ window.onload = function() {
             flashLayer.style.backgroundColor = 'transparent';
         }, 500);
     }, 3000);
+
+    setTimeout(function() {
+        document.getElementById('target-locked-left').style.display = 'block';
+        document.getElementById('target-locked-right').style.display = 'block';
+    }, 3000); /* Show the text after 3 seconds */
 };
