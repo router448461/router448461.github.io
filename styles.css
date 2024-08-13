@@ -2,7 +2,6 @@ body, html {
     height: 100%;
     margin: 0;
     padding: 0;
-    cursor: none; /* Hide the default cursor */
 }
 
 #map {
@@ -48,6 +47,16 @@ body, html {
     top: 50%;
     right: 0;
     animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
+}
+
+#ip-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 0px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15px;
+    z-index: 1001;
 }
 
 @keyframes lineMoveVertical {
@@ -99,7 +108,7 @@ body, html {
 }
 
 .leaflet-tooltip span {
-    color: #ff0000 !important; /* Added this line to change the color of the tooltips */
+    color: #ffffff !important; /* Added this line to change the color of the tooltips */
 }
 
 .leaflet-tooltip:before,
@@ -108,7 +117,6 @@ body, html {
 .leaflet-tooltip-left:before,
 .leaflet-tooltip-right:before {
     border: none !important;
-    background: none !important;
 }
 
 .target-locked {
