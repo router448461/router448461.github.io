@@ -94,9 +94,10 @@ window.onload = function() {
 
     setTimeout(function() {
         var flashLayer = document.getElementById('flash-layer');
-        flashLayer.style.backgroundColor = '#ff0000';
+        flashLayer.style.backgroundColor = '#ffffff';
+        flashLayer.style.transition = 'background-color 0.5s ease-in-out';
         setTimeout(function() {
             flashLayer.style.backgroundColor = 'transparent';
-        }, 1000);
+        }, 500);
     }, 3000);
 };
