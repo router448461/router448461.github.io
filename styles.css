@@ -2,8 +2,6 @@ body, html {
     height: 100%;
     margin: 0;
     padding: 0;
-    animation: flash 1s 3s forwards;
-    transition: background-color 1s;
 }
 
 #map {
@@ -89,6 +87,19 @@ body, html {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+#flash-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    pointer-events: none;
+    background-color: transparent;
+    animation: flash 1s 3s forwards;
+    transition: background-color 1s;
 }
 
 @keyframes flash {
