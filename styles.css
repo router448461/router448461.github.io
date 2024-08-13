@@ -98,7 +98,7 @@ body, html {
 }
 
 .leaflet-tooltip span {
-    color: #ffffff !important; /* Added this line to change the color of the tooltips */
+    color: #ff0000 !important; /* Added this line to change the color of the tooltips */
 }
 
 .leaflet-tooltip:before,
@@ -107,6 +107,7 @@ body, html {
 .leaflet-tooltip-left:before,
 .leaflet-tooltip-right:before {
     border: none !important;
+    background: none !important;
 }
 
 .target-locked {
