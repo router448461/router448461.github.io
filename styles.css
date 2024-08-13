@@ -90,6 +90,25 @@ body, html {
     background-color: transparent;
 }
 
+.leaflet-tooltip {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 1002 !important; /* Increased from 1001 to 1002 */
+}
+
+.leaflet-tooltip span {
+    color: #ffffff !important; /* Added this line to change the color of the tooltips */
+}
+
+.leaflet-tooltip:before,
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+    border: none !important;
+}
+
 .target-locked {
     position: absolute;
     top: 0;
