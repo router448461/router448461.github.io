@@ -91,4 +91,12 @@ window.onload = function() {
     setTimeout(function() {
         map.invalidateSize();
     }, 100);
+
+    setTimeout(function() {
+        var flashLayer = document.getElementById('flash-layer');
+        flashLayer.style.backgroundColor = '#ff0000';
+        setTimeout(function() {
+            flashLayer.style.backgroundColor = 'transparent';
+        }, 1000);
+    }, 3000);
 };
