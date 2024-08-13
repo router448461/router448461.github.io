@@ -51,10 +51,6 @@ window.onload = function() {
         [51.0000, -0.0000]    // NS12.DYNU.COM // UK, LONDON
     ];
 
-    var ipInfo = document.getElementById('ip-info');
-    ipInfo.style.color = '#ff0000';
-    ipInfo.style.fontFamily = 'Courier New, Courier, monospace';
-
     function formatIP(ip) {
         return ip.split('.').map(num => num.padStart(3, '0')).join('.');
     }
@@ -66,18 +62,20 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    Promise.all(nameServers.map(function(nameServer) {
-        return getIP(nameServer);
-    })).then(ipAddresses => {
-        ipInfo.innerHTML = ipAddresses.join('<br>');
-    });
-
-    nameServerCoords.concat([uluruCoords]).forEach(function(coord) {
-        var dot = L.divIcon({
-            className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+    Promise.all(nameServers.map(function(nameServer, index) {
+        return getIP(nameServer).then(ipAddress => {
+            return { ipAddress, index };
         });
-        L.marker(coord, { icon: dot }).addTo(map);
+    })).then(results => {
+        results.forEach(result => {
+            var dot = L.divIcon({
+                className: 'dot',
+                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            });
+            L.marker(nameServerCoords[result.index], { icon: dot })
+                .bindTooltip(result.ipAddress, { permanent: false })
+                .addTo(map);
+        });
     });
 
     setTimeout(function() {
