@@ -30,6 +30,8 @@ window.onload = function() {
 
     map.scrollWheelZoom.disable();
 
+    var uluruCoords = [-25.0000, 131.0000];
+
     var nameServers = [
         'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
     ];
@@ -101,14 +103,4 @@ window.onload = function() {
         document.getElementById('target-locked-left').style.display = 'block';
         document.getElementById('target-locked-right').style.display = 'block';
     }, 3000); /* Show the text after 3 seconds */
-
-    var lineVertical = document.getElementById('line-vertical');
-    var lineHorizontal = document.getElementById('line-horizontal');
-
-    setTimeout(function() {
-        window.addEventListener('mousemove', function(event) {
-            lineVertical.style.left = event.clientX + 'px';
-            lineHorizontal.style.top = event.clientY + 'px';
-        });
-    }, 3000); /* Add the mousemove event listener after 3 seconds */
 };
