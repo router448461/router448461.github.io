@@ -107,6 +107,10 @@ body, html {
     z-index: 1002 !important; /* Increased from 1001 to 1002 */
 }
 
+.leaflet-tooltip span {
+    color: #ffffff !important; /* Added this line to change the color of the tooltips */
+}
+
 .leaflet-tooltip:before,
 .leaflet-tooltip-top:before,
 .leaflet-tooltip-bottom:before,
