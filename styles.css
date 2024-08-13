@@ -12,7 +12,7 @@ body, html {
 .line {
     position: absolute;
     background-color: #ff0000;
-    z-index: 999; /* Decreased from 1000 to 999 */
+    z-index: 999;
     pointer-events: none;
 }
 
@@ -94,11 +94,11 @@ body, html {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    z-index: 1002 !important; /* Increased from 1001 to 1002 */
+    z-index: 1002 !important;
 }
 
 .leaflet-tooltip span {
-    color: #ff0000 !important; /* Added this line to change the color of the tooltips */
+    color: #ff0000 !important;
 }
 
 .leaflet-tooltip:before,
@@ -117,7 +117,7 @@ body, html {
     font-family: 'Courier New', Courier, monospace;
     font-size: 20px;
     color: #ff0000;
-    display: none; /* Hide it initially */
+    display: none;
 }
 
 #target-locked-left {
