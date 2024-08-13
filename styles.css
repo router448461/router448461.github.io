@@ -103,7 +103,7 @@ body, html {
 }
 
 @keyframes flash {
-    0% { background-color: #ffffff; }
+    0% { background-color: transparent; }
     50% { background-color: #ff0000; }
-    100% { background-color: #ffffff; }
+    100% { background-color: transparent; }
 }
