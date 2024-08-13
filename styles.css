@@ -98,12 +98,4 @@ body, html {
     z-index: 10000;
     pointer-events: none;
     background-color: transparent;
-    animation: flash 1s 3s forwards;
-    transition: background-color 1s;
-}
-
-@keyframes flash {
-    0% { background-color: transparent; }
-    50% { background-color: #ff0000; }
-    100% { background-color: transparent; }
 }
