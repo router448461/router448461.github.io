@@ -99,4 +99,16 @@ window.onload = function() {
         document.getElementById('target-locked-left').style.display = 'block';
         document.getElementById('target-locked-right').style.display = 'block';
     }, 3000);
+
+    // Add the user's location marker
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLocation = [position.coords.latitude, position.coords.longitude];
+            var userDot = L.divIcon({
+                className: 'dot',
+                html: `<div style="background-color: #4B5320; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            });
+            L.marker(userLocation, { icon: userDot }).addTo(map);
+        });
+    }
 };
