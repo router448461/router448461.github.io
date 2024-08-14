@@ -5,7 +5,7 @@ body, html {
     -webkit-user-select: none;  /* Chrome, Safari and Opera */
     -moz-user-select: none;     /* Firefox */
     -ms-user-select: none;      /* IE/Edge */
-    user-select: none;          /* Standard syntax */
+    user-select: none;          /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 #map {
@@ -16,13 +16,28 @@ body, html {
 .line {
     position: absolute;
     background-color: #ff0000;
-    z-index: 1000;
+    z-index: 999;
     pointer-events: none;
 }
 
-#line-vertical, #line-horizontal {
+#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
     width: 1px;
-    height: 100vh;
+    height: 1px;
+}
+
+@keyframes lineMove {
+    from { /* This will be replaced by JavaScript */ }
+    to { /* This will be replaced by JavaScript */ }
+}
+
+@keyframes stayVisible {
+    from { opacity: 1; }
+    to { opacity: 1; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 #ip-info {
@@ -46,6 +61,20 @@ body, html {
     background-color: transparent;
 }
 
+.leaflet-tooltip,
+.leaflet-tooltip span,
+.leaflet-tooltip:before,
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 1002 !important;
+    background-color: transparent !important;
+    color: #ff0000 !important;
+}
+
 .target-locked {
     position: absolute;
     top: 0;
@@ -54,10 +83,6 @@ body, html {
     font-size: 20px;
     color: #ff0000;
     display: none;
-    -webkit-user-select: none;  /* Chrome, Safari and Opera */
-    -moz-user-select: none;     /* Firefox */
-    -ms-user-select: none;      /* IE/Edge */
-    user-select: none;          /* Standard syntax */
 }
 
 #target-locked-left {
