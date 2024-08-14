@@ -25,44 +25,6 @@ body, html {
     height: 1px;
 }
 
-#line-vertical {
-    height: 100%;
-    left: 50%;
-    top: 0;
-    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards;
-}
-
-#line-horizontal {
-    width: 100%;
-    top: 50%;
-    left: 0;
-    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards;
-}
-
-#line-vertical-bottom {
-    height: 100%;
-    left: 50%;
-    bottom: 0;
-    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards;
-}
-
-#line-horizontal-right {
-    width: 100%;
-    top: 50%;
-    right: 0;
-    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
-}
-
-#ip-info {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    padding: 0px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 15px;
-    z-index: 1001;
-}
-
 @keyframes lineMoveVertical {
     from { left: 0; }
     to { left: 50%; }
@@ -93,6 +55,21 @@ body, html {
     50% { opacity: 0; }
 }
 
+@keyframes userBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+#ip-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 0px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15px;
+    z-index: 1001;
+}
+
 #flash-layer {
     position: fixed;
     top: 0;
@@ -104,23 +81,18 @@ body, html {
     background-color: transparent;
 }
 
-.leaflet-tooltip {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    z-index: 1002 !important;
-}
-
-.leaflet-tooltip span {
-    color: #ff0000 !important;
-}
-
+.leaflet-tooltip,
+.leaflet-tooltip span,
 .leaflet-tooltip:before,
 .leaflet-tooltip-top:before,
 .leaflet-tooltip-bottom:before,
 .leaflet-tooltip-left:before,
 .leaflet-tooltip-right:before {
     border: none !important;
+    box-shadow: none !important;
+    z-index: 1002 !important;
+    background-color: transparent !important;
+    color: #ff0000 !important;
 }
 
 .target-locked {
@@ -141,3 +113,6 @@ body, html {
     right: 0;
 }
 
+.dot, .user-dot {
+    animation: blink 1s infinite;
+}
