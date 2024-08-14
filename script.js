@@ -28,8 +28,6 @@ window.onload = function() {
         map.setZoom(2);
     });
 
-    map.scrollWheelZoom.disable();
-
     var nameServers = [
         'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
     ];
