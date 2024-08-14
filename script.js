@@ -28,6 +28,8 @@ window.onload = function() {
         map.setZoom(2);
     });
 
+    map.scrollWheelZoom.disable();
+
     var nameServers = [
         'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
     ];
@@ -99,14 +101,4 @@ window.onload = function() {
         document.getElementById('target-locked-left').style.display = 'block';
         document.getElementById('target-locked-right').style.display = 'block';
     }, 3000);
-
-    // Combine the animations into one function
-    function animateLine(elementId, from, to) {
-        document.getElementById(elementId).style.animation = `lineMove ${from} ${to} 3s linear forwards, stayVisible 3s linear 3s forwards`;
-    }
-
-    animateLine('line-vertical', 'left: 0;', 'left: 50%;');
-    animateLine('line-horizontal', 'top: 0;', 'top: 50%;');
-    animateLine('line-vertical-bottom', 'left: 100%;', 'left: 50%;');
-    animateLine('line-horizontal-right', 'top: 100%;', 'top: 50%;');
 };
