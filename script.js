@@ -62,7 +62,7 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             L.marker(nameServerCoords[result.index], { icon: dot })
-                .bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer}</span>`, { permanent: false })
+                .bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()}</span>`, { permanent: false })
                 .addTo(map);
         });
     });
@@ -88,4 +88,3 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
-
