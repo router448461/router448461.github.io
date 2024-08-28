@@ -31,22 +31,13 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
-        'ns1.dynu.com', 'ns2.dynu.com', 'ns3.dynu.com', 'ns4.dynu.com', 'ns5.dynu.com', 'ns6.dynu.com', 'ns7.dynu.com', 'ns8.dynu.com', 'ns9.dynu.com', 'ns10.dynu.com', 'ns11.dynu.com', 'ns12.dynu.com'
+        'ns8.dynu.com', // AU, SYDNEY
+        'ns9.dynu.com'  // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
-        [34.0000, -118.0000], // NS 1.DYNU.COM // US, LOS ANGELES
-        [33.0000, -112.0000], // NS 2.DYNU.COM // US, PHOENIX
-        [33.0000, -84.0000],  // NS 3.DYNU.COM // US, ATLANTA
-        [32.0000, -96.0000],  // NS 4.DYNU.COM // US, DALLAS
-        [47.0000, -122.0000], // NS 5.DYNU.COM // US, SEATTLE
-        [40.0000, -74.0000],  // NS 6.DYNU.COM // US, NEW JERSEY
-        [35.0000, 139.0000],  // NS 7.DYNU.COM // JP, TOKYO
         [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000],   // NS 9.DYNU.COM // SG, SINGAPORE
-        [52.0000, 4.0000],    // NS10.DYNU.COM // NL, AMSTERDAM
-        [50.0000, 8.0000],    // NS11.DYNU.COM // DE, FRANKFURT
-        [51.0000, -0.0000]    // NS12.DYNU.COM // UK, LONDON
+        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     function formatIP(ip) {
@@ -95,10 +86,5 @@ window.onload = function() {
         setTimeout(function() {
             flashLayer.style.backgroundColor = 'transparent';
         }, 500);
-    }, 3000);
-
-    setTimeout(function() {
-        document.getElementById('target-locked-left').style.display = 'block';
-        document.getElementById('target-locked-right').style.display = 'block';
     }, 3000);
 };
