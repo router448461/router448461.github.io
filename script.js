@@ -71,24 +71,6 @@ window.onload = function() {
         });
     });
 
-    fetch('http://ip-api.com/json/')
-        .then(response => response.json())
-        .then(data => {
-            var visitorInfo = document.createElement('div');
-            visitorInfo.style.position = 'absolute';
-            visitorInfo.style.bottom = '10px';
-            visitorInfo.style.right = '10px';
-            visitorInfo.style.color = '#ff0000';
-            visitorInfo.style.zIndex = '1002';
-            visitorInfo.innerHTML = `
-                IP: ${data.query}<br>
-                Location: ${data.city}, ${data.regionName}, ${data.country}<br>
-                Coordinates: ${data.lat}, ${data.lon}
-            `;
-            document.body.appendChild(visitorInfo);
-        })
-        .catch(error => console.error('Error:', error));
-
     setTimeout(function() {
         location.reload();
     }, 300000);
