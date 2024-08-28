@@ -122,3 +122,13 @@ body, html {
 .leaflet-tooltip-right:before {
     border: none !important;
 }
+
+.leaflet-popup-content-wrapper {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.leaflet-popup-tip {
+    display: none !important;
+}
