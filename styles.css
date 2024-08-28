@@ -122,21 +122,3 @@ body, html {
 .leaflet-tooltip-right:before {
     border: none !important;
 }
-
-.target-locked {
-    position: absolute;
-    top: 0;
-    padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 20px;
-    color: #ff0000;
-    display: none;
-}
-
-#target-locked-left {
-    left: 0;
-}
-
-#target-locked-right {
-    right: 0;
-}
