@@ -11,7 +11,7 @@ window.onload = function() {
         maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0,
         touchZoom: false,
-    }).setView([0, 0], 2);
+    }).setView([-33, 151], 2);
 
     var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
@@ -36,8 +36,8 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
+        [-33.8688, 151.2093], // NS 8.DYNU.COM // AU, SYDNEY
+        [1.3521, 103.8198]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
@@ -76,14 +76,14 @@ window.onload = function() {
         .then(data => {
             var visitorInfo = document.createElement('div');
             visitorInfo.style.position = 'absolute';
-            visitorInfo.style.bottom = '10px';
+            visitorInfo.style.top = '10px';
             visitorInfo.style.right = '10px';
             visitorInfo.style.color = '#ff0000';
             visitorInfo.style.zIndex = '1002';
             visitorInfo.innerHTML = `
                 IP: ${data.query}<br>
-                Location: ${data.city}, ${data.regionName}, ${data.country}<br>
-                Coordinates: ${data.lat}, ${data.lon}
+                Coordinates: ${data.lat}, ${data.lon}<br>
+                Location: ${data.city.toUpperCase()}, ${data.regionName.toUpperCase()}, ${data.country.toUpperCase()}
             `;
             document.body.appendChild(visitorInfo);
         })
@@ -110,3 +110,4 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
+
