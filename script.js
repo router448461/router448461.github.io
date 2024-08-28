@@ -77,7 +77,8 @@ window.onload = function() {
         results.forEach(result => {
             var dot = L.divIcon({
                 className: 'dot',
-                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`,
+                iconAnchor: [10, 0]  // Adjust the x-coordinate of the icon's tip
             });
             var marker = L.marker([result.latitude, result.longitude], { icon: dot }).addTo(map);
             marker.bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${[result.latitude, result.longitude].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
