@@ -31,22 +31,16 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
-        '111.220.1.1', // New DNS Server 1
-        '111.220.2.2', // New DNS Server 2
         'ns8.dynu.com', // NS8.DYNU.COM // AU, SYDNEY
         'ns9.dynu.com'  // NS9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
-        [latitude1, longitude1], // Coordinates for New DNS Server 1
-        [latitude2, longitude2], // Coordinates for New DNS Server 2
         [-33.0000, 151.0000], // NS8.DYNU.COM // AU, SYDNEY
         [1.0000, 103.0000]    // NS9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
-        'LOCATION 1', // Location for New DNS Server 1
-        'LOCATION 2', // Location for New DNS Server 2
         'SYDNEY, AU', // NS8.DYNU.COM // AU, SYDNEY
         'SINGAPORE, SP' // NS9.DYNU.COM // SG, SINGAPORE
     ];
