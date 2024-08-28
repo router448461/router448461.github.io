@@ -136,3 +136,9 @@ body, html {
 .leaflet-popup-close-button {
     display: none !important;
 }
+
+.myCSSClass {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
