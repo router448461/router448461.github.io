@@ -66,9 +66,14 @@ window.onload = function() {
                 className: 'dot',
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
-            L.marker(nameServerCoords[result.index], { icon: dot })
-                .bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: false })
-                .addTo(map);
+            var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
+            marker.bindPopup(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`);
+            marker.on('mouseover', function () {
+                this.openPopup();
+            });
+            marker.on('mouseout', function () {
+                this.closePopup();
+            });
         });
     });
 
