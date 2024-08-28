@@ -142,3 +142,12 @@ body, html {
     border: none !important;
     box-shadow: none !important;
 }
+
+/* Styles for the red dot */
+.dot div {
+    background-color: #ff0000;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
