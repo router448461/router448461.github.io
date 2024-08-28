@@ -85,7 +85,7 @@ window.onload = function() {
                 Coordinates: ${data.lat}, ${data.lon}<br>
                 Location: ${data.city.toUpperCase()}, ${data.regionName.toUpperCase()}, ${data.country.toUpperCase()}
             `;
-            document.body.appendChild(visitorInfo);
+            document.getElementById('map').appendChild(visitorInfo);
         })
         .catch(error => console.error('Error:', error));
 
@@ -110,4 +110,3 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
-
