@@ -31,18 +31,18 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
-        'ns8.dynu.com', // NS8.DYNU.COM // AU, SYDNEY
-        'ns9.dynu.com'  // NS9.DYNU.COM // SG, SINGAPORE
+        'ns8.dynu.com', // AU, SYDNEY
+        'ns9.dynu.com'  // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
-        [-33.0000, 151.0000], // NS8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000]    // NS9.DYNU.COM // SG, SINGAPORE
+        [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
+        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
-        'SYDNEY, AU', // NS8.DYNU.COM // AU, SYDNEY
-        'SINGAPORE, SP' // NS9.DYNU.COM // SG, SINGAPORE
+        'SYDNEY, AU', // NS 8.DYNU.COM
+        'SINGAPORE, SP' // NS 9.DYNU.COM
     ];
 
     function formatIP(ip) {
@@ -92,3 +92,4 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
+
