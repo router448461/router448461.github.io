@@ -31,18 +31,18 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
-        'ns8.dynu.com', // AU, SYDNEY
-        'ns9.dynu.com'  // SG, SINGAPORE
+        'ns8.dynu.com', // NS8.DYNU.COM // AU, SYDNEY
+        'ns9.dynu.com'  // NS9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
-        [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
+        [-33.0000, 151.0000], // NS8.DYNU.COM // AU, SYDNEY
+        [1.0000, 103.0000]    // NS9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
-        'SYDNEY, AU', // NS 8.DYNU.COM
-        'SINGAPORE, SP' // NS 9.DYNU.COM
+        'SYDNEY, AU', // NS8.DYNU.COM // AU, SYDNEY
+        'SINGAPORE, SP' // NS9.DYNU.COM // SG, SINGAPORE
     ];
 
     function formatIP(ip) {
@@ -67,13 +67,7 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            marker.bindPopup(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`);
-            marker.on('mouseover', function () {
-                this.openPopup();
-            });
-            marker.on('mouseout', function () {
-                this.closePopup();
-            });
+            marker.bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
         });
     });
 
