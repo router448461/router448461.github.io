@@ -132,3 +132,7 @@ body, html {
 .leaflet-popup-tip {
     display: none !important;
 }
+
+.leaflet-popup-close-button {
+    display: none !important;
+}
