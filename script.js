@@ -35,11 +35,6 @@ window.onload = function() {
         'ns9.dynu.com'  // SG, SINGAPORE
     ];
 
-    var nameServerCoords = [
-        [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
-    ];
-
     var nameServerLocations = [
         'SYDNEY, AU', // NS 8.DYNU.COM
         'SINGAPORE, SP' // NS 9.DYNU.COM
@@ -52,13 +47,31 @@ window.onload = function() {
     function getIP(nameServer) {
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => formatIP(data.Answer[0].data))
+            .then(data => {
+                var ipAddress = formatIP(data.Answer[0].data);
+                // Use a geolocation API to get the coordinates from the IP address
+                return fetch(`https://freegeoip.app/json/${ipAddress}`)
+                    .then(response => response.json())
+                    .then(geoData => {
+                        return {
+                            ipAddress,
+                            latitude: geoData.latitude,
+                            longitude: geoData.longitude
+                        };
+                    });
+            })
             .catch(error => console.error('Error:', error));
     }
 
     Promise.all(nameServers.map(function(nameServer, index) {
-        return getIP(nameServer).then(ipAddress => {
-            return { ipAddress, index, nameServer, location: nameServerLocations[index] };
+        return getIP(nameServer).then(ipData => {
+            return { 
+                ipAddress: ipData.ipAddress, 
+                latitude: ipData.latitude, 
+                longitude: ipData.longitude, 
+                nameServer, 
+                location: nameServerLocations[index] 
+            };
         });
     })).then(results => {
         results.forEach(result => {
@@ -66,8 +79,8 @@ window.onload = function() {
                 className: 'dot',
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
-            var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            marker.bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
+            var marker = L.marker([result.latitude, result.longitude], { icon: dot }).addTo(map);
+            marker.bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${[result.latitude, result.longitude].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
         });
     });
 
