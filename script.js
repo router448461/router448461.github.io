@@ -40,6 +40,11 @@ window.onload = function() {
         [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
+    var nameServerLocations = [
+        'SYDNEY, AU', // NS 8.DYNU.COM
+        'SINGAPORE, SP' // NS 9.DYNU.COM
+    ];
+
     function formatIP(ip) {
         return ip;
     }
@@ -53,7 +58,7 @@ window.onload = function() {
 
     Promise.all(nameServers.map(function(nameServer, index) {
         return getIP(nameServer).then(ipAddress => {
-            return { ipAddress, index, nameServer };
+            return { ipAddress, index, nameServer, location: nameServerLocations[index] };
         });
     })).then(results => {
         results.forEach(result => {
@@ -62,7 +67,7 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             L.marker(nameServerCoords[result.index], { icon: dot })
-                .bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()}</span>`, { permanent: false })
+                .bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: false })
                 .addTo(map);
         });
     });
