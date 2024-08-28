@@ -143,9 +143,9 @@ body, html {
     box-shadow: none !important;
 }
 
-/* Styles for the red dot */
+/* Styles for the blinking green dot */
 .dot div {
-    background-color: #ff0000;
+    background-color: #00ff00;  /* Changed from #ff0000 to #00ff00 */
     width: 10px;
     height: 10px;
     border-radius: 50%;
