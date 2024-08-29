@@ -100,7 +100,7 @@ window.onload = function() {
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
             var tooltipContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindTooltip(`<span class="visitor-tooltip" style="color: #00ff00">${tooltipContent}</span>`, { permanent: true, direction: "right", offset: [10, -10], className: "myCSSClass" }); // Adjust offset to position tooltip below the dot
+            marker.bindTooltip(`<span class="visitor-tooltip" style="color: #00ff00">${tooltipContent}</span>`, { permanent: true, direction: "bottom", offset: [0, -10], className: "myCSSClass" }); // Adjust offset to position tooltip below the dot
         })
         .catch(error => console.error('Error:', error));
 
