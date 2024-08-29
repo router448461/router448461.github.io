@@ -33,25 +33,34 @@ window.onload = function() {
     var nameServers = [
         '111.220.1.1', // nc1.dns.oss-core.net
         'ns8.dynu.com', // AU, SYDNEY
-        'ns9.dynu.com'  // SG, SINGAPORE
+        'ns9.dynu.com',  // SG, SINGAPORE
+        'dawn.ns.cloudflare.com', // San Francisco, USA
+        'peter.ns.cloudflare.com' // London, UK
     ];
 
     var nameServerCoords = [
         [-33.865143, 151.209900], // nc1.dns.oss-core.net
         [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.352083, 103.819839]    // NS 9.DYNU.COM // SG, SINGAPORE
+        [1.352083, 103.819839],   // NS 9.DYNU.COM // SG, SINGAPORE
+        [37.7749, -122.4194],     // dawn.ns.cloudflare.com
+        [51.5074, -0.1278]        // peter.ns.cloudflare.com
     ];
 
     var nameServerLocations = [
         'SYDNEY, AU', // nc1.dns.oss-core.net
         'SYDNEY, AU', // NS 8.DYNU.COM
-        'SINGAPORE, SP' // NS 9.DYNU.COM
+        'SINGAPORE, SP', // NS 9.DYNU.COM
+        'SAN FRANCISCO, US', // dawn.ns.cloudflare.com
+        'LONDON, UK' // peter.ns.cloudflare.com
     ];
 
     function getIP(nameServer) {
         // If the nameServer is an IP address, return the hostname directly
         if (nameServer === '111.220.1.1') {
             return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
+        } else if (nameServer === 'dawn.ns.cloudflare.com' || nameServer === 'peter.ns.cloudflare.com') {
+            // Replace with actual IP addresses
+            return Promise.resolve({ ipAddress: '0.0.0.0', hostname: nameServer });
         }
 
         // Otherwise, perform a DNS lookup
