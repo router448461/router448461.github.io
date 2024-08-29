@@ -58,9 +58,12 @@ window.onload = function() {
         // If the nameServer is an IP address, return the hostname directly
         if (nameServer === '111.220.1.1') {
             return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
-        } else if (nameServer === 'dawn.ns.cloudflare.com' || nameServer === 'peter.ns.cloudflare.com') {
-            // Replace with actual IP addresses
-            return Promise.resolve({ ipAddress: '0.0.0.0', hostname: nameServer });
+        } else if (nameServer === 'dawn.ns.cloudflare.com') {
+            // Replace with actual IP address
+            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer }); // IP address for dawn.ns.cloudflare.com
+        } else if (nameServer === 'peter.ns.cloudflare.com') {
+            // Replace with actual IP address
+            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer }); // IP address for peter.ns.cloudflare.com
         }
 
         // Otherwise, perform a DNS lookup
