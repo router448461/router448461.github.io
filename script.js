@@ -51,19 +51,19 @@ window.onload = function() {
     function getIP(nameServer) {
         // If the nameServer is an IP address, return the hostname directly
         if (nameServer === '111.220.1.1') {
-            return Promise.resolve('nc1.dns.oss-core.net');
+            return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
         }
 
         // Otherwise, perform a DNS lookup
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => data.Answer[0].data)
+            .then(data => ({ ipAddress: data.Answer[0].data, hostname: nameServer }))
             .catch(error => console.error('Error:', error));
     }
 
     Promise.all(nameServers.map(function(nameServer, index) {
-        return getIP(nameServer).then(ipAddress => {
-            return { ipAddress, index, nameServer, location: nameServerLocations[index] };
+        return getIP(nameServer).then(result => {
+            return { ...result, index, location: nameServerLocations[index] };
         });
     })).then(results => {
         results.forEach(result => {
@@ -72,8 +72,8 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            var tooltipDirection = result.nameServer === '111.220.1.1' ? "left" : "right";
-            var tooltipContent = result.nameServer === '111.220.1.1' ? `${result.ipAddress.toUpperCase()}<br>${result.location}` : `IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}`;
+            var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
+            var tooltipContent = `IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
             marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
         });
     });
