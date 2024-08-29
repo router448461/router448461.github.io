@@ -93,19 +93,6 @@ window.onload = function() {
     fetch('http://ip-api.com/json/')
         .then(response => response.json())
         .then(data => {
-            var visitorInfo = document.createElement('div');
-            visitorInfo.style.position = 'absolute';
-            visitorInfo.style.bottom = '10px';
-            visitorInfo.style.right = '10px';
-            visitorInfo.style.color = '#00ff00'; // Change color to green
-            visitorInfo.style.zIndex = '1002';
-            visitorInfo.innerHTML = `
-                IP: ${data.query}<br>
-                Location: ${data.city}, ${data.regionName}, ${data.country}<br>
-                Coordinates: ${data.lat}, ${data.lon}
-            `;
-            document.body.appendChild(visitorInfo);
-
             // Add a green dot for the visitor's location
             var dot = L.divIcon({
                 className: 'dot',
@@ -113,7 +100,7 @@ window.onload = function() {
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
             var tooltipContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindTooltip(`<span style="color: #00ff00">${tooltipContent}</span>`, { permanent: true, direction: "right", offset: [10, 0], className: "myCSSClass" });
+            marker.bindTooltip(`<span style="color: #00ff00">${tooltipContent}</span>`, { permanent: true, direction: "right", offset: [10, -10], className: "myCSSClass" }); // Adjust offset to position tooltip below the dot
         })
         .catch(error => console.error('Error:', error));
 
