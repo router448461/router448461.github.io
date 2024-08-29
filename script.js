@@ -67,7 +67,7 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            marker.bindTooltip(`<span style="color: #ff0000">${result.ipAddress}<br>${nameServerCoords[result.index].join(', ').toUpperCase()}<br>${result.nameServer.toUpperCase()} [${result.location}]</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
+            marker.bindTooltip(`<span style="color: #ff0000">IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}</span>`, { permanent: true, direction: "center", className: "myCSSClass" });
         });
     });
 
@@ -110,3 +110,4 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
+
