@@ -99,8 +99,8 @@ window.onload = function() {
                 html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
-            var tooltipContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindTooltip(`<span class="visitor-tooltip" style="color: #00ff00">${tooltipContent}</span>`, { permanent: true, direction: "bottom", offset: [0, -10], className: "myCSSClass" }); // Adjust offset to position tooltip below the dot
+            var popupContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, -10], className: "myCSSClass" }).openPopup(); // Adjust offset to position popup below the dot
         })
         .catch(error => console.error('Error:', error));
 
