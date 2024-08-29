@@ -73,7 +73,8 @@ window.onload = function() {
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
             var tooltipDirection = result.nameServer === '111.220.1.1' ? "left" : "right";
-            marker.bindTooltip(`<span style="color: #ff0000">IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
+            var tooltipContent = result.nameServer === '111.220.1.1' ? `${result.nameServer.toUpperCase()}<br>${result.location}` : `IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}`;
+            marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
         });
     });
 
