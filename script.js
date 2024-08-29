@@ -38,15 +38,15 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [-33.8678, 151.2073], // nc1.dns.oss-core.net
-        [-33.8678, 151.2073], // nc2.dns.oss-core.net
+        [-33.865143, 151.209900], // nc1.dns.oss-core.net
+        [1.352083, 103.819839],   // nc2.dns.oss-core.net
         [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
         [1.352083, 103.819839]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
         'SYDNEY, AU', // nc1.dns.oss-core.net
-        'SYDNEY, AU', // nc2.dns.oss-core.net
+        'SINGAPORE, SP', // nc2.dns.oss-core.net
         'SYDNEY, AU', // NS 8.DYNU.COM
         'SINGAPORE, SP' // NS 9.DYNU.COM
     ];
