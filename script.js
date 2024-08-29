@@ -1,21 +1,34 @@
 window.onload = function() {
     var map = L.map('map', {
-        minZoom: 1,
-        maxBounds: [
-            [-90, -180],
-            [90, 180]
-        ],
-        worldCopyJump: false,
+        zoomControl: false,
+        dragging: false,
+        attributionControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        worldCopyJump: true,
+        maxBounds: [[-90, -180], [90, 180]],
         maxBoundsViscosity: 1.0,
+        touchZoom: false,
     }).setView([0, 0], 2);
 
     var tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
-        noWrap: true,
-        bounds: [
-            [-90, -180],
-            [90, 180]
-        ]
+        attribution: '',
+        noWrap: false,
+        errorTileUrl: 'path/to/fallback-tile.png'
     }).addTo(map);
+
+    tileLayer.on('tileerror', function(error, tile) {
+        console.error('Tile loading error:', error);
+        console.error('Failed tile:', tile);
+    });
+
+    map.on('zoomend', function() {
+        map.setZoom(2);
+    });
+
+    map.scrollWheelZoom.disable();
 
     var nameServers = [
         '111.220.1.1', // nc1.dns.oss-core.net
@@ -42,14 +55,18 @@ window.onload = function() {
     ];
 
     function getIP(nameServer) {
+        // If the nameServer is an IP address, return the hostname directly
         if (nameServer === '111.220.1.1') {
             return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
         } else if (nameServer === 'dawn.ns.cloudflare.com') {
-            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer });
+            // Replace with actual IP address
+            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer }); // IP address for dawn.ns.cloudflare.com
         } else if (nameServer === 'peter.ns.cloudflare.com') {
-            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer });
+            // Replace with actual IP address
+            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer }); // IP address for peter.ns.cloudflare.com
         }
 
+        // Otherwise, perform a DNS lookup
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
             .then(data => ({ ipAddress: data.Answer[0].data, hostname: nameServer }))

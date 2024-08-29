@@ -1,6 +1,5 @@
-body, html, #map {
+body, html {
     height: 100%;
-    width: 100%;
     margin: 0;
     padding: 0;
     -webkit-user-select: none;  /* Chrome, Safari and Opera */
