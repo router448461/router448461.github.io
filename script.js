@@ -32,21 +32,18 @@ window.onload = function() {
 
     var nameServers = [
         '111.220.1.1', // nc1.dns.oss-core.net
-        '111.220.2.2', // nc2.dns.oss-core.net
         'ns8.dynu.com', // AU, SYDNEY
         'ns9.dynu.com'  // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
         [-33.865143, 151.209900], // nc1.dns.oss-core.net
-        [1.352083, 103.819839],   // nc2.dns.oss-core.net
         [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
         [1.352083, 103.819839]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
         'SYDNEY, AU', // nc1.dns.oss-core.net
-        'SINGAPORE, SP', // nc2.dns.oss-core.net
         'SYDNEY, AU', // NS 8.DYNU.COM
         'SINGAPORE, SP' // NS 9.DYNU.COM
     ];
@@ -75,7 +72,8 @@ window.onload = function() {
                 html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            marker.bindTooltip(`<span style="color: #ff0000">IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}</span>`, { permanent: true, direction: "right", offset: [10, 0], className: "myCSSClass" });
+            var tooltipDirection = result.nameServer === '111.220.1.1' ? "left" : "right";
+            marker.bindTooltip(`<span style="color: #ff0000">IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.nameServer.toUpperCase()}<br>${result.location}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
         });
     });
 
