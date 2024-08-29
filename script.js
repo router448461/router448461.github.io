@@ -31,28 +31,36 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
+        '111.220.1.1', // nc1.dns.oss-core.net
+        '111.220.2.2', // nc2.dns.oss-core.net
         'ns8.dynu.com', // AU, SYDNEY
         'ns9.dynu.com'  // SG, SINGAPORE
     ];
 
     var nameServerCoords = [
+        [-33.8678, 151.2073], // nc1.dns.oss-core.net
+        [-33.8678, 151.2073], // nc2.dns.oss-core.net
         [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
         [1.352083, 103.819839]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
+        'SYDNEY, AU', // nc1.dns.oss-core.net
+        'SYDNEY, AU', // nc2.dns.oss-core.net
         'SYDNEY, AU', // NS 8.DYNU.COM
         'SINGAPORE, SP' // NS 9.DYNU.COM
     ];
 
-    function formatIP(ip) {
-        return ip;
-    }
-
     function getIP(nameServer) {
+        // If the nameServer is an IP address, return it directly
+        if (/^\d+\.\d+\.\d+\.\d+$/.test(nameServer)) {
+            return Promise.resolve(nameServer);
+        }
+
+        // Otherwise, perform a DNS lookup
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
-            .then(data => formatIP(data.Answer[0].data))
+            .then(data => data.Answer[0].data)
             .catch(error => console.error('Error:', error));
     }
 
