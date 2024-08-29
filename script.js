@@ -36,8 +36,8 @@ window.onload = function() {
     ];
 
     var nameServerCoords = [
-        [-33.0000, 151.0000], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.0000, 103.0000]    // NS 9.DYNU.COM // SG, SINGAPORE
+        [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
+        [1.352083, 103.819839]    // NS 9.DYNU.COM // SG, SINGAPORE
     ];
 
     var nameServerLocations = [
@@ -110,3 +110,4 @@ window.onload = function() {
         }, 500);
     }, 3000);
 };
+
