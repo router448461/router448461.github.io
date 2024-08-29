@@ -53,16 +53,6 @@ body, html {
     animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-#ip-info {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    padding: 0px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 15px;
-    z-index: 1001;
-}
-
 @keyframes lineMoveVertical {
     from { left: 0; }
     to { left: 50%; }
@@ -141,4 +131,8 @@ body, html {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
+}
+
+.visitor-tooltip {
+    padding-bottom: 10px; /* Adjust as needed */
 }
