@@ -100,7 +100,7 @@ window.onload = function() {
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
             var popupContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, -10], className: "myCSSClass" }).openPopup(); // Adjust offset to position popup below the dot
+            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, 13], className: "myCSSClass" }).openPopup(); // Adjust offset to position popup below the dot
         })
         .catch(error => console.error('Error:', error));
 
