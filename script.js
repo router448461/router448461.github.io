@@ -96,6 +96,20 @@ window.onload = function() {
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
             var popupContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
             marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, 13], className: "myCSSClass" }).openPopup();
+
+            // Move visitor location data to the top right corner
+            var visitorInfo = document.createElement('div');
+            visitorInfo.id = 'visitor-info';
+            visitorInfo.innerHTML = popupContent;
+            visitorInfo.style.position = 'absolute';
+            visitorInfo.style.top = '10px';
+            visitorInfo.style.right = '10px';
+            visitorInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            visitorInfo.style.color = '#00ff00';
+            visitorInfo.style.padding = '10px';
+            visitorInfo.style.borderRadius = '5px';
+            visitorInfo.style.zIndex = '1001';
+            document.getElementById('map').appendChild(visitorInfo);
         })
         .catch(error => console.error('Error:', error));
 
