@@ -149,7 +149,6 @@ body, html {
     z-index: 1001;
 }
 
-/* Fallback styles for older browsers */
 .no-flexbox .line {
     display: block;
 }
