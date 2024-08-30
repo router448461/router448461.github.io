@@ -134,7 +134,7 @@ body, html {
 }
 
 .visitor-popup {
-    color: #4b5320 !important;
+    color: #00ff00 !important;
     padding-bottom: 13px;
 }
 
@@ -143,42 +143,8 @@ body, html {
     top: 10px;
     right: 10px;
     background-color: rgba(0, 0, 0, 0.5);
-    color: #4b5320;
+    color: #00ff00;
     padding: 10px;
     border-radius: 5px;
     z-index: 1001;
-}
-
-/* Fallback styles for older browsers */
-.no-flexbox .line {
-    display: block;
-}
-
-.no-flexbox .line-vertical, .no-flexbox .line-horizontal, .no-flexbox .line-vertical-bottom, .no-flexbox .line-horizontal-right {
-    width: 1px;
-    height: 1px;
-}
-
-.no-flexbox .line-vertical {
-    height: 100%;
-    left: 50%;
-    top: 0;
-}
-
-.no-flexbox .line-horizontal {
-    width: 100%;
-    top: 50%;
-    left: 0;
-}
-
-.no-flexbox .line-vertical-bottom {
-    height: 100%;
-    left: 50%;
-    bottom: 0;
-}
-
-.no-flexbox .line-horizontal-right {
-    width: 100%;
-    top: 50%;
-    right: 0;
 }

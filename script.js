@@ -86,7 +86,7 @@ window.onload = function() {
         });
     });
 
-    fetch('https://ip-api.com/json/')
+    fetch('http://ip-api.com/json/')
         .then(response => response.json())
         .then(data => {
             var dot = L.divIcon({
@@ -95,11 +95,13 @@ window.onload = function() {
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
+            // Move visitor location data to the top right corner inside the map element
             var visitorInfo = document.createElement('div');
             visitorInfo.id = 'visitor-info';
             visitorInfo.innerHTML = `${data.query}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
             document.getElementById('map').appendChild(visitorInfo);
 
+            // Translate IP address to name server
             fetch(`https://dns.google/resolve?name=${data.query}`)
                 .then(response => response.json())
                 .then(dnsData => {
