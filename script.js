@@ -77,7 +77,7 @@ window.onload = function() {
         results.forEach(result => {
             var dot = L.divIcon({
                 className: 'dot',
-                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
             var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
