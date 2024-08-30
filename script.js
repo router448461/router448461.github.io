@@ -81,7 +81,7 @@ window.onload = function() {
             });
             var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
             var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
-            var tooltipContent = `IP: ${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+            var tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
             marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
         });
     });
@@ -98,14 +98,14 @@ window.onload = function() {
             // Move visitor location data to the top right corner inside the map element
             var visitorInfo = document.createElement('div');
             visitorInfo.id = 'visitor-info';
-            visitorInfo.innerHTML = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+            visitorInfo.innerHTML = `${data.query}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
             document.getElementById('map').appendChild(visitorInfo);
 
             // Translate IP address to name server
             fetch(`https://dns.google/resolve?name=${data.query}`)
                 .then(response => response.json())
                 .then(dnsData => {
-                    visitorInfo.innerHTML = `IP: ${dnsData.Answer[0].data}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+                    visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
                 })
                 .catch(error => console.error('Error:', error));
         })
