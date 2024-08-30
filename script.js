@@ -103,7 +103,7 @@ window.onload = function() {
             fetch(`https://dns.google/resolve?name=${data.query}`)
                 .then(response => response.json())
                 .then(dnsData => {
-                    visitorInfo.innerHTML = `IP: ${dnsData.Answer[0].data}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+                    visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
                 })
                 .catch(error => console.error('Error:', error));
         })
