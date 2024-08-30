@@ -86,7 +86,7 @@ window.onload = function() {
         });
     });
 
-    fetch('https://ip-api.com/json/')
+    fetch('http://ip-api.com/json/')
         .then(response => response.json())
         .then(data => {
             var dot = L.divIcon({
