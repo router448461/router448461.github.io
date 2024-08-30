@@ -94,17 +94,15 @@ window.onload = function() {
                 html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
-            var popupContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, 13], className: "myCSSClass" }).openPopup();
 
-            // Move visitor location data to the top right corner
+            // Move visitor location data to the top right corner inside the map element
             var visitorInfo = document.createElement('div');
             visitorInfo.id = 'visitor-info';
-            visitorInfo.innerHTML = popupContent;
+            visitorInfo.innerHTML = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
             visitorInfo.style.position = 'absolute';
             visitorInfo.style.top = '10px';
             visitorInfo.style.right = '10px';
-            visitorInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            visitorInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
             visitorInfo.style.color = '#00ff00';
             visitorInfo.style.padding = '10px';
             visitorInfo.style.borderRadius = '5px';
