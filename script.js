@@ -31,42 +31,38 @@ window.onload = function() {
     map.scrollWheelZoom.disable();
 
     var nameServers = [
-        '111.220.1.1', // nc1.dns.oss-core.net
-        'ns8.dynu.com', // AU, SYDNEY
-        'ns9.dynu.com',  // SG, SINGAPORE
-        'dawn.ns.cloudflare.com', // San Francisco, USA
-        'peter.ns.cloudflare.com' // London, UK
+        'nc1.dns.oss-core.net',
+        'ns8.dynu.com',
+        'ns9.dynu.com',
+        'dawn.ns.cloudflare.com',
+        'peter.ns.cloudflare.com'
     ];
 
     var nameServerCoords = [
-        [-33.865143, 151.209900], // nc1.dns.oss-core.net
-        [-33.865143, 151.209900], // NS 8.DYNU.COM // AU, SYDNEY
-        [1.352083, 103.819839],   // NS 9.DYNU.COM // SG, SINGAPORE
-        [37.7749, -122.4194],     // dawn.ns.cloudflare.com
-        [51.5074, -0.1278]        // peter.ns.cloudflare.com
+        [-33.865143, 151.209900],
+        [-33.865143, 151.209900],
+        [1.352083, 103.819839],
+        [37.7749, -122.4194],
+        [51.5074, -0.1278]
     ];
 
     var nameServerLocations = [
-        'SYDNEY, AU', // nc1.dns.oss-core.net
-        'SYDNEY, AU', // NS 8.DYNU.COM
-        'SINGAPORE, SP', // NS 9.DYNU.COM
-        'SAN FRANCISCO, US', // dawn.ns.cloudflare.com
-        'LONDON, UK' // peter.ns.cloudflare.com
+        'SYDNEY, AU',
+        'SYDNEY, AU',
+        'SINGAPORE, SP',
+        'SAN FRANCISCO, US',
+        'LONDON, UK'
     ];
 
     function getIP(nameServer) {
-        // If the nameServer is an IP address, return the hostname directly
         if (nameServer === '111.220.1.1') {
             return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
         } else if (nameServer === 'dawn.ns.cloudflare.com') {
-            // Replace with actual IP address
-            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer }); // IP address for dawn.ns.cloudflare.com
+            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer });
         } else if (nameServer === 'peter.ns.cloudflare.com') {
-            // Replace with actual IP address
-            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer }); // IP address for peter.ns.cloudflare.com
+            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer });
         }
 
-        // Otherwise, perform a DNS lookup
         return fetch(`https://dns.google/resolve?name=${nameServer}`)
             .then(response => response.json())
             .then(data => ({ ipAddress: data.Answer[0].data, hostname: nameServer }))
@@ -93,14 +89,13 @@ window.onload = function() {
     fetch('http://ip-api.com/json/')
         .then(response => response.json())
         .then(data => {
-            // Add a green dot for the visitor's location
             var dot = L.divIcon({
                 className: 'dot',
                 html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
             var popupContent = `IP: ${data.query}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, 13], className: "myCSSClass" }).openPopup(); // Adjust offset to position popup below the dot
+            marker.bindPopup(`<span class="visitor-popup" style="color: #00ff00">${popupContent}</span>`, { offset: [0, 13], className: "myCSSClass" }).openPopup();
         })
         .catch(error => console.error('Error:', error));
 
