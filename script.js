@@ -91,7 +91,7 @@ window.onload = function() {
         .then(data => {
             var dot = L.divIcon({
                 className: 'dot',
-                html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+                html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 0.5s infinite;"> </div>`
             });
             var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
@@ -108,6 +108,14 @@ window.onload = function() {
             visitorInfo.style.borderRadius = '5px';
             visitorInfo.style.zIndex = '1001';
             document.getElementById('map').appendChild(visitorInfo);
+
+            // Translate IP address to name server
+            fetch(`https://dns.google/resolve?name=${data.query}`)
+                .then(response => response.json())
+                .then(dnsData => {
+                    visitorInfo.innerHTML = `IP: ${dnsData.Answer[0].data}<br>LAT: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+                })
+                .catch(error => console.error('Error:', error));
         })
         .catch(error => console.error('Error:', error));
 
