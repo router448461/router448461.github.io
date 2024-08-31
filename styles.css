@@ -27,40 +27,39 @@ body, html {
     z-index: 999;
     pointer-events: none;
     transition: all 0.3s ease;
-    animation: blink 1ms infinite;
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
-    width: 10px;
-    height: 10px;
+    width: 1px;
+    height: 1px;
 }
 
 #line-vertical {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 3s linear forwards, blink 1ms infinite;
+    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 3s linear forwards, blink 1ms infinite;
+    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 3s linear forwards, blink 1ms infinite;
+    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 3s linear forwards, blink 1ms infinite;
+    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 @keyframes lineMoveVertical {
@@ -81,6 +80,11 @@ body, html {
 @keyframes lineMoveHorizontalRight {
     from { top: 100%; }
     to { top: 50%; }
+}
+
+@keyframes stayVisible {
+    from { opacity: 1; }
+    to { opacity: 1; }
 }
 
 @keyframes blink {
@@ -160,8 +164,8 @@ body, html {
 }
 
 .no-flexbox .line-vertical, .no-flexbox .line-horizontal, .no-flexbox .line-vertical-bottom, .no-flexbox .line-horizontal-right {
-    width: 10px;
-    height: 10px;
+    width: 1px;
+    height: 1px;
 }
 
 .no-flexbox .line-vertical {
