@@ -7,13 +7,21 @@ body, html {
     -moz-user-select: none;     /* Firefox */
     -ms-user-select: none;      /* IE/Edge */
     user-select: none;          /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+    display: -webkit-box;       /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;          /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;       /* TWEENER - IE 10 */
+    display: -webkit-flex;      /* NEW - Chrome */
+    display: flex;              /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    justify-content: center;
+    align-items: center;
 }
 
 #map {
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     margin: 0;  /* Ensure no margin */
     padding: 0;  /* Ensure no padding */
+    flex: 1;  /* Ensure the map takes up all available space */
 }
 
 .line {
