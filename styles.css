@@ -3,6 +3,7 @@
     --line-color: #ff0000;
     --visitor-info-bg: rgba(0, 0, 0, 0.5);
     --visitor-info-color: #00ff00;
+    --military-green: #4b5320; /* Added military green color */
 }
 
 body, html {
