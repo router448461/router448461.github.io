@@ -1,3 +1,10 @@
+:root {
+    --background-color: #000000;
+    --line-color: #ff0000;
+    --visitor-info-bg: rgba(0, 0, 0, 0.5);
+    --visitor-info-color: #00ff00;
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -6,6 +13,7 @@ body, html {
     -moz-user-select: none;     /* Firefox */
     -ms-user-select: none;      /* IE/Edge */
     user-select: none;          /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+    background-color: var(--background-color);
 }
 
 #map {
@@ -15,9 +23,10 @@ body, html {
 
 .line {
     position: absolute;
-    background-color: #ff0000;
+    background-color: var(--line-color);
     z-index: 999;
     pointer-events: none;
+    transition: all 0.3s ease;
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
@@ -92,6 +101,7 @@ body, html {
     z-index: 10000;
     pointer-events: none;
     background-color: transparent;
+    transition: background-color 0.5s ease-in-out;
 }
 
 .leaflet-tooltip {
@@ -102,7 +112,7 @@ body, html {
 }
 
 .leaflet-tooltip span {
-    color: #ff0000 !important;
+    color: var(--line-color) !important;
 }
 
 .leaflet-tooltip:before,
@@ -134,7 +144,7 @@ body, html {
 }
 
 .visitor-popup {
-    color: #00ff00 !important;
+    color: var(--visitor-info-color) !important;
     padding-bottom: 13px;
 }
 
@@ -142,8 +152,8 @@ body, html {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #00ff00;
+    background-color: var(--visitor-info-bg);
+    color: var(--visitor-info-color);
     padding: 10px;
     border-radius: 5px;
     z-index: 1001;
