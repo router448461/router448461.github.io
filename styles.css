@@ -1,3 +1,9 @@
+:root {
+    --line-color: #ff0000;
+    --visitor-info-bg: rgba(0, 0, 0, 0.5);
+    --visitor-info-color: #00ff00;
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -13,64 +19,51 @@ body, html {
     width: 100vw;
 }
 
-.line {
+.line, .no-flexbox .line {
     position: absolute;
-    background-color: #ff0000;
+    background-color: var(--line-color);
     z-index: 999;
     pointer-events: none;
-}
-
-#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
     width: 1px;
     height: 1px;
 }
 
-#line-vertical {
+.no-flexbox .line-vertical, .no-flexbox .line-horizontal, .no-flexbox .line-vertical-bottom, .no-flexbox .line-horizontal-right {
+    width: 1px;
+    height: 1px;
+}
+
+.no-flexbox .line-vertical {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-#line-horizontal {
+.no-flexbox .line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-#line-vertical-bottom {
+.no-flexbox .line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-#line-horizontal-right {
+.no-flexbox .line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-@keyframes lineMoveVertical {
-    from { left: 0; }
-    to { left: 50%; }
+#line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
+    animation: lineMove 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
-@keyframes lineMoveHorizontal {
-    from { top: 0; }
-    to { top: 50%; }
-}
-
-@keyframes lineMoveVerticalBottom {
-    from { left: 100%; }
-    to { left: 50%; }
-}
-
-@keyframes lineMoveHorizontalRight {
-    from { top: 100%; }
-    to { top: 50%; }
+@keyframes lineMove {
+    from { transform: translate(0, 0); }
+    to { transform: translate(50%, 50%); }
 }
 
 @keyframes stayVisible {
@@ -102,7 +95,7 @@ body, html {
 }
 
 .leaflet-tooltip span {
-    color: #ff0000 !important;
+    color: var(--line-color) !important;
 }
 
 .leaflet-tooltip:before,
@@ -134,7 +127,7 @@ body, html {
 }
 
 .visitor-popup {
-    color: #00ff00 !important;
+    color: var(--visitor-info-color) !important;
     padding-bottom: 13px;
 }
 
@@ -142,42 +135,9 @@ body, html {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #00ff00;
+    background-color: var(--visitor-info-bg);
+    color: var(--visitor-info-color);
     padding: 10px;
     border-radius: 5px;
     z-index: 1001;
-}
-
-.no-flexbox .line {
-    display: block;
-}
-
-.no-flexbox .line-vertical, .no-flexbox .line-horizontal, .no-flexbox .line-vertical-bottom, .no-flexbox .line-horizontal-right {
-    width: 1px;
-    height: 1px;
-}
-
-.no-flexbox .line-vertical {
-    height: 100%;
-    left: 50%;
-    top: 0;
-}
-
-.no-flexbox .line-horizontal {
-    width: 100%;
-    top: 50%;
-    left: 0;
-}
-
-.no-flexbox .line-vertical-bottom {
-    height: 100%;
-    left: 50%;
-    bottom: 0;
-}
-
-.no-flexbox .line-horizontal-right {
-    width: 100%;
-    top: 50%;
-    right: 0;
 }
