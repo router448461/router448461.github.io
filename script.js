@@ -103,7 +103,7 @@ window.onload = async function() {
         const data = await response.json();
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
         });
         const marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
