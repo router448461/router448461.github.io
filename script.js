@@ -69,22 +69,20 @@ window.onload = function() {
             .catch(error => console.error('Error:', error));
     }
 
-    function createMarker(map, coords, color, tooltipContent, tooltipDirection) {
-        var dot = L.divIcon({
-            className: 'dot',
-            html: `<div style="background-color: ${color}; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
-        });
-        var marker = L.marker(coords, { icon: dot }).addTo(map);
-        marker.bindTooltip(`<span style="color: ${color}">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
-    }
-
     Promise.all(nameServers.map(function(nameServer, index) {
         return getIP(nameServer).then(result => {
             return { ...result, index, location: nameServerLocations[index] };
         });
     })).then(results => {
         results.forEach(result => {
-            createMarker(map, nameServerCoords[result.index], '#ff0000', `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`, result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right");
+            var dot = L.divIcon({
+                className: 'dot',
+                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            });
+            var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
+            var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
+            var tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+            marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
         });
     });
 
