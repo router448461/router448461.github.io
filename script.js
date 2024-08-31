@@ -1,4 +1,4 @@
-window.onload = function() {
+window.onload = async function() {
     var map = L.map('map', {
         zoomControl: false,
         dragging: false,
@@ -54,60 +54,60 @@ window.onload = function() {
         'LONDON, UK'
     ];
 
-    function getIP(nameServer) {
+    async function getIP(nameServer) {
         if (nameServer === '111.220.1.1') {
-            return Promise.resolve({ ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' });
+            return { ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' };
         } else if (nameServer === 'dawn.ns.cloudflare.com') {
-            return Promise.resolve({ ipAddress: '173.245.58.106', hostname: nameServer });
+            return { ipAddress: '173.245.58.106', hostname: nameServer };
         } else if (nameServer === 'peter.ns.cloudflare.com') {
-            return Promise.resolve({ ipAddress: '173.245.59.136', hostname: nameServer });
+            return { ipAddress: '173.245.59.136', hostname: nameServer };
         }
 
-        return fetch(`https://dns.google/resolve?name=${nameServer}`)
-            .then(response => response.json())
-            .then(data => ({ ipAddress: data.Answer[0].data, hostname: nameServer }))
-            .catch(error => console.error('Error:', error));
+        try {
+            const response = await fetch(`https://dns.google/resolve?name=${nameServer}`);
+            const data = await response.json();
+            return { ipAddress: data.Answer[0].data, hostname: nameServer };
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
-    Promise.all(nameServers.map(function(nameServer, index) {
-        return getIP(nameServer).then(result => {
-            return { ...result, index, location: nameServerLocations[index] };
+    const results = await Promise.all(nameServers.map(async (nameServer, index) => {
+        const result = await getIP(nameServer);
+        return { ...result, index, location: nameServerLocations[index] };
+    }));
+
+    results.forEach(result => {
+        var dot = L.divIcon({
+            className: 'dot',
+            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
-    })).then(results => {
-        results.forEach(result => {
-            var dot = L.divIcon({
-                className: 'dot',
-                html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
-            });
-            var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-            var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
-            var tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
-            marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
-        });
+        var marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
+        var tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
+        var tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+        marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
-    fetch('http://ip-api.com/json/')
-        .then(response => response.json())
-        .then(data => {
-            var dot = L.divIcon({
-                className: 'dot',
-                html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
-            });
-            var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
+    try {
+        const response = await fetch('http://ip-api.com/json/');
+        const data = await response.json();
+        var dot = L.divIcon({
+            className: 'dot',
+            html: `<div style="background-color: #00ff00; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+        });
+        var marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
-            var visitorInfo = document.createElement('div');
-            visitorInfo.id = 'visitor-info';
-            visitorInfo.innerHTML = `${data.query}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-            document.getElementById('map').appendChild(visitorInfo);
+        var visitorInfo = document.createElement('div');
+        visitorInfo.id = 'visitor-info';
+        visitorInfo.innerHTML = `${data.query}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+        document.getElementById('map').appendChild(visitorInfo);
 
-            fetch(`https://dns.google/resolve?name=${data.query}`)
-                .then(response => response.json())
-                .then(dnsData => {
-                    visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-                })
-                .catch(error => console.error('Error:', error));
-        })
-        .catch(error => console.error('Error:', error));
+        const dnsResponse = await fetch(`https://dns.google/resolve?name=${data.query}`);
+        const dnsData = await dnsResponse.json();
+        visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+    } catch (error) {
+        console.error('Error:', error);
+    }
 
     setTimeout(function() {
         location.reload();
