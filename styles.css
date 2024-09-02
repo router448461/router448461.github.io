@@ -36,28 +36,28 @@ body, html {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3s;
+    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3.5s;
 }
 
 #line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3s;
+    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3.5s;
 }
 
 #line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3s;
+    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3.5s;
 }
 
 #line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3s;
+    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite 3.5s;
 }
 
 @keyframes lineMoveVertical {
@@ -173,3 +173,4 @@ body, html {
     top: 50%;
     right: 0;
 }
+
