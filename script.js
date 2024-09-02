@@ -33,22 +33,19 @@ window.onload = async function() {
     const nameServers = [
         'ns8.dynu.com',
         'ns9.dynu.com',
-        'dawn.ns.cloudflare.com',
-        'peter.ns.cloudflare.com'
+        'dawn.ns.cloudflare.com'
     ];
 
     const nameServerCoords = [
         [-33.865143, 151.209900],
         [1.352083, 103.819839],
-        [37.7749, -122.4194],
-        [51.5074, -0.1278]
+        [37.7749, -122.4194]
     ];
 
     const nameServerLocations = [
         'SYDNEY, AU',
         'SINGAPORE, SP',
-        'SAN FRANCISCO, US',
-        'LONDON, UK'
+        'SAN FRANCISCO, US'
     ];
 
     async function getIP(nameServer) {
