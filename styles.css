@@ -1,8 +1,6 @@
 :root {
     --background-color: #000000;
     --line-color: #ff0000;
-    --visitor-info-bg: rgba(0, 0, 0, 0.5);
-    --visitor-info-color: #00ff00;
     --military-green: #4b5320; /* Added military green color */
 }
 
@@ -142,22 +140,6 @@ body, html {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-}
-
-.visitor-popup {
-    color: var(--visitor-info-color) !important;
-    padding-bottom: 13px;
-}
-
-#visitor-info {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: var(--visitor-info-bg);
-    color: var(--visitor-info-color);
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1001;
 }
 
 .no-flexbox .line {
