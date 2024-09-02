@@ -62,20 +62,13 @@ window.onload = async function() {
 
     // Function to get IP address of a name server
     async function getIP(nameServer) {
-        if (nameServer === '111.220.1.1') {
-            return { ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' };
-        } else if (nameServer === 'dawn.ns.cloudflare.com') {
-            return { ipAddress: '173.245.58.106', hostname: nameServer };
-        } else if (nameServer === 'peter.ns.cloudflare.com') {
-            return { ipAddress: '173.245.59.136', hostname: nameServer };
-        }
-
         try {
             const response = await fetch(`https://dns.google/resolve?name=${nameServer}`);
             const data = await response.json();
             return { ipAddress: data.Answer[0].data, hostname: nameServer };
         } catch (error) {
-            console.error('Error:', error);
+            console.error(`Error fetching IP for ${nameServer}:`, error);
+            return { ipAddress: 'N/A', hostname: nameServer };
         }
     }
 
