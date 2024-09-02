@@ -67,12 +67,12 @@ window.onload = async function() {
     results.forEach((result, index) => {
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         const marker = L.marker(nameServerCoords[index], { icon: dot }).addTo(map);
         const tooltipDirection = "right";
         const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[index][0]}<br>${nameServerCoords[index][1]}<br>${result.hostname.toUpperCase()}<br>${nameServerLocations[index]}`;
-        marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
+        marker.bindTooltip(`<span style="color: var(--military-green)">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
     try {
@@ -80,7 +80,7 @@ window.onload = async function() {
         const data = await response.json();
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         const marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
