@@ -8,18 +8,15 @@
         <meta name="keywords" content="2001">
         <link rel="stylesheet" href="styles.css"/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+        <script src="script.js" defer></script>
     </head>
     <body>
-        <main id="map" aria-label="Map">
-            <section id="visitor-info" aria-label="Visitor Information"></section>
-        </main>
-        <div id="line-vertical" class="line" aria-label="Vertical Line"></div>
-        <div id="line-horizontal" class="line" aria-label="Horizontal Line"></div>
-        <div id="line-vertical-bottom" class="line" aria-label="Bottom Vertical Line"></div>
-        <div id="line-horizontal-right" class="line" aria-label="Right Horizontal Line"></div>
-        <footer id="ip-info" aria-label="IP Information"></footer>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <script src="script.js"></script>
+        <main id="map" aria-label="Map"></main>
+        <hr id="line-vertical" class="line" aria-label="Vertical Line">
+        <hr id="line-horizontal" class="line" aria-label="Horizontal Line">
+        <hr id="line-vertical-bottom" class="line" aria-label="Bottom Vertical Line">
+        <hr id="line-horizontal-right" class="line" aria-label="Right Horizontal Line">
         <div id="flash-layer" aria-label="Flash Layer"></div>
     </body>
 </html>
