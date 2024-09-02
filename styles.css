@@ -28,6 +28,7 @@ body, html {
     z-index: 999;
     pointer-events: none;
     transition: all 0.3s ease;
+    will-change: transform, opacity;
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
