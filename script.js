@@ -31,7 +31,6 @@ window.onload = async function() {
     map.scrollWheelZoom.disable();
 
     const nameServers = [
-        'nc1.dns.oss-core.net',
         'ns8.dynu.com',
         'ns9.dynu.com',
         'dawn.ns.cloudflare.com',
@@ -40,7 +39,6 @@ window.onload = async function() {
 
     const nameServerCoords = [
         [-33.865143, 151.209900],
-        [-33.865143, 151.209900],
         [1.352083, 103.819839],
         [37.7749, -122.4194],
         [51.5074, -0.1278]
@@ -48,16 +46,13 @@ window.onload = async function() {
 
     const nameServerLocations = [
         'SYDNEY, AU',
-        'SYDNEY, AU',
         'SINGAPORE, SP',
         'SAN FRANCISCO, US',
         'LONDON, UK'
     ];
 
     async function getIP(nameServer) {
-        if (nameServer === '111.220.1.1') {
-            return { ipAddress: nameServer, hostname: 'nc1.dns.oss-core.net' };
-        } else if (nameServer === 'dawn.ns.cloudflare.com') {
+        if (nameServer === 'dawn.ns.cloudflare.com') {
             return { ipAddress: '173.245.58.106', hostname: nameServer };
         } else if (nameServer === 'peter.ns.cloudflare.com') {
             return { ipAddress: '173.245.59.136', hostname: nameServer };
@@ -83,31 +78,10 @@ window.onload = async function() {
             html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-        const tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
+        const tooltipDirection = "right";
         const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
-
-    try {
-        const response = await fetch('http://ip-api.com/json/');
-        const data = await response.json();
-        const dot = L.divIcon({
-            className: 'dot',
-            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
-        });
-        const marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
-
-        const visitorInfo = document.createElement('div');
-        visitorInfo.id = 'visitor-info';
-        visitorInfo.innerHTML = `${data.query}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-        document.getElementById('map').appendChild(visitorInfo);
-
-        const dnsResponse = await fetch(`https://dns.google/resolve?name=${data.query}`);
-        const dnsData = await dnsResponse.json();
-        visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>${data.lat}<br>${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
-    } catch (error) {
-        console.error('Error:', error);
-    }
 
     setTimeout(() => {
         location.reload();
