@@ -62,19 +62,16 @@ window.onload = async function() {
         }
     }
 
-    const results = await Promise.all(nameServers.map(async (nameServer, index) => {
-        const result = await getIP(nameServer);
-        return { ...result, index, location: nameServerLocations[index] };
-    }));
+    const results = await Promise.all(nameServers.map(getIP));
 
-    results.forEach(result => {
+    results.forEach((result, index) => {
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
         });
-        const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
+        const marker = L.marker(nameServerCoords[index], { icon: dot }).addTo(map);
         const tooltipDirection = "right";
-        const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+        const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[index][0]}<br>${nameServerCoords[index][1]}<br>${result.hostname.toUpperCase()}<br>${nameServerLocations[index]}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
