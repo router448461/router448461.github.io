@@ -37,7 +37,6 @@ window.onload = async function() {
 
     // Name servers and their coordinates
     const nameServers = [
-        'nc1.dns.oss-core.net',
         'ns8.dynu.com',
         'ns9.dynu.com',
         'dawn.ns.cloudflare.com',
@@ -46,14 +45,12 @@ window.onload = async function() {
 
     const nameServerCoords = [
         [-33.865143, 151.209900],
-        [-33.865143, 151.209900],
         [1.352083, 103.819839],
         [37.7749, -122.4194],
         [51.5074, -0.1278]
     ];
 
     const nameServerLocations = [
-        'SYDNEY, AU',
         'SYDNEY, AU',
         'SINGAPORE, SP',
         'SAN FRANCISCO, US',
@@ -85,14 +82,14 @@ window.onload = async function() {
             html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-        const tooltipDirection = result.hostname === 'nc1.dns.oss-core.net' ? "left" : "right";
+        const tooltipDirection = "right";
         const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
     // Get visitor's IP information and add marker
     try {
-        const response = await fetch('http://ip-api.com/json/');
+        const response = await fetch('https://ip-api.com/json/');
         const data = await response.json();
         const dot = L.divIcon({
             className: 'dot',
