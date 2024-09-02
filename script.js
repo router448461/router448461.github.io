@@ -1,5 +1,4 @@
 window.onload = async function() {
-    // Initialize the map
     const map = L.map('map', {
         zoomControl: false,
         dragging: false,
@@ -14,28 +13,23 @@ window.onload = async function() {
         touchZoom: false,
     }).setView([0, 0], 2);
 
-    // Add tile layer to the map
     const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
         attribution: '',
         noWrap: false,
         errorTileUrl: 'path/to/fallback-tile.png'
     }).addTo(map);
 
-    // Handle tile loading errors
     tileLayer.on('tileerror', (error, tile) => {
         console.error('Tile loading error:', error);
         console.error('Failed tile:', tile);
     });
 
-    // Prevent zooming
     map.on('zoomend', () => {
         map.setZoom(2);
     });
 
-    // Disable scroll wheel zoom
     map.scrollWheelZoom.disable();
 
-    // Name servers and their coordinates
     const nameServers = [
         'ns8.dynu.com',
         'ns9.dynu.com',
@@ -57,7 +51,6 @@ window.onload = async function() {
         'LONDON, UK'
     ];
 
-    // Function to get IP address of a name server
     async function getIP(nameServer) {
         try {
             const response = await fetch(`https://dns.google/resolve?name=${nameServer}`);
@@ -69,13 +62,11 @@ window.onload = async function() {
         }
     }
 
-    // Get IP addresses for all name servers
     const results = await Promise.all(nameServers.map(async (nameServer, index) => {
         const result = await getIP(nameServer);
         return { ...result, index, location: nameServerLocations[index] };
     }));
 
-    // Add markers for name servers
     results.forEach(result => {
         const dot = L.divIcon({
             className: 'dot',
@@ -87,7 +78,6 @@ window.onload = async function() {
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
-    // Get visitor's IP information and add marker
     try {
         const response = await fetch('https://ip-api.com/json/');
         const data = await response.json();
@@ -109,12 +99,10 @@ window.onload = async function() {
         console.error('Error:', error);
     }
 
-    // Reload the page every 5 minutes
     setTimeout(() => {
         location.reload();
     }, 300000);
 
-    // Adjust map size on window resize
     window.addEventListener('resize', () => {
         map.invalidateSize();
     });
@@ -123,7 +111,6 @@ window.onload = async function() {
         map.invalidateSize();
     }, 100);
 
-    // Flash effect on page load
     setTimeout(() => {
         const flashLayer = document.getElementById('flash-layer');
         flashLayer.style.backgroundColor = '#ffffff';
