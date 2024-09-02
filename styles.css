@@ -29,6 +29,7 @@ body, html {
     pointer-events: none;
     transition: all 0.3s ease;
     will-change: transform, opacity;
+    animation: blink 1s infinite; /* Add blink animation */
 }
 
 #line-vertical, #line-horizontal, #line-vertical-bottom, #line-horizontal-right {
@@ -40,28 +41,28 @@ body, html {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards;
+    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite; /* Add blink animation */
 }
 
 #line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards;
+    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite; /* Add blink animation */
 }
 
 #line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards;
+    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite; /* Add blink animation */
 }
 
 #line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
+    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards, blink 1s infinite; /* Add blink animation */
 }
 
 @keyframes lineMoveVertical {
