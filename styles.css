@@ -16,7 +16,8 @@ body, html {
 
 .line {
     position: absolute;
-    background-color: #000;
+    background-color: #ff0000;
+    animation: scroll 1s linear infinite, flash 1s linear infinite;
 }
 
 #line-vertical {
@@ -56,10 +57,24 @@ body, html {
     background-color: transparent;
 }
 
+.dot {
+    animation: flash 1s linear infinite;
+}
+
 .myCSSClass {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
     color: #fff;
     padding: 5px;
     border-radius: 5px;
     font-size: 12px;
+}
+
+@keyframes scroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-100%); }
+}
+
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
