@@ -35,8 +35,7 @@ window.onload = async function() {
         'ns9.dynu.com',
         'dawn.ns.cloudflare.com',
         'peter.ns.cloudflare.com',
-        '61.9.188.33', // Telstra Primary DNS Tasmania
-        '61.9.134.49'  // Telstra Secondary DNS Tasmania
+        '61.9.188.33' // Telstra Primary DNS Tasmania
     ];
 
     const nameServerCoords = [
@@ -44,8 +43,7 @@ window.onload = async function() {
         [1.352083, 103.819839],
         [37.7749, -122.4194],
         [51.5074, -0.1278],
-        [-42.8821, 147.3272], // Coordinates for Telstra Primary DNS Tasmania
-        [-42.8821, 147.3272]  // Coordinates for Telstra Secondary DNS Tasmania
+        [-42.8821, 147.3272] // Coordinates for Telstra Primary DNS Tasmania
     ];
 
     const nameServerLocations = [
@@ -53,7 +51,6 @@ window.onload = async function() {
         'SINGAPORE, SP',
         'SAN FRANCISCO, US',
         'LONDON, UK',
-        'HOBART, TAS',
         'HOBART, TAS'
     ];
 
@@ -64,8 +61,6 @@ window.onload = async function() {
             return { ipAddress: '173.245.59.136', hostname: nameServer };
         } else if (nameServer === '61.9.188.33') {
             return { ipAddress: '61.9.188.33', hostname: 'telstra-primary-dns-tasmania' };
-        } else if (nameServer === '61.9.134.49') {
-            return { ipAddress: '61.9.134.49', hostname: 'telstra-secondary-dns-tasmania' };
         }
 
         try {
@@ -89,7 +84,7 @@ window.onload = async function() {
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
         const tooltipDirection = "right";
-        const tooltipContent = `${result.ipAddress}<br>${nameServerCoords[result.index][0]}<br>${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+        const tooltipContent = `${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toLowerCase()}<br>Hobart, ${result.location.split(', ')[1]}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
