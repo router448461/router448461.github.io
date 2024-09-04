@@ -89,7 +89,7 @@ window.onload = async function() {
     results.forEach(result => {
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%; animation: blink 1s infinite;"> </div>`
+            html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%;"></div>`
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
         const tooltipDirection = result.hostname === '61.9.188.33' ? "left" : "right";
@@ -103,7 +103,7 @@ window.onload = async function() {
         const data = await response.json();
         const dot = L.divIcon({
             className: 'dot',
-            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%; animation: blink 1ms infinite;"> </div>`
+            html: `<div style="background-color: var(--military-green); width: 10px; height: 10px; border-radius: 50%;"></div>`
         });
         const marker = L.marker([data.lat, data.lon], { icon: dot }).addTo(map);
 
