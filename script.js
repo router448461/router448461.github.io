@@ -51,7 +51,7 @@ window.onload = async function() {
         'SINGAPORE, SP',
         'SAN FRANCISCO, US',
         'LONDON, UK',
-        'HOBART, TAS'
+        'HOBART, AU'
     ];
 
     async function getIP(nameServer) {
@@ -84,7 +84,7 @@ window.onload = async function() {
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
         const tooltipDirection = "right";
-        const tooltipContent = `${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toLowerCase()}<br>Hobart, ${result.location.split(', ')[1]}`;
+        const tooltipContent = `${result.ipAddress}<br>LAT: ${nameServerCoords[result.index][0]} LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toLowerCase()}<br>${result.location}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
