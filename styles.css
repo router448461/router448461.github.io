@@ -17,7 +17,7 @@ body, html {
 .line {
     position: absolute;
     background-color: #ff0000;
-    animation: scroll 1s linear infinite, flash 1s linear infinite;
+    animation: scroll 1s linear forwards, flash 1s linear infinite 3s;
 }
 
 #line-vertical {
@@ -25,6 +25,7 @@ body, html {
     height: 100%;
     left: 50%;
     top: 0;
+    transform: translateX(-50%);
 }
 
 #line-horizontal {
@@ -32,6 +33,7 @@ body, html {
     width: 100%;
     top: 50%;
     left: 0;
+    transform: translateY(-50%);
 }
 
 #line-vertical-bottom {
@@ -39,6 +41,7 @@ body, html {
     height: 100%;
     left: 50%;
     bottom: 0;
+    transform: translateX(-50%);
 }
 
 #line-horizontal-right {
@@ -46,6 +49,7 @@ body, html {
     width: 100%;
     bottom: 50%;
     right: 0;
+    transform: translateY(50%);
 }
 
 #flash-layer {
@@ -58,7 +62,7 @@ body, html {
 }
 
 .dot {
-    animation: flash 1s linear infinite;
+    animation: flash 1s linear infinite 3s;
 }
 
 .myCSSClass {
@@ -70,8 +74,8 @@ body, html {
 }
 
 @keyframes scroll {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-100%); }
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(0); }
 }
 
 @keyframes flash {
