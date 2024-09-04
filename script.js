@@ -93,7 +93,7 @@ window.onload = async function() {
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
         const tooltipDirection = result.hostname === '61.9.188.33' ? "left" : "right";
-        const tooltipContent = `${result.ipAddress}<br>LAN: ${nameServerCoords[result.index][0]}<br>LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
+        const tooltipContent = `${result.ipAddress}<br>LAN: ${nameServerCoords[result.index][0]} LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
 
@@ -109,12 +109,12 @@ window.onload = async function() {
 
         const visitorInfo = document.createElement('div');
         visitorInfo.id = 'visitor-info';
-        visitorInfo.innerHTML = `${data.query}<br>LAN: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+        visitorInfo.innerHTML = `${data.query}<br>LAN: ${data.lat} LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
         document.getElementById('map').appendChild(visitorInfo);
 
         const dnsResponse = await fetch(`https://dns.google/resolve?name=${data.query}`);
         const dnsData = await dnsResponse.json();
-        visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>LAN: ${data.lat}<br>LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
+        visitorInfo.innerHTML = `${dnsData.Answer[0].data}<br>LAN: ${data.lat} LON: ${data.lon}<br>${data.as}<br>${data.city}, ${data.regionName}, ${data.country}`;
     } catch (error) {
         console.error('Error:', error);
     }
@@ -140,6 +140,10 @@ window.onload = async function() {
         flashLayer.style.transition = 'background-color 0.5s ease-in-out';
         setTimeout(() => {
             flashLayer.style.backgroundColor = 'transparent';
+            // Start blinking the red lines and dots
+            document.querySelectorAll('.dot, .line').forEach(element => {
+                element.style.animation = 'blink 1s infinite';
+            });
         }, 500);
     }, 3000);
 };
