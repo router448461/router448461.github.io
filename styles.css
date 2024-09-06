@@ -1,3 +1,11 @@
+:root {
+    --background-color: #000000;
+    --line-color: #ff0000;
+    --visitor-info-bg: rgba(0, 0, 0, 0.5);
+    --visitor-info-color: #00ff00;
+    --military-green: #4b5320; /* Added military green color */
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -31,28 +39,28 @@ body, html {
     height: 100%;
     left: 50%;
     top: 0;
-    animation: lineMoveVertical 6s linear forwards, stayVisible 6s linear 6s forwards;
+    animation: lineMoveVertical 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-horizontal {
     width: 100%;
     top: 50%;
     left: 0;
-    animation: lineMoveHorizontal 6s linear forwards, stayVisible 6s linear 6s forwards;
+    animation: lineMoveHorizontal 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-vertical-bottom {
     height: 100%;
     left: 50%;
     bottom: 0;
-    animation: lineMoveVerticalBottom 6s linear forwards, stayVisible 6s linear 6s forwards;
+    animation: lineMoveVerticalBottom 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 #line-horizontal-right {
     width: 100%;
     top: 50%;
     right: 0;
-    animation: lineMoveHorizontalRight 6s linear forwards, stayVisible 6s linear 6s forwards;
+    animation: lineMoveHorizontalRight 3s linear forwards, stayVisible 3s linear 3s forwards;
 }
 
 @keyframes lineMoveVertical {
@@ -83,6 +91,18 @@ body, html {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+#flash-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    pointer-events: none;
+    background-color: transparent;
+    transition: background-color 0.5s ease-in-out;
 }
 
 .leaflet-tooltip {
@@ -127,6 +147,17 @@ body, html {
 .visitor-popup {
     color: var(--visitor-info-color) !important;
     padding-bottom: 13px;
+}
+
+#visitor-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--visitor-info-bg);
+    color: var(--visitor-info-color);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1001;
 }
 
 .no-flexbox .line {
