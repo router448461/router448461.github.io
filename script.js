@@ -123,8 +123,10 @@ window.onload = async function() {
         map.invalidateSize();
     }, 100);
 
-    // Start blinking the red lines and dots
-    document.querySelectorAll('.dot, .line').forEach(element => {
-        element.style.animation = 'blink 1s infinite';
-    });
+    // Start blinking the red lines once they meet in the middle
+    setTimeout(() => {
+        document.querySelectorAll('.line').forEach(element => {
+            element.style.animation = 'blink 1s infinite';
+        });
+    }, 3000);
 };
