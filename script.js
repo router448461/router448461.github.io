@@ -37,7 +37,6 @@ window.onload = async function() {
 
     // Name servers and their coordinates
     const nameServers = [
-        '61.9.188.33',
         'ns8.dynu.com',
         'ns9.dynu.com',
         'dawn.ns.cloudflare.com',
@@ -46,14 +45,12 @@ window.onload = async function() {
 
     const nameServerCoords = [
         [-33.865143, 151.209900],
-        [-33.865143, 151.209900],
         [1.352083, 103.819839],
         [37.7749, -122.4194],
         [51.5074, -0.1278]
     ];
 
     const nameServerLocations = [
-        'SYDNEY, AU',
         'SYDNEY, AU',
         'SINGAPORE, SP',
         'SAN FRANCISCO, US',
@@ -62,9 +59,7 @@ window.onload = async function() {
 
     // Function to get IP address of a name server
     async function getIP(nameServer) {
-        if (nameServer === '61.9.188.33') {
-            return { ipAddress: nameServer, hostname: '61.9.188.33' };
-        } else if (nameServer === 'dawn.ns.cloudflare.com') {
+        if (nameServer === 'dawn.ns.cloudflare.com') {
             return { ipAddress: '173.245.58.106', hostname: nameServer };
         } else if (nameServer === 'peter.ns.cloudflare.com') {
             return { ipAddress: '173.245.59.136', hostname: nameServer };
@@ -92,7 +87,7 @@ window.onload = async function() {
             html: `<div style="background-color: #ff0000; width: 10px; height: 10px; border-radius: 50%;"></div>`
         });
         const marker = L.marker(nameServerCoords[result.index], { icon: dot }).addTo(map);
-        const tooltipDirection = result.hostname === '61.9.188.33' ? "left" : "right";
+        const tooltipDirection = "right";
         const tooltipContent = `${result.ipAddress}<br>LAN: ${nameServerCoords[result.index][0]} LON: ${nameServerCoords[result.index][1]}<br>${result.hostname.toUpperCase()}<br>${result.location}`;
         marker.bindTooltip(`<span style="color: #ff0000">${tooltipContent}</span>`, { permanent: true, direction: tooltipDirection, offset: [10, 0], className: "myCSSClass" });
     });
@@ -132,18 +127,4 @@ window.onload = async function() {
     setTimeout(() => {
         map.invalidateSize();
     }, 100);
-
-    // Flash effect on page load
-    setTimeout(() => {
-        const flashLayer = document.getElementById('flash-layer');
-        flashLayer.style.backgroundColor = '#ffffff';
-        flashLayer.style.transition = 'background-color 0.5s ease-in-out';
-        setTimeout(() => {
-            flashLayer.style.backgroundColor = 'transparent';
-            // Start blinking the red lines and dots
-            document.querySelectorAll('.dot, .line').forEach(element => {
-                element.style.animation = 'blink 1s infinite';
-            });
-        }, 500);
-    }, 3000);
 };
