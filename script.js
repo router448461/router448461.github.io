@@ -114,11 +114,6 @@ window.onload = async function() {
         console.error('Error:', error);
     }
 
-    // Reload the page every 5 minutes
-    setTimeout(() => {
-        location.reload();
-    }, 300000);
-
     // Adjust map size on window resize
     window.addEventListener('resize', () => {
         map.invalidateSize();
@@ -127,4 +122,9 @@ window.onload = async function() {
     setTimeout(() => {
         map.invalidateSize();
     }, 100);
+
+    // Start blinking the red lines and dots
+    document.querySelectorAll('.dot, .line').forEach(element => {
+        element.style.animation = 'blink 1s infinite';
+    });
 };
