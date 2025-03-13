@@ -1,9 +1,19 @@
 // Initialize the map
-const map = L.map('map').setView([-25.2744, 133.7751], 4); // Center on Australia
+const map = L.map('map', {
+    maxBounds: [
+        [-45, 110],  // Southwest corner (approximate boundary for Australia)
+        [-9, 155]    // Northeast corner (approximate boundary for Australia)
+    ],
+    maxBoundsViscosity: 1.0, // Prevent panning out of bounds
+    zoomSnap: 0.5,          // Adjust zoom snapping for smoothness
+}).setView([-25.2744, 133.7751], 4); // Center on Australia
 
-// Add a tile layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+// Add a dark tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 7, // Prevent zooming in too far
+    minZoom: 4  // Prevent zooming out beyond Australia
 }).addTo(map);
 
 // Add server markers
