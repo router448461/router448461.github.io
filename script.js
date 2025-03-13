@@ -39,3 +39,4 @@ targetMarker.on('dragend', () => {
     const position = targetMarker.getLatLng();
     console.log(`Target moved to: ${position.lat}, ${position.lng}`);
 });
+
