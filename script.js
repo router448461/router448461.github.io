@@ -26,73 +26,92 @@ window.addEventListener('resize', () => {
 // Call the function initially to set the crosshair lines
 animateLinesToCenter();
 
-// Function to fetch data dynamically from both ArcGIS datasets
+// Function to fetch military bases data
 async function fetchMilitaryBases() {
-    const mirtaUrl = 'https://hifld-geoplatform.hub.arcgis.com/datasets/geoplatform::military-installations-ranges-and-training-areas-mirta-dod-sites-boundaries/explore';
-    const basesUrl = 'https://hub.arcgis.com/datasets/FDEP::military-bases/data';
+    const mirtaUrl =
+        'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Military_Installations_Ranges_and_Training_Areas_MIRTA_DOD_Sites_Boundaries/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
+    const basesUrl =
+        'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MilitaryBases/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
 
     try {
-        // Fetch data from MIRTA API
         const mirtaResponse = await fetch(mirtaUrl);
         const mirtaData = await mirtaResponse.json();
 
-        // Fetch data from Military Bases API
         const basesResponse = await fetch(basesUrl);
         const basesData = await basesResponse.json();
 
-        // Combine and normalize data
-        const combinedData = [...mirtaData.features, ...basesData.features].map(feature => ({
-            name: feature.attributes.Name || 'Unnamed Base',
-            lat: feature.geometry.y,
-            lon: feature.geometry.x
-        }));
+        // Combine and format data as GeoJSON
+        const features = [
+            ...mirtaData.features.map(feature => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
+                properties: { name: feature.attributes.Name || 'Unnamed Base' }
+            })),
+            ...basesData.features.map(feature => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
+                properties: { name: feature.attributes.Name || 'Unnamed Base' }
+            }))
+        ];
 
-        return combinedData;
+        return {
+            type: 'FeatureCollection',
+            features: features
+        }; // Return GeoJSON
     } catch (error) {
         console.error('Failed to fetch military base data:', error);
-        return []; // Return empty array if API call fails
+        return { type: 'FeatureCollection', features: [] }; // Return empty GeoJSON if an error occurs
     }
 }
 
-// Function to add flashing markers dynamically
+// Function to display bases using GeoJSON and a Mapbox layer
 async function displayMilitaryBases() {
-    const militaryBases = await fetchMilitaryBases(); // Fetch data dynamically
+    const geojsonData = await fetchMilitaryBases(); // Fetch GeoJSON data
 
-    // Clear existing markers
-    document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
+    // Add a GeoJSON source for military bases
+    map.addSource('military-bases', {
+        type: 'geojson',
+        data: geojsonData
+    });
 
-    // Add markers for updated bases
-    militaryBases.forEach(base => {
-        const markerElement = document.createElement('div'); // Create a custom marker element
-        markerElement.className = 'mapboxgl-marker'; // Assign the flashing effect class
+    // Add a layer to display the bases as flashing red dots
+    map.addLayer({
+        id: 'military-bases-layer',
+        type: 'circle',
+        source: 'military-bases',
+        paint: {
+            'circle-radius': 6,
+            'circle-color': 'red',
+            'circle-opacity': 1,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': 'white'
+        }
+    });
 
-        // Add the marker to the map
-        new mapboxgl.Marker(markerElement)
-            .setLngLat([base.lon, base.lat])
+    // Animate flashing effect (use transition opacity to simulate)
+    let flashToggle = true;
+    setInterval(() => {
+        map.setPaintProperty(
+            'military-bases-layer',
+            'circle-opacity',
+            flashToggle ? 1 : 0.5
+        );
+        flashToggle = !flashToggle;
+    }, 500); // Toggle every 500ms
+
+    // Add popup tooltips on hover
+    map.on('mouseenter', 'military-bases-layer', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const name = e.features[0].properties.name;
+
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(`<strong>${name}</strong>`)
             .addTo(map);
-
-        // Tooltip for displaying base name and coordinates
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerHTML = `<strong>${base.name}</strong><br>Lat: ${base.lat}, Lon: ${base.lon}`;
-        document.body.appendChild(tooltip);
-
-        // Show tooltip on hover
-        markerElement.addEventListener('mouseenter', (event) => {
-            tooltip.style.display = 'block';
-            tooltip.style.left = `${event.pageX + 10}px`;
-            tooltip.style.top = `${event.pageY + 10}px`;
-        });
-
-        // Hide tooltip on mouse leave
-        markerElement.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-        });
     });
 }
 
-// Periodic updates to refresh data dynamically
-setInterval(displayMilitaryBases, 60000); // Refresh every 60 seconds
-
-// Initial load
-displayMilitaryBases();
+// Wait for the map to load before adding layers
+map.on('load', () => {
+    displayMilitaryBases();
+});
