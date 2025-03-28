@@ -7,7 +7,6 @@
     <meta name="description" content="Interactive world map with dynamic crosshairs and blinking capital city markers.">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library -->
 </head>
 <body>
     <main role="application" aria-labelledby="map-title">
@@ -19,9 +18,6 @@
             </div>
             <div id="coordinates-panel" aria-live="polite">Coordinates: None</div>
             <div id="time-panel" aria-live="polite">Time: Loading...</div>
-        </section>
-        <section id="chart-panel">
-            <canvas id="capital-chart"></canvas> <!-- Chart container -->
         </section>
     </main>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
