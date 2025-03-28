@@ -1,50 +1,56 @@
 /* General Styles */
 body {
     margin: 0;
+    padding: 0;
     overflow: hidden;
-    background-color: #000; /* Dark background to match dark mode */
+    height: 100vh; /* Match body height to viewport height */
+    width: 100vw; /* Match body width to viewport width */
+    background-color: #000; /* Set dark mode background color */
 }
 
 #map-container {
-    position: fixed; /* Ensures the map fills the entire viewport */
+    position: fixed; /* Anchor the map container directly to the viewport */
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000; /* Fallback in case tiles don't load */
+    height: 100%; /* Ensure the map fills the screen vertically */
+    width: 100%; /* Ensure the map fills the screen horizontally */
+    background-color: #000; /* Fallback background color */
+    margin: 0; /* Remove margin to eliminate white space */
+    padding: 0; /* Remove padding to eliminate white space */
+    overflow: hidden; /* Prevent map overflow */
 }
 
 /* Red Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
     background-color: red;
-    z-index: 1000;
-    pointer-events: none;
-    transition: all 0.3s ease;
+    z-index: 1000; /* Ensure crosshairs appear above the map */
+    pointer-events: none; /* Allow clicks to pass through crosshair lines */
+    transition: all 0.3s ease; /* Smooth animations for resizing */
 }
 
 #vertical-line {
-    width: 2px;
-    height: 100%;
-    left: 0;
+    width: 2px; /* Define line thickness */
+    height: 100%; /* Stretch vertically across the screen */
+    left: 0; /* Initial position before animation */
 }
 
 #horizontal-line {
-    width: 100%;
-    height: 2px;
-    top: 0;
+    width: 100%; /* Stretch horizontally across the screen */
+    height: 2px; /* Define line thickness */
+    top: 0; /* Initial position before animation */
 }
 
 /* Flash Effect */
 .flash {
-    animation: flash-animation 0.2s ease-out;
+    animation: flash-animation 0.2s ease-out; /* Short flash effect animation */
 }
 
 @keyframes flash-animation {
     0% {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.8); /* Bright flash color */
     }
     100% {
-        background-color: transparent;
+        background-color: transparent; /* Gradually fade out */
     }
 }
