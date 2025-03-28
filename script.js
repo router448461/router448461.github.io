@@ -2,7 +2,7 @@
 const map = L.map('map-container', {
     zoomControl: false, // Disable zoom buttons
     attributionControl: false, // Remove Leaflet attribution
-    worldCopyJump: true // Prevent infinite scrolling horizontally
+    worldCopyJump: true // Prevent infinite horizontal scrolling
 }).setView([0, 0], 2); // Set initial map view
 
 // Add dark mode tiles without labels using Carto's Positron (no labels) tiles
