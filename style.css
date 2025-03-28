@@ -1,56 +1,55 @@
 /* General Styles */
-body {
+html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    height: 100vh; /* Match body height to viewport height */
-    width: 100vw; /* Match body width to viewport width */
-    background-color: #000; /* Set dark mode background color */
+    height: 100%; /* Make the body and HTML fill the full viewport height */
+    width: 100%; /* Ensure it covers the full viewport width */
+    overflow: hidden; /* Prevent scrolling */
+    background-color: #000; /* Set a dark background to match the map */
 }
 
 #map-container {
-    position: fixed; /* Anchor the map container directly to the viewport */
+    position: absolute; /* Fix the map to the viewport */
     top: 0;
     left: 0;
-    height: 100%; /* Ensure the map fills the screen vertically */
-    width: 100%; /* Ensure the map fills the screen horizontally */
+    height: 100%; /* Make the map fill the screen vertically */
+    width: 100%; /* Make the map fill the screen horizontally */
     background-color: #000; /* Fallback background color */
-    margin: 0; /* Remove margin to eliminate white space */
-    padding: 0; /* Remove padding to eliminate white space */
-    overflow: hidden; /* Prevent map overflow */
+    margin: 0;
+    padding: 0;
 }
-
+ 
 /* Red Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
-    background-color: red;
-    z-index: 1000; /* Ensure crosshairs appear above the map */
-    pointer-events: none; /* Allow clicks to pass through crosshair lines */
-    transition: all 0.3s ease; /* Smooth animations for resizing */
+    background-color: red; /* Crosshair color */
+    z-index: 1000; /* Make sure the crosshairs are above the map */
+    pointer-events: none; /* Allow interaction with the map through the crosshairs */
+    transition: all 0.3s ease;
 }
 
 #vertical-line {
-    width: 2px; /* Define line thickness */
+    width: 2px; /* Line thickness */
     height: 100%; /* Stretch vertically across the screen */
-    left: 0; /* Initial position before animation */
+    left: 0;
 }
 
 #horizontal-line {
     width: 100%; /* Stretch horizontally across the screen */
-    height: 2px; /* Define line thickness */
-    top: 0; /* Initial position before animation */
+    height: 2px; /* Line thickness */
+    top: 0;
 }
 
 /* Flash Effect */
 .flash {
-    animation: flash-animation 0.2s ease-out; /* Short flash effect animation */
+    animation: flash-animation 0.2s ease-out;
 }
 
 @keyframes flash-animation {
     0% {
-        background-color: rgba(255, 255, 255, 0.8); /* Bright flash color */
+        background-color: rgba(255, 255, 255, 0.8);
     }
     100% {
-        background-color: transparent; /* Gradually fade out */
+        background-color: transparent;
     }
 }
