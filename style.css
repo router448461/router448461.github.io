@@ -3,7 +3,7 @@ body {
     margin: 0;
     overflow: hidden;
     background-color: #000; /* Dark background to match dark mode */
-    font-family: Arial, sans-serif; /* Fallback for better readability */
+    font-family: Arial, sans-serif; /* Fallback font for better readability */
 }
 
 #map-container {
