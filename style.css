@@ -7,10 +7,10 @@
 
 /* Ensure the HTML and body span the entire viewport */
 html, body {
-    height: 100%; /* Ensure full viewport height */
-    width: 100%; /* Ensure full viewport width */
+    height: 100%; /* Full height to match the viewport */
+    width: 100%; /* Full width to match the viewport */
     overflow: hidden; /* Prevent scrolling */
-    background-color: #000; /* Set dark background */
+    background-color: #000; /* Set a dark background */
 }
 
 /* Map container styling to guarantee it fills the screen */
@@ -18,10 +18,10 @@ html, body {
     position: fixed; /* Fix map container to the viewport */
     top: 0;
     left: 0;
-    right: 0;
+    right: 0; /* Explicitly set right and bottom properties */
     bottom: 0;
-    width: 100%; /* Fill the entire viewport width */
-    height: 100%; /* Fill the entire viewport height */
+    width: 100%; /* Full viewport width */
+    height: 100%; /* Full viewport height */
     background-color: #000; /* Fallback background */
     overflow: hidden; /* Prevent content overflow */
 }
@@ -29,20 +29,22 @@ html, body {
 /* Styling for the red crosshair lines */
 #vertical-line, #horizontal-line {
     position: absolute;
-    background-color: red;
+    background-color: red; /* Set the crosshair color */
     z-index: 1000; /* Ensure the lines appear above the map */
-    pointer-events: none;
+    pointer-events: none; /* Allow interaction with the map through the crosshairs */
     transition: all 0.3s ease; /* Smooth resizing animations */
 }
 
 #vertical-line {
-    width: 2px;
+    width: 2px; /* Vertical line thickness */
     height: 100%; /* Stretch vertically across the screen */
+    left: 0; /* Starting position */
 }
 
 #horizontal-line {
     width: 100%; /* Stretch horizontally across the screen */
-    height: 2px;
+    height: 2px; /* Horizontal line thickness */
+    top: 0; /* Starting position */
 }
 
 /* Flash effect styling */
@@ -52,9 +54,9 @@ html, body {
 
 @keyframes flash-animation {
     0% {
-        background-color: rgba(255, 255, 255, 0.8); /* Bright white */
+        background-color: rgba(255, 255, 255, 0.8); /* Flash bright white */
     }
     100% {
-        background-color: transparent; /* Fade out */
+        background-color: transparent; /* Fade to transparent */
     }
 }
