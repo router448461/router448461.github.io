@@ -1,12 +1,10 @@
-// Mapbox configuration
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYyaW9oaG5peGY4NTQifQ.aTWb-NcZPgEUm-0b1jib6w';
+// Initialize the Leaflet map
+const map = L.map('map-container').setView([0, 0], 2); // Set initial view: [Latitude, Longitude]
 
-const map = new mapboxgl.Map({
-    container: 'map-container',
-    style: 'mapbox://styles/mapbox/streets-v11', // Mapbox style
-    center: [0, 0], // Longitude, Latitude (initial position)
-    zoom: 2 // Initial zoom level
-});
+// Add OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
 // Animate the red crosshair lines to meet at the center of the screen
 function animateLinesToCenter() {
@@ -18,7 +16,7 @@ function animateLinesToCenter() {
     horizontalLine.style.top = `${window.innerHeight / 2}px`;
 }
 
-// Trigger the flash effect on click
+// Trigger the flash effect on map click
 map.on('click', () => {
     const mapContainer = document.getElementById('map-container');
     mapContainer.classList.add('flash');
