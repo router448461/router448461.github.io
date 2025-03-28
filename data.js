@@ -1,11 +1,39 @@
-const militaryBases = [
-    { name: "HMAS Creswell", lat: -35.0589, lon: 150.6629 },
-    { name: "HMAS Stirling", lat: -32.2490, lon: 115.6840 },
-    { name: "Larrakeyah Barracks", lat: -12.4572, lon: 130.8338 },
-    { name: "Gallipoli Barracks", lat: -27.4064, lon: 152.9731 },
-    { name: "RAAF Base Amberley", lat: -27.6269, lon: 152.7111 },
-    { name: "Anglesea Barracks", lat: -42.8917, lon: 147.3272 },
-    { name: "Victoria Barracks", lat: -37.8315, lon: 144.9780 },
-    { name: "Campbell Barracks", lat: -31.9523, lon: 115.7585 },
-    // Add more bases as needed
-];
+// Function to fetch data dynamically from both ArcGIS datasets
+async function fetchMilitaryBases() {
+    const mirtaUrl =
+        'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Military_Installations_Ranges_and_Training_Areas_MIRTA_DOD_Sites_Boundaries/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
+    const basesUrl =
+        'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MilitaryBases/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
+
+    try {
+        // Fetch data from MIRTA API
+        const mirtaResponse = await fetch(mirtaUrl);
+        const mirtaData = await mirtaResponse.json();
+
+        // Fetch data from Military Bases API
+        const basesResponse = await fetch(basesUrl);
+        const basesData = await basesResponse.json();
+
+        // Combine and normalize data
+        const combinedData = [
+            ...mirtaData.features.map((feature) => ({
+                name: feature.attributes.Name || 'Unnamed Base',
+                lat: feature.geometry.y,
+                lon: feature.geometry.x,
+            })),
+            ...basesData.features.map((feature) => ({
+                name: feature.attributes.Name || 'Unnamed Base',
+                lat: feature.geometry.y,
+                lon: feature.geometry.x,
+            })),
+        ];
+
+        return combinedData; // Return the normalized list of military bases
+    } catch (error) {
+        console.error('Failed to fetch military base data:', error);
+        return []; // Return an empty array if there's an API error
+    }
+}
+
+// Example export to use this function in other files
+export { fetchMilitaryBases };
