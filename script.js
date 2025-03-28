@@ -78,7 +78,7 @@ const createBlinkingDot = (coordinates) => {
     });
 };
 
-// Add blinking markers for each capital, sorted by distance
+// Add blinking markers for each capital
 sortedCapitals.forEach((capital) => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
@@ -86,47 +86,37 @@ sortedCapitals.forEach((capital) => {
         // Display coordinates and city name in the panel
         const coordinatesPanel = document.getElementById('coordinates-panel');
         coordinatesPanel.textContent = `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)} (City: ${capital.name})`;
-    }).on('click', (e) => {
-        // Move crosshair lines to the clicked city
-        const verticalLine = document.getElementById('vertical-line');
-        const horizontalLine = document.getElementById('horizontal-line');
-        verticalLine.style.left = `${e.containerPoint.x}px`;
-        horizontalLine.style.top = `${e.containerPoint.y}px`;
     }).addTo(map);
 });
 
-// Function to re-trigger the red line animations
-const resetLineAnimations = () => {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
+// Function to animate a line from Canberra to the closest city
+const animateLine = () => {
+    const canberra = { lat: -35.2809, lng: 149.1300 }; // Canberra
+    const closestCity = sortedCapitals[1]; // Closest city, excluding Canberra itself
 
-    // Remove and re-add the animation classes to restart them
-    verticalLine.style.animation = 'none';
-    horizontalLine.style.animation = 'none';
+    const line = L.polyline([ [canberra.lat, canberra.lng] ], { color: 'red', weight: 3 }).addTo(map);
 
-    setTimeout(() => {
-        verticalLine.style.animation = 'vertical-draw var(--animation-duration) ease-in-out forwards';
-        horizontalLine.style.animation = 'horizontal-draw var(--animation-duration) ease-in-out forwards';
-    }, 0);
+    const latDiff = (closestCity.lat - canberra.lat) / 300; // Divide by 300 for 30 seconds
+    const lngDiff = (closestCity.lng - canberra.lng) / 300;
+
+    let step = 0;
+
+    const interval = setInterval(() => {
+        if (step >= 300) {
+            clearInterval(interval);
+        } else {
+            const newLat = canberra.lat + latDiff * step;
+            const newLng = canberra.lng + lngDiff * step;
+            line.addLatLng([newLat, newLng]);
+            step++;
+        }
+    }, 100); // Update every 100ms (300 steps = 30 seconds)
 };
 
 // Trigger animations when the map is ready
 map.whenReady(() => {
-    resetLineAnimations();
+    animateLine(); // Start the line animation
 });
-
-// Optimize window resize events using debounce logic
-const debounce = (func, delay) => {
-    let timeout;
-    return () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(), delay);
-    };
-};
-
-window.addEventListener('resize', debounce(() => {
-    resetLineAnimations();
-}, 150));
 
 // Live Clock Logic
 document.addEventListener('DOMContentLoaded', () => {
