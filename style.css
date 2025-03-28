@@ -52,3 +52,8 @@ body {
     pointer-events: none;
     z-index: 1000;
 }
+
+/* Remove Mapbox attribution */
+.mapboxgl-control-container .mapboxgl-ctrl-bottom-right {
+    display: none;
+}
