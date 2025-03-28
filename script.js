@@ -12,14 +12,21 @@ const map = new mapboxgl.Map({
 
 // Ensure layers are loaded before making changes
 map.on('load', () => {
-  // Remove all labels from the map
-  map.getStyle().layers.forEach(layer => {
-    if (layer.type === 'symbol') {
-      map.setLayoutProperty(layer.id, 'visibility', 'none');
-    }
-  });
+  console.log('Map loaded successfully!'); // Debugging
 
-  // Add flashing markers at Australian military bases
+  // Attempt to remove all labels
+  try {
+    map.getStyle().layers.forEach(layer => {
+      if (layer.type === 'symbol') {
+        map.setLayoutProperty(layer.id, 'visibility', 'none');
+        console.log(`Removed layer: ${layer.id}`);
+      }
+    });
+  } catch (error) {
+    console.error('Error removing labels:', error);
+  }
+
+  // Add markers at Australian military bases
   const militaryBases = [
     { name: "Base A", coordinates: [149.165, -35.308] }, // Canberra
     { name: "Base B", coordinates: [130.841, -12.425] }, // Darwin
@@ -35,7 +42,13 @@ map.on('load', () => {
     markerElement.style.borderRadius = '50%';
 
     new mapboxgl.Marker(markerElement).setLngLat(base.coordinates).addTo(map);
+    console.log(`Added marker for: ${base.name}`);
   });
+});
+
+// Basic map loading debugging
+map.on('error', event => {
+  console.error('Mapbox encountered an error:', event.error);
 });
 
 // Add red lines converging in the middle
