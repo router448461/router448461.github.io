@@ -2,25 +2,20 @@
 const map = L.map('map-container', {
     zoomControl: false, // Disable zoom buttons
     attributionControl: false, // Remove Leaflet attribution
-}).setView([0, 0], 2);
+    dragging: false, // Disable map dragging
+    scrollWheelZoom: false, // Disable zooming with the scroll wheel
+    doubleClickZoom: false, // Disable zooming with double click
+    boxZoom: false, // Disable box zooming
+    keyboard: false, // Disable keyboard navigation
+    touchZoom: false // Disable pinch zooming on touch devices
+}).setView([0, 0], 2); // Set initial view to show the whole world
 
 // Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">Carto</a>',
     subdomains: 'abcd',
-    maxZoom: 19,
-    updateWhenIdle: true // Optimize tile loading
+    maxZoom: 19
 }).addTo(map);
-
-// Set bounds to prevent scrolling beyond the world
-const bounds = [
-    [-90, -180], // South-West corner
-    [90, 180]    // North-East corner
-];
-map.setMaxBounds(bounds);
-map.on('drag', () => {
-    map.panInsideBounds(bounds, { animate: true });
-});
 
 // Function to center the red crosshair lines
 const animateLinesToCenter = () => {
@@ -39,7 +34,7 @@ map.on('click', (e) => {
         mapContainer.classList.remove('flash');
     }, 200);
 
-    // Show coordinates tooltip
+    // Optional: Show coordinates tooltip
     const { lat, lng } = e.latlng;
     L.popup()
         .setLatLng([lat, lng])
@@ -60,12 +55,3 @@ window.addEventListener('resize', () => {
         animateLinesToCenter();
     }, 100);
 });
-
-// Optional: Add a dark/light mode toggle for tiles
-const toggleTheme = (isDark) => {
-    const tileURL = isDark
-        ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-    L.tileLayer(tileURL, { maxZoom: 19 }).addTo(map);
-};
-// Example usage: toggleTheme(true); for dark mode
