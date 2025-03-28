@@ -19,21 +19,21 @@ body {
     background-color: red;
     z-index: 1000;
     pointer-events: none;
-    transform: translate(0, 0);
+    transition: transform 0.3s ease;
 }
 
 #vertical-line {
     width: 2px;
     height: 100%;
-    left: 0; /* Start from the left edge */
-    animation: vertical-line-animation 0.5s forwards;
+    left: 50%; /* Center in the middle */
+    transform: translateX(-50%);
 }
 
 #horizontal-line {
     width: 100%;
     height: 2px;
-    top: 0; /* Start from the top edge */
-    animation: horizontal-line-animation 0.5s forwards;
+    top: 50%; /* Center in the middle */
+    transform: translateY(-50%);
 }
 
 /* Blinking Effect for Red Dots */
