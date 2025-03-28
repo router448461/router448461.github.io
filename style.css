@@ -1,40 +1,46 @@
-// Mapbox configuration
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYyaW9oaG5peGY4NTQifQ.aTWb-NcZPgEUm-0b1jib6w';
-
-const map = new mapboxgl.Map({
-    container: 'map-container',
-    style: 'mapbox://styles/mapbox/streets-v11', // Mapbox style
-    center: [0, 0], // Longitude, Latitude (initial position)
-    zoom: 2 // Initial zoom level
-});
-
-// Animate the red crosshair lines to meet at the center of the screen
-function animateLinesToCenter() {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
-
-    // Set lines to target the center of the viewport
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
+/* General Styling */
+body {
+    margin: 0;
+    overflow: hidden;
 }
 
-// Trigger the flash effect on click
-map.on('click', () => {
-    const mapContainer = document.getElementById('map-container');
-    mapContainer.classList.add('flash');
+#map-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
 
-    // Remove the flash effect after the animation ends
-    setTimeout(() => {
-        mapContainer.classList.remove('flash');
-    }, 200);
-});
+/* Red crosshair lines */
+#vertical-line, #horizontal-line {
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
 
-// Start the animation as the map initializes
-map.on('load', () => {
-    animateLinesToCenter();
-});
+#vertical-line {
+    width: 2px;
+    height: 100%;
+    left: 0; /* Start at the left edge */
+}
 
-// Recalculate lines on window resize
-window.addEventListener('resize', () => {
-    animateLinesToCenter();
-});
+#horizontal-line {
+    width: 100%;
+    height: 2px;
+    top: 0; /* Start at the top edge */
+}
+
+/* Flash effect */
+.flash {
+    animation: flash-animation 0.2s ease-out;
+}
+
+@keyframes flash-animation {
+    0% {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
