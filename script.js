@@ -4,7 +4,8 @@ const map = new mapboxgl.Map({
     container: 'map-container',
     style: 'mapbox://styles/mapbox/streets-v11',
     center: [133.7751, -25.2744], // Center of Australia
-    zoom: 4
+    zoom: 4,
+    attributionControl: false // Removes attribution link
 });
 
 // Function to animate lines to the center of the viewport
