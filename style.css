@@ -21,18 +21,23 @@ body {
 #vertical-line {
     width: 2px;
     height: 100%;
-    left: 0; /* Will adjust dynamically */
+    left: 0; /* Adjusted dynamically */
 }
 
 #horizontal-line {
     width: 100%;
     height: 2px;
-    top: 0; /* Will adjust dynamically */
+    top: 0; /* Adjusted dynamically */
 }
 
 /* Flashing red dots */
 .mapboxgl-marker {
     animation: flash 1s infinite;
+    position: relative;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: red;
 }
 
 @keyframes flash {
