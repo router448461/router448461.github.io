@@ -1,55 +1,57 @@
-/* General Styles */
+/* Ensure full height and width for the HTML and body */
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%; /* Make the body and HTML fill the full viewport height */
-    width: 100%; /* Ensure it covers the full viewport width */
+    height: 100vh; /* Match the height of the browser viewport */
+    width: 100vw; /* Match the width of the browser viewport */
     overflow: hidden; /* Prevent scrolling */
-    background-color: #000; /* Set a dark background to match the map */
+    background-color: #000; /* Set a consistent dark background */
 }
 
+/* Map container styling to guarantee it fills the screen */
 #map-container {
-    position: absolute; /* Fix the map to the viewport */
+    position: fixed; /* Fixed to prevent scrolling */
     top: 0;
     left: 0;
-    height: 100%; /* Make the map fill the screen vertically */
-    width: 100%; /* Make the map fill the screen horizontally */
-    background-color: #000; /* Fallback background color */
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
     margin: 0;
     padding: 0;
+    background-color: #000; /* Fallback background in case tiles fail */
+    overflow: hidden; /* Prevent map overflow */
 }
- 
-/* Red Crosshair Lines */
+
+/* Styling for the red crosshair lines */
 #vertical-line, #horizontal-line {
     position: absolute;
-    background-color: red; /* Crosshair color */
-    z-index: 1000; /* Make sure the crosshairs are above the map */
-    pointer-events: none; /* Allow interaction with the map through the crosshairs */
-    transition: all 0.3s ease;
+    background-color: red; /* Set the crosshair color */
+    z-index: 1000; /* Ensure the lines are above the map */
+    pointer-events: none; /* Allow map interactions through the crosshair */
+    transition: all 0.3s ease; /* Smooth transition animations */
 }
 
 #vertical-line {
-    width: 2px; /* Line thickness */
+    width: 2px; /* Vertical line thickness */
     height: 100%; /* Stretch vertically across the screen */
-    left: 0;
+    left: 0; /* Starting position */
 }
 
 #horizontal-line {
     width: 100%; /* Stretch horizontally across the screen */
-    height: 2px; /* Line thickness */
-    top: 0;
+    height: 2px; /* Horizontal line thickness */
+    top: 0; /* Starting position */
 }
 
-/* Flash Effect */
+/* Flash effect styling */
 .flash {
-    animation: flash-animation 0.2s ease-out;
+    animation: flash-animation 0.2s ease-out; /* Create a short flash effect */
 }
 
 @keyframes flash-animation {
     0% {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.8); /* Flash bright white */
     }
     100% {
-        background-color: transparent;
+        background-color: transparent; /* Fade to transparent */
     }
 }
