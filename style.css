@@ -6,6 +6,7 @@
     --animation-duration: 1s;
     --tooltip-bg-color: black;
     --tooltip-font-color: white;
+    --hover-glow-color: rgba(255, 0, 0, 0.6);
 }
 
 /* General Styles */
@@ -29,7 +30,6 @@ body {
     background-color: transparent; /* Ensure no flat color overrides the gradient */
     z-index: 1000;
     pointer-events: none;
-    transition: none; /* Disable conflicting transitions */
 }
 
 #vertical-line {
@@ -69,6 +69,18 @@ body {
     }
 }
 
+/* Coordinates Display Panel */
+#coordinates-panel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /* Blinking Effect for Red Dots */
 .blinking-dot {
     width: 10px;
@@ -105,10 +117,16 @@ body {
     border-radius: 4px;
     opacity: 0; /* Initially hidden */
     pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth animation for tooltip */
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .blinking-dot:hover::after {
     opacity: 1; /* Show tooltip on hover */
     transform: translate(-50%, -40px); /* Slide tooltip further above the dot */
+}
+
+/* Hover Glow Effect */
+.blinking-dot:hover {
+    box-shadow: 0 0 10px var(--hover-glow-color);
+    transform: scale(1.2); /* Slightly enlarge the dot */
 }
