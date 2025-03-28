@@ -2,18 +2,18 @@
 const map = L.map('map-container', {
     zoomControl: false, // Disable zoom buttons
     attributionControl: false, // Remove Leaflet attribution
-    worldCopyJump: true // Ensure the world doesn't wrap infinitely
-}).setView([0, 0], 2); // Initial map view at [Lat, Lng]
+    worldCopyJump: true // Prevent infinite scrolling horizontally
+}).setView([0, 0], 2); // Set initial map view
 
 // Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">Carto</a>',
     subdomains: 'abcd',
     maxZoom: 19,
-    noWrap: true // Prevent horizontal map wrapping
+    noWrap: true // Prevent infinite horizontal wrapping
 }).addTo(map);
 
-// Function to center the red crosshair lines
+// Center the red crosshair lines
 function animateLinesToCenter() {
     const verticalLine = document.getElementById('vertical-line');
     const horizontalLine = document.getElementById('horizontal-line');
