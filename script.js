@@ -2,33 +2,21 @@
 const map = L.map('map-container', {
     zoomControl: false, // Disable zoom buttons
     attributionControl: false, // Remove Leaflet attribution
-    worldCopyJump: true // Prevent infinite horizontal scrolling
-}).setView([0, 0], 2); // Set initial map view
+}).setView([0, 0], 2); // Center on 0,0 (world view)
 
-// Add dark mode tiles using Stadia Maps (no labels)
-L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
+// Add OpenStreetMap tiles (free and reliable, no authentication needed)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
-    noWrap: true // Prevent infinite horizontal wrapping
+    noWrap: true // Prevent infinite map scrolling
 }).addTo(map);
 
-// Force Leaflet to respect the container dimensions
+// Resize the map to fit the browser window
 map.whenReady(() => {
-    map.invalidateSize(); // Ensures correct rendering after map loads
-    animateLinesToCenter();
+    map.invalidateSize(); // Fix sizing issues after load
 });
 
-// Center the red crosshair lines
-function animateLinesToCenter() {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
-
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
-}
-
-// Recalculate map size and center lines on window resize
+// Ensure the map resizes correctly on window resize
 window.addEventListener('resize', () => {
-    map.invalidateSize(); // Fixes map size after resizing
-    animateLinesToCenter();
+    map.invalidateSize(); // Force Leaflet to re-calculate map size
 });
