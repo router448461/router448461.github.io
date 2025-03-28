@@ -10,7 +10,7 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
+    background-color: #000; /* Ensure the map container covers the full screen */
 }
 
 /* Red Crosshair Lines */
@@ -19,6 +19,7 @@ body {
     background-color: red;
     z-index: 1000;
     pointer-events: none;
+    transition: none; /* Disable any conflicting transition styles */
 }
 
 #vertical-line {
