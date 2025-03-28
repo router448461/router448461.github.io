@@ -1,14 +1,14 @@
 // Initialize the Leaflet map
 const map = L.map('map-container', {
-    zoomControl: false, // Disable zoom buttons
-    attributionControl: false, // Remove Leaflet attribution
-    dragging: false, // Disable map dragging
-    scrollWheelZoom: false, // Disable zooming with the scroll wheel
-    doubleClickZoom: false, // Disable zooming with double click
-    boxZoom: false, // Disable box zooming
-    keyboard: false, // Disable keyboard navigation
-    touchZoom: false // Disable pinch zooming on touch devices
-}).setView([-35.2809, 149.1300], 2); // Center the map on Canberra
+    zoomControl: false,
+    attributionControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    touchZoom: false
+}).setView([-35.2809, 149.1300], 2); // Center on Canberra
 
 // Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
