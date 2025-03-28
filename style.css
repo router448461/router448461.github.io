@@ -81,6 +81,18 @@ body {
     border-radius: 5px;
 }
 
+/* Time Panel in the Top-Right Corner */
+#time-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /* Blinking Effect for Red Dots */
 .blinking-dot {
     width: 10px;
