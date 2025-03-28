@@ -1,4 +1,4 @@
-/* General Styling */
+/* General Styles */
 body {
     margin: 0;
     overflow: hidden;
@@ -10,7 +10,7 @@ body {
     height: 100vh;
 }
 
-/* Red crosshair lines */
+/* Red Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
     background-color: red;
@@ -22,16 +22,16 @@ body {
 #vertical-line {
     width: 2px;
     height: 100%;
-    left: 0; /* Start at the left edge */
+    left: 0;
 }
 
 #horizontal-line {
     width: 100%;
     height: 2px;
-    top: 0; /* Start at the top edge */
+    top: 0;
 }
 
-/* Flash effect */
+/* Flash Effect */
 .flash {
     animation: flash-animation 0.2s ease-out;
 }
@@ -44,3 +44,4 @@ body {
         background-color: transparent;
     }
 }
+
