@@ -6,34 +6,30 @@ async function fetchMilitaryBases() {
         'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MilitaryBases/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
 
     try {
-        // Fetch data from MIRTA API
-        const mirtaResponse = await fetch(mirtaUrl);
-        const mirtaData = await mirtaResponse.json();
+        const response1 = await fetch(mirtaUrl);
+        const data1 = await response1.json();
 
-        // Fetch data from Military Bases API
-        const basesResponse = await fetch(basesUrl);
-        const basesData = await basesResponse.json();
+        const response2 = await fetch(basesUrl);
+        const data2 = await response2.json();
 
-        // Combine and normalize data
-        const combinedData = [
-            ...mirtaData.features.map((feature) => ({
-                name: feature.attributes.Name || 'Unnamed Base',
-                lat: feature.geometry.y,
-                lon: feature.geometry.x,
+        const features = [
+            ...data1.features.map(feature => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
+                properties: { name: feature.attributes.Name || 'Unnamed Base' }
             })),
-            ...basesData.features.map((feature) => ({
-                name: feature.attributes.Name || 'Unnamed Base',
-                lat: feature.geometry.y,
-                lon: feature.geometry.x,
-            })),
+            ...data2.features.map(feature => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
+                properties: { name: feature.attributes.Name || 'Unnamed Base' }
+            }))
         ];
 
-        return combinedData; // Return the normalized list of military bases
+        return { type: 'FeatureCollection', features };
     } catch (error) {
         console.error('Failed to fetch military base data:', error);
-        return []; // Return an empty array if there's an API error
+        return { type: 'FeatureCollection', features: [] }; // Empty GeoJSON
     }
 }
 
-// Example export to use this function in other files
 export { fetchMilitaryBases };
