@@ -17,26 +17,23 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     maxZoom: 19
 }).addTo(map);
 
-// Function to center the red crosshair lines
-const animateLinesToCenter = () => {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
+// Capital city coordinates
+const capitals = [
+    { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
+    { name: "Canberra", lat: -35.2809, lng: 149.1300 }
+];
 
-    // Start animations to bring lines to center
-    verticalLine.style.animationPlayState = 'running';
-    horizontalLine.style.animationPlayState = 'running';
-};
+// Add blinking markers for each capital
+capitals.forEach(capital => {
+    const blinkingDot = document.createElement('div');
+    blinkingDot.className = 'blinking-dot';
+    blinkingDot.setAttribute('data-coordinates', `${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`);
 
-// Center the lines when the map is loaded
-map.whenReady(() => {
-    animateLinesToCenter();
-});
-
-// Optimize window resize events using a debounce function
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        animateLinesToCenter();
-    }, 100);
+    const marker = L.marker([capital.lat, capital.lng], {
+        icon: L.divIcon({
+            html: blinkingDot.outerHTML,
+            className: '',
+            iconSize: [10, 10]
+        })
+    }).addTo(map);
 });
