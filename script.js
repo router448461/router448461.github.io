@@ -1,74 +1,61 @@
-import { fetchMilitaryBases } from './data.js';
+// Mapbox access token
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYyaW9oaG5peGY4NTQifQ.aTWb-NcZPgEUm-0b1jib6w';
 
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHNobXZoMjAwNzIya29jOHByNDBucHgifQ.LsGEX5K-EQLu10oo1U_Enw';
-
+// Initialize the map
 const map = new mapboxgl.Map({
-    container: 'map-container',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [133.7751, -25.2744], // Center of Australia
-    zoom: 4,
-    attributionControl: false // Removes Mapbox attribution
+  container: 'map',
+  style: 'mapbox://styles/mapbox/light-v11', // Light base map style
+  center: [0, 0], // Center of the world
+  zoom: 2,
+  projection: 'mercator' // Flat world map
 });
 
-// Animate crosshair lines
-function animateLinesToCenter() {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
-}
-window.addEventListener('resize', animateLinesToCenter);
-animateLinesToCenter();
-
-// Add GeoJSON-based military bases to the map
-async function displayMilitaryBases() {
-    const geojsonData = await fetchMilitaryBases();
-    console.log('GeoJSON Data:', geojsonData); // Debugging output
-
-    // Remove existing source if already present
-    if (map.getSource('military-bases')) {
-        map.getSource('military-bases').setData(geojsonData);
-    } else {
-        // Add a new source and layer
-        map.addSource('military-bases', { type: 'geojson', data: geojsonData });
-        map.addLayer({
-            id: 'military-bases-layer',
-            type: 'circle',
-            source: 'military-bases',
-            paint: {
-                'circle-radius': 6,
-                'circle-color': 'red',
-                'circle-opacity': 1,
-                'circle-stroke-width': 2,
-                'circle-stroke-color': 'white'
-            }
-        });
-
-        // Add flashing animation
-        let flashToggle = true;
-        setInterval(() => {
-            map.setPaintProperty(
-                'military-bases-layer',
-                'circle-opacity',
-                flashToggle ? 1 : 0.5
-            );
-            flashToggle = !flashToggle;
-        }, 500);
-    }
-
-    // Tooltip popups
-    map.on('mouseenter', 'military-bases-layer', (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const name = e.features[0].properties.name;
-
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(`<strong>${name}</strong>`)
-            .addTo(map);
-    });
-}
-
-// Wait for the map to load
+// Remove labels
 map.on('load', () => {
-    displayMilitaryBases();
+  map.getStyle().layers.forEach(layer => {
+    if (layer.type === 'symbol') {
+      map.setLayoutProperty(layer.id, 'visibility', 'none');
+    }
+  });
+
+  // Add flashing dots at Australian military base locations
+  const militaryBases = [
+    { name: "Base A", coordinates: [149.165, -35.308] }, // Canberra
+    { name: "Base B", coordinates: [130.841, -12.425] }, // Darwin
+    { name: "Base C", coordinates: [117.165, -20.667] }, // Pilbara
+    // Add more as necessary or connect to a real-time data API here
+  ];
+
+  militaryBases.forEach(base => {
+    const markerElement = document.createElement('div');
+    markerElement.className = 'blink';
+    markerElement.style.width = '12px';
+    markerElement.style.height = '12px';
+    markerElement.style.backgroundColor = 'red';
+    markerElement.style.borderRadius = '50%';
+
+    new mapboxgl.Marker(markerElement).setLngLat(base.coordinates).addTo(map);
+  });
 });
+
+// Add red lines converging in the middle
+const lineTop = document.createElement('div');
+lineTop.id = 'line-top';
+lineTop.className = 'red-line';
+document.body.appendChild(lineTop);
+
+const lineBottom = document.createElement('div');
+lineBottom.id = 'line-bottom';
+lineBottom.className = 'red-line';
+document.body.appendChild(lineBottom);
+
+const lineLeft = document.createElement('div');
+lineLeft.id = 'line-left';
+lineLeft.className = 'red-line';
+document.body.appendChild(lineLeft);
+
+const lineRight = document.createElement('div');
+lineRight.id = 'line-right';
+lineRight.className = 'red-line';
+document.body.appendChild(lineRight);
+
