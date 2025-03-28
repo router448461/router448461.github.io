@@ -5,7 +5,7 @@ const map = new mapboxgl.Map({
     style: 'mapbox://styles/mapbox/streets-v11',
     center: [133.7751, -25.2744], // Center of Australia
     zoom: 4,
-    attributionControl: false // Removes attribution link
+    attributionControl: false // Removes Mapbox attribution
 });
 
 // Function to animate lines to the center of the viewport
@@ -26,47 +26,36 @@ window.addEventListener('resize', () => {
 // Call the function initially to set the crosshair lines
 animateLinesToCenter();
 
-// Function to fetch and update data dynamically
-async function updateMilitaryBases() {
-    try {
-        // Example endpoint for fetching dynamic data
-        const response = await fetch('https://example.com/api/military-bases'); // Replace with actual API endpoint
-        const updatedData = await response.json();
+// Function to add flashing markers for military bases
+function displayMilitaryBases() {
+    militaryBases.forEach(base => {
+        const markerElement = document.createElement('div'); // Create a custom marker element
+        markerElement.className = 'mapboxgl-marker'; // Assign the flashing effect class
 
-        // Clear existing markers
-        document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
+        // Add the marker to the map
+        new mapboxgl.Marker(markerElement)
+            .setLngLat([base.lon, base.lat])
+            .addTo(map);
 
-        // Add updated markers
-        updatedData.forEach(base => {
-            const marker = new mapboxgl.Marker({ color: 'red' })
-                .setLngLat([base.lon, base.lat])
-                .addTo(map);
+        // Tooltip for displaying base name and coordinates
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.innerHTML = `<strong>${base.name}</strong><br>Lat: ${base.lat}, Lon: ${base.lon}`;
+        document.body.appendChild(tooltip);
 
-            // Tooltip for displaying base name and coordinates
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerHTML = `<strong>${base.name}</strong><br>Lat: ${base.lat}, Lon: ${base.lon}`;
-            document.body.appendChild(tooltip);
-
-            // Show tooltip on hover
-            marker.getElement().addEventListener('mouseenter', (event) => {
-                tooltip.style.display = 'block';
-                tooltip.style.left = `${event.pageX + 10}px`;
-                tooltip.style.top = `${event.pageY + 10}px`;
-            });
-
-            // Hide tooltip on mouse leave
-            marker.getElement().addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
-            });
+        // Show tooltip on hover
+        markerElement.addEventListener('mouseenter', (event) => {
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${event.pageX + 10}px`;
+            tooltip.style.top = `${event.pageY + 10}px`;
         });
-    } catch (error) {
-        console.error('Failed to fetch military base data:', error);
-    }
+
+        // Hide tooltip on mouse leave
+        markerElement.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    });
 }
 
-// Periodically update markers every 60 seconds
-setInterval(updateMilitaryBases, 60000);
-
-// Initial call to populate the map
-updateMilitaryBases();
+// Display the bases
+displayMilitaryBases();
