@@ -21,26 +21,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
 const animateLinesToCenter = () => {
     const verticalLine = document.getElementById('vertical-line');
     const horizontalLine = document.getElementById('horizontal-line');
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
+
+    // Start animations to bring lines to center
+    verticalLine.style.animationPlayState = 'running';
+    horizontalLine.style.animationPlayState = 'running';
 };
-
-// Trigger a flash effect on map click
-map.on('click', (e) => {
-    const mapContainer = document.getElementById('map-container');
-    mapContainer.classList.add('flash');
-
-    setTimeout(() => {
-        mapContainer.classList.remove('flash');
-    }, 200);
-
-    // Optional: Show coordinates tooltip
-    const { lat, lng } = e.latlng;
-    L.popup()
-        .setLatLng([lat, lng])
-        .setContent(`Coordinates: ${lat.toFixed(2)}, ${lng.toFixed(2)}`)
-        .openOn(map);
-});
 
 // Center the lines when the map is loaded
 map.whenReady(() => {
