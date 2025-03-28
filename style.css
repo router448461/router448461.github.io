@@ -1,19 +1,47 @@
-// Enable movement of the red crosshair lines
-document.addEventListener('mousemove', (event) => {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
+/* General styling */
+body {
+    margin: 0;
+    overflow: hidden;
+}
 
-    verticalLine.style.left = `${event.clientX}px`;
-    horizontalLine.style.top = `${event.clientY}px`;
-});
+#map-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
 
-// Create flash effect when clicking
-document.getElementById('world-map').addEventListener('click', () => {
-    const map = document.getElementById('world-map');
-    map.classList.add('flash');
+/* Red crosshair lines */
+#vertical-line, #horizontal-line {
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+    pointer-events: none;
+}
 
-    // Remove flash effect after animation ends
-    setTimeout(() => {
-        map.classList.remove('flash');
-    }, 200);
-});
+#vertical-line {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#horizontal-line {
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Flash effect */
+.flash {
+    animation: flash-animation 0.2s ease-out;
+}
+
+@keyframes flash-animation {
+    0% {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
