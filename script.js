@@ -8,98 +8,82 @@ const map = new mapboxgl.Map({
     attributionControl: false // Removes Mapbox attribution
 });
 
-// Function to animate lines to the center of the viewport
+// Animate crosshair lines
 function animateLinesToCenter() {
     const verticalLine = document.getElementById('vertical-line');
     const horizontalLine = document.getElementById('horizontal-line');
-
-    // Set lines to target the center of the viewport
     verticalLine.style.left = `${window.innerWidth / 2}px`;
     horizontalLine.style.top = `${window.innerHeight / 2}px`;
 }
-
-// Recalculate crosshair lines on window resize
-window.addEventListener('resize', () => {
-    animateLinesToCenter();
-});
-
-// Call the function initially to set the crosshair lines
+window.addEventListener('resize', animateLinesToCenter);
 animateLinesToCenter();
 
-// Function to fetch military bases data
+// Fetch GeoJSON data for military bases
 async function fetchMilitaryBases() {
-    const mirtaUrl =
-        'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Military_Installations_Ranges_and_Training_Areas_MIRTA_DOD_Sites_Boundaries/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
-    const basesUrl =
-        'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MilitaryBases/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json';
-
     try {
-        const mirtaResponse = await fetch(mirtaUrl);
-        const mirtaData = await mirtaResponse.json();
+        const response1 = await fetch('https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/Military_Installations_Ranges_and_Training_Areas_MIRTA_DOD_Sites_Boundaries/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json');
+        const data1 = await response1.json();
 
-        const basesResponse = await fetch(basesUrl);
-        const basesData = await basesResponse.json();
+        const response2 = await fetch('https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/MilitaryBases/FeatureServer/0/query?where=1%3D1&outFields=Name,Latitude,Longitude&outSR=4326&f=json');
+        const data2 = await response2.json();
 
-        // Combine and format data as GeoJSON
         const features = [
-            ...mirtaData.features.map(feature => ({
+            ...data1.features.map(feature => ({
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
                 properties: { name: feature.attributes.Name || 'Unnamed Base' }
             })),
-            ...basesData.features.map(feature => ({
+            ...data2.features.map(feature => ({
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [feature.geometry.x, feature.geometry.y] },
                 properties: { name: feature.attributes.Name || 'Unnamed Base' }
             }))
         ];
 
-        return {
-            type: 'FeatureCollection',
-            features: features
-        }; // Return GeoJSON
+        return { type: 'FeatureCollection', features };
     } catch (error) {
         console.error('Failed to fetch military base data:', error);
-        return { type: 'FeatureCollection', features: [] }; // Return empty GeoJSON if an error occurs
+        return { type: 'FeatureCollection', features: [] }; // Empty GeoJSON
     }
 }
 
-// Function to display bases using GeoJSON and a Mapbox layer
+// Add GeoJSON-based military bases to the map
 async function displayMilitaryBases() {
-    const geojsonData = await fetchMilitaryBases(); // Fetch GeoJSON data
+    const geojsonData = await fetchMilitaryBases();
+    console.log('GeoJSON Data:', geojsonData); // Debugging output
 
-    // Add a GeoJSON source for military bases
-    map.addSource('military-bases', {
-        type: 'geojson',
-        data: geojsonData
-    });
+    // Remove existing source if already present
+    if (map.getSource('military-bases')) {
+        map.getSource('military-bases').setData(geojsonData);
+    } else {
+        // Add a new source and layer
+        map.addSource('military-bases', { type: 'geojson', data: geojsonData });
+        map.addLayer({
+            id: 'military-bases-layer',
+            type: 'circle',
+            source: 'military-bases',
+            paint: {
+                'circle-radius': 6,
+                'circle-color': 'red',
+                'circle-opacity': 1,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': 'white'
+            }
+        });
 
-    // Add a layer to display the bases as flashing red dots
-    map.addLayer({
-        id: 'military-bases-layer',
-        type: 'circle',
-        source: 'military-bases',
-        paint: {
-            'circle-radius': 6,
-            'circle-color': 'red',
-            'circle-opacity': 1,
-            'circle-stroke-width': 2,
-            'circle-stroke-color': 'white'
-        }
-    });
+        // Add flashing animation
+        let flashToggle = true;
+        setInterval(() => {
+            map.setPaintProperty(
+                'military-bases-layer',
+                'circle-opacity',
+                flashToggle ? 1 : 0.5
+            );
+            flashToggle = !flashToggle;
+        }, 500);
+    }
 
-    // Animate flashing effect (use transition opacity to simulate)
-    let flashToggle = true;
-    setInterval(() => {
-        map.setPaintProperty(
-            'military-bases-layer',
-            'circle-opacity',
-            flashToggle ? 1 : 0.5
-        );
-        flashToggle = !flashToggle;
-    }, 500); // Toggle every 500ms
-
-    // Add popup tooltips on hover
+    // Tooltip popups
     map.on('mouseenter', 'military-bases-layer', (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const name = e.features[0].properties.name;
@@ -111,7 +95,7 @@ async function displayMilitaryBases() {
     });
 }
 
-// Wait for the map to load before adding layers
+// Wait for the map to load
 map.on('load', () => {
     displayMilitaryBases();
 });
