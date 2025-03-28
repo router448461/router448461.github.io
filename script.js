@@ -1,22 +1,24 @@
-// Initialize the Leaflet map
-const map = L.map('map-container', {
-    zoomControl: false, // Disable zoom buttons
-    attributionControl: false, // Remove Leaflet attribution
-}).setView([0, 0], 2); // Center on 0,0 (world view)
+/* Universal reset for consistent layout */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-// Add OpenStreetMap tiles (free and reliable, no authentication needed)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 19,
-    noWrap: true // Prevent infinite map scrolling
-}).addTo(map);
+/* Ensure the HTML and body span the full viewport */
+html, body {
+    height: 100%; /* Ensure full height */
+    width: 100%; /* Ensure full width */
+    overflow: hidden; /* Prevent scrolling */
+    background-color: #000; /* Set a clean background */
+}
 
-// Resize the map to fit the browser window
-map.whenReady(() => {
-    map.invalidateSize(); // Fix sizing issues after load
-});
-
-// Ensure the map resizes correctly on window resize
-window.addEventListener('resize', () => {
-    map.invalidateSize(); // Force Leaflet to re-calculate map size
-});
+/* Map container fills the viewport completely */
+#map-container {
+    position: fixed; /* Fix to viewport */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Fill entire browser width */
+    height: 100vh; /* Fill entire browser height */
+    background-color: #000; /* Fallback background if tiles fail */
+}
