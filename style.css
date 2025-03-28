@@ -23,10 +23,10 @@ body {
     background-color: #000;
 }
 
-/* Red Crosshair Lines */
+/* Gradient Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
-    background-color: var(--line-color);
+    background-color: transparent; /* Ensure no flat color overrides the gradient */
     z-index: 1000;
     pointer-events: none;
     transition: none; /* Disable conflicting transitions */
@@ -37,6 +37,7 @@ body {
     height: 100%;
     left: 0; /* Start at the left edge */
     animation: vertical-draw var(--animation-duration) ease-in-out forwards;
+    background: linear-gradient(to bottom, var(--line-color), transparent); /* Vertical gradient */
 }
 
 #horizontal-line {
@@ -44,6 +45,7 @@ body {
     height: 2px;
     top: 0; /* Start at the top edge */
     animation: horizontal-draw var(--animation-duration) ease-in-out forwards;
+    background: linear-gradient(to right, var(--line-color), transparent); /* Horizontal gradient */
 }
 
 /* Animations for the red lines */
@@ -89,13 +91,13 @@ body {
     }
 }
 
-/* Tooltip Styling */
+/* Smooth Tooltip Animation */
 .blinking-dot::after {
     content: attr(data-coordinates); /* Display coordinates on hover */
     position: absolute;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -20px); /* Start above the dot */
     background-color: var(--tooltip-bg-color);
     color: var(--tooltip-font-color);
     padding: 5px;
@@ -103,9 +105,10 @@ body {
     border-radius: 4px;
     opacity: 0; /* Initially hidden */
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth animation for tooltip */
 }
 
 .blinking-dot:hover::after {
     opacity: 1; /* Show tooltip on hover */
+    transform: translate(-50%, -40px); /* Slide tooltip further above the dot */
 }
