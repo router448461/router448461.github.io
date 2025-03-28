@@ -13,8 +13,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     noWrap: true // Prevent infinite horizontal wrapping
 }).addTo(map);
 
-// Ensure the map respects its container dimensions
-map.invalidateSize(); // Explicitly resize the map
+// Force Leaflet to respect the container size
+map.whenReady(() => {
+    map.invalidateSize(); // Ensures correct rendering after map loads
+    animateLinesToCenter();
+});
 
 // Center the red crosshair lines
 function animateLinesToCenter() {
@@ -35,12 +38,8 @@ map.on('click', () => {
     }, 200);
 });
 
-// Center the lines when the map is loaded
-map.whenReady(() => {
-    animateLinesToCenter();
-});
-
-// Recalculate the lines on window resize
+// Recalculate map size and center lines on window resize
 window.addEventListener('resize', () => {
+    map.invalidateSize(); // Fixes map size after resizing
     animateLinesToCenter();
 });
