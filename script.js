@@ -3,71 +3,9 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYya
 
 // Initialize the map
 const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/light-v11', // Light base map style
-  center: [0, 0], // Center of the world
-  zoom: 2,
-  projection: 'mercator' // Flat world map
+  container: 'map', // ID of the map container
+  style: 'mapbox://styles/mapbox/light-v11', // Mapbox style
+  center: [0, 0], // Longitude and latitude of map center
+  zoom: 2, // Initial zoom level
+  projection: 'mercator' // Flat world map projection
 });
-
-// Ensure layers are loaded before making changes
-map.on('load', () => {
-  console.log('Map loaded successfully!'); // Debugging
-
-  // Attempt to remove all labels
-  try {
-    map.getStyle().layers.forEach(layer => {
-      if (layer.type === 'symbol') {
-        map.setLayoutProperty(layer.id, 'visibility', 'none');
-        console.log(`Removed layer: ${layer.id}`);
-      }
-    });
-  } catch (error) {
-    console.error('Error removing labels:', error);
-  }
-
-  // Add markers at Australian military bases
-  const militaryBases = [
-    { name: "Base A", coordinates: [149.165, -35.308] }, // Canberra
-    { name: "Base B", coordinates: [130.841, -12.425] }, // Darwin
-    { name: "Base C", coordinates: [117.165, -20.667] }  // Pilbara
-  ];
-
-  militaryBases.forEach(base => {
-    const markerElement = document.createElement('div');
-    markerElement.className = 'blink';
-    markerElement.style.width = '12px';
-    markerElement.style.height = '12px';
-    markerElement.style.backgroundColor = 'red';
-    markerElement.style.borderRadius = '50%';
-
-    new mapboxgl.Marker(markerElement).setLngLat(base.coordinates).addTo(map);
-    console.log(`Added marker for: ${base.name}`);
-  });
-});
-
-// Basic map loading debugging
-map.on('error', event => {
-  console.error('Mapbox encountered an error:', event.error);
-});
-
-// Add red lines converging in the middle
-const lineTop = document.createElement('div');
-lineTop.id = 'line-top';
-lineTop.className = 'red-line';
-document.body.appendChild(lineTop);
-
-const lineBottom = document.createElement('div');
-lineBottom.id = 'line-bottom';
-lineBottom.className = 'red-line';
-document.body.appendChild(lineBottom);
-
-const lineLeft = document.createElement('div');
-lineLeft.id = 'line-left';
-lineLeft.className = 'red-line';
-document.body.appendChild(lineLeft);
-
-const lineRight = document.createElement('div');
-lineRight.id = 'line-right';
-lineRight.className = 'red-line';
-document.body.appendChild(lineRight);
