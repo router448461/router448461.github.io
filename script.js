@@ -5,15 +5,14 @@ const map = L.map('map-container', {
     worldCopyJump: true // Prevent infinite horizontal scrolling
 }).setView([0, 0], 2); // Set initial map view
 
-// Add dark mode tiles without labels using Carto's Positron (no labels) tiles
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://carto.com/">Carto</a>',
-    subdomains: 'abcd',
+// Add dark mode tiles using Stadia Maps (no labels)
+L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
     maxZoom: 19,
     noWrap: true // Prevent infinite horizontal wrapping
 }).addTo(map);
 
-// Force Leaflet to respect the container size
+// Force Leaflet to respect the container dimensions
 map.whenReady(() => {
     map.invalidateSize(); // Ensures correct rendering after map loads
     animateLinesToCenter();
@@ -27,16 +26,6 @@ function animateLinesToCenter() {
     verticalLine.style.left = `${window.innerWidth / 2}px`;
     horizontalLine.style.top = `${window.innerHeight / 2}px`;
 }
-
-// Trigger a flash effect on map click
-map.on('click', () => {
-    const mapContainer = document.getElementById('map-container');
-    mapContainer.classList.add('flash');
-
-    setTimeout(() => {
-        mapContainer.classList.remove('flash');
-    }, 200);
-});
 
 // Recalculate map size and center lines on window resize
 window.addEventListener('resize', () => {
