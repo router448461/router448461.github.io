@@ -4,8 +4,30 @@ body {
 }
 
 #map-container {
+    position: relative;
     width: 100vw;
     height: 100vh;
+}
+
+/* Red crosshair lines */
+#vertical-line, #horizontal-line {
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+#vertical-line {
+    width: 2px;
+    height: 100%;
+    left: 0; /* Will adjust dynamically */
+}
+
+#horizontal-line {
+    width: 100%;
+    height: 2px;
+    top: 0; /* Will adjust dynamically */
 }
 
 /* Flashing red dots */
