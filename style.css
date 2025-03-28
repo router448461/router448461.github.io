@@ -1,33 +1,35 @@
-/* Ensure full height and width for the HTML and body */
+/* Ensure the HTML and body span the entire viewport */
 html, body {
     margin: 0;
     padding: 0;
-    height: 100vh; /* Match the height of the browser viewport */
-    width: 100vw; /* Match the width of the browser viewport */
+    height: 100%; /* Ensure the full height matches the viewport */
+    width: 100%; /* Ensure the full width matches the viewport */
     overflow: hidden; /* Prevent scrolling */
     background-color: #000; /* Set a consistent dark background */
 }
 
 /* Map container styling to guarantee it fills the screen */
 #map-container {
-    position: fixed; /* Fixed to prevent scrolling */
+    position: fixed; /* Fix map container to the viewport */
     top: 0;
     left: 0;
-    height: 100vh; /* Full viewport height */
-    width: 100vw; /* Full viewport width */
-    margin: 0;
-    padding: 0;
+    right: 0; /* Explicitly set right and bottom properties */
+    bottom: 0;
+    width: 100%; /* Fill the entire viewport width */
+    height: 100%; /* Fill the entire viewport height */
     background-color: #000; /* Fallback background in case tiles fail */
     overflow: hidden; /* Prevent map overflow */
+    display: flex; /* Allow debug or child elements alignment */
+    flex-direction: column; /* Ensure flexibility for child alignment */
 }
 
 /* Styling for the red crosshair lines */
 #vertical-line, #horizontal-line {
     position: absolute;
     background-color: red; /* Set the crosshair color */
-    z-index: 1000; /* Ensure the lines are above the map */
-    pointer-events: none; /* Allow map interactions through the crosshair */
-    transition: all 0.3s ease; /* Smooth transition animations */
+    z-index: 1000; /* Ensure the lines appear above the map */
+    pointer-events: none; /* Allow interaction with the map through the crosshairs */
+    transition: all 0.3s ease; /* Smooth resizing animations */
 }
 
 #vertical-line {
