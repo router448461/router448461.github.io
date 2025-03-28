@@ -36,6 +36,10 @@ const createBlinkingDot = (coordinates) => {
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
+    }).on('mouseover', (e) => {
+        // Display coordinates in the panel
+        const coordinatesPanel = document.getElementById('coordinates-panel');
+        coordinatesPanel.textContent = `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
     }).addTo(map);
 });
 
