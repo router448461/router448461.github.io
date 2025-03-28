@@ -2,12 +2,14 @@
 body {
     margin: 0;
     overflow: hidden;
+    background-color: #000; /* Dark background to match dark mode */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
+    background-color: #000; /* Fallback in case tiles don't load */
 }
 
 /* Red Crosshair Lines */
@@ -44,4 +46,3 @@ body {
         background-color: transparent;
     }
 }
-
