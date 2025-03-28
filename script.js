@@ -38,17 +38,24 @@ capitals.forEach(capital => {
     }).addTo(map);
 });
 
-// Function to center the red crosshair lines
-const animateLinesToCenter = () => {
+// Function to re-trigger the red line animations
+const resetLineAnimations = () => {
     const verticalLine = document.getElementById('vertical-line');
     const horizontalLine = document.getElementById('horizontal-line');
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
+
+    // Remove and re-add the animation classes to restart them
+    verticalLine.style.animation = 'none';
+    horizontalLine.style.animation = 'none';
+
+    setTimeout(() => {
+        verticalLine.style.animation = 'vertical-draw 1s ease-out forwards';
+        horizontalLine.style.animation = 'horizontal-draw 1s ease-out forwards';
+    }, 0);
 };
 
-// Center the lines when the map is loaded
+// Trigger animations when the map is ready
 map.whenReady(() => {
-    animateLinesToCenter();
+    resetLineAnimations();
 });
 
 // Optimize window resize events using a debounce function
@@ -56,6 +63,6 @@ let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        animateLinesToCenter();
+        resetLineAnimations();
     }, 100);
 });
