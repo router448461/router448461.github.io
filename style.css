@@ -3,13 +3,14 @@ body {
     margin: 0;
     overflow: hidden;
     background-color: #000; /* Dark background to match dark mode */
+    font-family: Arial, sans-serif; /* Fallback for better readability */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-color: #000; /* Fallback in case tiles don't load */
+    background-color: #000;
 }
 
 /* Red Crosshair Lines */
@@ -18,19 +19,21 @@ body {
     background-color: red;
     z-index: 1000;
     pointer-events: none;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 #vertical-line {
     width: 2px;
     height: 100%;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #horizontal-line {
     width: 100%;
     height: 2px;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* Flash Effect */
