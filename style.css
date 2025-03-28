@@ -1,0 +1,49 @@
+/* Style for the world map */
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #1c1c1c;
+}
+
+#world-map {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Mercator_projection_world_map_-_medium_resolution.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* Style for red lines */
+#vertical-line, #horizontal-line {
+    position: absolute;
+    background-color: red;
+    z-index: 1000;
+}
+
+#vertical-line {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#horizontal-line {
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Flash effect */
+.flash {
+    animation: flash-animation 0.2s ease-out;
+}
+
+@keyframes flash-animation {
+    0% {
+        background-color: white;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
