@@ -1,5 +1,6 @@
-// Mapbox configuration
-mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+// Mapbox configuration with default public token
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYyaW9oaG5peGY4NTQifQ.aTWb-NcZPgEUm-0b1jib6w';
+
 const map = new mapboxgl.Map({
     container: 'map-container',
     style: 'mapbox://styles/mapbox/streets-v11', // Mapbox style
