@@ -1,49 +1,19 @@
-/* Style for the world map */
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #1c1c1c;
-}
+// Enable movement of the red crosshair lines
+document.addEventListener('mousemove', (event) => {
+    const verticalLine = document.getElementById('vertical-line');
+    const horizontalLine = document.getElementById('horizontal-line');
 
-#world-map {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Mercator_projection_world_map_-_medium_resolution.jpg') no-repeat center center;
-    background-size: cover;
-}
+    verticalLine.style.left = `${event.clientX}px`;
+    horizontalLine.style.top = `${event.clientY}px`;
+});
 
-/* Style for red lines */
-#vertical-line, #horizontal-line {
-    position: absolute;
-    background-color: red;
-    z-index: 1000;
-}
+// Create flash effect when clicking
+document.getElementById('world-map').addEventListener('click', () => {
+    const map = document.getElementById('world-map');
+    map.classList.add('flash');
 
-#vertical-line {
-    width: 2px;
-    height: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-#horizontal-line {
-    width: 100%;
-    height: 2px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Flash effect */
-.flash {
-    animation: flash-animation 0.2s ease-out;
-}
-
-@keyframes flash-animation {
-    0% {
-        background-color: white;
-    }
-    100% {
-        background-color: transparent;
-    }
-}
+    // Remove flash effect after animation ends
+    setTimeout(() => {
+        map.classList.remove('flash');
+    }, 200);
+});
