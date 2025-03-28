@@ -57,3 +57,50 @@ capitals.forEach((capital, index) => {
 });
 
 // Function to re-trigger the red line animations
+const resetLineAnimations = () => {
+    const verticalLine = document.getElementById('vertical-line');
+    const horizontalLine = document.getElementById('horizontal-line');
+
+    // Remove and re-add the animation classes to restart them
+    verticalLine.style.animation = 'none';
+    horizontalLine.style.animation = 'none';
+
+    setTimeout(() => {
+        verticalLine.style.animation = 'vertical-draw var(--animation-duration) ease-in-out forwards';
+        horizontalLine.style.animation = 'horizontal-draw var(--animation-duration) ease-in-out forwards';
+    }, 0);
+};
+
+// Trigger animations when the map is ready
+map.whenReady(() => {
+    resetLineAnimations();
+});
+
+// Optimize window resize events using debounce logic
+const debounce = (func, delay) => {
+    let timeout;
+    return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(), delay);
+    };
+};
+
+window.addEventListener('resize', debounce(() => {
+    resetLineAnimations();
+}, 150));
+
+// Live Clock Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const updateClock = () => {
+        const now = new Date();
+        const milliseconds = now.getMilliseconds();
+        const nanoseconds = Math.floor(Math.random() * 1000); // Simulated nanoseconds for effect
+
+        const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+        const timePanel = document.getElementById('time-panel');
+        timePanel.textContent = `Time: ${timeString}.${milliseconds.toString().padStart(3, '0')}${nanoseconds.toString().padStart(3, '0')} ns`;
+    };
+
+    // Update the clock every millisecond
+    setInterval(updateClock, 1);
+});
