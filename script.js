@@ -26,8 +26,42 @@ window.addEventListener('resize', () => {
 // Call the function initially to set the crosshair lines
 animateLinesToCenter();
 
-// Function to add flashing markers for military bases
-function displayMilitaryBases() {
+// Function to fetch data dynamically from both ArcGIS datasets
+async function fetchMilitaryBases() {
+    const mirtaUrl = 'https://hifld-geoplatform.hub.arcgis.com/datasets/geoplatform::military-installations-ranges-and-training-areas-mirta-dod-sites-boundaries/explore';
+    const basesUrl = 'https://hub.arcgis.com/datasets/FDEP::military-bases/data';
+
+    try {
+        // Fetch data from MIRTA API
+        const mirtaResponse = await fetch(mirtaUrl);
+        const mirtaData = await mirtaResponse.json();
+
+        // Fetch data from Military Bases API
+        const basesResponse = await fetch(basesUrl);
+        const basesData = await basesResponse.json();
+
+        // Combine and normalize data
+        const combinedData = [...mirtaData.features, ...basesData.features].map(feature => ({
+            name: feature.attributes.Name || 'Unnamed Base',
+            lat: feature.geometry.y,
+            lon: feature.geometry.x
+        }));
+
+        return combinedData;
+    } catch (error) {
+        console.error('Failed to fetch military base data:', error);
+        return []; // Return empty array if API call fails
+    }
+}
+
+// Function to add flashing markers dynamically
+async function displayMilitaryBases() {
+    const militaryBases = await fetchMilitaryBases(); // Fetch data dynamically
+
+    // Clear existing markers
+    document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
+
+    // Add markers for updated bases
     militaryBases.forEach(base => {
         const markerElement = document.createElement('div'); // Create a custom marker element
         markerElement.className = 'mapboxgl-marker'; // Assign the flashing effect class
@@ -57,5 +91,8 @@ function displayMilitaryBases() {
     });
 }
 
-// Display the bases
+// Periodic updates to refresh data dynamically
+setInterval(displayMilitaryBases, 60000); // Refresh every 60 seconds
+
+// Initial load
 displayMilitaryBases();
