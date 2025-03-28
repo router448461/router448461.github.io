@@ -13,6 +13,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     noWrap: true // Prevent infinite horizontal wrapping
 }).addTo(map);
 
+// Ensure the map respects its container dimensions
+map.invalidateSize(); // Explicitly resize the map
+
 // Center the red crosshair lines
 function animateLinesToCenter() {
     const verticalLine = document.getElementById('vertical-line');
