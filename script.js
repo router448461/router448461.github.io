@@ -20,7 +20,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
 // Capital city coordinates
 const capitals = [
     { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
-    { name: "Canberra", lat: -35.2809, lng: 149.1300 }
+    { name: "Canberra", lat: -35.2809, lng: 149.1300 },
+    { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
 ];
 
 // Create blinking dot icon
@@ -75,3 +76,17 @@ const debounce = (func, delay) => {
 window.addEventListener('resize', debounce(() => {
     resetLineAnimations();
 }, 150));
+
+// Live Clock Logic
+const updateClock = () => {
+    const now = new Date();
+    const milliseconds = now.getMilliseconds();
+    const nanoseconds = Math.floor(Math.random() * 1000); // Simulated nanoseconds for effect
+
+    const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+    const timePanel = document.getElementById('time-panel');
+    timePanel.textContent = `Time: ${timeString}.${milliseconds.toString().padStart(3, '0')}${nanoseconds.toString().padStart(3, '0')} ns`;
+};
+
+// Update the clock every millisecond
+setInterval(updateClock, 1);
