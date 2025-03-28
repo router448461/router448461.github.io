@@ -10,20 +10,20 @@ const map = new mapboxgl.Map({
   projection: 'mercator' // Flat world map
 });
 
-// Remove labels
+// Ensure layers are loaded before making changes
 map.on('load', () => {
+  // Remove all labels from the map
   map.getStyle().layers.forEach(layer => {
     if (layer.type === 'symbol') {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
 
-  // Add flashing dots at Australian military base locations
+  // Add flashing markers at Australian military bases
   const militaryBases = [
     { name: "Base A", coordinates: [149.165, -35.308] }, // Canberra
     { name: "Base B", coordinates: [130.841, -12.425] }, // Darwin
-    { name: "Base C", coordinates: [117.165, -20.667] }, // Pilbara
-    // Add more as necessary or connect to a real-time data API here
+    { name: "Base C", coordinates: [117.165, -20.667] }  // Pilbara
   ];
 
   militaryBases.forEach(base => {
@@ -58,4 +58,3 @@ const lineRight = document.createElement('div');
 lineRight.id = 'line-right';
 lineRight.className = 'red-line';
 document.body.appendChild(lineRight);
-
