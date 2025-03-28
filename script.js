@@ -23,18 +23,19 @@ const capitals = [
     { name: "Canberra", lat: -35.2809, lng: 149.1300 }
 ];
 
+// Create blinking dot icon
+const createBlinkingDot = (coordinates) => {
+    return L.divIcon({
+        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
+        className: '',
+        iconSize: [10, 10]
+    });
+};
+
 // Add blinking markers for each capital
 capitals.forEach(capital => {
-    const blinkingDot = document.createElement('div');
-    blinkingDot.className = 'blinking-dot';
-    blinkingDot.setAttribute('data-coordinates', `${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`);
-
-    const marker = L.marker([capital.lat, capital.lng], {
-        icon: L.divIcon({
-            html: blinkingDot.outerHTML,
-            className: '',
-            iconSize: [10, 10]
-        })
+    L.marker([capital.lat, capital.lng], {
+        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
     }).addTo(map);
 });
 
@@ -48,8 +49,8 @@ const resetLineAnimations = () => {
     horizontalLine.style.animation = 'none';
 
     setTimeout(() => {
-        verticalLine.style.animation = 'vertical-draw 1s ease-out forwards';
-        horizontalLine.style.animation = 'horizontal-draw 1s ease-out forwards';
+        verticalLine.style.animation = 'vertical-draw var(--animation-duration) ease-in-out forwards';
+        horizontalLine.style.animation = 'horizontal-draw var(--animation-duration) ease-in-out forwards';
     }, 0);
 };
 
@@ -58,11 +59,15 @@ map.whenReady(() => {
     resetLineAnimations();
 });
 
-// Optimize window resize events using a debounce function
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        resetLineAnimations();
-    }, 100);
-});
+// Optimize window resize events using debounce logic
+const debounce = (func, delay) => {
+    let timeout;
+    return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(), delay);
+    };
+};
+
+window.addEventListener('resize', debounce(() => {
+    resetLineAnimations();
+}, 150));
