@@ -36,31 +36,44 @@ body {
     animation: horizontal-line-animation 0.5s forwards;
 }
 
-/* Flash Effect */
-.flash {
-    animation: flash-animation 0.2s ease-out;
+/* Blinking Effect for Red Dots */
+.blinking-dot {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    animation: blink-animation 1s infinite;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
 }
 
-@keyframes flash-animation {
-    0% {
-        background-color: rgba(255, 255, 255, 0.8);
+@keyframes blink-animation {
+    0%, 100% {
+        opacity: 1;
     }
-    100% {
-        background-color: transparent;
-    }
-}
-
-/* Animations for the red lines */
-@keyframes vertical-line-animation {
-    to {
-        left: 50%; /* Move to the center */
-        transform: translateX(-50%);
+    50% {
+        opacity: 0;
     }
 }
 
-@keyframes horizontal-line-animation {
-    to {
-        top: 50%; /* Move to the center */
-        transform: translateY(-50%);
-    }
+/* Tooltip Styling */
+.blinking-dot::after {
+    content: attr(data-coordinates); /* Display coordinates on hover */
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0; /* Initially hidden */
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.blinking-dot:hover::after {
+    opacity: 1; /* Show tooltip on hover */
 }
