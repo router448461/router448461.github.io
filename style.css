@@ -38,25 +38,9 @@ html, body {
 #vertical-line {
     width: 2px; /* Vertical line thickness */
     height: 100%; /* Stretch vertically across the screen */
-    left: 0; /* Starting position */
 }
 
 #horizontal-line {
     width: 100%; /* Stretch horizontally across the screen */
-    height: 2px; /* Horizontal line thickness */
-    top: 0; /* Starting position */
-}
-
-/* Flash effect styling */
-.flash {
-    animation: flash-animation 0.2s ease-out; /* Create a short flash effect */
-}
-
-@keyframes flash-animation {
-    0% {
-        background-color: rgba(255, 255, 255, 0.8); /* Flash bright white */
-    }
-    100% {
-        background-color: transparent; /* Fade to transparent */
-    }
+    height: 2px;
 }
