@@ -2,7 +2,7 @@
 const map = L.map('map-container', {
     zoomControl: false, // Disable zoom buttons
     attributionControl: false, // Remove Leaflet attribution
-}).setView([0, 0], 2); // Initial map view at [Lat, Lng]
+}).setView([0, 0], 2);
 
 // Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
@@ -12,13 +12,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
 }).addTo(map);
 
 // Function to center the red crosshair lines
-function animateLinesToCenter() {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
-
-    verticalLine.style.left = `${window.innerWidth / 2}px`;
-    horizontalLine.style.top = `${window.innerHeight / 2}px`;
-}
+const animateLinesToCenter = () => {
+    document.getElementById('vertical-line').style.left = `${window.innerWidth / 2}px`;
+    document.getElementById('horizontal-line').style.top = `${window.innerHeight / 2}px`;
+};
 
 // Trigger a flash effect on map click
 map.on('click', () => {
@@ -31,11 +28,7 @@ map.on('click', () => {
 });
 
 // Center the lines when the map is loaded
-map.whenReady(() => {
-    animateLinesToCenter();
-});
+map.whenReady(animateLinesToCenter);
 
 // Recalculate the lines on window resize
-window.addEventListener('resize', () => {
-    animateLinesToCenter();
-});
+window.addEventListener('resize', animateLinesToCenter);
