@@ -3,13 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Map with Red Lines</title>
-  <link href="style.css" rel="stylesheet">
+  <title>Basic Mapbox Map</title>
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
 </head>
 <body>
   <div id="map"></div>
-  <script src="script.js"></script>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtMGRkbmRrYzBlNzYyaW9oaG5peGY4NTQifQ.aTWb-NcZPgEUm-0b1jib6w';
+    const map = new mapboxgl.Map({
+      container: 'map', // ID of the map container
+      style: 'mapbox://styles/mapbox/light-v11', // Mapbox style
+      center: [0, 0], // Longitude and latitude of map center
+      zoom: 2, // Initial zoom level
+      projection: 'mercator' // Flat world map projection
+    });
+  </script>
 </body>
 </html>
