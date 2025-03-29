@@ -3,17 +3,18 @@
     --dot-color: red;
     --contrast-outline-color: white;
     --animation-duration: 1s;
+    --tooltip-bg-color: black;
+    --tooltip-font-color: white;
+    --hover-glow-color: rgba(255, 0, 0, 0.6);
     --day-bg-color: #f0f0f0;
     --night-bg-color: #000;
 }
 
 body {
     margin: 0;
-    overflow: auto; /* Re-enabled scrolling and interaction */
+    overflow: hidden;
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    user-select: none; /* Prevent text selection */
-    -webkit-user-drag: none; /* Prevent dragging of elements */
 }
 
 #map-container {
@@ -107,4 +108,30 @@ body {
     50% {
         opacity: 0;
     }
+}
+
+.blinking-dot::after {
+    content: attr(data-coordinates);
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, -20px);
+    background-color: var(--tooltip-bg-color);
+    color: var(--tooltip-font-color);
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.blinking-dot:hover::after {
+    opacity: 1;
+    transform: translate(-50%, -40px);
+}
+
+.blinking-dot:hover {
+    box-shadow: 0 0 10px var(--hover-glow-color);
+    transform: scale(1.2);
 }
