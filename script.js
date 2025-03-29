@@ -16,18 +16,17 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     maxZoom: 19
 }).addTo(map);
 
-// Updated Landmark Coordinates
+// Capital City Coordinates
 const capitals = [
-    { name: "White House", lat: 38.8977, lng: -77.0365 },
-    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
-    { name: "Brandenburg Gate", lat: 52.5163, lng: 13.3777 },
-    { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
+    { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
+    { name: "Canberra", lat: -35.2809, lng: 149.1300 },
+    { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
 ];
 
 // Create Blinking Dot Icon
-const createBlinkingDot = () => {
+const createBlinkingDot = (coordinates) => {
     return L.divIcon({
-        html: `<div class="blinking-dot"></div>`,
+        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
         className: '',
         iconSize: [10, 10]
     });
@@ -36,35 +35,27 @@ const createBlinkingDot = () => {
 // Add Markers
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot()
+        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
+    }).on('mouseover', (e) => {
+        document.getElementById('coordinates-panel').textContent =
+            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
     }).addTo(map);
 });
-
-// Update Coordinates Panel with Correct Info
-const updateCoordinatesPanel = () => {
-    const coordPanel = document.getElementById('coordinates-panel');
-    coordPanel.textContent = capitals.map(capital => 
-        `${capital.name}: ${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`
-    ).join(' | ');
-};
-updateCoordinatesPanel(); // Initialize static content
 
 // Synchronize Blinking Dots with the Clock
 const syncDotsWithClock = () => {
     const now = new Date();
     const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animation = `blink-animation 1s steps(1, start) infinite`;
+        dot.style.animationDuration = `${60 / seconds}s`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
-// Update Clock Panel with Correct NanoSeconds
+// Update Clock Panel
 const updateClock = () => {
     const now = new Date();
-    const nanoseconds = (now.getMilliseconds() * 1e6 / 1e9).toFixed(2); // Convert ms to ns and format
-    const timeWithNS = `${now.toLocaleTimeString('en-US', { hour12: false })}.${nanoseconds}`;
-    document.getElementById('time-panel').textContent = `Time: ${timeWithNS}`;
+    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
 };
 setInterval(updateClock, 1000);
 
