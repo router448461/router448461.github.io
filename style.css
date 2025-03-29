@@ -2,63 +2,45 @@
     --line-color: red;
     --dot-color: red;
     --contrast-outline-color: white;
-    --animation-duration: 30s; /* Duration synced with refresh */
+    --animation-duration: 1s;
     --day-bg-color: #f0f0f0;
     --night-bg-color: #000;
 }
 
 body {
     margin: 0;
-    overflow: hidden; /* Prevent scrolling globally */
+    overflow: hidden; /* Disable scrolling globally */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    user-select: none; /* Disable text selection globally */
-    -webkit-user-drag: none; /* Disable dragging globally */
+    user-select: none; /* Disable text selection */
+    -webkit-user-drag: none; /* Disable dragging of elements */
+    pointer-events: none; /* Disable interactions globally */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
+    pointer-events: none; /* Disable interactions for the map */
 }
 
 .scrolling-text {
-    position: absolute; /* Place inside the map */
-    top: 20px; /* Align text at the top of the map */
-    left: -100%; /* Start off-screen */
+    position: fixed;
+    top: 10px;
+    left: -100%;
     font-size: 24px;
     font-weight: bold;
     color: red;
-    z-index: 1000; /* Layer above all elements */
-    animation: scroll-text var(--animation-duration) linear; /* Single scroll animation */
+    animation: scroll-left-to-right 10s linear infinite; /* Infinite scroll animation */
 }
 
-@keyframes scroll-text {
+@keyframes scroll-left-to-right {
     from {
-        transform: translateX(-100%); /* Start off-screen */
+        left: -100%;
     }
     to {
-        transform: translateX(100%); /* End off-screen */
+        left: 100%;
     }
-}
-
-#coordinates-panel, #time-panel {
-    position: absolute;
-    color: white;
-    font-size: 16px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 5px;
-}
-
-#coordinates-panel {
-    bottom: 10px;
-    left: 10px;
-}
-
-#time-panel {
-    top: 10px;
-    right: 10px;
 }
 
 .blinking-dot {
