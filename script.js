@@ -56,6 +56,6 @@ const updateClock = () => {
 setInterval(updateClock, 100);
 
 const refreshPage = () => {
-    window.location.reload(); // Refresh the page every 30 seconds
+    window.location.reload(); // Refresh page every 30 seconds
 };
 setTimeout(refreshPage, 30000);
