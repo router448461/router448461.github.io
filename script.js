@@ -1,30 +1,29 @@
-// Initialize the Leaflet map
+// Initialize the Leaflet Map
 const map = L.map('map-container', {
-    zoomControl: false, // Disable zoom buttons
-    attributionControl: false, // Remove Leaflet attribution
-    dragging: false, // Disable map dragging
-    scrollWheelZoom: false, // Disable zooming with the scroll wheel
-    doubleClickZoom: false, // Disable zooming with double click
-    boxZoom: false, // Disable box zooming
-    keyboard: false, // Disable keyboard navigation
-    touchZoom: false // Disable pinch zooming on touch devices
-}).setView([0, 0], 2); // Set initial view to show the whole world
+    zoomControl: false,
+    attributionControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    touchZoom: false
+}).setView([0, 0], 2);
 
-// Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">Carto</a>',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(map);
 
-// Capital city coordinates
+// Capital City Coordinates
 const capitals = [
     { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
     { name: "Canberra", lat: -35.2809, lng: 149.1300 },
     { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
 ];
 
-// Create blinking dot icon
+// Create Blinking Dot Icon
 const createBlinkingDot = (coordinates) => {
     return L.divIcon({
         html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
@@ -33,60 +32,39 @@ const createBlinkingDot = (coordinates) => {
     });
 };
 
-// Add blinking markers for each capital
+// Add Markers
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
     }).on('mouseover', (e) => {
-        // Display coordinates in the panel
-        const coordinatesPanel = document.getElementById('coordinates-panel');
-        coordinatesPanel.textContent = `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+        document.getElementById('coordinates-panel').textContent =
+            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
     }).addTo(map);
 });
 
-// Function to re-trigger the red line animations
-const resetLineAnimations = () => {
-    const verticalLine = document.getElementById('vertical-line');
-    const horizontalLine = document.getElementById('horizontal-line');
-
-    // Remove and re-add the animation classes to restart them
-    verticalLine.style.animation = 'none';
-    horizontalLine.style.animation = 'none';
-
-    setTimeout(() => {
-        verticalLine.style.animation = 'vertical-draw var(--animation-duration) ease-in-out forwards';
-        horizontalLine.style.animation = 'horizontal-draw var(--animation-duration) ease-in-out forwards';
-    }, 0);
+// Synchronize Blinking Dots with the Clock
+const syncDotsWithClock = () => {
+    const now = new Date();
+    const seconds = now.getSeconds();
+    document.querySelectorAll('.blinking-dot').forEach(dot => {
+        dot.style.animationDuration = `${60 / seconds}s`;
+    });
 };
+setInterval(syncDotsWithClock, 1000);
 
-// Trigger animations when the map is ready
-map.whenReady(() => {
-    resetLineAnimations();
-});
-
-// Optimize window resize events using debounce logic
-const debounce = (func, delay) => {
-    let timeout;
-    return () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(), delay);
-    };
-};
-
-window.addEventListener('resize', debounce(() => {
-    resetLineAnimations();
-}, 150));
-
-// Live Clock Logic
+// Update Clock Panel
 const updateClock = () => {
     const now = new Date();
-    const milliseconds = now.getMilliseconds();
-    const nanoseconds = Math.floor(Math.random() * 1000); // Simulated nanoseconds for effect
-
-    const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-    const timePanel = document.getElementById('time-panel');
-    timePanel.textContent = `Time: ${timeString}.${milliseconds.toString().padStart(3, '0')}${nanoseconds.toString().padStart(3, '0')} ns`;
+    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
 };
+setInterval(updateClock, 1000);
 
-// Update the clock every millisecond
-setInterval(updateClock, 1);
+// Day/Night Mode Toggle
+const updateDayNightMode = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
+    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
+    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
+};
+setInterval(updateDayNightMode, 60000); // Check every minute
