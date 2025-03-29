@@ -1,7 +1,7 @@
 const map = L.map('map-container', {
     zoomControl: false,
     attributionControl: false,
-    dragging: false,
+    dragging: false, // Block map dragging
     scrollWheelZoom: false,
     doubleClickZoom: false,
     boxZoom: false,
@@ -55,10 +55,7 @@ const updateClock = () => {
 };
 setInterval(updateClock, 100);
 
-// Refresh the page after the scrolling text animation ends
 const refreshPage = () => {
-    setTimeout(() => {
-        window.location.reload();
-    }, 30000); // Match refresh timing with animation duration
+    window.location.reload();
 };
-refreshPage();
+setTimeout(refreshPage, 30000); // Sync with scrolling text duration
