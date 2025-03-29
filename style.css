@@ -7,9 +7,10 @@
     --animation-duration: 1s;
 }
 
-/* Disable text selection */
+/* Disable text selection and dragging globally */
 * {
     user-select: none;
+    cursor: default; /* Always a pointer cursor */
 }
 
 /* General Page Styles */
@@ -18,7 +19,6 @@ body {
     overflow: hidden;
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    cursor: default; /* Static cursor */
 }
 
 #map-container {
@@ -106,10 +106,10 @@ body {
     animation: blink-animation 1s steps(1, start) infinite;
     position: absolute;
     transform: translate(-50%, -50%);
-    cursor: default; /* Prevent hand cursor */
+    cursor: default; /* Prevent interactivity */
 }
 
-/* Remove dot hover effects */
+/* Remove hover effects */
 .blinking-dot::after {
     display: none;
 }
