@@ -1,86 +1,61 @@
-:root {
-    --line-color: red;
-    --dot-color: red;
-    --contrast-outline-color: white;
-    --animation-duration: 30s; /* Match scrolling text animation to page refresh */
-    --day-bg-color: #f0f0f0;
-    --night-bg-color: #000;
-}
+const map = L.map('map-container', {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    touchZoom: false
+}).setView([0, 0], 2);
 
-body, * {
-    margin: 0;
-    padding: 0;
-    user-select: none; /* Disable text selection globally */
-    -webkit-user-drag: none; /* Disable dragging globally */
-}
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com/">Carto</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(map);
 
-body {
-    overflow: hidden; /* Disable scrolling */
-    background-color: var(--night-bg-color);
-    font-family: Arial, sans-serif;
-}
+const capitals = [
+    { name: "White House", lat: 38.8977, lng: -77.0365 },
+    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
+    { name: "Brandenburg Gate", lat: 52.5163, lng: 13.3777 },
+    { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
+];
 
-#map-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-}
+const createBlinkingDot = () => {
+    return L.divIcon({
+        html: `<div class="blinking-dot"></div>`,
+        className: '',
+        iconSize: [10, 10]
+    });
+};
 
-.scrolling-text {
-    position: absolute; /* Place within the map */
-    top: 20px; /* Align inside the map container */
-    left: -100%; /* Start completely off-screen */
-    font-size: 24px;
-    font-weight: bold;
-    color: red;
-    z-index: 1000; /* Ensure it appears above all elements */
-    animation: scroll-text var(--animation-duration) linear infinite; /* Match animation with 30s duration */
-}
+capitals.forEach(capital => {
+    L.marker([capital.lat, capital.lng], {
+        icon: createBlinkingDot()
+    }).addTo(map).on('mouseover', (e) => {
+        document.getElementById('coordinates-panel').textContent =
+            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+    });
+});
 
-@keyframes scroll-text {
-    from {
-        left: -100%;
-    }
-    to {
-        left: 100%;
-    }
-}
+const syncDotsWithClock = () => {
+    document.querySelectorAll('.blinking-dot').forEach(dot => {
+        dot.style.animationDuration = "1s"; // Consistent blinking every second
+    });
+};
+setInterval(syncDotsWithClock, 1000);
 
-#coordinates-panel, #time-panel {
-    position: absolute;
-    color: white;
-    font-size: 16px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 5px;
-}
+const updateClock = () => {
+    const now = new Date();
+    const milliseconds = now.getMilliseconds();
+    const formattedMilliseconds = milliseconds.toString().padStart(3, '0');
+    document.getElementById('time-panel').textContent =
+        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${formattedMilliseconds}`;
+};
+setInterval(updateClock, 100);
 
-#coordinates-panel {
-    bottom: 10px;
-    left: 10px;
-}
-
-#time-panel {
-    top: 10px;
-    right: 10px;
-}
-
-.blinking-dot {
-    width: 10px;
-    height: 10px;
-    background-color: var(--dot-color);
-    border: 2px solid var(--contrast-outline-color);
-    border-radius: 50%;
-    animation: blink-animation 1s infinite; /* Dots blink every second */
-    position: absolute;
-    transform: translate(-50%, -50%);
-}
-
-@keyframes blink-animation {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0;
-    }
-}
+const refreshPage = () => {
+    window.location.reload(); // Refresh page every 30 seconds
+};
+setTimeout(refreshPage, 30000);
