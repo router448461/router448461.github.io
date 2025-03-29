@@ -38,21 +38,27 @@ capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot()
     }).addTo(map);
+
+    // Display name and coordinates in the coordinates panel
+    const coordPanel = document.getElementById('coordinates-panel');
+    coordPanel.textContent = `${capital.name}: ${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`;
 });
 
 // Synchronize Blinking Dots with the Clock
 const syncDotsWithClock = () => {
     const now = new Date();
+    const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
         dot.style.animation = `blink-animation 1s steps(1, start) infinite`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
-// Update Clock Panel
+// Update Clock Panel with NanoSeconds
 const updateClock = () => {
     const now = new Date();
-    const timeWithNS = now.toLocaleTimeString('en-US', { hour12: false }) + ' ns';
+    const nanoseconds = now.getMilliseconds() * 1e6; // Convert ms to ns
+    const timeWithNS = `${now.toLocaleTimeString('en-US', { hour12: false })}.${nanoseconds} ns`;
     document.getElementById('time-panel').textContent = `Time: ${timeWithNS}`;
 };
 setInterval(updateClock, 1000);
