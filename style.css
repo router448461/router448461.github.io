@@ -9,11 +9,11 @@
 
 body {
     margin: 0;
-    overflow: hidden;
+    overflow: auto; /* Re-enabled scrolling and interaction */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
     user-select: none; /* Prevent text selection */
-    -webkit-user-drag: none; /* Disable dragging */
+    -webkit-user-drag: none; /* Prevent dragging of elements */
 }
 
 #map-container {
