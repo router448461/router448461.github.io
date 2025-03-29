@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced World Map</title>
-    <meta name="description" content="Interactive world map with dynamic features and crosshairs.">
+    <title>Target System on World Map</title>
+    <meta name="description" content="Interactive world map with dynamic crosshairs and blinking capital city markers.">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
     <main role="application" aria-labelledby="map-title">
-        <h1 id="map-title" style="display: none;">Enhanced World Map Display</h1>
+        <h1 id="map-title" style="display: none;">World Map Display with Target System</h1>
         <section id="map-section">
             <div id="map-container">
-                <div id="vertical-line" aria-hidden="true"></div>
-                <div id="horizontal-line" aria-hidden="true"></div>
+                <div id="vertical-line" aria-label="Vertical crosshair line" aria-hidden="true"></div>
+                <div id="horizontal-line" aria-label="Horizontal crosshair line" aria-hidden="true"></div>
             </div>
             <div id="coordinates-panel" aria-live="polite">Coordinates: None</div>
             <div id="time-panel" aria-live="polite">Time: Loading...</div>
             <div id="day-night-panel" aria-live="polite">Mode: Day</div>
         </section>
-        <button id="zoom-fit" aria-label="Fit zoom to markers">Fit Zoom</button>
-        <button id="toggle-mode" aria-label="Toggle Day/Night Mode">Toggle Mode</button>
     </main>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
