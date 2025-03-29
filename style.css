@@ -9,37 +9,37 @@
 
 body {
     margin: 0;
-    overflow: hidden; /* Prevent scrolling globally */
+    overflow: hidden; /* Disable scrolling globally */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
     user-select: none; /* Disable text highlighting globally */
     -webkit-user-drag: none; /* Disable dragging globally */
-    pointer-events: none; /* Disable all mouse interactions globally */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    pointer-events: none; /* Disable all map interactions */
+    pointer-events: none; /* Disable interactions within the map */
 }
 
 .scrolling-text {
-    position: absolute; /* Absolute positioning inside the map */
-    top: 20px; /* Adjust to make text appear within the map */
-    left: -100%; /* Start off-screen */
+    position: absolute; /* Inside the map container */
+    top: 20px; /* Align text at the top of the map */
+    width: 100%; /* Ensure the text scrolls across the full width */
+    text-align: center; /* Center the text within its container */
     font-size: 24px;
     font-weight: bold;
     color: red;
-    animation: scroll-left-to-right 10s linear infinite; /* Infinite scroll animation */
+    animation: scroll-text 10s linear infinite; /* Correct animation */
 }
 
-@keyframes scroll-left-to-right {
+@keyframes scroll-text {
     from {
-        left: -100%;
+        transform: translateX(-100%); /* Start off-screen to the left */
     }
     to {
-        left: 100%;
+        transform: translateX(100%); /* Move off-screen to the right */
     }
 }
 
