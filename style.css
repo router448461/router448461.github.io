@@ -2,23 +2,25 @@
     --line-color: red;
     --dot-color: red;
     --contrast-outline-color: white;
-    --tooltip-bg-color: black;
-    --tooltip-font-color: white;
-    --hover-glow-color: rgba(255, 0, 0, 0.6);
     --day-bg-color: #f0f0f0;
     --night-bg-color: #000;
     --animation-duration: 1s;
 }
 
-/* General Styles */
+/* Disable text selection */
+* {
+    user-select: none;
+}
+
+/* Prevent interactivity outside map */
 body {
     margin: 0;
     overflow: hidden;
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
+    cursor: default; /* Static cursor */
 }
 
-/* Map Container */
 #map-container {
     position: relative;
     width: 100vw;
@@ -104,40 +106,4 @@ body {
     animation: blink-animation 1s steps(1, start) infinite;
     position: absolute;
     transform: translate(-50%, -50%);
-}
-
-@keyframes blink-animation {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0;
-    }
-}
-
-/* Tooltip */
-.blinking-dot::after {
-    content: attr(data-name) " (" attr(data-coordinates) ")";
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translate(-50%, -20px);
-    background-color: var(--tooltip-bg-color);
-    color: var(--tooltip-font-color);
-    padding: 5px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.blinking-dot:hover::after {
-    opacity: 1;
-    transform: translate(-50%, -40px);
-}
-
-.blinking-dot:hover {
-    box-shadow: 0 0 10px var(--hover-glow-color);
-    transform: scale(1.2);
 }
