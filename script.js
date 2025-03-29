@@ -55,7 +55,10 @@ const updateClock = () => {
 };
 setInterval(updateClock, 100);
 
+// Refresh the page after the scrolling text animation ends
 const refreshPage = () => {
-    window.location.reload(); // Refresh page every 30 seconds
+    setTimeout(() => {
+        window.location.reload();
+    }, 30000); // Match refresh timing with animation duration
 };
-setTimeout(refreshPage, 30000);
+refreshPage();
