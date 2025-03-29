@@ -2,19 +2,22 @@
     --line-color: red;
     --dot-color: red;
     --contrast-outline-color: white;
-    --animation-duration: 30s; /* Animation synced with 30s refresh */
+    --animation-duration: 30s; /* Match scrolling text animation to page refresh */
     --day-bg-color: #f0f0f0;
     --night-bg-color: #000;
 }
 
-body {
+body, * {
     margin: 0;
-    overflow: hidden; /* Disable scrolling globally */
+    padding: 0;
+    user-select: none; /* Disable text selection globally */
+    -webkit-user-drag: none; /* Disable dragging globally */
+}
+
+body {
+    overflow: hidden; /* Disable scrolling */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    user-select: none; /* Disable text highlighting globally */
-    -webkit-user-drag: none; /* Disable dragging globally */
-    pointer-events: none; /* Disable all mouse interactions globally */
 }
 
 #map-container {
@@ -24,22 +27,22 @@ body {
 }
 
 .scrolling-text {
-    position: absolute; /* Inside the map container */
-    top: 20px; /* Position text within the map */
-    left: -100%; /* Start off-screen */
+    position: absolute; /* Place within the map */
+    top: 20px; /* Align inside the map container */
+    left: -100%; /* Start completely off-screen */
     font-size: 24px;
     font-weight: bold;
     color: red;
-    width: 100%; /* Ensure it spans full width while scrolling */
-    animation: scroll-text var(--animation-duration) linear infinite; /* Sync animation with refresh */
+    z-index: 1000; /* Ensure it appears above all elements */
+    animation: scroll-text var(--animation-duration) linear infinite; /* Match animation with 30s duration */
 }
 
 @keyframes scroll-text {
     from {
-        left: -100%; /* Start off-screen */
+        left: -100%;
     }
     to {
-        left: 100%; /* End off-screen */
+        left: 100%;
     }
 }
 
