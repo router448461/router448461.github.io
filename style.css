@@ -12,7 +12,7 @@
     user-select: none;
 }
 
-/* Prevent interactivity outside map */
+/* General Page Styles */
 body {
     margin: 0;
     overflow: hidden;
@@ -106,4 +106,10 @@ body {
     animation: blink-animation 1s steps(1, start) infinite;
     position: absolute;
     transform: translate(-50%, -50%);
+    cursor: default; /* Prevent hand cursor */
+}
+
+/* Remove dot hover effects */
+.blinking-dot::after {
+    display: none;
 }
