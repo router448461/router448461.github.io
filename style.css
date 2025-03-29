@@ -9,25 +9,25 @@
 
 body {
     margin: 0;
-    overflow: hidden; /* Disable scrolling globally */
+    overflow: hidden; /* Prevent scrolling globally */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    user-select: none; /* Disable text selection */
-    -webkit-user-drag: none; /* Disable dragging of elements */
-    pointer-events: none; /* Disable interactions globally */
+    user-select: none; /* Disable text highlighting globally */
+    -webkit-user-drag: none; /* Disable dragging globally */
+    pointer-events: none; /* Disable all mouse interactions globally */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    pointer-events: none; /* Disable interactions for the map */
+    pointer-events: none; /* Disable all map interactions */
 }
 
 .scrolling-text {
-    position: fixed;
-    top: 10px;
-    left: -100%;
+    position: absolute; /* Absolute positioning inside the map */
+    top: 20px; /* Adjust to make text appear within the map */
+    left: -100%; /* Start off-screen */
     font-size: 24px;
     font-weight: bold;
     color: red;
@@ -43,13 +43,32 @@ body {
     }
 }
 
+#coordinates-panel, #time-panel {
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#coordinates-panel {
+    bottom: 10px;
+    left: 10px;
+}
+
+#time-panel {
+    top: 10px;
+    right: 10px;
+}
+
 .blinking-dot {
     width: 10px;
     height: 10px;
     background-color: var(--dot-color);
     border: 2px solid var(--contrast-outline-color);
     border-radius: 50%;
-    animation: blink-animation 1s infinite; /* Dots blink every second */
+    animation: blink-animation 1s infinite; /* Blink consistently every second */
     position: absolute;
     transform: translate(-50%, -50%);
 }
