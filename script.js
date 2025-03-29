@@ -1,12 +1,12 @@
 const map = L.map('map-container', {
     zoomControl: false,
     attributionControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    touchZoom: false
+    dragging: true, // Re-enabled map dragging
+    scrollWheelZoom: true,
+    doubleClickZoom: true,
+    boxZoom: true,
+    keyboard: true,
+    touchZoom: true
 }).setView([0, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
@@ -33,28 +33,27 @@ const createBlinkingDot = () => {
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot()
-    }).addTo(map); // Removed tooltips and hover effects
+    }).on('mouseover', (e) => {
+        document.getElementById('coordinates-panel').textContent =
+            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+    }).addTo(map); // Retains coordinate display but removes all other hover effects
 });
 
 const syncDotsWithClock = () => {
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Synchronize blinking dots with the clock
+        dot.style.animationDuration = "1s"; // Blinks synchronized with the clock
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
 const updateClock = () => {
     const now = new Date();
+    const milliseconds = now.getMilliseconds();
+    const nanoseconds = Math.floor(milliseconds * 1e6) % 100; // Approximate nanos as 2 digits
+    const formattedMilliseconds = milliseconds.toString().padStart(2, '0');
+    const formattedNanoseconds = nanoseconds.toString().padStart(2, '0');
+
     document.getElementById('time-panel').textContent =
-        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${now.getMilliseconds()}`;
+        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${formattedMilliseconds}:${formattedNanoseconds}`;
 };
 setInterval(updateClock, 100);
-
-const updateDayNightMode = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
-    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
-    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
-};
-setInterval(updateDayNightMode, 60000);
