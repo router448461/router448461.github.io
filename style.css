@@ -1,19 +1,16 @@
-:root {
-    --line-color: red;
-    --dot-color: red;
-    --contrast-outline-color: white;
-    --animation-duration: 30s; /* Duration synced with refresh */
-    --day-bg-color: #f0f0f0;
-    --night-bg-color: #000;
+/* GLOBAL BLOCK: Disable text selection and mouse interactions */
+* {
+    margin: 0;
+    padding: 0;
+    user-select: none; /* Disable text highlighting globally */
+    -webkit-user-drag: none; /* Disable dragging globally */
+    pointer-events: none; /* Disable all interactions */
 }
 
 body {
-    margin: 0;
     overflow: hidden; /* Prevent scrolling globally */
     background-color: var(--night-bg-color);
     font-family: Arial, sans-serif;
-    user-select: none; /* Disable text selection globally */
-    -webkit-user-drag: none; /* Disable dragging globally */
 }
 
 #map-container {
@@ -22,15 +19,16 @@ body {
     height: 100vh;
 }
 
+/* SCROLLING TEXT */
 .scrolling-text {
-    position: absolute; /* Place inside the map */
+    position: absolute; /* Place inside map container */
     top: 20px; /* Align text at the top of the map */
-    left: -100%; /* Start off-screen */
+    left: -100%; /* Start completely off-screen */
     font-size: 24px;
     font-weight: bold;
     color: red;
-    z-index: 1000; /* Layer above all elements */
-    animation: scroll-text var(--animation-duration) linear; /* Single scroll animation */
+    z-index: 1000; /* Place above all elements */
+    animation: scroll-text 30s linear infinite; /* Scrolling sync with refresh */
 }
 
 @keyframes scroll-text {
@@ -42,6 +40,7 @@ body {
     }
 }
 
+/* OTHER UI ELEMENTS */
 #coordinates-panel, #time-panel {
     position: absolute;
     color: white;
@@ -61,6 +60,7 @@ body {
     right: 10px;
 }
 
+/* BLINKING DOTS */
 .blinking-dot {
     width: 10px;
     height: 10px;
