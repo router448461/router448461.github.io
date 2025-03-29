@@ -1,60 +1,110 @@
-const map = L.map('map-container', {
-    zoomControl: false,
-    attributionControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    touchZoom: false
-}).setView([0, 0], 2);
+:root {
+    --line-color: red;
+    --dot-color: red;
+    --contrast-outline-color: white;
+    --animation-duration: 1s;
+    --day-bg-color: #f0f0f0;
+    --night-bg-color: #000;
+}
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://carto.com/">Carto</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
-}).addTo(map);
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--night-bg-color);
+    font-family: Arial, sans-serif;
+    user-select: none; /* Prevent text selection */
+    -webkit-user-drag: none; /* Disable dragging */
+}
 
-const capitals = [
-    { name: "White House", lat: 38.8977, lng: -77.0365 },
-    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
-    { name: "Brandenburg Gate", lat: 52.5163, lng: 13.3777 },
-    { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
-];
+#map-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
 
-const createBlinkingDot = () => {
-    return L.divIcon({
-        html: `<div class="blinking-dot"></div>`,
-        className: '',
-        iconSize: [10, 10]
-    });
-};
+#vertical-line, #horizontal-line {
+    position: absolute;
+    background-color: transparent;
+    z-index: 1000;
+    pointer-events: none;
+}
 
-capitals.forEach(capital => {
-    L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot()
-    }).addTo(map); // Removed tooltips and hover effects
-});
+#vertical-line {
+    width: 2px;
+    height: 100%;
+    left: 0;
+    animation: vertical-draw var(--animation-duration) ease-in-out forwards;
+    background: linear-gradient(to bottom, var(--line-color), transparent);
+}
 
-const syncDotsWithClock = () => {
-    document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Synchronize blinking dots with the clock
-    });
-};
-setInterval(syncDotsWithClock, 1000);
+#horizontal-line {
+    width: 100%;
+    height: 2px;
+    top: 0;
+    animation: horizontal-draw var(--animation-duration) ease-in-out forwards;
+    background: linear-gradient(to right, var(--line-color), transparent);
+}
 
-const updateClock = () => {
-    const now = new Date();
-    document.getElementById('time-panel').textContent =
-        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${now.getMilliseconds()}`;
-};
-setInterval(updateClock, 100);
+@keyframes vertical-draw {
+    from {
+        left: 0;
+    }
+    to {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
 
-const updateDayNightMode = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
-    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
-    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
-};
-setInterval(updateDayNightMode, 60000);
+@keyframes horizontal-draw {
+    from {
+        top: 0;
+    }
+    to {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+#coordinates-panel, #time-panel, #day-night-panel {
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#coordinates-panel {
+    bottom: 10px;
+    left: 10px;
+}
+
+#time-panel {
+    top: 10px;
+    right: 10px;
+}
+
+#day-night-panel {
+    top: 10px;
+    left: 10px;
+}
+
+.blinking-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--dot-color);
+    border: 2px solid var(--contrast-outline-color);
+    border-radius: 50%;
+    animation: blink-animation infinite;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes blink-animation {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
