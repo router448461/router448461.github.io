@@ -38,11 +38,16 @@ capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot()
     }).addTo(map);
-
-    // Display name and coordinates in the coordinates panel
-    const coordPanel = document.getElementById('coordinates-panel');
-    coordPanel.textContent = `${capital.name}: ${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`;
 });
+
+// Update Coordinates Panel with Correct Info
+const updateCoordinatesPanel = () => {
+    const coordPanel = document.getElementById('coordinates-panel');
+    coordPanel.textContent = capitals.map(capital => 
+        `${capital.name}: ${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`
+    ).join(' | ');
+};
+updateCoordinatesPanel(); // Initialize static content
 
 // Synchronize Blinking Dots with the Clock
 const syncDotsWithClock = () => {
@@ -54,11 +59,11 @@ const syncDotsWithClock = () => {
 };
 setInterval(syncDotsWithClock, 1000);
 
-// Update Clock Panel with NanoSeconds
+// Update Clock Panel with Correct NanoSeconds
 const updateClock = () => {
     const now = new Date();
-    const nanoseconds = now.getMilliseconds() * 1e6; // Convert ms to ns
-    const timeWithNS = `${now.toLocaleTimeString('en-US', { hour12: false })}.${nanoseconds} ns`;
+    const nanoseconds = (now.getMilliseconds() * 1e6 / 1e9).toFixed(2); // Convert ms to ns and format
+    const timeWithNS = `${now.toLocaleTimeString('en-US', { hour12: false })}.${nanoseconds}`;
     document.getElementById('time-panel').textContent = `Time: ${timeWithNS}`;
 };
 setInterval(updateClock, 1000);
