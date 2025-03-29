@@ -1,7 +1,7 @@
 const map = L.map('map-container', {
     zoomControl: false,
     attributionControl: false,
-    dragging: false,
+    dragging: false, // Disabled
     scrollWheelZoom: false,
     doubleClickZoom: false,
     boxZoom: false,
@@ -33,17 +33,12 @@ const createBlinkingDot = () => {
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot()
-    }).addTo(map);
+    }).addTo(map); // No hover interaction
 });
 
 const syncDotsWithClock = () => {
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Dots blink every second
+        dot.style.animationDuration = "1s"; // Consistent blinking every second
     });
 };
 setInterval(syncDotsWithClock, 1000);
-
-const refreshPage = () => {
-    window.location.reload(); // Refresh the page every 30 seconds
-};
-setTimeout(refreshPage, 30000);
