@@ -25,9 +25,9 @@ const capitals = [
 ];
 
 // Create Blinking Dot Icon
-const createBlinkingDot = (coordinates, name) => {
+const createBlinkingDot = () => {
     return L.divIcon({
-        html: `<div class="blinking-dot" data-name="${name}" data-coordinates="${coordinates}"></div>`,
+        html: `<div class="blinking-dot"></div>`,
         className: '',
         iconSize: [10, 10]
     });
@@ -36,20 +36,15 @@ const createBlinkingDot = (coordinates, name) => {
 // Add Markers
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`, capital.name)
-    }).on('mouseover', (e) => {
-        document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)} (Location: ${capital.name})`;
+        icon: createBlinkingDot()
     }).addTo(map);
 });
 
 // Synchronize Blinking Dots with the Clock
 const syncDotsWithClock = () => {
     const now = new Date();
-    const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
         dot.style.animation = `blink-animation 1s steps(1, start) infinite`;
-        dot.style.animationDelay = `-${seconds % 1}s`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
@@ -57,7 +52,8 @@ setInterval(syncDotsWithClock, 1000);
 // Update Clock Panel
 const updateClock = () => {
     const now = new Date();
-    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
+    const timeWithNS = now.toLocaleTimeString('en-US', { hour12: false }) + ' ns';
+    document.getElementById('time-panel').textContent = `Time: ${timeWithNS}`;
 };
 setInterval(updateClock, 1000);
 
