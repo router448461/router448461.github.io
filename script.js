@@ -16,17 +16,18 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
     maxZoom: 19
 }).addTo(map);
 
-// Capital City Coordinates
+// Updated Landmark Coordinates
 const capitals = [
-    { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
-    { name: "Canberra", lat: -35.2809, lng: 149.1300 },
-    { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
+    { name: "White House", lat: 38.8977, lng: -77.0365 },
+    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
+    { name: "Brandenburg Gate", lat: 52.5163, lng: 13.3777 },
+    { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
 ];
 
 // Create Blinking Dot Icon
-const createBlinkingDot = (coordinates) => {
+const createBlinkingDot = (coordinates, name) => {
     return L.divIcon({
-        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
+        html: `<div class="blinking-dot" data-name="${name}" data-coordinates="${coordinates}"></div>`,
         className: '',
         iconSize: [10, 10]
     });
@@ -35,10 +36,10 @@ const createBlinkingDot = (coordinates) => {
 // Add Markers
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
+        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`, capital.name)
     }).on('mouseover', (e) => {
         document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)} (Location: ${capital.name})`;
     }).addTo(map);
 });
 
@@ -47,7 +48,8 @@ const syncDotsWithClock = () => {
     const now = new Date();
     const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = `${60 / seconds}s`;
+        dot.style.animation = `blink-animation 1s steps(1, start) infinite`;
+        dot.style.animationDelay = `-${seconds % 1}s`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
