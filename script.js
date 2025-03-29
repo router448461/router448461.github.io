@@ -1,12 +1,12 @@
 const map = L.map('map-container', {
     zoomControl: false,
     attributionControl: false,
-    dragging: true, // Re-enabled map dragging
-    scrollWheelZoom: true,
-    doubleClickZoom: true,
-    boxZoom: true,
-    keyboard: true,
-    touchZoom: true
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    touchZoom: false
 }).setView([0, 0], 2);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
@@ -22,9 +22,9 @@ const capitals = [
     { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
 ];
 
-const createBlinkingDot = () => {
+const createBlinkingDot = (coordinates) => {
     return L.divIcon({
-        html: `<div class="blinking-dot"></div>`,
+        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
         className: '',
         iconSize: [10, 10]
     });
@@ -32,28 +32,33 @@ const createBlinkingDot = () => {
 
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot()
+        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
     }).on('mouseover', (e) => {
         document.getElementById('coordinates-panel').textContent =
             `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
-    }).addTo(map); // Retains coordinate display but removes all other hover effects
+    }).addTo(map);
 });
 
 const syncDotsWithClock = () => {
+    const now = new Date();
+    const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Blinks synchronized with the clock
+        dot.style.animationDuration = `${60 / seconds}s`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
 const updateClock = () => {
     const now = new Date();
-    const milliseconds = now.getMilliseconds();
-    const nanoseconds = Math.floor(milliseconds * 1e6) % 100; // Approximate nanos as 2 digits
-    const formattedMilliseconds = milliseconds.toString().padStart(2, '0');
-    const formattedNanoseconds = nanoseconds.toString().padStart(2, '0');
-
-    document.getElementById('time-panel').textContent =
-        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${formattedMilliseconds}:${formattedNanoseconds}`;
+    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
 };
-setInterval(updateClock, 100);
+setInterval(updateClock, 1000);
+
+const updateDayNightMode = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
+    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
+    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
+};
+setInterval(updateDayNightMode, 60000);
