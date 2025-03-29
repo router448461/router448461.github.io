@@ -33,32 +33,17 @@ const createBlinkingDot = () => {
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot()
-    }).addTo(map).on('mouseover', (e) => {
-        document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
-    });
+    }).addTo(map);
 });
 
 const syncDotsWithClock = () => {
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Consistent blinking every second
+        dot.style.animationDuration = "1s"; // Dots blink every second
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
-const updateClock = () => {
-    const now = new Date();
-    const milliseconds = now.getMilliseconds();
-    const formattedMilliseconds = milliseconds.toString().padStart(3, '0');
-    document.getElementById('time-panel').textContent =
-        `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}:${formattedMilliseconds}`;
-};
-setInterval(updateClock, 100);
-
-// Refresh the page after the scrolling text animation ends
 const refreshPage = () => {
-    setTimeout(() => {
-        window.location.reload();
-    }, 30000); // Match refresh timing with animation duration
+    window.location.reload(); // Refresh the page every 30 seconds
 };
-refreshPage();
+setTimeout(refreshPage, 30000);
