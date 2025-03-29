@@ -22,9 +22,9 @@ const capitals = [
     { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
 ];
 
-const createBlinkingDot = (coordinates) => {
+const createBlinkingDot = () => {
     return L.divIcon({
-        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
+        html: `<div class="blinking-dot"></div>`,
         className: '',
         iconSize: [10, 10]
     });
@@ -32,33 +32,18 @@ const createBlinkingDot = (coordinates) => {
 
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
-    }).on('mouseover', (e) => {
-        document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+        icon: createBlinkingDot()
     }).addTo(map);
 });
 
 const syncDotsWithClock = () => {
-    const now = new Date();
-    const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = `${60 / seconds}s`;
+        dot.style.animationDuration = "1s"; // Dots blink every second
     });
 };
 setInterval(syncDotsWithClock, 1000);
 
-const updateClock = () => {
-    const now = new Date();
-    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
+const refreshPage = () => {
+    window.location.reload(); // Refresh the page every 30 seconds
 };
-setInterval(updateClock, 1000);
-
-const updateDayNightMode = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
-    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
-    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
-};
-setInterval(updateDayNightMode, 60000);
+setTimeout(refreshPage, 30000);
