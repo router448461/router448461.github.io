@@ -1,162 +1,66 @@
-/* CSS Variables */
-:root {
-    --line-color: red;
-    --dot-color: red;
-    --contrast-outline-color: white;
-    --animation-duration: 1s;
-    --tooltip-bg-color: black;
-    --tooltip-font-color: white;
-    --hover-glow-color: rgba(255, 0, 0, 0.6);
-}
-
 /* General Styles */
 body {
     margin: 0;
     overflow: hidden;
-    background-color: #000;
-    font-family: Arial, sans-serif;
-}
-
-/* Background Animation */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,255,0.05) 1%, transparent 70%);
-    animation: pulse 10s infinite alternate;
-}
-
-@keyframes pulse {
-    from {
-        transform: scale(1.05);
-    }
-    to {
-        transform: scale(1);
-    }
+    background-color: #000; /* Dark background to match dark mode */
+    font-family: Arial, sans-serif; /* Fallback font for better readability */
 }
 
 #map-container {
     position: relative;
     width: 100vw;
     height: 100vh;
+    background-color: #000;
 }
 
-/* Gradient Crosshair Lines */
+/* Red Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
-    background-color: transparent;
+    background-color: red;
     z-index: 1000;
     pointer-events: none;
+    transform: translate(0, 0);
 }
 
 #vertical-line {
     width: 2px;
     height: 100%;
-    left: 0;
-    animation: vertical-draw var(--animation-duration) ease-in-out forwards;
-    background: linear-gradient(to bottom, var(--line-color), transparent);
+    left: 0; /* Start from the left edge */
+    animation: vertical-line-animation 0.5s forwards;
 }
 
 #horizontal-line {
     width: 100%;
     height: 2px;
-    top: 0;
-    animation: horizontal-draw var(--animation-duration) ease-in-out forwards;
-    background: linear-gradient(to right, var(--line-color), transparent);
+    top: 0; /* Start from the top edge */
+    animation: horizontal-line-animation 0.5s forwards;
 }
 
-/* Animations */
-@keyframes vertical-draw {
-    from {
-        left: 0;
+/* Flash Effect */
+.flash {
+    animation: flash-animation 0.2s ease-out;
+}
+
+@keyframes flash-animation {
+    0% {
+        background-color: rgba(255, 255, 255, 0.8);
     }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Animations for the red lines */
+@keyframes vertical-line-animation {
     to {
-        left: 50%;
+        left: 50%; /* Move to the center */
         transform: translateX(-50%);
     }
 }
 
-@keyframes horizontal-draw {
-    from {
-        top: 0;
-    }
+@keyframes horizontal-line-animation {
     to {
-        top: 50%;
+        top: 50%; /* Move to the center */
         transform: translateY(-50%);
     }
-}
-
-/* Coordinates Panel */
-#coordinates-panel {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-/* Time Panel */
-#time-panel {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-/* Blinking Dots */
-.blinking-dot {
-    width: 10px;
-    height: 10px;
-    background-color: var(--dot-color);
-    border: 2px solid var(--contrast-outline-color);
-    border-radius: 50%;
-    animation: blink-animation 1s infinite;
-    position: absolute;
-    transform: translate(-50%, -50%);
-}
-
-@keyframes blink-animation {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0;
-    }
-}
-
-/* Tooltip Animation */
-.blinking-dot::after {
-    content: attr(data-coordinates);
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translate(-50%, -20px);
-    background-color: var(--tooltip-bg-color);
-    color: var(--tooltip-font-color);
-    padding: 5px;
-    font-size: 12px;
-    border-radius: 4px;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.blinking-dot:hover::after {
-    opacity: 1;
-    transform: translate(-50%, -40px);
-}
-
-.blinking-dot:hover {
-    box-shadow: 0 0 10px var(--hover-glow-color);
-    transform: scale(1.2);
 }
