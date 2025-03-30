@@ -1,44 +1,59 @@
+// Initialize the Leaflet map
 const map = L.map('map-container', {
-    zoomControl: false,
-    attributionControl: false,
-    dragging: false, // Disabled
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    touchZoom: false
-}).setView([0, 0], 2);
+    zoomControl: false, // Disable zoom buttons
+    attributionControl: false, // Remove Leaflet attribution
+    dragging: false, // Disable map dragging
+    scrollWheelZoom: false, // Disable zooming with the scroll wheel
+    doubleClickZoom: false, // Disable zooming with double click
+    boxZoom: false, // Disable box zooming
+    keyboard: false, // Disable keyboard navigation
+    touchZoom: false // Disable pinch zooming on touch devices
+}).setView([0, 0], 2); // Set initial view to show the whole world
 
+// Add dark mode tiles without labels using Carto's Positron (no labels) tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">Carto</a>',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(map);
 
+// Capital city coordinates
 const capitals = [
-    { name: "White House", lat: 38.8977, lng: -77.0365 },
-    { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
-    { name: "Brandenburg Gate", lat: 52.5163, lng: 13.3777 },
-    { name: "Blenheim Palace", lat: 51.8418, lng: -1.3605 }
+    { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
+    { name: "Canberra", lat: -35.2809, lng: 149.1300 },
+    { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
 ];
 
-const createBlinkingDot = () => {
+// Create blinking dot icon
+const createBlinkingDot = (coordinates) => {
     return L.divIcon({
-        html: `<div class="blinking-dot"></div>`,
+        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
         className: '',
         iconSize: [10, 10]
     });
 };
 
-capitals.forEach(capital => {
-    L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot()
-    }).addTo(map); // No hover interaction
+// Add blinking markers for each capital and connect them with lines
+capitals.forEach((capital, index) => {
+    const marker = L.marker([capital.lat, capital.lng], {
+        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
+    }).on('mouseover', (e) => {
+        const coordinatesPanel = document.getElementById('coordinates-panel');
+        coordinatesPanel.textContent = `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)} (City: ${capital.name})`;
+    }).on('click', (e) => {
+        const verticalLine = document.getElementById('vertical-line');
+        const horizontalLine = document.getElementById('horizontal-line');
+        verticalLine.style.left = `${e.containerPoint.x}px`;
+        horizontalLine.style.top = `${e.containerPoint.y}px`;
+    }).addTo(map);
+
+    if (index > 0) {
+        const prevCapital = capitals[index - 1];
+        L.polyline(
+            [[capital.lat, capital.lng], [prevCapital.lat, prevCapital.lng]],
+            { color: 'red', weight: 1 }
+        ).addTo(map);
+    }
 });
 
-const syncDotsWithClock = () => {
-    document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = "1s"; // Consistent blinking every second
-    });
-};
-setInterval(syncDotsWithClock, 1000);
+// Function to re-trigger the red line animations
