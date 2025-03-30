@@ -26,6 +26,11 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// Cross-browser compatibility for media queries (if needed in future features)
+if (window.matchMedia("(max-width: 600px)").matches) {
+  console.log("You're in mobile view.");
+}
+
 // Draw red lines converging to the center
 function drawLines() {
   const centerX = canvas.width / 2;
