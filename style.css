@@ -70,14 +70,14 @@ body {
     }
 }
 
-/* Panels */
+/* Coordinates Panel */
 #coordinates-panel, #time-panel, #day-night-panel {
     position: absolute;
-    color: var(--tooltip-font-color);
-    font-size: 1rem;
-    background-color: var(--tooltip-bg-color);
-    padding: 0.625rem;
-    border-radius: 0.3125rem;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
 }
 
 #coordinates-panel {
@@ -105,7 +105,6 @@ body {
     animation: blink-animation infinite;
     position: absolute;
     transform: translate(-50%, -50%);
-    will-change: transform, opacity;
 }
 
 @keyframes blink-animation {
@@ -127,7 +126,7 @@ body {
     background-color: var(--tooltip-bg-color);
     color: var(--tooltip-font-color);
     padding: 5px;
-    font-size: 0.75rem;
+    font-size: 12px;
     border-radius: 4px;
     opacity: 0;
     pointer-events: none;
