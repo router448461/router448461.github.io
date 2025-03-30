@@ -32,13 +32,17 @@ const createBlinkingDot = (coordinates) => {
     });
 };
 
+// Cache DOM Elements
+const coordinatesPanel = document.getElementById('coordinates-panel');
+const timePanel = document.getElementById('time-panel');
+const dayNightPanel = document.getElementById('day-night-panel');
+
 // Add Markers
 capitals.forEach(capital => {
     L.marker([capital.lat, capital.lng], {
         icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
     }).on('mouseover', (e) => {
-        document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+        coordinatesPanel.textContent = `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
     }).addTo(map);
 });
 
@@ -47,7 +51,7 @@ const syncDotsWithClock = () => {
     const now = new Date();
     const seconds = now.getSeconds();
     document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = `${60 / seconds}s`;
+        dot.style.animationDuration = `${60 / (seconds || 60)}s`;
     });
 };
 setInterval(syncDotsWithClock, 1000);
@@ -55,7 +59,7 @@ setInterval(syncDotsWithClock, 1000);
 // Update Clock Panel
 const updateClock = () => {
     const now = new Date();
-    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
+    timePanel.textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
 };
 setInterval(updateClock, 1000);
 
@@ -64,7 +68,12 @@ const updateDayNightMode = () => {
     const now = new Date();
     const hours = now.getHours();
     const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
-    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
+    dayNightPanel.textContent = `Mode: ${mode}`;
     document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
 };
 setInterval(updateDayNightMode, 60000); // Check every minute
+
+// Initialize Panels on Load
+updateClock();
+updateDayNightMode();
+syncDotsWithClock();
