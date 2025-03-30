@@ -1,10 +1,10 @@
-// Import Leaflet.js for the map
+// Initialize the map
 const map = L.map('map', {
   center: [0, 0], // Center of the world
-  zoom: 2,
+  zoom: 2, // Default zoom level
   zoomControl: false, // Disable zoom controls
   dragging: false, // Disable dragging
-  scrollWheelZoom: false, // Disable scroll zoom
+  scrollWheelZoom: false, // Disable scroll wheel zoom
   doubleClickZoom: false, // Disable double-click zoom
   boxZoom: false, // Disable box zoom
   keyboard: false, // Disable keyboard navigation
@@ -12,26 +12,25 @@ const map = L.map('map', {
   attributionControl: false // Hide attribution
 });
 
-// Add a dark-themed tile layer
+// Add a dark tile layer to the map
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   subdomains: 'abcd',
   maxZoom: 19
 }).addTo(map);
 
-// Animation logic
+// Handle canvas for red-line animation
 const canvas = document.getElementById('animation');
 const ctx = canvas.getContext('2d');
 
 // Adjust canvas size
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-// Cross-browser compatibility for media queries (if needed in future features)
-if (window.matchMedia("(max-width: 600px)").matches) {
-  console.log("You're in mobile view.");
+function adjustCanvasSize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
+adjustCanvasSize(); // Initial sizing
+window.addEventListener('resize', adjustCanvasSize); // Resize dynamically
 
-// Draw red lines converging to the center
+// Function to draw red lines converging to the center
 function drawLines() {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
@@ -52,12 +51,6 @@ function drawLines() {
   }
 }
 
-// Redraw lines on resize
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  drawLines();
-});
-
-// Initial draw
-drawLines();
+// Draw red lines after resizing
+window.addEventListener('resize', drawLines);
+drawLines(); // Initial draw
