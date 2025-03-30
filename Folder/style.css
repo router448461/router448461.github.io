@@ -1,4 +1,4 @@
-/* Reset default margins and paddings */
+/* Reset default styles */
 * {
   margin: 0;
   padding: 0;
@@ -10,19 +10,11 @@ html, body {
   overflow: hidden;
 }
 
-#map {
+#map, #animation {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-#animation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; /* Disable mouse interactions */
+  pointer-events: none; /* Disable all mouse interactions */
 }
