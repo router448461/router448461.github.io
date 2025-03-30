@@ -54,3 +54,4 @@ function drawLines() {
 // Draw red lines after resizing
 window.addEventListener('resize', drawLines);
 drawLines(); // Initial draw
+
