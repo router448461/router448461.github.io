@@ -1,75 +1,58 @@
-// Initialize the Leaflet Map
-const map = L.map('map-container', {
-    zoomControl: false,
-    attributionControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    touchZoom: false
-}).setView([0, 0], 2);
-
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://carto.com/">Carto</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
-}).addTo(map);
-
-// Capital City Coordinates
-const capitals = [
-    { name: "Washington D.C.", lat: 38.9072, lng: -77.0369 },
-    { name: "Canberra", lat: -35.2809, lng: 149.1300 },
-    { name: "Tokyo", lat: 35.6895, lng: 139.6917 }
-];
-
-// Create Blinking Dot Icon
-const createBlinkingDot = (coordinates) => {
-    return L.divIcon({
-        html: `<div class="blinking-dot" data-coordinates="${coordinates}"></div>`,
-        className: '',
-        iconSize: [10, 10]
-    });
-};
-
-// Add Markers
-capitals.forEach(capital => {
-    L.marker([capital.lat, capital.lng], {
-        icon: createBlinkingDot(`${capital.lat.toFixed(2)}, ${capital.lng.toFixed(2)}`)
-    }).on('mouseover', (e) => {
-        document.getElementById('coordinates-panel').textContent =
-            `Coordinates: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
-    }).addTo(map);
+// Import Leaflet.js for the map
+const map = L.map('map', {
+  center: [0, 0], // Center of the world
+  zoom: 2,
+  zoomControl: false, // Disable zoom controls
+  dragging: false, // Disable dragging
+  scrollWheelZoom: false, // Disable scroll zoom
+  doubleClickZoom: false, // Disable double-click zoom
+  boxZoom: false, // Disable box zoom
+  keyboard: false, // Disable keyboard navigation
+  touchZoom: false, // Disable touch zoom
+  attributionControl: false // Hide attribution
 });
 
-// Synchronize Blinking Dots with the Clock
-const syncDotsWithClock = () => {
-    const now = new Date();
-    const seconds = now.getSeconds();
-    document.querySelectorAll('.blinking-dot').forEach(dot => {
-        dot.style.animationDuration = `${60 / seconds}s`;
-    });
-};
-setInterval(syncDotsWithClock, 1000);
+// Add a dark-themed tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
 
-// Update Clock Panel
-const updateClock = () => {
-    const now = new Date();
-    document.getElementById('time-panel').textContent = `Time: ${now.toLocaleTimeString('en-US', { hour12: false })}`;
-};
-setInterval(updateClock, 1000);
+// Animation logic
+const canvas = document.getElementById('animation');
+const ctx = canvas.getContext('2d');
 
-// Day/Night Mode Toggle
-const updateDayNightMode = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const mode = (hours >= 6 && hours < 18) ? 'Day' : 'Night';
-    document.getElementById('day-night-panel').textContent = `Mode: ${mode}`;
-    document.body.style.backgroundColor = mode === 'Day' ? 'var(--day-bg-color)' : 'var(--night-bg-color)';
-};
-setInterval(updateDayNightMode, 60000); // Check every minute
+// Adjust canvas size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// Initialize Panels on Load
-updateClock();
-updateDayNightMode();
-syncDotsWithClock();
+// Draw red lines converging to the center
+function drawLines() {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 2;
+
+  for (let i = 0; i < 360; i += 10) {
+    const angle = (i * Math.PI) / 180;
+    const x = centerX + Math.cos(angle) * canvas.width;
+    const y = centerY + Math.sin(angle) * canvas.height;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(centerX, centerY);
+    ctx.stroke();
+  }
+}
+
+// Redraw lines on resize
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drawLines();
+});
+
+// Initial draw
+drawLines();
