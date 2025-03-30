@@ -1,66 +1,56 @@
 /* General Styles */
 body {
     margin: 0;
+    padding: 0;
     overflow: hidden;
-    background-color: #000; /* Dark background to match dark mode */
-    font-family: Arial, sans-serif; /* Fallback font for better readability */
+    height: 100vh; /* Match body height to viewport height */
+    width: 100vw; /* Match body width to viewport width */
+    background-color: #000; /* Set dark mode background color */
 }
 
 #map-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
+    position: fixed; /* Anchor the map container directly to the viewport */
+    top: 0;
+    left: 0;
+    height: 100%; /* Ensure the map fills the screen vertically */
+    width: 100%; /* Ensure the map fills the screen horizontally */
+    background-color: #000; /* Fallback background color */
+    margin: 0; /* Remove margin to eliminate white space */
+    padding: 0; /* Remove padding to eliminate white space */
+    overflow: hidden; /* Prevent map overflow */
 }
 
 /* Red Crosshair Lines */
 #vertical-line, #horizontal-line {
     position: absolute;
     background-color: red;
-    z-index: 1000;
-    pointer-events: none;
-    transform: translate(0, 0);
+    z-index: 1000; /* Ensure crosshairs appear above the map */
+    pointer-events: none; /* Allow clicks to pass through crosshair lines */
+    transition: all 0.3s ease; /* Smooth animations for resizing */
 }
 
 #vertical-line {
-    width: 2px;
-    height: 100%;
-    left: 0; /* Start from the left edge */
-    animation: vertical-line-animation 0.5s forwards;
+    width: 2px; /* Define line thickness */
+    height: 100%; /* Stretch vertically across the screen */
+    left: 0; /* Initial position before animation */
 }
 
 #horizontal-line {
-    width: 100%;
-    height: 2px;
-    top: 0; /* Start from the top edge */
-    animation: horizontal-line-animation 0.5s forwards;
+    width: 100%; /* Stretch horizontally across the screen */
+    height: 2px; /* Define line thickness */
+    top: 0; /* Initial position before animation */
 }
 
 /* Flash Effect */
 .flash {
-    animation: flash-animation 0.2s ease-out;
+    animation: flash-animation 0.2s ease-out; /* Short flash effect animation */
 }
 
 @keyframes flash-animation {
     0% {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.8); /* Bright flash color */
     }
     100% {
-        background-color: transparent;
-    }
-}
-
-/* Animations for the red lines */
-@keyframes vertical-line-animation {
-    to {
-        left: 50%; /* Move to the center */
-        transform: translateX(-50%);
-    }
-}
-
-@keyframes horizontal-line-animation {
-    to {
-        top: 50%; /* Move to the center */
-        transform: translateY(-50%);
+        background-color: transparent; /* Gradually fade out */
     }
 }
