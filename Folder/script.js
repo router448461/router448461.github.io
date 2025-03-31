@@ -38,7 +38,7 @@ function getBoundaryPoint(centerX, centerY, width, height, angle) {
 
   if (cos !== 0) {
     // Left edge (x = 0)
-    let t_left izmanto = -centerX / cos;
+    let t_left = -centerX / cos;  // Corrected typo
     if (t_left > 0) {
       let y_left = centerY + t_left * sin;
       if (y_left >= 0 && y_left <= height) t_values.push(t_left);
