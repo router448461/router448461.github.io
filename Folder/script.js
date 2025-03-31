@@ -1,15 +1,15 @@
 // Initialize the map
 const map = L.map('map', {
   center: [0, 0], // Center of the world
-  zoom: 2, // Default zoom level
-  zoomControl: false, // Disable zoom controls
-  dragging: false, // Disable dragging
-  scrollWheelZoom: false, // Disable scroll wheel zoom
-  doubleClickZoom: false, // Disable double-click zoom
-  boxZoom: false, // Disable box zoom
-  keyboard: false, // Disable keyboard navigation
-  touchZoom: false, // Disable touch zoom
-  attributionControl: false // Hide attribution
+  zoom: 2,        // Default zoom level
+  zoomControl: false,
+  dragging: false,
+  scrollWheelZoom: false,
+  doubleClickZoom: false,
+  boxZoom: false,
+  keyboard: false,
+  touchZoom: false,
+  attributionControl: false
 });
 
 // Add a dark tile layer to the map
@@ -22,11 +22,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 const canvas = document.getElementById('animation');
 const ctx = canvas.getContext('2d');
 
-// Adjust canvas size and redraw lines
+// Adjust canvas size to match window
 function adjustCanvasSize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  drawLines(progress); // Redraw with current animation progress
+  drawLines(progress); // Redraw lines with current progress
 }
 adjustCanvasSize(); // Initial sizing
 
@@ -38,7 +38,7 @@ function getBoundaryPoint(centerX, centerY, width, height, angle) {
 
   if (cos !== 0) {
     // Left edge (x = 0)
-    let t_left = -centerX / cos;
+    let t_left izmanto = -centerX / cos;
     if (t_left > 0) {
       let y_left = centerY + t_left * sin;
       if (y_left >= 0 && y_left <= height) t_values.push(t_left);
