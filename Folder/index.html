@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Map with Red Lines</title>
-  <!-- Link Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Link custom CSS -->
-  <link rel="stylesheet" href="style.css">
-  <!-- Link Leaflet JavaScript -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Map of Australia</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="map"></div>
-  <canvas id="animation"></canvas>
-  <!-- Link custom JavaScript -->
-  <script src="script.js" defer></script>
+    <div id="map"></div>
+    <div class="crosshair vertical"></div>
+    <div class="crosshair horizontal"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
