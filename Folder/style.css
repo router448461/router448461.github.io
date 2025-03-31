@@ -1,40 +1,32 @@
-/* Reset default styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-/* Ensure full-screen coverage */
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow: hidden; /* Prevent scrollbars */
-}
-
-/* Style for the map container */
 #map {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; /* Disable mouse interactions */
-  z-index: 1; /* Ensure map is behind the canvas */
+    width: 100vw;
+    height: 100vh;
 }
 
-/* Style for the canvas */
-#animation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; /* Disable mouse interactions */
-  z-index: 2; /* Ensure canvas is on top of the map */
+.crosshair {
+    position: absolute;
+    background-color: red;
+    z-index: 10;
 }
 
-/* Enforce default cursor */
-canvas, #map {
-  cursor: default !important;
+.crosshair.vertical {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform: translateX(-50%);
+}
+
+.crosshair.horizontal {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    transform: translateY(-50%);
 }
