@@ -23,6 +23,11 @@ map.touchZoomRotate.disable(); // Disable touch gestures
 map.on('load', () => {
     console.log('Map has loaded successfully.');
     console.log(map.getStyle()); // Logs the active style to verify it
+
+    // Ensure the map container is displayed
+    if (!document.getElementById('map').style.height) {
+        document.getElementById('map').style.height = '100%';
+    }
 });
 
 // Error handling for debugging Mapbox issues
