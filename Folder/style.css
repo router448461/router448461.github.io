@@ -1,11 +1,13 @@
-/* Ensures the map fills the entire screen */
+/* Reset margin and padding to make the map fullscreen */
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
 }
 
+/* Ensure the map container fills the entire screen */
 #map {
     width: 100%;
     height: 100%;
+    position: absolute; /* Position it absolutely for better control */
 }
