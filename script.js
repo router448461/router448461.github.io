@@ -28,6 +28,20 @@ map.on('load', () => {
     if (!document.getElementById('map').style.height) {
         document.getElementById('map').style.height = '100%';
     }
+
+    // Log sources and layers
+    const style = map.getStyle();
+    console.log('Style data:', style);
+
+    // Check sources
+    for (const source in style.sources) {
+        console.log(`Source: ${source}`, style.sources[source]);
+    }
+
+    // Check layers
+    style.layers.forEach(layer => {
+        console.log(`Layer: ${layer.id}`, layer);
+    });
 });
 
 // Error handling for debugging Mapbox issues
@@ -37,3 +51,12 @@ map.on('error', (e) => {
 
 // Log initialization confirmation
 console.log('Mapbox map initialized successfully');
+
+// Additional logging to diagnose issues
+map.on('styledata', () => {
+    console.log('Style data loaded:', map.getStyle());
+});
+
+map.on('sourcedata', () => {
+    console.log('Source data loaded:', map.getSource());
+});
