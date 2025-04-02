@@ -4,7 +4,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya
 // Initialize the map
 const map = new mapboxgl.Map({
     container: 'map', // ID of the container where the map is rendered
-    style: 'mapbox://styles/router448461/cm8zh31z3005f01sradm3gkfg', // Verified Mapbox style URL
+    style: 'mapbox://styles/router448461/cm8zh31z3005f01sradm3gkfg', // Your verified Mapbox style URL
     center: [0, 0], // Center map at coordinates [longitude, latitude]
     zoom: 1,        // Default zoom level
     projection: 'equalEarth' // Set the map projection to Equal Earth
@@ -19,10 +19,13 @@ map.keyboard.disable();    // Disable keyboard interactions
 map.doubleClickZoom.disable(); // Disable double-click zoom
 map.touchZoomRotate.disable(); // Disable touch gestures
 
-// Add error handling for debugging purposes
+// Error handler for Mapbox issues
 map.on('error', (e) => {
     console.error('Mapbox error:', e);
 });
 
-// Log a confirmation to confirm the script has initialized
+// Log a confirmation message
 console.log('Mapbox map initialized successfully');
+
+// Optionally disable telemetry to avoid `rum` errors
+mapboxgl.setRTLTextPlugin('https://'); // Disable telemetry
