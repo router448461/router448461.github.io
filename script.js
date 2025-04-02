@@ -4,9 +4,9 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya
 // Initialize the map
 const map = new mapboxgl.Map({
     container: 'map', // ID of the container where the map is rendered
-    style: 'mapbox://styles/router448461/cm8zh31z3005f01sradm3gkfg', // Verified Mapbox style URL
-    center: [0, 0], // Center map at coordinates [longitude, latitude]
-    zoom: 1,        // Default zoom level
+    style: 'mapbox://styles/router448461/cm8zh31z3005f01sradm3gkfg', // Your verified Mapbox style URL
+    center: [0, 20], // Adjusted center coordinates to focus on a populated area
+    zoom: 2,         // Increased zoom level to ensure visible map details
     projection: 'equalEarth' // Set the map projection to Equal Earth
 });
 
@@ -19,10 +19,16 @@ map.keyboard.disable();    // Disable keyboard interactions
 map.doubleClickZoom.disable(); // Disable double-click zoom
 map.touchZoomRotate.disable(); // Disable touch gestures
 
-// Add error handling for debugging
+// Add debugging tools
+map.on('load', () => {
+    console.log('Map has loaded successfully.');
+    console.log(map.getStyle()); // Logs the active style to verify it
+});
+
+// Error handling for debugging Mapbox issues
 map.on('error', (e) => {
     console.error('Mapbox error:', e);
 });
 
-// Log a confirmation message
+// Log initialization confirmation
 console.log('Mapbox map initialized successfully');
