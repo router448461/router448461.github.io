@@ -19,7 +19,10 @@ map.keyboard.disable();    // Disable keyboard interactions
 map.doubleClickZoom.disable(); // Disable double-click zoom
 map.touchZoomRotate.disable(); // Disable touch gestures
 
-// Add error handling for debugging
+// Add error handling for debugging purposes
 map.on('error', (e) => {
     console.error('Mapbox error:', e);
 });
+
+// Log a confirmation to confirm the script has initialized
+console.log('Mapbox map initialized successfully');
