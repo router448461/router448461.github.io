@@ -4,7 +4,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya
 // Initialize the map
 const map = new mapboxgl.Map({
     container: 'map', // ID of the container where the map is rendered
-    style: 'mapbox://styles/router448461/YOUR_STYLE_ID', // Replace YOUR_STYLE_ID with your Mapbox style ID
+    style: 'mapbox://styles/router448461/cm8zh31z3005f01sradm3gkfg', // Your Mapbox style ID
     center: [0, 0], // Center map at coordinates [longitude, latitude]
     zoom: 1,        // Default zoom level
     projection: 'equalEarth' // Set the map projection to Equal Earth
