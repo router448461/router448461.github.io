@@ -1,4 +1,4 @@
-/* Ensure html and body fill the viewport */
+/* Ensure html and body take up the full viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ html, body {
   overflow: hidden;
 }
 
-/* The map container fills the browser window */
+/* The map container fills the entire browser window */
 #map {
   position: absolute;
   top: 0;
@@ -16,8 +16,67 @@ html, body {
   height: 100vh;
 }
 
+/* Force the default arrow cursor for the Mapbox canvas */
+.mapboxgl-canvas {
+  cursor: default !important;
+}
+
 /* Hide any attribution/control elements inserted by Mapbox */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
+}
+
+/* Overlay for the target crosshair */
+#overlay {
+  pointer-events: none;  /* Allow clicks to go through to the map */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;  /* Above the map */
+}
+
+/* Base style for the red lines */
+#line,
+.line {
+  position: absolute;
+  background-color: red;
+}
+
+/* Horizontal line from left edge to center */
+.line.horizontal.left {
+  top: 50%;
+  left: 0;
+  width: 50vw;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+/* Horizontal line from right edge to center */
+.line.horizontal.right {
+  top: 50%;
+  right: 0;
+  width: 50vw;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+/* Vertical line from top edge to center */
+.line.vertical.top {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 50vh;
+  transform: translateX(-50%);
+}
+
+/* Vertical line from bottom edge to center */
+.line.vertical.bottom {
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 50vh;
+  transform: translateX(-50%);
 }
