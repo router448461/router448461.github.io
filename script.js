@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize Mapbox map using the dark style
+// Initialize the Mapbox map using the dark style
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -49,4 +49,5 @@ function updateTimer() {
     .padStart(2, '0');
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 }
+updateTimer(); // Update immediately upon load
 setInterval(updateTimer, 10);
