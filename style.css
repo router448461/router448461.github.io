@@ -1,5 +1,6 @@
 /* Ensure the document fills the entire viewport */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -7,7 +8,7 @@ html, body {
   overflow: hidden;
 }
 
-/* The map container fills the browser window */
+/* The map container fills the entire window */
 #map {
   position: absolute;
   top: 0;
@@ -16,85 +17,91 @@ html, body {
   height: 100vh;
 }
 
-/* Force the default (arrow) cursor over the Mapbox canvas */
+/* Force default (arrow) cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide any Mapbox attribution/control elements */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay covering the full viewport */
+/* Overlay sitting atop the map */
 #overlay {
-  pointer-events: none; /* Allow clicks to pass through to the map */
+  pointer-events: none; /* Allow clicks to pass through */
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10; /* Ensure overlay is above the map */
+  z-index: 10;
+  /* During debugging you might temporarily add a background color:
+     background: rgba(0, 255, 0, 0.05);
+  */
 }
 
 /* --- Animated Red Lines --- */
 
-/* Base style for the red lines with a gradient and glow effect */
+/* Base style: a linear gradient and a glowing box-shadow.
+   Added a flicker animation for a darker, more sinister edge.
+*/
 .line {
   position: absolute;
   background: linear-gradient(90deg, darkred, red, darkred);
-  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
+  box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.7);
+  animation: flicker 2s infinite;
 }
 
-/* Horizontal lines:
-   – Fixed final width of 50vw.
-   – Start with a scaleX(0) (length zero) and 1px height, then animate to full size and thicker (3px).
+/* Horizontal red lines:
+   – Final width: 50vw.
+   – Start thin (1px) and animate to 3px.
+   – Animate length with scaleX.
 */
 .line.horizontal {
   top: 50%;
   width: 50vw;
+  height: 1px; /* initial thickness */
   transform: scaleX(0);
   transform-origin: left center;
-  height: 1px; /* initial thickness */
-  /* Two animations: one for length (scaleX) and one for growing thickness */
-  animation: expandHorizontal 1s forwards, growThicknessH 1s forwards;
+  animation: expandHorizontal 1s forwards, growThicknessH 1s forwards, flicker 2s infinite;
 }
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
-  /* Stagger the animation slightly */
-  animation-delay: 0.2s, 0.2s;
+  animation-delay: 0.2s, 0.2s, 0.2s;
 }
 
-/* Vertical lines:
-   – Fixed final height of 50vh.
-   – Start with a scaleY(0) (length zero) and 1px width, then animate to full size and thicker (3px).
+/* Vertical red lines:
+   – Final height: 50vh.
+   – Start thin (1px) and animate to 3px.
+   – Animate length with scaleY.
 */
 .line.vertical {
   left: 50%;
   height: 50vh;
+  width: 1px; /* initial thickness */
   transform: scaleY(0);
   transform-origin: top center;
-  width: 1px; /* initial thickness */
-  animation: expandVertical 1s forwards, growThicknessV 1s forwards;
+  animation: expandVertical 1s forwards, growThicknessV 1s forwards, flicker 2s infinite;
 }
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
-  animation-delay: 0.2s, 0.2s;
+  animation-delay: 0.2s, 0.2s, 0.2s;
 }
 
-/* Keyframes for horizontal length expansion via scaleX */
+/* Keyframes for horizontal expansion (using scaleX) */
 @keyframes expandHorizontal {
   to {
     transform: scaleX(1);
   }
 }
 
-/* Keyframes for vertical length expansion via scaleY */
+/* Keyframes for vertical expansion (using scaleY) */
 @keyframes expandVertical {
   to {
     transform: scaleY(1);
@@ -103,14 +110,33 @@ html, body {
 
 /* Keyframes to grow horizontal line thickness from 1px to 3px */
 @keyframes growThicknessH {
-  from { height: 1px; }
-  to { height: 3px; }
+  from {
+    height: 1px;
+  }
+  to {
+    height: 3px;
+  }
 }
 
 /* Keyframes to grow vertical line thickness from 1px to 3px */
 @keyframes growThicknessV {
-  from { width: 1px; }
-  to { width: 3px; }
+  from {
+    width: 1px;
+  }
+  to {
+    width: 3px;
+  }
+}
+
+/* Flicker animation for a sinister, pulsating glow */
+@keyframes flicker {
+  0%,
+  100% {
+    box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 15px 4px rgba(139, 0, 0, 1);
+  }
 }
 
 /* --- Scope SVG Icon Styles --- */
@@ -123,34 +149,44 @@ html, body {
   width: 60px;
   height: 60px;
   transform: translate(-50%, -50%);
-  opacity: 0; /* start hidden */
+  opacity: 0;
   animation: fadeInScope 0.5s forwards;
-  animation-delay: 1.2s; /* begin after the lines animate */
+  animation-delay: 1.2s; /* Start after red-line animations complete */
+  filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.7));
 }
 
-/* Fade-in keyframes for the scope icon */
+/* Fade-in animation */
 @keyframes fadeInScope {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Animate drawing of the circle (stroke-dashoffset from full to 0) */
+/* Animate drawing (stroke-dashoffset) for the scope circle */
 @keyframes drawScopeCircle {
-  from { stroke-dashoffset: 251; }
-  to { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 251;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-/* Animate drawing of the crosshair lines */
+/* Animate drawing for the crosshair lines */
 @keyframes drawScopeLine {
-  from { stroke-dashoffset: 80; }
-  to { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 80;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-/* Apply the drawing animations to the SVG elements */
+/* Apply drawing animations to the SVG elements */
 #scope-icon .scope-circle {
   animation: drawScopeCircle 1s forwards;
   animation-delay: 1.2s;
 }
-
 #scope-icon .scope-line {
   animation: drawScopeLine 1s forwards;
   animation-delay: 1.2s;
