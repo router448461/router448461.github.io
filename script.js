@@ -1,31 +1,47 @@
-// Mapbox API key
+// Your Mapbox API key
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the map with attribution disabled and adjusted view parameters
+// Initialize the map
 const map = new mapboxgl.Map({
-  container: 'map',                          // Container ID
-  style: 'mapbox://styles/mapbox/dark-v10',    // Built-in Mapbox Dark style
-  center: [0, 0],                            // Center the map at [longitude, latitude]
-  zoom: 1,                                   // Lower zoom level to fit the entire world in view
-  projection: 'equalEarth',                  // Optional: use the Equal Earth projection for a flat look
+  container: 'map',                          // The ID of the container to render the map into
+  style: 'mapbox://styles/mapbox/dark-v10',    // Using the built-in dark style (Mercator projection by default)
+  center: [0, 0],                            // Center of the world (longitude, latitude)
+  zoom: 1,                                   // A zoom level that shows the entire world
   attributionControl: false                  // Disable the built-in attribution control
 });
 
-// Disable interactive controls for a static map experience
-map.scrollZoom.disable();
-map.boxZoom.disable();
-map.dragRotate.disable();
+// Disable interactive controls for a static display
 map.dragPan.disable();
-map.keyboard.disable();
+map.dragRotate.disable();
+map.scrollZoom.disable();
 map.doubleClickZoom.disable();
+map.boxZoom.disable();
+map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Once the map loads, remove any attribution elements that might appear
+/**
+ * Hide all text labels.
+ * Whenever the style data is loaded or updated,
+ * loop through all layers. If a layer is of type 'symbol'
+ * and defines a 'text-field', hide it.
+ */
+function hideLabels() {
+  const style = map.getStyle();
+  if (!style || !style.layers) return;
+  style.layers.forEach(layer => {
+    if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
+      map.setLayoutProperty(layer.id, 'visibility', 'none');
+    }
+  });
+}
+
+// Hide labels once on load...
 map.on('load', () => {
-  // Hide any Mapbox attribution element (should be hidden by CSS too)
-  const attribs = document.getElementsByClassName('mapboxgl-ctrl-attrib');
-  for (let i = 0; i < attribs.length; i++) {
-    attribs[i].style.display = 'none';
-  }
-  console.log('Map loaded: full world view with attribution removed.');
+  hideLabels();
+  console.log('Map loaded: full-screen, no labels, and no attribution.');
+});
+
+// ...and also whenever the style data is updated.
+map.on('styledata', () => {
+  hideLabels();
 });
