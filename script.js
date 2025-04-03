@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
-// Disable interactive controls for a static experience
+// Disable all interactive controls for a static experience
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide text labels from the map
+// Function to hide all text labels
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -31,11 +31,31 @@ function hideLabels() {
   });
 }
 
+// Function to hide white boundary lines (administrative boundaries)
+// Adjust this filter as necessary per your Mapbox style.
+function hideBoundaries() {
+  const layers = map.getStyle().layers;
+  layers.forEach(layer => {
+    if (
+      layer.id.includes('boundary') ||
+      layer.id.includes('admin-0') ||
+      layer.id.includes('admin-1')
+    ) {
+      map.setLayoutProperty(layer.id, 'visibility', 'none');
+      console.log(`Hiding boundary layer: ${layer.id}`);
+    }
+  });
+}
+
 map.on('load', () => {
   hideLabels();
-  console.log('Map loaded; labels hidden; red lines animating.');
+  hideBoundaries();
+  console.log('Map loaded; labels and boundaries hidden; red lines animating.');
 });
-map.on('styledata', hideLabels);
+map.on('styledata', () => {
+  hideLabels();
+  hideBoundaries();
+});
 
 /* --- Timer Implementation (Local Time) --- */
 const timerElement = document.getElementById('timer');
@@ -49,12 +69,14 @@ function updateTimer() {
     .padStart(2, '0');
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 }
-updateTimer(); // update immediately on load
+updateTimer(); // update immediately
 setInterval(updateTimer, 10);
 
 /* --- Countdown Implementation (1 Minute) --- */
 const countdownElement = document.getElementById('countdown');
-let countdownTime = 60 * 1000; // 60,000ms = 1 minute
+// Start time: 60,000ms (1 minute)
+let countdownTime = 60 * 1000;
+
 function updateCountdown() {
   countdownTime -= 10;
   if (countdownTime < 0) countdownTime = 0;
@@ -74,10 +96,11 @@ function updateCountdown() {
 
   countdownElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 
-  // When countdown reaches zero, refresh the page
+  // When countdown reaches zero, clear the interval and refresh the page once
   if (countdownTime <= 0) {
+    clearInterval(countdownInterval);
     location.reload();
   }
 }
-updateCountdown(); // update immediately on load
-setInterval(updateCountdown, 10);
+updateCountdown(); // update immediately
+const countdownInterval = setInterval(updateCountdown, 10);
