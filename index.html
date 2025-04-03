@@ -13,23 +13,23 @@
     />
   </head>
   <body>
-    <!-- Map container -->
+    <!-- Map container (initially hidden via CSS) -->
     <div id="map"></div>
-
-    <!-- Timers displayed in the top-left -->
+    
+    <!-- Timers container (top-right): Clock and Countdown -->
     <div id="timers">
       <div id="clock"></div>
       <div id="countdown"></div>
     </div>
-
-    <!-- Overlay container for the animated red lines -->
+    
+    <!-- Overlay container for animated red lines -->
     <div id="overlay">
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
     </div>
-
+    
     <!-- Mapbox GL JS library -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <!-- Link to your JavaScript file -->
