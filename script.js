@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
-// Disable interactive controls for a static display
+// Disable interactive controls for a static experience
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide all text labels on the map
+// Function to hide text labels from the map
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -37,7 +37,7 @@ map.on('load', () => {
 });
 map.on('styledata', hideLabels);
 
-/* --- Timer Implementation --- */
+/* --- Timer Implementation (Local Time) --- */
 const timerElement = document.getElementById('timer');
 function updateTimer() {
   const now = new Date();
@@ -49,5 +49,35 @@ function updateTimer() {
     .padStart(2, '0');
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 }
-updateTimer(); // Update immediately upon load
+updateTimer(); // update immediately on load
 setInterval(updateTimer, 10);
+
+/* --- Countdown Implementation (1 Minute) --- */
+const countdownElement = document.getElementById('countdown');
+let countdownTime = 60 * 1000; // 60,000ms = 1 minute
+function updateCountdown() {
+  countdownTime -= 10;
+  if (countdownTime < 0) countdownTime = 0;
+
+  const hours = Math.floor(countdownTime / (1000 * 60 * 60))
+    .toString()
+    .padStart(2, '0');
+  const minutes = Math.floor((countdownTime % (1000 * 60 * 60)) / (1000 * 60))
+    .toString()
+    .padStart(2, '0');
+  const seconds = Math.floor((countdownTime % (1000 * 60)) / 1000)
+    .toString()
+    .padStart(2, '0');
+  const centiseconds = Math.floor((countdownTime % 1000) / 10)
+    .toString()
+    .padStart(2, '0');
+
+  countdownElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
+
+  // When countdown reaches zero, refresh the page
+  if (countdownTime <= 0) {
+    location.reload();
+  }
+}
+updateCountdown(); // update immediately on load
+setInterval(updateCountdown, 10);
