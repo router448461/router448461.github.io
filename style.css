@@ -1,4 +1,4 @@
-/* Ensure that the document covers the complete viewport */
+/* Reset default margins, paddings, and ensure full viewport usage */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,11 +7,16 @@ html, body {
   overflow: hidden;  /* Prevent scrolling */
 }
 
-/* Make the map container fill the entire browser window */
+/* Ensure the map container fills the entire browser window */
 #map {
-  position: fixed;  /* Fix it to the viewport */
+  position: fixed;  /* Fix the container relative to the viewport */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+}
+
+/* Hide the Mapbox attribution element — note this may conflict with Mapbox's usage policies */
+.mapboxgl-ctrl-attrib {
+  display: none !important;
 }
