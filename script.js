@@ -1,16 +1,16 @@
 // Your Mapbox API key
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map in the "dark" style
+// Initialize the Mapbox map using the dark style
 const map = new mapboxgl.Map({
-  container: 'map', // ID of the container element
-  style: 'mapbox://styles/mapbox/dark-v10', // Use the built-in dark style
-  center: [0, 0], // Center the map at [0, 0]
-  zoom: 1, // A low zoom for a nearly full-world view
-  attributionControl: false, // Disable built-in attribution
+  container: 'map',
+  style: 'mapbox://styles/mapbox/dark-v10',
+  center: [0, 0],
+  zoom: 1,
+  attributionControl: false
 });
 
-// Disable interactive controls for a completely static display
+// Disable interactive controls for a static display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -21,19 +21,20 @@ map.touchZoomRotate.disable();
 
 /**
  * Hide all text labels on the map.
- * Iterates over each style layer; if a layer is a symbol with a text field, it hides it.
+ * Iterates over style layers; for any layer of type "symbol" with a text-field,
+ * we set its visibility to "none".
  */
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
-  style.layers.forEach((layer) => {
+  style.layers.forEach(layer => {
     if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
 }
 
-// Hide labels when the map loads and on style updates.
+// Run label hiding after the map loads and on subsequent style updates
 map.on('load', () => {
   hideLabels();
   console.log('Map loaded: overlay animations in progress.');
