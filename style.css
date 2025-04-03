@@ -1,14 +1,14 @@
-/* Reset margin and padding to make the map fullscreen */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden; /* Prevent scrolling */
+/* Reset default margin and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevent scrolling */
 }
 
-/* Ensure the map container fills the entire screen */
+/* Ensure the map container fills the entire viewport */
 #map {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
