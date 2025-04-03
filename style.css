@@ -16,67 +16,90 @@ html, body {
   height: 100vh;
 }
 
-/* Force the default arrow cursor for the Mapbox canvas */
+/* Force default arrow cursor over the map */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide any attribution/control elements inserted by Mapbox */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay for the target crosshair */
+/* Target overlay covering the entire viewport */
 #overlay {
-  pointer-events: none;  /* Allow clicks to go through to the map */
+  pointer-events: none;  /* Allow clicks to go through */
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10;  /* Above the map */
+  z-index: 10;  /* Layer above the map */
 }
 
 /* Base style for the red lines */
-#line,
 .line {
   position: absolute;
   background-color: red;
 }
 
-/* Horizontal line from left edge to center */
+/* Horizontal left: starts from left edge */
 .line.horizontal.left {
   top: 50%;
   left: 0;
-  width: 50vw;
   height: 2px;
   transform: translateY(-50%);
+  width: 0; /* Start at zero */
+  animation: slideHorizontal 1s forwards;
 }
 
-/* Horizontal line from right edge to center */
+/* Horizontal right: starts from right edge */
 .line.horizontal.right {
   top: 50%;
   right: 0;
-  width: 50vw;
   height: 2px;
   transform: translateY(-50%);
+  width: 0;
+  animation: slideHorizontal 1s forwards;
 }
 
-/* Vertical line from top edge to center */
+/* Vertical top: starts from top edge */
 .line.vertical.top {
   left: 50%;
   top: 0;
   width: 2px;
-  height: 50vh;
   transform: translateX(-50%);
+  height: 0;
+  animation: slideVertical 1s forwards;
 }
 
-/* Vertical line from bottom edge to center */
+/* Vertical bottom: starts from bottom edge */
 .line.vertical.bottom {
   left: 50%;
   bottom: 0;
   width: 2px;
-  height: 50vh;
   transform: translateX(-50%);
+  height: 0;
+  animation: slideVertical 1s forwards;
+}
+
+/* Keyframes for horizontal lines: animate width from 0 to 50vw */
+@keyframes slideHorizontal {
+  from {
+    width: 0;
+  }
+  to {
+    width: 50vw;
+  }
+}
+
+/* Keyframes for vertical lines: animate height from 0 to 50vh */
+@keyframes slideVertical {
+  from {
+    height: 0;
+  }
+  to {
+    height: 50vh;
+  }
 }
