@@ -1,18 +1,18 @@
-/* Define CSS variables for easier tuning */
+/* Define CSS variables for easy tuning and consistency */
 :root {
   --edge-color: darkred;
   --center-color: red;
   --min-thickness: 1px;
   --max-thickness: 4px;
-  --line-duration: 3s;         /* Slow down the draw speed to 3 seconds */
-  --animation-delay: 0s;       /* No delay; all lines meet at the same time */
+  --line-duration: 3s;         /* Draw speed: 3 seconds */
+  --animation-delay: 0s;       /* No delay so all lines meet at once */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
   --pulsation-duration: 1.5s;
 }
 
-/* Reset styles and set full viewport */
+/* Reset styles and ensure full-viewport usage */
 html, body {
   margin: 0;
   padding: 0;
@@ -21,7 +21,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Map container fills the entire browser window */
+/* Full-screen Mapbox map container */
 #map {
   position: absolute;
   top: 0;
@@ -30,7 +30,7 @@ html, body {
   height: 100vh;
 }
 
-/* Force the default arrow cursor on the Mapbox canvas */
+/* Enforce default arrow cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
@@ -41,7 +41,7 @@ html, body {
   display: none !important;
 }
 
-/* Timer styling in the top-right corner – no background; increased z-index so it appears above other elements */
+/* Timer styling in the top-right corner */
 #timer {
   position: fixed;
   top: 20px;
@@ -53,9 +53,21 @@ html, body {
   padding: 5px 10px;
 }
 
-/* Overlay covering the full viewport */
+/* Countdown timer styled identically and placed just below the main timer */
+#countdown {
+  position: fixed;
+  top: 60px; /* 20px + timer height (approx) */
+  right: 20px;
+  z-index: 100;
+  font-family: monospace;
+  font-size: 20px;
+  color: white;
+  padding: 5px 10px;
+}
+
+/* Overlay that covers the full viewport (for the red lines) */
 #overlay {
-  pointer-events: none;  /* Allow clicks to fall through to the map */
+  pointer-events: none;  /* Allow clicks to pass through */
   position: absolute;
   top: 0;
   left: 0;
@@ -65,11 +77,11 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* Common style for red lines */
+/* Common style for the red lines with a mean, futuristic glow */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* A futuristic pulsation effect to boost brightness for an extra mean look */
+  /* Subtle pulsation to boost brightness for an extra mean look */
   animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
 @keyframes pulseLine {
@@ -77,11 +89,11 @@ html, body {
   to { filter: brightness(1.15); }
 }
 
-/* Horizontal red lines (span 50vw) */
+/* Horizontal red lines spanning 50vw */
 .line.horizontal {
   top: 50%;
   width: 50vw;
-  height: var(--min-thickness);
+  height: var(--min-thickness); /* Start very thin at the edges */
   background: linear-gradient(
     to right,
     var(--edge-color) 0%,
@@ -92,7 +104,8 @@ html, body {
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThicknessH var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
 }
 .line.horizontal.right {
   right: 0;
@@ -101,11 +114,11 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines (span 50vh) */
+/* Vertical red lines spanning 50vh */
 .line.vertical {
   left: 50%;
   height: 50vh;
-  width: var(--min-thickness);
+  width: var(--min-thickness); /* Start very thin at the edges */
   background: linear-gradient(
     to bottom,
     var(--edge-color) 0%,
@@ -116,7 +129,8 @@ html, body {
   );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards,
+             growThicknessV var(--line-duration) forwards;
 }
 .line.vertical.bottom {
   bottom: 0;
@@ -125,23 +139,23 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaleX) */
+/* Keyframes for horizontal expansion (scaleX from 0 to 1) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (scaleY) */
+/* Keyframes for vertical expansion (scaleY from 0 to 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
 
-/* Keyframes to grow horizontal thickness from min to max */
+/* Keyframes for growing horizontal thickness from min to max */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Keyframes to grow vertical thickness from min to max */
+/* Keyframes for growing vertical thickness from min to max */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
