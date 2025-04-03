@@ -5,7 +5,7 @@
   --min-thickness: 1px;
   --max-thickness: 4px;
   --line-duration: 3s;         /* Slow down the draw speed to 3 seconds */
-  --animation-delay: 0s;       /* Ensure no delay so that they all meet at the same time */
+  --animation-delay: 0s;       /* No delay; all lines meet at the same time */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
@@ -21,7 +21,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Full-screen Mapbox map container */
+/* Map container fills the entire browser window */
 #map {
   position: absolute;
   top: 0;
@@ -30,23 +30,23 @@ html, body {
   height: 100vh;
 }
 
-/* Force default (arrow) cursor on Mapbox canvas */
+/* Force the default arrow cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution elements */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Timer: placed at top-right with white text and no background */
+/* Timer styling in the top-right corner – no background; increased z-index so it appears above other elements */
 #timer {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 30;
+  z-index: 100;
   font-family: monospace;
   font-size: 20px;
   color: white;
@@ -69,10 +69,10 @@ html, body {
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* A futuristic pulsation effect; for an extra mean look, boost brightness slightly */
-  animation: futuristicPulse var(--pulsation-duration) infinite alternate;
+  /* A futuristic pulsation effect to boost brightness for an extra mean look */
+  animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
-@keyframes futuristicPulse {
+@keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.15); }
 }
@@ -81,8 +81,7 @@ html, body {
 .line.horizontal {
   top: 50%;
   width: 50vw;
-  height: var(--min-thickness); /* Start very thin */
-  /* Use a sharp gradient: edges are dark and the center is bright red */
+  height: var(--min-thickness);
   background: linear-gradient(
     to right,
     var(--edge-color) 0%,
@@ -95,7 +94,6 @@ html, body {
   transform-origin: left center;
   animation: expandHorizontal var(--line-duration) forwards, growThicknessH var(--line-duration) forwards;
 }
-/* Right horizontal line */
 .line.horizontal.right {
   right: 0;
   left: auto;
@@ -107,7 +105,7 @@ html, body {
 .line.vertical {
   left: 50%;
   height: 50vh;
-  width: var(--min-thickness); /* Start very thin */
+  width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
     var(--edge-color) 0%,
@@ -120,7 +118,6 @@ html, body {
   transform-origin: top center;
   animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
-/* Bottom vertical line */
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
