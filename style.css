@@ -1,18 +1,21 @@
-/* Define CSS variables for easy tuning and consistency */
+/* 
+  Define CSS variables for easy tuning.
+  Adjust these values to fine-tune the menacing look.
+*/
 :root {
   --edge-color: darkred;
   --center-color: red;
-  --min-thickness: 0.5px;    /* start extremely thin at the edge */
-  --max-thickness: 4px;      
-  --line-duration: 3s;       /* Lines animate over 3 seconds */
-  --animation-delay: 0s;     /* All lines start together */
+  --min-thickness: 0.5px;   /* Extremely thin at the edges */
+  --max-thickness: 4px;     
+  --line-duration: 3s;      /* Animation duration */
+  --animation-delay: 0s;    /* All lines start together */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
   --pulsation-duration: 1.5s;
 }
 
-/* Reset styles and ensure full-viewport usage */
+/* Reset and fill the entire viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -30,7 +33,7 @@ html, body {
   height: 100vh;
 }
 
-/* Use default arrow cursor on Mapbox canvas */
+/* Use the default arrow cursor on Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
@@ -41,35 +44,38 @@ html, body {
   display: none !important;
 }
 
-/* Timer styling in the top-right corner – ensure a high z-index */
+/* Timer styling in the top-right corner */
 #timer {
   position: fixed;
   top: 20px;
-  right: 20px;
-  z-index: 1000; 
-  font-family: monospace;
-  font-size: 20px;
-  color: white;
-  padding: 5px 10px;
-  /* (Optional: for debugging, add a background: rgba(0, 0, 0, 0.5);) */
-}
-
-/* Countdown timer styled identically, placed just below the main timer */
-#countdown {
-  position: fixed;
-  top: 60px; /* Adjust as needed based on the timer height */
   right: 20px;
   z-index: 1000;
   font-family: monospace;
   font-size: 20px;
   color: white;
   padding: 5px 10px;
-  /* (Optional: for debugging, add a background: rgba(0, 0, 0, 0.5);) */
+  /* Uncomment the background property for debugging
+     background: rgba(0, 0, 0, 0.5);
+  */
 }
 
-/* Overlay covering the full viewport (for the red lines) */
+/* Countdown timer styled identically; placed just beneath #timer */
+#countdown {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  z-index: 1000;
+  font-family: monospace;
+  font-size: 20px;
+  color: white;
+  padding: 5px 10px;
+  /* Uncomment the background property for debugging */
+  /* background: rgba(0, 0, 0, 0.5); */
+}
+
+/* Overlay for the red lines, set below the timers */
 #overlay {
-  pointer-events: none;  /* Allow clicks to fall through to the map */
+  pointer-events: none; /* Let clicks pass through */
   position: absolute;
   top: 0;
   left: 0;
@@ -79,11 +85,11 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* Common style for all red lines */
+/* General rules for red lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Subtle futuristic pulsation effect (brightness alternate) */
+  /* Futuristic subtle pulsation effect */
   animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
 @keyframes pulseLine {
@@ -91,15 +97,16 @@ html, body {
   to { filter: brightness(1.15); }
 }
 
-/* Horizontal red lines: span 50vw */
-/* Updated gradient incorporates black at the extreme edges */
+/* Horizontal red lines (span 50vw) with a custom gradient.
+   Black is blended at the extreme edges for extra menace.
+*/
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    black 0%, 
+    black 0%,
     var(--edge-color) 20%,
     var(--edge-color) 30%,
     var(--center-color) 50%,
@@ -119,8 +126,7 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines: span 50vh */
-/* Updated gradient with touch of black at the very top and bottom */
+/* Vertical red lines (span 50vh) with a custom gradient including black. */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -147,23 +153,23 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaling X from 0 to 1) */
+/* Keyframes for horizontal expansion (scaling X from 0 → 1) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (scaling Y from 0 to 1) */
+/* Keyframes for vertical expansion (scaling Y from 0 → 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
 
-/* Keyframes to grow horizontal thickness from min to max */
+/* Keyframes for growing horizontal thickness from min to max */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Keyframes to grow vertical thickness from min to max */
+/* Keyframes for growing vertical thickness from min to max */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
