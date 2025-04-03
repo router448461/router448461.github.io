@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map using the dark style
+// Initialize the Mapbox map with the dark-v10 style
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
-// Disable all interactive controls for a static experience
+// Disable interactivity for a static display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide all text labels
+// Function to hide text labels from the map
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -31,15 +31,14 @@ function hideLabels() {
   });
 }
 
-// Function to hide white boundary lines (administrative boundaries)
-// Adjust this filter as necessary per your Mapbox style.
+// Function to hide boundary layers based on common substrings
 function hideBoundaries() {
   const layers = map.getStyle().layers;
   layers.forEach(layer => {
     if (
-      layer.id.includes('boundary') ||
-      layer.id.includes('admin-0') ||
-      layer.id.includes('admin-1')
+      (layer.id && layer.id.includes('boundary')) ||
+      (layer.id && layer.id.includes('admin-0')) ||
+      (layer.id && layer.id.includes('admin-1'))
     ) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
       console.log(`Hiding boundary layer: ${layer.id}`);
@@ -69,13 +68,12 @@ function updateTimer() {
     .padStart(2, '0');
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 }
-updateTimer(); // update immediately
+updateTimer(); // update immediately on load
 setInterval(updateTimer, 10);
 
 /* --- Countdown Implementation (1 Minute) --- */
 const countdownElement = document.getElementById('countdown');
-// Start time: 60,000ms (1 minute)
-let countdownTime = 60 * 1000;
+let countdownTime = 60 * 1000; // 60,000ms = 1 minute
 
 function updateCountdown() {
   countdownTime -= 10;
@@ -96,11 +94,12 @@ function updateCountdown() {
 
   countdownElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 
-  // When countdown reaches zero, clear the interval and refresh the page once
+  // When countdown reaches zero, clear the interval and reload the page
   if (countdownTime <= 0) {
     clearInterval(countdownInterval);
+    // Reload the page to restart the animation/timer process
     location.reload();
   }
 }
-updateCountdown(); // update immediately
+updateCountdown(); // update immediately on load
 const countdownInterval = setInterval(updateCountdown, 10);
