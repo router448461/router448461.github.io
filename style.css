@@ -1,6 +1,5 @@
 /* 
-  CSS Variables for easy customization:
-  Adjust these values as needed.
+  CSS Variables for customization.
 */
 :root {
   --edge-color: darkred;
@@ -12,8 +11,6 @@
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
-  /* For blinking dot, lower duration equals faster flicker */
-  --dot-blink-duration: 0.1s;
 }
 
 /* Reset and fill the viewport */
@@ -55,26 +52,42 @@ html, body {
   z-index: 1000;
   font-family: monospace;
   color: white;
+  text-align: right;
 }
 #clock, #countdown {
   font-size: 20px;
   margin-bottom: 5px;
 }
-
-/* --- Custom Uluru Marker --- */
-.uluru-marker {
-  position: relative;
-  width: 150px;    /* Adjust overall cross size as desired */
-  height: 150px;
-  pointer-events: none; /* So it does not interfere with map interactions */
+#cmd-text {
+  font-size: 16px;
+  color: white;
+  margin-top: 5px;
 }
 
-/* The horizontal red line in the marker */
-.uluru-marker .red-line.horizontal {
+/* Overlay container for the red lines */
+#overlay {
+  pointer-events: none;
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+}
+
+/* --- Animated Red Lines --- */
+.line {
+  position: absolute;
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  animation: pulseLine 1.5s infinite alternate;
+}
+@keyframes pulseLine {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+.line.horizontal {
+  top: 50%;
+  width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
@@ -91,13 +104,15 @@ html, body {
   animation: expandHorizontal var(--line-duration) forwards,
              growThicknessH var(--line-duration) forwards;
 }
-
-/* The vertical red line in the marker */
-.uluru-marker .red-line.vertical {
-  position: absolute;
+.line.horizontal.right {
+  right: 0;
+  left: auto;
+  transform-origin: right center;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+}
+.line.vertical {
   left: 50%;
-  top: 0;
-  height: 100%;
+  height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
@@ -114,53 +129,15 @@ html, body {
   animation: expandVertical var(--line-duration) forwards,
              growThicknessV var(--line-duration) forwards;
 }
-
-/* Keyframes for expanding red lines from 0 to full scale */
-@keyframes expandHorizontal {
-  to { transform: scaleX(1); }
-}
-@keyframes expandVertical {
-  to { transform: scaleY(1); }
-}
-@keyframes growThicknessH {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
-}
-@keyframes growThicknessV {
-  from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
-}
-
-/* Blinking dot style in the center of the marker */
-.uluru-marker .blinking-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: red;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  /* To make the dot look more sinister, add a dark shadow */
-  box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.8);
-  animation: blinkDot var(--dot-blink-duration) infinite;
-}
-
-/* Blink keyframe: extremely fast flash cycle */
-@keyframes blinkDot {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-/* (Optional: if you wish to add additional sinister effects, try a subtle dark filter) */
-.uluru-marker .blinking-dot::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+.line.vertical.bottom {
   bottom: 0;
-  box-shadow: inset 0 0 10px 4px rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  pointer-events: none;
+  top: auto;
+  transform-origin: bottom center;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
+@keyframes expandHorizontal { to { transform: scaleX(1); } }
+@keyframes expandVertical { to { transform: scaleY(1); } }
+@keyframes growThicknessH { from { height: var(--min-thickness); } to { height: var(--max-thickness); } }
+@keyframes growThicknessV { from { width: var(--min-thickness); } to { width: var(--max-thickness); } }
+
+/* Green markers styling is handled by Mapbox's Marker options */
