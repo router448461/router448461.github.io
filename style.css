@@ -1,20 +1,21 @@
 /* 
-  Define CSS variables for customization and consistency.
+  CSS Variables for easy tuning.
+  Adjust these to refine the look and timing.
 */
 :root {
   --edge-color: darkred;
   --center-color: red;
-  --min-thickness: 0.5px;   
+  --min-thickness: 0.5px;   /* Extremely thin at the very edge */
   --max-thickness: 4px;     
-  --line-duration: 3s;      
-  --animation-delay: 0s;    
+  --line-duration: 3s;      /* 3-second line animation */
+  --animation-delay: 0s;    /* All lines start together */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
-  --blink-duration: 1s; /* Red dot blink duration in sync with the timer */
+  /* We control the dot blink via JS (no CSS animation) */
 }
 
-/* Reset styling and ensure full-viewport usage */
+/* Reset margins and set full viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -23,31 +24,32 @@ html, body {
   overflow: hidden;
 }
 
-/* Map container filling the entire viewport */
+/* Map container: full screen and initially hidden to avoid flicker */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  visibility: hidden;
 }
 
-/* Use the default arrow cursor on the Mapbox canvas */
+/* Mapbox canvas uses the default arrow cursor */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution and control elements */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Timers displayed in the top-left corner */
+/* Timers container positioned at top-right */
 #timers {
   position: fixed;
   top: 20px;
-  left: 20px;
+  right: 20px;
   z-index: 1000;
   font-family: monospace;
   color: white;
@@ -57,7 +59,7 @@ html, body {
   margin-bottom: 5px;
 }
 
-/* Overlay that covers the viewport (for the red lines) */
+/* Overlay container for the red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -69,7 +71,7 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* Common styling for red lines */
+/* Common style for the red lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -80,7 +82,7 @@ html, body {
   to { filter: brightness(1.2); }
 }
 
-/* Horizontal red lines spanning 50vw */
+/* Horizontal red lines (span 50vw) with a gradient blending black at the extremes */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -107,7 +109,7 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines spanning 50vh */
+/* Vertical red lines (span 50vh) with a similar gradient */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -134,39 +136,28 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaling X from 0 → 1) */
+/* Keyframes for expanding horizontally/vertically and for growing thickness */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
-
-/* Keyframes for vertical expansion (scaling Y from 0 → 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
-
-/* Keyframes for horizontal thickness growth (min → max) */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
-
-/* Keyframes for vertical thickness growth (min → max) */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
 }
 
-/* Blinking dot centered on Uluru (Ayers Rock) */
+/* Blinking dot style (we control its opacity via JS) */
 .blinking-dot {
   position: absolute;
   background-color: red;
   border-radius: 50%;
   width: 10px;
   height: 10px;
-  animation: blink var(--blink-duration) infinite;
   z-index: 1000;
-}
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  100% { opacity: 0; }
 }
