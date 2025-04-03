@@ -1,4 +1,4 @@
-/* Ensure the document uses the full viewport */
+/* Ensure the document fills the entire viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -16,35 +16,34 @@ html, body {
   height: 100vh;
 }
 
-/* Force default (arrow) cursor on the Mapbox canvas */
+/* Force the default (arrow) cursor over the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution elements */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Timer styling (positioned at top center) */
+/* Timer in the top-right corner */
 #timer {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px;
   z-index: 30;
   font-family: monospace;
   font-size: 20px;
   color: white;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   padding: 5px 10px;
   border-radius: 5px;
 }
 
-/* Overlay covers the full viewport */
+/* Overlay covering the entire viewport */
 #overlay {
-  pointer-events: none;
+  pointer-events: none; /* Let clicks pass through to the map */
   position: absolute;
   top: 0;
   left: 0;
@@ -53,7 +52,7 @@ html, body {
   z-index: 10;
 }
 
-/* Flash overlay to create a full-screen flash effect */
+/* Flash overlay for the full-screen flash effect */
 #flash {
   position: fixed;
   top: 0;
@@ -77,6 +76,7 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
+
 /* Common base style for the red lines */
 .line {
   position: absolute;
@@ -84,13 +84,15 @@ html, body {
 }
 
 /* Horizontal red lines:
-   - Span 50vw, start thin at 1px.
-   - Use a linear gradient making edges dark and center bright,
-     then animate length (scaleX) and thickness (height). */
+   - Span 50vw,
+   - Use a gradient so the edges are darkred (thin) and the center is bright red.
+   - Start with a transform scaleX(0) (hidden) and 1px high,
+   - Animate to full width and grow thickness to 4px.
+*/
 .line.horizontal {
   top: 50%;
   width: 50vw;
-  height: 1px;
+  height: 1px; /* thin near edge */
   background: linear-gradient(to right, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
   transform: scaleX(0);
   transform-origin: left center;
@@ -104,12 +106,15 @@ html, body {
 }
 
 /* Vertical red lines:
-   - Span 50vh, start with 1px width.
-   - Similarly use a vertical gradient, then animate length and thickness. */
+   - Span 50vh,
+   - Use a vertical gradient so the top and bottom edges are darkred,
+   - Start with a transform scaleY(0) and 1px wide,
+   - Animate to full height and grow thickness to 4px.
+*/
 .line.vertical {
   left: 50%;
   height: 50vh;
-  width: 1px;
+  width: 1px; /* thin near edge */
   background: linear-gradient(to bottom, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
   transform: scaleY(0);
   transform-origin: top center;
@@ -122,12 +127,12 @@ html, body {
   animation-delay: 0.2s, 0.2s;
 }
 
-/* Keyframes to expand horizontal lines (scaleX) */
+/* Keyframes for horizontal expansion (scaling X) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes to expand vertical lines (scaleY) */
+/* Keyframes for vertical expansion (scaling Y) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
@@ -142,36 +147,4 @@ html, body {
 @keyframes growThicknessV {
   from { width: 1px; }
   to { width: 4px; }
-}
-
-/* --- Drawn Circle in the Center --- */
-/* Position the SVG exactly at the center and fade it in */
-#circle-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60px;
-  height: 60px;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  animation: fadeInCircle 0.5s forwards;
-  animation-delay: 1.2s;
-  filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.8));
-}
-
-/* Fade in animation for circle container */
-@keyframes fadeInCircle {
-  to { opacity: 1; }
-}
-
-/* Animation to “draw” the circle by reducing stroke-dashoffset */
-@keyframes drawCircle {
-  from { stroke-dashoffset: 251; }
-  to { stroke-dashoffset: 0; }
-}
-
-/* Apply drawing animation to the circle element */
-#circle-icon .draw-circle {
-  animation: drawCircle 1s forwards;
-  animation-delay: 1.2s;
 }
