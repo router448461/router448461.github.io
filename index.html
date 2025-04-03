@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Futuristic Sinister Map with Timer</title>
+    <title>Futuristic Sinister Map with Timer & Countdown</title>
     <!-- External stylesheet -->
     <link rel="stylesheet" href="style.css" />
     <!-- Mapbox GL JS stylesheet -->
@@ -18,6 +18,8 @@
     
     <!-- Timer displayed at the top-right (no background) -->
     <div id="timer"></div>
+    <!-- Countdown displayed directly beneath the timer -->
+    <div id="countdown"></div>
     
     <!-- Overlay container for the animated red lines -->
     <div id="overlay">
@@ -26,8 +28,6 @@
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
     </div>
-    
-    <!-- Flash overlay removed in this version -->
     
     <!-- Mapbox GL JS library -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
