@@ -1,21 +1,20 @@
 /* 
-  Define CSS variables for easy tuning and consistency.
-  Adjust these values to refine the menacing look.
+  Define CSS variables for customization and consistency.
 */
 :root {
   --edge-color: darkred;
   --center-color: red;
-  --min-thickness: 0.5px;   /* Extremely thin at the very edge */
+  --min-thickness: 0.5px;   
   --max-thickness: 4px;     
-  --line-duration: 3s;      /* Animation duration */
-  --animation-delay: 0s;    /* All lines start simultaneously */
+  --line-duration: 3s;      
+  --animation-delay: 0s;    
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
-  --pulsation-duration: 1.5s;
+  --blink-duration: 1s; /* Red dot blink duration in sync with the timer */
 }
 
-/* Reset and fill the entire viewport */
+/* Reset styling and ensure full-viewport usage */
 html, body {
   margin: 0;
   padding: 0;
@@ -24,7 +23,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Full-screen Mapbox map container */
+/* Map container filling the entire viewport */
 #map {
   position: absolute;
   top: 0;
@@ -33,46 +32,34 @@ html, body {
   height: 100vh;
 }
 
-/* Use the default arrow cursor on Mapbox canvas */
+/* Use the default arrow cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide Mapbox attribution and control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Timer styling for the top-right corner */
-#timer {
+/* Timers displayed in the top-left corner */
+#timers {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 20px;
   z-index: 1000;
   font-family: monospace;
-  font-size: 20px;
   color: white;
-  padding: 5px 10px;
-  /* Uncomment for debugging: background: rgba(0, 0, 0, 0.5); */
+}
+#clock, #countdown {
+  font-size: 20px;
+  margin-bottom: 5px;
 }
 
-/* Countdown timer styled identically and placed beneath #timer */
-#countdown {
-  position: fixed;
-  top: 60px;
-  right: 20px;
-  z-index: 1000;
-  font-family: monospace;
-  font-size: 20px;
-  color: white;
-  padding: 5px 10px;
-  /* Uncomment for debugging: background: rgba(0, 0, 0, 0.5); */
-}
-
-/* Overlay that covers the full viewport (for the red lines) */
+/* Overlay that covers the viewport (for the red lines) */
 #overlay {
-  pointer-events: none;  /* Allow clicks to pass through */
+  pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -82,21 +69,18 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* Common styling for the red lines */
+/* Common styling for red lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Futuristic pulsation effect */
-  animation: pulseLine var(--pulsation-duration) infinite alternate;
+  animation: pulseLine 1.5s infinite alternate;
 }
 @keyframes pulseLine {
   from { filter: brightness(1); }
-  to { filter: brightness(1.15); }
+  to { filter: brightness(1.2); }
 }
 
-/* Horizontal red lines that span 50vw;
-   Apply a gradient with black tint at the extreme edges for a mean look.
-*/
+/* Horizontal red lines spanning 50vw */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -123,9 +107,7 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines that span 50vh;
-   Apply a gradient with black tint at the top and bottom.
-*/
+/* Vertical red lines spanning 50vh */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -152,24 +134,39 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaling X from 0 to 1) */
+/* Keyframes for horizontal expansion (scaling X from 0 → 1) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (scaling Y from 0 to 1) */
+/* Keyframes for vertical expansion (scaling Y from 0 → 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
 
-/* Keyframes to grow horizontal thickness from min to max */
+/* Keyframes for horizontal thickness growth (min → max) */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Keyframes to grow vertical thickness from min to max */
+/* Keyframes for vertical thickness growth (min → max) */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
+}
+
+/* Blinking dot centered on Uluru (Ayers Rock) */
+.blinking-dot {
+  position: absolute;
+  background-color: red;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  animation: blink var(--blink-duration) infinite;
+  z-index: 1000;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  100% { opacity: 0; }
 }
