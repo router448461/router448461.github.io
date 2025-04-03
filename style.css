@@ -1,18 +1,18 @@
-/* Define CSS variables for easy tuning and consistency */
+/* Define CSS variables for easy tuning */
 :root {
   --edge-color: darkred;
   --center-color: red;
   --min-thickness: 1px;
   --max-thickness: 4px;
-  --line-duration: 3s;         /* Draw speed: 3 seconds */
-  --animation-delay: 0s;       /* No delay so all lines meet at once */
+  --line-duration: 3s;         /* Lines animate over 3 seconds */
+  --animation-delay: 0s;       /* All lines start together */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
   --pulsation-duration: 1.5s;
 }
 
-/* Reset styles and ensure full-viewport usage */
+/* Reset and fill the entire viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -21,7 +21,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Full-screen Mapbox map container */
+/* The Mapbox map container fills the viewport */
 #map {
   position: absolute;
   top: 0;
@@ -30,12 +30,12 @@ html, body {
   height: 100vh;
 }
 
-/* Enforce default arrow cursor on the Mapbox canvas */
+/* Use the default arrow cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide Mapbox attribution and controls */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
@@ -46,26 +46,27 @@ html, body {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 100;
+  z-index: 1000;
   font-family: monospace;
   font-size: 20px;
   color: white;
   padding: 5px 10px;
+  /* Remove background for transparency */
 }
 
-/* Countdown timer styled identically and placed just below the main timer */
+/* Countdown timer styled identically, placed just below */
 #countdown {
   position: fixed;
-  top: 60px; /* 20px + timer height (approx) */
+  top: 60px; /* adjust as needed */
   right: 20px;
-  z-index: 100;
+  z-index: 1000;
   font-family: monospace;
   font-size: 20px;
   color: white;
   padding: 5px 10px;
 }
 
-/* Overlay that covers the full viewport (for the red lines) */
+/* Overlay covering the full viewport (for red lines) */
 #overlay {
   pointer-events: none;  /* Allow clicks to pass through */
   position: absolute;
@@ -77,11 +78,11 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* Common style for the red lines with a mean, futuristic glow */
+/* Common style for all red lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Subtle pulsation to boost brightness for an extra mean look */
+  /* Futuristic pulsation effect */
   animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
 @keyframes pulseLine {
@@ -89,11 +90,11 @@ html, body {
   to { filter: brightness(1.15); }
 }
 
-/* Horizontal red lines spanning 50vw */
+/* Horizontal red lines: span 50vw */
 .line.horizontal {
   top: 50%;
   width: 50vw;
-  height: var(--min-thickness); /* Start very thin at the edges */
+  height: var(--min-thickness);
   background: linear-gradient(
     to right,
     var(--edge-color) 0%,
@@ -114,11 +115,11 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines spanning 50vh */
+/* Vertical red lines: span 50vh */
 .line.vertical {
   left: 50%;
   height: 50vh;
-  width: var(--min-thickness); /* Start very thin at the edges */
+  width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
     var(--edge-color) 0%,
@@ -149,13 +150,13 @@ html, body {
   to { transform: scaleY(1); }
 }
 
-/* Keyframes for growing horizontal thickness from min to max */
+/* Keyframes to grow horizontal thickness from min to max */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Keyframes for growing vertical thickness from min to max */
+/* Keyframes to grow vertical thickness from min to max */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
