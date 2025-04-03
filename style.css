@@ -1,4 +1,18 @@
-/* Ensure the document fills the entire viewport */
+/* Define CSS variables for easy adjustments */
+:root {
+  --edge-color: darkred;
+  --center-color: red;
+  --min-thickness: 1px;
+  --max-thickness: 4px;
+  --line-duration: 1s;
+  --animation-delay: 0.2s;
+  --box-shadow-color: rgba(139, 0, 0, 0.9);
+  --shadow-blur: 8px;
+  --shadow-spread: 2px;
+  --pulsation-duration: 1.5s;
+}
+
+/* Reset & full‑viewport container */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,7 +21,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Map container fills the browser window */
+/* Map container fills the entire browser window */
 #map {
   position: absolute;
   top: 0;
@@ -16,7 +30,7 @@ html, body {
   height: 100vh;
 }
 
-/* Force the default (arrow) cursor over the Mapbox canvas */
+/* Force the default arrow cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
@@ -27,7 +41,7 @@ html, body {
   display: none !important;
 }
 
-/* Timer in the top-right corner */
+/* Timer styling in the top-right corner – no background */
 #timer {
   position: fixed;
   top: 20px;
@@ -36,14 +50,12 @@ html, body {
   font-family: monospace;
   font-size: 20px;
   color: white;
-  background: rgba(0,0,0,0.5);
   padding: 5px 10px;
-  border-radius: 5px;
 }
 
-/* Overlay covering the entire viewport */
+/* Overlay that covers the full viewport */
 #overlay {
-  pointer-events: none; /* Let clicks pass through to the map */
+  pointer-events: none; /* Allow clicks to pass through to the map */
   position: absolute;
   top: 0;
   left: 0;
@@ -52,7 +64,7 @@ html, body {
   z-index: 10;
 }
 
-/* Flash overlay for the full-screen flash effect */
+/* Flash overlay for the full‑screen flash effect */
 #flash {
   position: fixed;
   top: 0;
@@ -64,87 +76,98 @@ html, body {
   pointer-events: none;
   z-index: 20;
 }
-
 @keyframes flashAnimation {
   0% { opacity: 0; }
   50% { opacity: 1; }
   100% { opacity: 0; }
 }
-
 .flash {
   animation: flashAnimation 0.5s forwards;
 }
 
 /* --- Animated Red Lines --- */
-
-/* Common base style for the red lines */
+/* Common base style for all lines */
 .line {
   position: absolute;
-  box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.8);
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  /* The filter pulsates the brightness for a subtle “mean” flicker */
+  animation: pulseFilter var(--pulsation-duration) infinite alternate;
+}
+@keyframes pulseFilter {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.1); }
 }
 
-/* Horizontal red lines:
-   - Span 50vw,
-   - Use a gradient so the edges are darkred (thin) and the center is bright red.
-   - Start with a transform scaleX(0) (hidden) and 1px high,
-   - Animate to full width and grow thickness to 4px.
-*/
+/* Horizontal lines (span 50vw) */
 .line.horizontal {
   top: 50%;
   width: 50vw;
-  height: 1px; /* thin near edge */
-  background: linear-gradient(to right, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to right, 
+    var(--edge-color) 0%, 
+    var(--edge-color) 30%, 
+    var(--center-color) 50%, 
+    var(--edge-color) 70%, 
+    var(--edge-color) 100%
+  );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal 1s forwards, growThicknessH 1s forwards;
+  animation: expandHorizontal var(--line-duration) forwards, growThicknessH var(--line-duration) forwards;
 }
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
-  animation-delay: 0.2s, 0.2s;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines:
-   - Span 50vh,
-   - Use a vertical gradient so the top and bottom edges are darkred,
-   - Start with a transform scaleY(0) and 1px wide,
-   - Animate to full height and grow thickness to 4px.
-*/
+/* Vertical lines (span 50vh) */
 .line.vertical {
   left: 50%;
   height: 50vh;
-  width: 1px; /* thin near edge */
-  background: linear-gradient(to bottom, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
+  width: var(--min-thickness);
+  background: linear-gradient(
+    to bottom, 
+    var(--edge-color) 0%, 
+    var(--edge-color) 30%, 
+    var(--center-color) 50%, 
+    var(--edge-color) 70%, 
+    var(--edge-color) 100%
+  );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical 1s forwards, growThicknessV 1s forwards;
+  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
-  animation-delay: 0.2s, 0.2s;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaling X) */
+/* Keyframes for expanding horizontal lines (scaleX) */
 @keyframes expandHorizontal {
-  to { transform: scaleX(1); }
+  to {
+    transform: scaleX(1);
+  }
 }
 
-/* Keyframes for vertical expansion (scaling Y) */
+/* Keyframes for expanding vertical lines (scaleY) */
 @keyframes expandVertical {
-  to { transform: scaleY(1); }
+  to {
+    transform: scaleY(1);
+  }
 }
 
-/* Keyframes to grow horizontal line thickness from 1px to 4px */
+/* Keyframes to grow horizontal thickness from min to max */
 @keyframes growThicknessH {
-  from { height: 1px; }
-  to { height: 4px; }
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
 }
 
-/* Keyframes to grow vertical line thickness from 1px to 4px */
+/* Keyframes to grow vertical thickness from min to max */
 @keyframes growThicknessV {
-  from { width: 1px; }
-  to { width: 4px; }
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
 }
