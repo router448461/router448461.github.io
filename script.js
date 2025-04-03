@@ -1,16 +1,16 @@
 // Your Mapbox API key
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the map
+// Initialize the map using the built-in dark style (default Mercator projection)
 const map = new mapboxgl.Map({
-  container: 'map',                          // The ID of the container to render the map into
-  style: 'mapbox://styles/mapbox/dark-v10',    // Using the built-in dark style (Mercator projection by default)
-  center: [0, 0],                            // Center of the world (longitude, latitude)
+  container: 'map',                          // Container ID
+  style: 'mapbox://styles/mapbox/dark-v10',    // Built-in dark style
+  center: [0, 0],                            // Center at [longitude, latitude]
   zoom: 1,                                   // A zoom level that shows the entire world
-  attributionControl: false                  // Disable the built-in attribution control
+  attributionControl: false                  // Disable built-in attribution
 });
 
-// Disable interactive controls for a static display
+// Disable all interactive controls for a static display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,10 +20,7 @@ map.keyboard.disable();
 map.touchZoomRotate.disable();
 
 /**
- * Hide all text labels.
- * Whenever the style data is loaded or updated,
- * loop through all layers. If a layer is of type 'symbol'
- * and defines a 'text-field', hide it.
+ * Hide text labels (if any) on the map by disabling visibility for symbol layers with 'text-field'
  */
 function hideLabels() {
   const style = map.getStyle();
@@ -35,13 +32,9 @@ function hideLabels() {
   });
 }
 
-// Hide labels once on load...
+// Hide labels when the map loads and whenever the style data updates
 map.on('load', () => {
   hideLabels();
-  console.log('Map loaded: full-screen, no labels, and no attribution.');
+  console.log('Map loaded: full screen with arrow cursor, target overlay, and labels hidden.');
 });
-
-// ...and also whenever the style data is updated.
-map.on('styledata', () => {
-  hideLabels();
-});
+map.on('styledata', hideLabels);
