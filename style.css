@@ -1,4 +1,4 @@
-/* Ensure html and body take up the full viewport */
+/* Ensure html and body fill the entire viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ html, body {
   overflow: hidden;
 }
 
-/* The map container fills the entire browser window */
+/* The map container fills the browser window */
 #map {
   position: absolute;
   top: 0;
@@ -16,7 +16,7 @@ html, body {
   height: 100vh;
 }
 
-/* Force default arrow cursor over the map */
+/* Force default (arrow) cursor over the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
@@ -27,79 +27,96 @@ html, body {
   display: none !important;
 }
 
-/* Target overlay covering the entire viewport */
+/* Overlay covering the complete viewport */
 #overlay {
-  pointer-events: none;  /* Allow clicks to go through */
+  pointer-events: none;  /* Let clicks pass through to the map */
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10;  /* Layer above the map */
+  z-index: 10;  /* Ensure overlay is above the map */
 }
 
-/* Base style for the red lines */
+/* Base style for red lines with a gradient and glow */
 .line {
   position: absolute;
-  background-color: red;
+  background: linear-gradient(90deg, darkred, red, darkred);
+  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
 }
 
-/* Horizontal left: starts from left edge */
-.line.horizontal.left {
+/* Horizontal lines: fixed width of 50vw, animate via scaleX */
+.line.horizontal {
   top: 50%;
-  left: 0;
-  height: 2px;
-  transform: translateY(-50%);
-  width: 0; /* Start at zero */
-  animation: slideHorizontal 1s forwards;
+  height: 3px;
+  width: 50vw;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: expandHorizontal 1s forwards;
 }
 
-/* Horizontal right: starts from right edge */
+/* For the right horizontal line, change the origin and add a slight delay */
 .line.horizontal.right {
-  top: 50%;
   right: 0;
-  height: 2px;
-  transform: translateY(-50%);
-  width: 0;
-  animation: slideHorizontal 1s forwards;
+  left: auto;
+  transform-origin: right center;
+  animation-delay: 0.2s;
 }
 
-/* Vertical top: starts from top edge */
-.line.vertical.top {
+/* Vertical lines: fixed height of 50vh, animate via scaleY */
+.line.vertical {
   left: 50%;
-  top: 0;
-  width: 2px;
-  transform: translateX(-50%);
-  height: 0;
-  animation: slideVertical 1s forwards;
+  width: 3px;
+  height: 50vh;
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: expandVertical 1s forwards;
 }
 
-/* Vertical bottom: starts from bottom edge */
+/* For the bottom vertical line, change transform origin and stagger animation */
 .line.vertical.bottom {
-  left: 50%;
   bottom: 0;
-  width: 2px;
-  transform: translateX(-50%);
-  height: 0;
-  animation: slideVertical 1s forwards;
+  top: auto;
+  transform-origin: bottom center;
+  animation-delay: 0.2s;
 }
 
-/* Keyframes for horizontal lines: animate width from 0 to 50vw */
-@keyframes slideHorizontal {
-  from {
-    width: 0;
-  }
+/* Keyframes for horizontal expansion using scaleX */
+@keyframes expandHorizontal {
   to {
-    width: 50vw;
+    transform: scaleX(1);
   }
 }
 
-/* Keyframes for vertical lines: animate height from 0 to 50vh */
-@keyframes slideVertical {
-  from {
-    height: 0;
-  }
+/* Keyframes for vertical expansion using scaleY */
+@keyframes expandVertical {
   to {
-    height: 50vh;
+    transform: scaleY(1);
+  }
+}
+
+/* Style for the central pulsing marker */
+#center-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 2s infinite;
+  z-index: 11; /* Ensure it appears above the red lines */
+}
+
+/* Keyframes for the pulsing effect */
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0.8;
   }
 }
