@@ -1,17 +1,19 @@
-// Your Mapbox API key
+// Replace the following token with your valid Mapbox API token.
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map
+let blinkingDotElement; // Global reference for blinking dot
+
+// Initialize the Mapbox map, centered on Uluru.
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
-  center: [131.0369, -25.3444], // Centered on Uluru
+  center: [131.0369, -25.3444], // Uluru coordinates
   zoom: 4,
   attributionControl: false,
 });
 
-// Disable interactive controls for a static experience
+// Disable interactivity for a static presentation.
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,53 +22,55 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide text labels and administrative boundaries from the map
+// Hide labels and boundaries to prevent flicker of world titles.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
-
-  style.layers.forEach((layer) => {
+  style.layers.forEach(layer => {
     if (
-      layer.type === 'symbol' || // Hide symbols (like text labels)
-      layer.id.includes('boundary') || // Hide boundaries
-      layer.id.includes('admin-0') || // Hide country boundaries
-      layer.id.includes('admin-1') // Hide state/province boundaries
+      layer.type === 'symbol' ||
+      (layer.id && (layer.id.includes('boundary') || layer.id.includes('admin-0') || layer.id.includes('admin-1')))
     ) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
 }
 
-// Add a blinking red dot at Uluru
+// Add a blinking dot over Uluru.
 function addBlinkingDot() {
-  const uluruDot = document.createElement('div');
-  uluruDot.className = 'blinking-dot';
-  new mapboxgl.Marker(uluruDot).setLngLat([131.0369, -25.3444]).addTo(map);
+  const dot = document.createElement('div');
+  dot.className = 'blinking-dot';
+  blinkingDotElement = dot; // Save a reference for synchronous updates.
+  new mapboxgl.Marker(dot).setLngLat([131.0369, -25.3444]).addTo(map);
 }
 
-// Clock and countdown timer sync logic
+// References to our timer elements.
 const clockElement = document.getElementById('clock');
 const countdownElement = document.getElementById('countdown');
-let countdownTime = 60 * 1000; // 60,000ms = 1 minute
+let countdownTime = 60 * 1000; // 1 minute in milliseconds.
+let syncInterval; // Global sync interval.
 
-// Update the clock timer (local time)
+// Update the clock (local time) and—here, also update the blinking dot's opacity.
+// We toggle the dot's opacity so that it "flashes" in sync with the clock updates.
 function updateClock() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
   const seconds = now.getSeconds().toString().padStart(2, '0');
-  const centiseconds = Math.floor(now.getMilliseconds() / 10)
-    .toString()
-    .padStart(2, '0');
-
+  const centiseconds = Math.floor(now.getMilliseconds() / 10).toString().padStart(2, '0');
   clockElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
+  
+  // For a fast flash, toggle opacity using the centiseconds.
+  if (blinkingDotElement) {
+    blinkingDotElement.style.opacity = (parseInt(centiseconds) % 2 === 0) ? '1' : '0';
+  }
 }
 
-// Update the countdown timer in sync with the clock
+// Update the countdown timer.
 function updateCountdown() {
-  countdownTime -= 10; // Decrease by 10ms
+  countdownTime -= 10; // Decrement by 10ms.
   if (countdownTime < 0) countdownTime = 0;
-
+  
   const minutes = Math.floor((countdownTime % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
     .padStart(2, '0');
@@ -76,33 +80,40 @@ function updateCountdown() {
   const centiseconds = Math.floor((countdownTime % 1000) / 10)
     .toString()
     .padStart(2, '0');
-
   countdownElement.innerText = `${minutes}:${seconds}:${centiseconds}`;
-
-  // If countdown reaches zero, reload the page to restart the loop
+  
+  // If the countdown has reached zero, clear the sync interval and force a full reload.
   if (countdownTime <= 0) {
-    clearInterval(syncInterval); // Stop the interval
+    clearInterval(syncInterval);
     setTimeout(() => {
-      window.location.href = window.location.href; // Force reload
-    }, 100); // Brief delay for visibility
+      window.location.href = window.location.href; // Fully reload the page.
+    }, 100); // Brief delay to show the final state.
   }
 }
 
-// Sync both timers and the blinking dot
-function syncTimersAndDot() {
-  updateClock(); // Update the local clock
-  updateCountdown(); // Update the countdown
+// Synchronize both timers (and blinking dot) together.
+function syncTimers() {
+  updateClock();
+  updateCountdown();
 }
 
-// When the map is loaded
+// When the map has loaded:
 map.on('load', () => {
-  hideMapElements(); // Hide boundaries and labels
-  addBlinkingDot(); // Add the red dot at Uluru
-  console.log('Map loaded, boundaries hidden, and red dot added.');
-
-  // Delay the start of the timers by 3 seconds for the red lines animation
+  hideMapElements(); // Immediately hide unwanted labels/boundaries.
+  
+  // Once the style is ready, show the map container.
+  document.getElementById('map').style.visibility = 'visible';
+  
+  addBlinkingDot(); // Add the blinking red dot over Uluru.
+  
+  console.log('Map loaded, labels hidden, and blinking dot added.');
+  
+  // Delay the start of the timers by 3 seconds (to allow red line animation to complete).
   setTimeout(() => {
-    countdownTime = 60 * 1000; // Reset countdown to 1 minute
-    syncInterval = setInterval(syncTimersAndDot, 10); // Start syncing timers every 10ms
-  }, 3000); // 3-second delay
+    countdownTime = 60 * 1000; // Reset countdown to 1 minute.
+    syncInterval = setInterval(syncTimers, 10); // Start syncing every 10ms.
+  }, 3000);
 });
+
+// In case the style data updates, re-hide the labels/boundaries.
+map.on('styledata', hideMapElements);
