@@ -2,9 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Uluru Blinking Map with Timers</title>
-    <!-- Link to your CSS file -->
+    <meta name="viewport" 
+          content="width=device-width, initial-scale=1.0" />
+    <title>Uluru & Australian Bases – Sinister Map</title>
+    <!-- Link to CSS -->
     <link rel="stylesheet" href="style.css" />
     <!-- Mapbox GL JS stylesheet -->
     <link
@@ -13,26 +14,21 @@
     />
   </head>
   <body>
-    <!-- Map container (initially hidden via CSS) -->
+    <!-- Map container -->
     <div id="map"></div>
-    
-    <!-- Timers container (top-right): Clock and Countdown -->
+
+    <!-- Timers container in top-right -->
     <div id="timers">
       <div id="clock"></div>
       <div id="countdown"></div>
     </div>
-    
-    <!-- Overlay container for animated red lines -->
-    <div id="overlay">
-      <div class="line horizontal left"></div>
-      <div class="line horizontal right"></div>
-      <div class="line vertical top"></div>
-      <div class="line vertical bottom"></div>
-    </div>
-    
+
+    <!-- (No full-screen overlay now –
+         the red lines are drawn in a custom marker over Uluru) -->
+
     <!-- Mapbox GL JS library -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <!-- Link to your JavaScript file -->
+    <!-- Link to JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>
