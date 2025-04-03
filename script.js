@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map in dark mode
+// Initialize Mapbox map using the dark style
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
-// Disable all interactive controls for a completely static display
+// Disable interactive controls for a static display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Hide all text labels on the map
+// Function to hide all text labels on the map
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -33,7 +33,7 @@ function hideLabels() {
 
 map.on('load', () => {
   hideLabels();
-  console.log('Map loaded and labels hidden.');
+  console.log('Map loaded; labels hidden; red lines animating.');
 });
 map.on('styledata', hideLabels);
 
@@ -50,22 +50,3 @@ function updateTimer() {
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
 }
 setInterval(updateTimer, 10);
-
-/* --- Flash Effect --- */
-// Trigger the flash when the right horizontal line's thickness animation ends
-const flashTriggeredElement = document.querySelector('.line.horizontal.right');
-let flashTriggered = false;
-flashTriggeredElement.addEventListener('animationend', event => {
-  if (event.animationName === 'growThicknessH' && !flashTriggered) {
-    flashTriggered = true;
-    const flashDiv = document.getElementById('flash');
-    flashDiv.classList.add('flash');
-    flashDiv.addEventListener(
-      'animationend',
-      () => {
-        flashDiv.classList.remove('flash');
-      },
-      { once: true }
-    );
-  }
-});
