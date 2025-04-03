@@ -1,18 +1,18 @@
-/* Define CSS variables for easy tuning */
+/* Define CSS variables for easy tuning and consistency */
 :root {
   --edge-color: darkred;
   --center-color: red;
-  --min-thickness: 1px;
-  --max-thickness: 4px;
-  --line-duration: 3s;         /* Lines animate over 3 seconds */
-  --animation-delay: 0s;       /* All lines start together */
+  --min-thickness: 0.5px;    /* start extremely thin at the edge */
+  --max-thickness: 4px;      
+  --line-duration: 3s;       /* Lines animate over 3 seconds */
+  --animation-delay: 0s;     /* All lines start together */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
   --pulsation-duration: 1.5s;
 }
 
-/* Reset and fill the entire viewport */
+/* Reset styles and ensure full-viewport usage */
 html, body {
   margin: 0;
   padding: 0;
@@ -21,7 +21,7 @@ html, body {
   overflow: hidden;
 }
 
-/* The Mapbox map container fills the viewport */
+/* Full-screen Mapbox map container */
 #map {
   position: absolute;
   top: 0;
@@ -30,45 +30,46 @@ html, body {
   height: 100vh;
 }
 
-/* Use the default arrow cursor on the Mapbox canvas */
+/* Use default arrow cursor on Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution and controls */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Timer styling in the top-right corner */
+/* Timer styling in the top-right corner – ensure a high z-index */
 #timer {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 1000;
+  z-index: 1000; 
   font-family: monospace;
   font-size: 20px;
   color: white;
   padding: 5px 10px;
-  /* Remove background for transparency */
+  /* (Optional: for debugging, add a background: rgba(0, 0, 0, 0.5);) */
 }
 
-/* Countdown timer styled identically, placed just below */
+/* Countdown timer styled identically, placed just below the main timer */
 #countdown {
   position: fixed;
-  top: 60px; /* adjust as needed */
+  top: 60px; /* Adjust as needed based on the timer height */
   right: 20px;
   z-index: 1000;
   font-family: monospace;
   font-size: 20px;
   color: white;
   padding: 5px 10px;
+  /* (Optional: for debugging, add a background: rgba(0, 0, 0, 0.5);) */
 }
 
-/* Overlay covering the full viewport (for red lines) */
+/* Overlay covering the full viewport (for the red lines) */
 #overlay {
-  pointer-events: none;  /* Allow clicks to pass through */
+  pointer-events: none;  /* Allow clicks to fall through to the map */
   position: absolute;
   top: 0;
   left: 0;
@@ -82,7 +83,7 @@ html, body {
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Futuristic pulsation effect */
+  /* Subtle futuristic pulsation effect (brightness alternate) */
   animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
 @keyframes pulseLine {
@@ -91,17 +92,20 @@ html, body {
 }
 
 /* Horizontal red lines: span 50vw */
+/* Updated gradient incorporates black at the extreme edges */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    var(--edge-color) 0%,
+    black 0%, 
+    var(--edge-color) 20%,
     var(--edge-color) 30%,
     var(--center-color) 50%,
     var(--edge-color) 70%,
-    var(--edge-color) 100%
+    var(--edge-color) 80%,
+    black 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
@@ -116,17 +120,20 @@ html, body {
 }
 
 /* Vertical red lines: span 50vh */
+/* Updated gradient with touch of black at the very top and bottom */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    var(--edge-color) 0%,
+    black 0%,
+    var(--edge-color) 20%,
     var(--edge-color) 30%,
     var(--center-color) 50%,
     var(--edge-color) 70%,
-    var(--edge-color) 100%
+    var(--edge-color) 80%,
+    black 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
@@ -140,12 +147,12 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaleX from 0 to 1) */
+/* Keyframes for horizontal expansion (scaling X from 0 to 1) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (scaleY from 0 to 1) */
+/* Keyframes for vertical expansion (scaling Y from 0 to 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
