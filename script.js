@@ -1,17 +1,17 @@
-// Your Mapbox API key (make sure it is valid)
+// Your Mapbox API key
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map using the dark-v10 style.
+// Initialize the Mapbox map
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
-  center: [0, 0],
-  zoom: 1,
-  attributionControl: false
+  center: [131.0369, -25.3444], // Centered on Uluru
+  zoom: 4,
+  attributionControl: false,
 });
 
-// Disable interactive controls for a static experience.
+// Disable interactive controls for a static experience
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,45 +20,37 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide text labels from the map.
-function hideLabels() {
+// Function to hide text labels and administrative boundaries from the map
+function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
-  style.layers.forEach(layer => {
-    if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
-      map.setLayoutProperty(layer.id, 'visibility', 'none');
-    }
-  });
-}
 
-// Function to hide boundary layers (common IDs containing "boundary", "admin-0", or "admin-1").
-function hideBoundaries() {
-  const layers = map.getStyle().layers;
-  layers.forEach(layer => {
+  style.layers.forEach((layer) => {
     if (
-      (layer.id && layer.id.includes('boundary')) ||
-      (layer.id && layer.id.includes('admin-0')) ||
-      (layer.id && layer.id.includes('admin-1'))
+      layer.type === 'symbol' || // Hide symbols (like text labels)
+      layer.id.includes('boundary') || // Hide boundaries
+      layer.id.includes('admin-0') || // Hide country boundaries
+      layer.id.includes('admin-1') // Hide state/province boundaries
     ) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
-      console.log(`Hiding boundary layer: ${layer.id}`);
     }
   });
 }
 
-map.on('load', () => {
-  hideLabels();
-  hideBoundaries();
-  console.log('Map loaded; labels and boundaries hidden; red lines animating.');
-});
-map.on('styledata', () => {
-  hideLabels();
-  hideBoundaries();
-});
+// Add a blinking red dot at Uluru
+function addBlinkingDot() {
+  const uluruDot = document.createElement('div');
+  uluruDot.className = 'blinking-dot';
+  new mapboxgl.Marker(uluruDot).setLngLat([131.0369, -25.3444]).addTo(map);
+}
 
-/* --- Timer Implementation (Current Local Time) --- */
-const timerElement = document.getElementById('timer');
-function updateTimer() {
+// Clock and countdown timer sync logic
+const clockElement = document.getElementById('clock');
+const countdownElement = document.getElementById('countdown');
+let countdownTime = 60 * 1000; // 60,000ms = 1 minute
+
+// Update the clock timer (local time)
+function updateClock() {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -66,22 +58,15 @@ function updateTimer() {
   const centiseconds = Math.floor(now.getMilliseconds() / 10)
     .toString()
     .padStart(2, '0');
-  timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
-}
-updateTimer(); // Update immediately on load.
-setInterval(updateTimer, 10);
 
-/* --- Countdown Implementation (1 Minute) --- */
-const countdownElement = document.getElementById('countdown');
-let countdownTime = 60 * 1000; // 60,000ms = 1 minute.
+  clockElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
+}
+
+// Update the countdown timer in sync with the clock
 function updateCountdown() {
-  // Decrease countdownTime by 10ms.
-  countdownTime -= 10;
+  countdownTime -= 10; // Decrease by 10ms
   if (countdownTime < 0) countdownTime = 0;
-  
-  const hours = Math.floor(countdownTime / (1000 * 60 * 60))
-    .toString()
-    .padStart(2, '0');
+
   const minutes = Math.floor((countdownTime % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
     .padStart(2, '0');
@@ -91,17 +76,33 @@ function updateCountdown() {
   const centiseconds = Math.floor((countdownTime % 1000) / 10)
     .toString()
     .padStart(2, '0');
-  
-  countdownElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
-  
-  // When countdown reaches zero, clear the interval and force a full reload.
+
+  countdownElement.innerText = `${minutes}:${seconds}:${centiseconds}`;
+
+  // If countdown reaches zero, reload the page to restart the loop
   if (countdownTime <= 0) {
-    clearInterval(countdownInterval);
-    // A slight delay before reloading
+    clearInterval(syncInterval); // Stop the interval
     setTimeout(() => {
-      window.location.href = window.location.href;
-    }, 100);
+      window.location.href = window.location.href; // Force reload
+    }, 100); // Brief delay for visibility
   }
 }
-updateCountdown(); // Update immediately on load.
-const countdownInterval = setInterval(updateCountdown, 10);
+
+// Sync both timers and the blinking dot
+function syncTimersAndDot() {
+  updateClock(); // Update the local clock
+  updateCountdown(); // Update the countdown
+}
+
+// When the map is loaded
+map.on('load', () => {
+  hideMapElements(); // Hide boundaries and labels
+  addBlinkingDot(); // Add the red dot at Uluru
+  console.log('Map loaded, boundaries hidden, and red dot added.');
+
+  // Delay the start of the timers by 3 seconds for the red lines animation
+  setTimeout(() => {
+    countdownTime = 60 * 1000; // Reset countdown to 1 minute
+    syncInterval = setInterval(syncTimersAndDot, 10); // Start syncing timers every 10ms
+  }, 3000); // 3-second delay
+});
