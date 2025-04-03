@@ -1,14 +1,14 @@
 /* 
-  Define CSS variables for easy tuning.
-  Adjust these values to fine-tune the menacing look.
+  Define CSS variables for easy tuning and consistency.
+  Adjust these values to refine the menacing look.
 */
 :root {
   --edge-color: darkred;
   --center-color: red;
-  --min-thickness: 0.5px;   /* Extremely thin at the edges */
+  --min-thickness: 0.5px;   /* Extremely thin at the very edge */
   --max-thickness: 4px;     
   --line-duration: 3s;      /* Animation duration */
-  --animation-delay: 0s;    /* All lines start together */
+  --animation-delay: 0s;    /* All lines start simultaneously */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
@@ -44,7 +44,7 @@ html, body {
   display: none !important;
 }
 
-/* Timer styling in the top-right corner */
+/* Timer styling for the top-right corner */
 #timer {
   position: fixed;
   top: 20px;
@@ -54,12 +54,10 @@ html, body {
   font-size: 20px;
   color: white;
   padding: 5px 10px;
-  /* Uncomment the background property for debugging
-     background: rgba(0, 0, 0, 0.5);
-  */
+  /* Uncomment for debugging: background: rgba(0, 0, 0, 0.5); */
 }
 
-/* Countdown timer styled identically; placed just beneath #timer */
+/* Countdown timer styled identically and placed beneath #timer */
 #countdown {
   position: fixed;
   top: 60px;
@@ -69,13 +67,12 @@ html, body {
   font-size: 20px;
   color: white;
   padding: 5px 10px;
-  /* Uncomment the background property for debugging */
-  /* background: rgba(0, 0, 0, 0.5); */
+  /* Uncomment for debugging: background: rgba(0, 0, 0, 0.5); */
 }
 
-/* Overlay for the red lines, set below the timers */
+/* Overlay that covers the full viewport (for the red lines) */
 #overlay {
-  pointer-events: none; /* Let clicks pass through */
+  pointer-events: none;  /* Allow clicks to pass through */
   position: absolute;
   top: 0;
   left: 0;
@@ -85,11 +82,11 @@ html, body {
 }
 
 /* --- Animated Red Lines --- */
-/* General rules for red lines */
+/* Common styling for the red lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Futuristic subtle pulsation effect */
+  /* Futuristic pulsation effect */
   animation: pulseLine var(--pulsation-duration) infinite alternate;
 }
 @keyframes pulseLine {
@@ -97,8 +94,8 @@ html, body {
   to { filter: brightness(1.15); }
 }
 
-/* Horizontal red lines (span 50vw) with a custom gradient.
-   Black is blended at the extreme edges for extra menace.
+/* Horizontal red lines that span 50vw;
+   Apply a gradient with black tint at the extreme edges for a mean look.
 */
 .line.horizontal {
   top: 50%;
@@ -126,7 +123,9 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Vertical red lines (span 50vh) with a custom gradient including black. */
+/* Vertical red lines that span 50vh;
+   Apply a gradient with black tint at the top and bottom.
+*/
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -153,23 +152,23 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Keyframes for horizontal expansion (scaling X from 0 → 1) */
+/* Keyframes for horizontal expansion (scaling X from 0 to 1) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (scaling Y from 0 → 1) */
+/* Keyframes for vertical expansion (scaling Y from 0 to 1) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
 
-/* Keyframes for growing horizontal thickness from min to max */
+/* Keyframes to grow horizontal thickness from min to max */
 @keyframes growThicknessH {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Keyframes for growing vertical thickness from min to max */
+/* Keyframes to grow vertical thickness from min to max */
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
