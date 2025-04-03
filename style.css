@@ -1,4 +1,4 @@
-/* Ensure the document fills the entire viewport */
+/* Ensure the document uses the full viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@ html, body {
   overflow: hidden;
 }
 
-/* The Mapbox map container is full-screen */
+/* Map container fills the browser window */
 #map {
   position: absolute;
   top: 0;
@@ -16,20 +16,35 @@ html, body {
   height: 100vh;
 }
 
-/* Force default (arrow) cursor over the Mapbox canvas */
+/* Force default (arrow) cursor on the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide Mapbox attribution elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay covering the full viewport */
+/* Timer styling (positioned at top center) */
+#timer {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-family: monospace;
+  font-size: 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Overlay covers the full viewport */
 #overlay {
-  pointer-events: none; /* Let clicks pass through to the map */
+  pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -38,18 +53,47 @@ html, body {
   z-index: 10;
 }
 
-/* --- Animated Red Lines for a Sinister Effect --- */
+/* Flash overlay to create a full-screen flash effect */
+#flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
 
-/* Horizontal red lines: they span 50vw, start 1px thick, and expand from the edge. */
-.line.horizontal {
+@keyframes flashAnimation {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.flash {
+  animation: flashAnimation 0.5s forwards;
+}
+
+/* --- Animated Red Lines --- */
+/* Common base style for the red lines */
+.line {
   position: absolute;
+  box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.8);
+}
+
+/* Horizontal red lines:
+   - Span 50vw, start thin at 1px.
+   - Use a linear gradient making edges dark and center bright,
+     then animate length (scaleX) and thickness (height). */
+.line.horizontal {
   top: 50%;
   width: 50vw;
-  height: 1px; /* Thin near the edge */
+  height: 1px;
+  background: linear-gradient(to right, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
   transform: scaleX(0);
   transform-origin: left center;
-  background: linear-gradient(to right, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
-  box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.8);
   animation: expandHorizontal 1s forwards, growThicknessH 1s forwards;
 }
 .line.horizontal.right {
@@ -59,16 +103,16 @@ html, body {
   animation-delay: 0.2s, 0.2s;
 }
 
-/* Vertical red lines: they span 50vh, start 1px thick, and expand from the edge. */
+/* Vertical red lines:
+   - Span 50vh, start with 1px width.
+   - Similarly use a vertical gradient, then animate length and thickness. */
 .line.vertical {
-  position: absolute;
   left: 50%;
   height: 50vh;
-  width: 1px; /* Thin near the edge */
+  width: 1px;
+  background: linear-gradient(to bottom, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
   transform: scaleY(0);
   transform-origin: top center;
-  background: linear-gradient(to bottom, darkred 0%, darkred 20%, red 50%, darkred 80%, darkred 100%);
-  box-shadow: 0 0 10px 2px rgba(139, 0, 0, 0.8);
   animation: expandVertical 1s forwards, growThicknessV 1s forwards;
 }
 .line.vertical.bottom {
@@ -78,12 +122,12 @@ html, body {
   animation-delay: 0.2s, 0.2s;
 }
 
-/* Keyframes for horizontal expansion (using scaleX) */
+/* Keyframes to expand horizontal lines (scaleX) */
 @keyframes expandHorizontal {
   to { transform: scaleX(1); }
 }
 
-/* Keyframes for vertical expansion (using scaleY) */
+/* Keyframes to expand vertical lines (scaleY) */
 @keyframes expandVertical {
   to { transform: scaleY(1); }
 }
@@ -100,10 +144,9 @@ html, body {
   to { width: 4px; }
 }
 
-/* --- Scope SVG Icon Animation & Centering --- */
-
-/* Exactly center the scope icon using 50%/50% and translate */
-#scope-icon {
+/* --- Drawn Circle in the Center --- */
+/* Position the SVG exactly at the center and fade it in */
+#circle-icon {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -111,34 +154,24 @@ html, body {
   height: 60px;
   transform: translate(-50%, -50%);
   opacity: 0;
+  animation: fadeInCircle 0.5s forwards;
+  animation-delay: 1.2s;
   filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.8));
-  animation: fadeInScope 0.5s forwards;
-  animation-delay: 1.2s; /* Begin after red-line animations complete */
 }
 
-/* Fade in the scope icon */
-@keyframes fadeInScope {
+/* Fade in animation for circle container */
+@keyframes fadeInCircle {
   to { opacity: 1; }
 }
 
-/* Animate drawing of the scope circle using the stroke-dash technique */
-@keyframes drawScopeCircle {
+/* Animation to “draw” the circle by reducing stroke-dashoffset */
+@keyframes drawCircle {
   from { stroke-dashoffset: 251; }
   to { stroke-dashoffset: 0; }
 }
 
-/* Animate drawing of the crosshair lines */
-@keyframes drawScopeLine {
-  from { stroke-dashoffset: 80; }
-  to { stroke-dashoffset: 0; }
-}
-
-/* Apply drawing animations to the SVG elements */
-#scope-icon .scope-circle {
-  animation: drawScopeCircle 1s forwards;
-  animation-delay: 1.2s;
-}
-#scope-icon .scope-line {
-  animation: drawScopeLine 1s forwards;
+/* Apply drawing animation to the circle element */
+#circle-icon .draw-circle {
+  animation: drawCircle 1s forwards;
   animation-delay: 1.2s;
 }
