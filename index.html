@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Full-Screen Map with Animated Target Overlay</title>
+  <title>Full-Screen Map With Animated Target Overlay</title>
   <!-- External stylesheet -->
   <link rel="stylesheet" href="style.css" />
   <!-- Mapbox GL JS stylesheet -->
@@ -13,12 +13,13 @@
   <!-- Map container -->
   <div id="map"></div>
   
-  <!-- Target overlay: animated red lines that converge at the center -->
+  <!-- Target overlay: animated red lines and central marker -->
   <div id="overlay">
     <div class="line horizontal left"></div>
     <div class="line horizontal right"></div>
     <div class="line vertical top"></div>
     <div class="line vertical bottom"></div>
+    <div id="center-marker"></div>
   </div>
   
   <!-- Mapbox GL JS library -->
