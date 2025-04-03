@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map using the built-in dark style
+// Initialize the Mapbox map in dark mode
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
-// Disable interactive controls for a static display
+// Disable all interactive controls for a completely static display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide all text labels on the map
+// Hide all text labels on the map
 function hideLabels() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -41,10 +41,10 @@ map.on('styledata', hideLabels);
 const timerElement = document.getElementById('timer');
 function updateTimer() {
   const now = new Date();
-  let hours = now.getHours().toString().padStart(2, '0');
-  let minutes = now.getMinutes().toString().padStart(2, '0');
-  let seconds = now.getSeconds().toString().padStart(2, '0');
-  let centiseconds = Math.floor(now.getMilliseconds() / 10)
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const centiseconds = Math.floor(now.getMilliseconds() / 10)
     .toString()
     .padStart(2, '0');
   timerElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
@@ -52,11 +52,10 @@ function updateTimer() {
 setInterval(updateTimer, 10);
 
 /* --- Flash Effect --- */
-// Trigger the flash effect when one of the red-line animations completes.
-// Attach to the right horizontal line's growThicknessH animation.
-const redLine = document.querySelector('.line.horizontal.right');
+// Trigger the flash when the right horizontal line's thickness animation ends
+const flashTriggeredElement = document.querySelector('.line.horizontal.right');
 let flashTriggered = false;
-redLine.addEventListener('animationend', (event) => {
+flashTriggeredElement.addEventListener('animationend', event => {
   if (event.animationName === 'growThicknessH' && !flashTriggered) {
     flashTriggered = true;
     const flashDiv = document.getElementById('flash');
