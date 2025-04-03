@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Full-Screen Map with Sinister Animated Scope</title>
+    <title>Sinister Map with Timer and Flash</title>
     <!-- External stylesheet -->
     <link rel="stylesheet" href="style.css" />
     <!-- Mapbox GL JS stylesheet -->
@@ -15,76 +15,48 @@
   <body>
     <!-- Map container -->
     <div id="map"></div>
-    
-    <!-- Overlay container with animated red lines and the scope symbol -->
+
+    <!-- Timer overlay (shows visitor’s local time) -->
+    <div id="timer"></div>
+
+    <!-- Overlay container for the animated red lines and drawn circle -->
     <div id="overlay">
       <!-- Animated red lines -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
-      
-      <!-- Inline SVG for the SF Scope symbol -->
-      <svg id="scope-icon" viewBox="0 0 100 100">
+
+      <!-- Inline SVG to draw the circle at the center -->
+      <svg id="circle-icon" viewBox="0 0 100 100">
         <defs>
-          <!-- Define gradients that match the red lines -->
-          <linearGradient id="lineGradientHorizontal" gradientTransform="rotate(0)">
+          <linearGradient id="lineGradientCircle">
             <stop offset="0%" stop-color="darkred" />
-            <stop offset="20%" stop-color="darkred" />
             <stop offset="50%" stop-color="red" />
-            <stop offset="80%" stop-color="darkred" />
-            <stop offset="100%" stop-color="darkred" />
-          </linearGradient>
-          <linearGradient id="lineGradientVertical" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="darkred" />
-            <stop offset="20%" stop-color="darkred" />
-            <stop offset="50%" stop-color="red" />
-            <stop offset="80%" stop-color="darkred" />
             <stop offset="100%" stop-color="darkred" />
           </linearGradient>
         </defs>
-        <!-- Scope circle using the horizontal gradient -->
+        <!-- The circle is drawn from a full stroke-dashoffset down to 0 -->
         <circle
-          class="scope-circle"
+          class="draw-circle"
           cx="50"
           cy="50"
           r="40"
           fill="none"
-          stroke="url(#lineGradientHorizontal)"
+          stroke="url(#lineGradientCircle)"
           stroke-width="3"
           stroke-dasharray="251"
           stroke-dashoffset="251"
         />
-        <!-- Vertical crosshair line using the vertical gradient -->
-        <line
-          class="scope-line"
-          x1="50"
-          y1="10"
-          x2="50"
-          y2="90"
-          stroke="url(#lineGradientVertical)"
-          stroke-width="3"
-          stroke-dasharray="80"
-          stroke-dashoffset="80"
-        />
-        <!-- Horizontal crosshair line using the horizontal gradient -->
-        <line
-          class="scope-line"
-          x1="10"
-          y1="50"
-          x2="90"
-          y2="50"
-          stroke="url(#lineGradientHorizontal)"
-          stroke-width="3"
-          stroke-dasharray="80"
-          stroke-dashoffset="80"
-        />
       </svg>
     </div>
-    
+
+    <!-- Flash overlay: covers the screen to produce a flash effect -->
+    <div id="flash"></div>
+
     <!-- Mapbox GL JS library -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <!-- Custom script for map initialization -->
+    <!-- Custom script -->
     <script src="script.js"></script>
   </body>
 </html>
