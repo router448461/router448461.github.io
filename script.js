@@ -1,17 +1,16 @@
 // Your Mapbox API key
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the map using Mapbox Dark style with a full-world view.
-// Note: We disable attributionControl to remove the default attribution.
+// Initialize the Mapbox map using the dark style (default Mercator projection)
 const map = new mapboxgl.Map({
-  container: 'map',                          // Container element ID
-  style: 'mapbox://styles/mapbox/dark-v10',    // Use the built-in Mapbox Dark style
-  center: [0, 0],                            // Center the map at longitude 0, latitude 0
-  zoom: 1,                                   // A zoom level that shows nearly the entire world
-  attributionControl: false                  // Disable built-in attribution
+  container: 'map',                           // ID of the container element
+  style: 'mapbox://styles/mapbox/dark-v10',     // Using Mapbox's built-in dark style
+  center: [0, 0],                             // Center of the world
+  zoom: 1,                                    // A zoom level showing almost the entire world
+  attributionControl: false                   // Disable built-in attribution control
 });
 
-// Disable all interactive controls for a static display
+// Disable all interactive controls to create a static map display
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -21,8 +20,8 @@ map.keyboard.disable();
 map.touchZoomRotate.disable();
 
 /**
- * Hides all text labels on the map by iterating through the style layers.
- * For any layer of type "symbol" that has a text-field, we set its visibility to "none".
+ * Hide all text labels on the map. This loops through all style layers
+ * and hides any layer that is a symbol with a defined text field.
  */
 function hideLabels() {
   const style = map.getStyle();
@@ -34,11 +33,9 @@ function hideLabels() {
   });
 }
 
-// Hide labels once when the map loads...
+// Hide labels both when the map loads and whenever its style data is updated.
 map.on('load', () => {
   hideLabels();
-  console.log('Map loaded: overlay, labels hidden, and static view established.');
+  console.log('Map loaded: labels hidden; animated overlay in progress.');
 });
-
-// ...and also whenever the style data is updated.
 map.on('styledata', hideLabels);
