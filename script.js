@@ -1,4 +1,4 @@
-// Your Mapbox API key – ensure it is valid.
+// Your Mapbox API key (make sure it is valid)
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
@@ -31,7 +31,7 @@ function hideLabels() {
   });
 }
 
-// Function to hide boundary layers (those with IDs containing "boundary", "admin-0", or "admin-1").
+// Function to hide boundary layers (common IDs containing "boundary", "admin-0", or "admin-1").
 function hideBoundaries() {
   const layers = map.getStyle().layers;
   layers.forEach(layer => {
@@ -75,10 +75,10 @@ setInterval(updateTimer, 10);
 const countdownElement = document.getElementById('countdown');
 let countdownTime = 60 * 1000; // 60,000ms = 1 minute.
 function updateCountdown() {
-  // Decrement countdown by 10ms.
+  // Decrease countdownTime by 10ms.
   countdownTime -= 10;
   if (countdownTime < 0) countdownTime = 0;
-
+  
   const hours = Math.floor(countdownTime / (1000 * 60 * 60))
     .toString()
     .padStart(2, '0');
@@ -91,15 +91,15 @@ function updateCountdown() {
   const centiseconds = Math.floor((countdownTime % 1000) / 10)
     .toString()
     .padStart(2, '0');
-
+  
   countdownElement.innerText = `${hours}:${minutes}:${seconds}:${centiseconds}`;
-
-  // When countdown reaches zero, clear the interval and reload the page after a brief delay.
+  
+  // When countdown reaches zero, clear the interval and force a full reload.
   if (countdownTime <= 0) {
     clearInterval(countdownInterval);
-    // A slight delay before reload to ensure final frame is visible.
+    // A slight delay before reloading
     setTimeout(() => {
-      location.reload();
+      window.location.href = window.location.href;
     }, 100);
   }
 }
