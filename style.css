@@ -1,4 +1,4 @@
-/* Ensure html and body fill the entire viewport */
+/* Ensure the document fills the entire viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -16,107 +16,142 @@ html, body {
   height: 100vh;
 }
 
-/* Force default (arrow) cursor over the Mapbox canvas */
+/* Force the default (arrow) cursor over the Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide any Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay covering the complete viewport */
+/* Overlay covering the full viewport */
 #overlay {
-  pointer-events: none;  /* Let clicks pass through to the map */
+  pointer-events: none; /* Allow clicks to pass through to the map */
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10;  /* Ensure overlay is above the map */
+  z-index: 10; /* Ensure overlay is above the map */
 }
 
-/* Base style for red lines with a gradient and glow */
+/* --- Animated Red Lines --- */
+
+/* Base style for the red lines with a gradient and glow effect */
 .line {
   position: absolute;
   background: linear-gradient(90deg, darkred, red, darkred);
   box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.7);
 }
 
-/* Horizontal lines: fixed width of 50vw, animate via scaleX */
+/* Horizontal lines:
+   – Fixed final width of 50vw.
+   – Start with a scaleX(0) (length zero) and 1px height, then animate to full size and thicker (3px).
+*/
 .line.horizontal {
   top: 50%;
-  height: 3px;
   width: 50vw;
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal 1s forwards;
+  height: 1px; /* initial thickness */
+  /* Two animations: one for length (scaleX) and one for growing thickness */
+  animation: expandHorizontal 1s forwards, growThicknessH 1s forwards;
 }
-
-/* For the right horizontal line, change the origin and add a slight delay */
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
-  animation-delay: 0.2s;
+  /* Stagger the animation slightly */
+  animation-delay: 0.2s, 0.2s;
 }
 
-/* Vertical lines: fixed height of 50vh, animate via scaleY */
+/* Vertical lines:
+   – Fixed final height of 50vh.
+   – Start with a scaleY(0) (length zero) and 1px width, then animate to full size and thicker (3px).
+*/
 .line.vertical {
   left: 50%;
-  width: 3px;
   height: 50vh;
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical 1s forwards;
+  width: 1px; /* initial thickness */
+  animation: expandVertical 1s forwards, growThicknessV 1s forwards;
 }
-
-/* For the bottom vertical line, change transform origin and stagger animation */
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
-  animation-delay: 0.2s;
+  animation-delay: 0.2s, 0.2s;
 }
 
-/* Keyframes for horizontal expansion using scaleX */
+/* Keyframes for horizontal length expansion via scaleX */
 @keyframes expandHorizontal {
   to {
     transform: scaleX(1);
   }
 }
 
-/* Keyframes for vertical expansion using scaleY */
+/* Keyframes for vertical length expansion via scaleY */
 @keyframes expandVertical {
   to {
     transform: scaleY(1);
   }
 }
 
-/* Style for the central pulsing marker */
-#center-marker {
+/* Keyframes to grow horizontal line thickness from 1px to 3px */
+@keyframes growThicknessH {
+  from { height: 1px; }
+  to { height: 3px; }
+}
+
+/* Keyframes to grow vertical line thickness from 1px to 3px */
+@keyframes growThicknessV {
+  from { width: 1px; }
+  to { width: 3px; }
+}
+
+/* --- Scope SVG Icon Styles --- */
+
+/* Position and fade in the scope icon at the center */
+#scope-icon {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
+  width: 60px;
+  height: 60px;
   transform: translate(-50%, -50%);
-  animation: pulse 2s infinite;
-  z-index: 11; /* Ensure it appears above the red lines */
+  opacity: 0; /* start hidden */
+  animation: fadeInScope 0.5s forwards;
+  animation-delay: 1.2s; /* begin after the lines animate */
 }
 
-/* Keyframes for the pulsing effect */
-@keyframes pulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.4);
-    opacity: 0.8;
-  }
+/* Fade-in keyframes for the scope icon */
+@keyframes fadeInScope {
+  to { opacity: 1; }
+}
+
+/* Animate drawing of the circle (stroke-dashoffset from full to 0) */
+@keyframes drawScopeCircle {
+  from { stroke-dashoffset: 251; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Animate drawing of the crosshair lines */
+@keyframes drawScopeLine {
+  from { stroke-dashoffset: 80; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Apply the drawing animations to the SVG elements */
+#scope-icon .scope-circle {
+  animation: drawScopeCircle 1s forwards;
+  animation-delay: 1.2s;
+}
+
+#scope-icon .scope-line {
+  animation: drawScopeLine 1s forwards;
+  animation-delay: 1.2s;
 }
