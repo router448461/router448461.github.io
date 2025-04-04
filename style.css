@@ -4,13 +4,11 @@
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 9s;
-  --flicker-duration: 1.5s;
-  --intensity: 2;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --box-shadow-color: rgba(255,0,0,0.7);
   --sweep-duration: 3s;
-  --pulse-duration: 3s;
+  --glow-duration: 1.5s;
 }
 * {
   user-select: none;
@@ -23,6 +21,7 @@ html, body {
   height: 100vh;
   overflow: hidden;
   background-color: #000;
+  font-family: 'Quantico', sans-serif;
 }
 #map {
   position: absolute;
@@ -33,7 +32,7 @@ html, body {
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
   border: 5px solid rgba(255,0,0,0.7);
   box-shadow: 0 0 10px rgba(255,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.5);
-  animation: glow 1.5s infinite alternate;
+  animation: glow var(--glow-duration) infinite alternate;
 }
 @keyframes glow {
   from { box-shadow: 0 0 5px rgba(255,0,0,0.7), inset 0 0 5px rgba(255,0,0,0.4); }
@@ -70,18 +69,6 @@ html, body {
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: pulseLine 1.5s infinite alternate;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-}
-.line::before, .line::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  box-shadow: inherit;
-  opacity: 0.5;
-  animation: pulseLine 1.5s infinite alternate;
 }
 .line.horizontal {
   top: 50%;
@@ -166,21 +153,6 @@ html, body {
   background-size: cover;
   z-index: 15;
 }
-#scanning-grid {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 12;
-  background: repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,0,0,0.2) 20px), repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,0,0,0.2) 20px);
-  animation: scanGrid 5s linear infinite;
-}
-@keyframes scanGrid {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 20px 20px, 20px 20px; }
-}
 #laser-scan {
   pointer-events: none;
   position: absolute;
@@ -195,48 +167,4 @@ html, body {
 @keyframes sweep {
   from { left: -2px; }
   to { left: 100vw; }
-}
-#pulse-ring {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border: 2px solid rgba(255,0,0,0.8);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 14;
-  animation: pulse var(--pulse-duration) infinite;
-}
-@keyframes pulse {
-  0% { width: 10px; height: 10px; opacity: 1; }
-  100% { width: 200px; height: 200px; opacity: 0; }
-}
-#circuit-background {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: url("circuit-pattern.svg");
-  opacity: 0.1;
-  z-index: 8;
-}
-#static-jitter {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 4px);
-  animation: phaseShift 0.1s infinite linear;
-  z-index: 9;
-}
-@keyframes phaseShift {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-  100% { transform: translateY(0); }
 }
