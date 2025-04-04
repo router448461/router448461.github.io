@@ -4,6 +4,8 @@
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 9s;
+  --flicker-duration: 1.5s;
+  --intensity: 2;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
@@ -28,7 +30,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: contrast(1.2) brightness(0.9);
+  filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
   border: 5px solid rgba(255,0,0,0.7);
   box-shadow: 0 0 10px rgba(255,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.5);
   animation: glow 1.5s infinite alternate;
@@ -42,6 +44,17 @@ html, body {
 }
 .mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
   display: none !important;
+}
+#depth-overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 14;
+  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.7) 100%);
+  filter: blur(4px);
 }
 #overlay {
   pointer-events: none;
