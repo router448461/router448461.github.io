@@ -4,12 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>router448461</title>
-    <!-- Mapbox CSS -->
+    
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
-      rel="stylesheet"
-    />
-    <!-- Google Font for digital styling -->
+      rel="stylesheet"/>
+    
     <link
       href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
       rel="stylesheet"
@@ -17,10 +16,9 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Map container (will become visible once the map loads) -->
+    
     <div id="map"></div>
 
-    <!-- Overlay for the four cross lines -->
     <div id="overlay">
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
@@ -28,16 +26,12 @@
       <div class="line vertical bottom"></div>
     </div>
     
-    <!-- Radar sweep overlay (rotating red circle) -->
     <div id="radar"></div>
     
-    <!-- Scanlines overlay for a digital CRT effect -->
     <div id="scanlines"></div>
     
-    <!-- Noise overlay for interference/static effect -->
     <div id="noise"></div>
     
-    <!-- Audio elements (update src with your files later) -->
     <audio id="audio-bg" src="your-background-audio.mp3" preload="auto"></audio>
     <audio id="audio-alert" src="your-alert-audio.mp3" preload="auto"></audio>
     
