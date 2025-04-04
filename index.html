@@ -11,24 +11,21 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- Map container -->
     <div id="map"></div>
 
+    <!-- Overlay for the cross lines -->
     <div id="overlay">
-      <!-- Cross Lines -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
-      
-      <!-- Triangle Lines -->
-      <div class="line triangle ab"></div>
-      <div class="line triangle ac"></div>
-      <div class="line triangle bc"></div>
     </div>
 
-    <!-- Clock (initially hidden) -->
-    <div id="clock"></div>
+    <!-- Stop-watch style clock (hidden initially) -->
+    <div id="clock">00:00:000</div>
 
+    <!-- Flash overlay -->
     <div id="flash-overlay"></div>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
