@@ -2,10 +2,10 @@
   --edge-color: #8B0000;
   --center-color: #FF0000;
   --min-thickness: 0.5px;
-  --max-thickness: 2px;
+  --max-thickness: 3px;
   --line-duration: 9s;
-  --shadow-blur: 5px;
-  --shadow-spread: 1px;
+  --shadow-blur: 10px;
+  --shadow-spread: 2px;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --sweep-duration: 9s;
 }
@@ -21,7 +21,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #000;
+  background-color: #111111;
   font-family: 'Quantico', sans-serif;
 }
 
@@ -31,7 +31,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
+  filter: grayscale(0.5) contrast(1.5) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
 }
 
 #map::before {
@@ -67,7 +67,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%);
+  background: radial-gradient(circle, transparent 30%, rgba(0,0,0,1) 100%);
   filter: blur(4px);
 }
 
@@ -93,7 +93,7 @@ html, body {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
+  animation: lineAnimationHorizontal 9s infinite;
 }
 
 .line.horizontal.right {
@@ -108,13 +108,49 @@ html, body {
   height: 50vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation: lineAnimationVertical 9s infinite;
 }
 
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
+}
+
+@keyframes lineAnimationHorizontal {
+  0% {
+    transform: scaleX(0);
+    height: var(--min-thickness);
+    opacity: 1;
+  }
+  90% {
+    transform: scaleX(1);
+    height: var(--max-thickness);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    height: var(--max-thickness);
+    opacity: 0;
+  }
+}
+
+@keyframes lineAnimationVertical {
+  0% {
+    transform: scaleY(0);
+    width: var(--min-thickness);
+    opacity: 1;
+  }
+  90% {
+    transform: scaleY(1);
+    width: var(--max-thickness);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    width: var(--max-thickness);
+    opacity: 0;
+  }
 }
 
 @keyframes pulseLine {
@@ -127,26 +163,6 @@ html, body {
   50% { opacity: 0.8; }
 }
 
-@keyframes expandHorizontal {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@keyframes growThickness {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
-}
-
-@keyframes expandVertical {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
-}
-
-@keyframes growThicknessV {
-  from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
-}
-
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -154,14 +170,14 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: moveScanlines 0.2s infinite linear;
+  animation: moveScanlines 0.1s infinite linear;
 }
 
 @keyframes moveScanlines {
   from { transform: translateY(0); }
-  to { transform: translateY(-4px); }
+  to { transform: translateY(-2px); }
 }
 
 #noise {
@@ -186,7 +202,7 @@ html, body {
   height: 100vh;
   background: rgba(85, 107, 47, 0.8);
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  box-shadow: 0 0 15px 5px rgba(85, 107, 47, 1);
 }
 
 #laser-scan-vertical {
@@ -197,7 +213,7 @@ html, body {
   height: 2px;
   background: rgba(85, 107, 47, 0.8);
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  box-shadow: 0 0 15px 5px rgba(85, 107, 47, 1);
 }
 
 @keyframes sweepHorizontal {
@@ -224,31 +240,21 @@ html, body {
   font-family: 'Courier New', monospace;
   text-shadow: 0 0 5px #FF0000;
   z-index: 15;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
   padding: 10px;
-  border: 1px solid #556B2F;
+  border: 1px solid #FF0000;
 }
 
 #reticle {
   position: absolute;
   width: 20px;
   height: 20px;
-  border: 2px solid #556B2F;
+  border: 2px solid #FF0000;
   border-radius: 50%;
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
-}
-
-#reticle::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40px;
-  height: 2px;
-  background: #556B2F;
-  transform: translate(-50%, -50%);
+  box-shadow: 0 0 5px #FF0000;
 }
 
 #reticle::after {
@@ -256,8 +262,8 @@ html, body {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 40px;
-  width: 2px;
-  background: #556B2F;
+  width: 4px;
+  height: 4px;
+  background: #FF0000;
   transform: translate(-50%, -50%);
 }
