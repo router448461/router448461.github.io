@@ -1,16 +1,17 @@
 :root {
-  --edge-color: #8B0000;         /* dark red */
-  --center-color: #FF0000;       /* bright red */
-  --min-thickness: 0.5px;        /* very thin at the edges */
-  --max-thickness: 2px;          /* moderately thicker in the middle */
-  --line-duration: 3s;           /* red lines animate over 3 seconds */
-  --animation-delay: 3s;         /* wait 3 seconds before starting red line animation */
+  /* Colors and thicknesses */
+  --edge-color: #8B0000;       /* dark red */
+  --center-color: #FF0000;     /* bright red */
+  --min-thickness: 0.5px;      /* very thin at the edges */
+  --max-thickness: 2px;        /* moderately thicker in the middle */
+  --line-duration: 3s;         /* each red line animates over 3 seconds */
+  --animation-delay: 3s;       /* wait 3 seconds before starting the animations */
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
-/* Reset and occupy full viewport */
+/* Reset and occupy the full viewport */
 html,
 body {
   margin: 0;
@@ -20,14 +21,13 @@ body {
   overflow: hidden;
 }
 
-/* Map container: full screen */
+/* Map container: full screen (initially hidden to prevent flicker) */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Initially hidden to prevent flickering until style corrections */
   visibility: hidden;
 }
 
@@ -53,7 +53,7 @@ body {
   z-index: 10;
 }
 
-/* Animated Red Lines */
+/* --- Animated Red Lines (base style) --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -61,15 +61,11 @@ body {
 }
 
 @keyframes pulseLine {
-  from {
-    filter: brightness(1);
-  }
-  to {
-    filter: brightness(1.2);
-  }
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
 }
 
-/* Horizontal line styles */
+/* Horizontal lines (from center to left/right edges) */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -84,7 +80,8 @@ body {
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThicknessH var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
@@ -95,21 +92,15 @@ body {
 }
 
 @keyframes expandHorizontal {
-  to {
-    transform: scaleX(1);
-  }
+  to { transform: scaleX(1); }
 }
 
 @keyframes growThicknessH {
-  from {
-    height: var(--min-thickness);
-  }
-  to {
-    height: var(--max-thickness);
-  }
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
 }
 
-/* Vertical line styles */
+/* Vertical lines (from center to top/bottom edges) */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -124,7 +115,8 @@ body {
   );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards,
+             growThicknessV var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
@@ -135,21 +127,71 @@ body {
 }
 
 @keyframes expandVertical {
-  to {
-    transform: scaleY(1);
-  }
+  to { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
-  from {
-    width: var(--min-thickness);
-  }
-  to {
-    width: var(--max-thickness);
-  }
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
 }
 
-/* Info container for status and clock (positioned top right) */
+/* --- Diagonal Lines for the Triangle --- */
+/* They use a custom property "--rotate" so each element can “lock in” its rotation. */
+.line.diagonal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: left center;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  animation: expandDiagonal var(--line-duration) forwards,
+             growThicknessDiagonal var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+}
+
+/* Top‑left diagonal: from center toward vertex near (30%,35%) */
+/* Computed length (approx): 25vmin; rotation set via custom property */
+.line.diagonal.tl {
+  width: 25vmin;
+  height: var(--min-thickness);
+  --rotate: -143deg;
+  transform: rotate(var(--rotate)) scaleX(0);
+}
+
+/* Top‑right diagonal: from center toward vertex near (70%,35%) */
+.line.diagonal.tr {
+  width: 25vmin;
+  height: var(--min-thickness);
+  --rotate: -37deg;
+  transform: rotate(var(--rotate)) scaleX(0);
+}
+
+/* Bottom‑middle diagonal: from center toward vertex near (50%,80%) */
+/* (This one is a vertical line when animated, but added here for the triangle effect.) */
+.line.diagonal.bm {
+  width: 30vmin;
+  height: var(--min-thickness);
+  --rotate: 90deg;
+  transform: rotate(var(--rotate)) scaleX(0);
+}
+
+@keyframes expandDiagonal {
+  from { transform: rotate(var(--rotate)) scaleX(0); }
+  to { transform: rotate(var(--rotate)) scaleX(1); }
+}
+
+@keyframes growThicknessDiagonal {
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
+}
+
+/* --- Info Container (for status message and clock) --- */
 #info {
   position: fixed;
   top: 20px;
@@ -161,17 +203,11 @@ body {
   font-size: 20px;
 }
 
-/* Flash animation for the status message */
+/* Flash animation only applied to the status message */
 @keyframes flash {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .flash {
