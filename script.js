@@ -19,7 +19,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Hide undesirable map elements.
+// Hide undesired map labels and boundaries.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -36,11 +36,12 @@ function hideMapElements() {
   });
 }
 
+// When the map has fully loaded, reveal it and start all animations.
 map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
   
-  // Start the cross-line animations immediately.
+  // Unpause the cross-line animations.
   document.querySelectorAll('.line').forEach((el) => {
     el.style.animationPlayState = 'running';
   });
@@ -48,14 +49,19 @@ map.on('load', () => {
   // Start the stopwatch immediately.
   startStopwatch();
   
-  // Play audio (if supplied).
-  const audio = document.getElementById('audio');
-  if (audio) {
-    // For autoplay to work in some browsers, additional user gesture might be required.
-    audio.play().catch(function (e) {
-      console.log("Audio play was prevented:", e);
-    });
+  // Play background audio.
+  const audioBg = document.getElementById('audio-bg');
+  if (audioBg) {
+    audioBg.play().catch((e) => console.log("Background audio play was prevented:", e));
   }
+  
+  // After the cross lines finish drawing (9 seconds), play the alert audio.
+  setTimeout(() => {
+    const audioAlert = document.getElementById('audio-alert');
+    if (audioAlert) {
+      audioAlert.play().catch((e) => console.log("Alert audio play was prevented:", e));
+    }
+  }, 9000);
 });
 
 // Stopwatch functionality.
