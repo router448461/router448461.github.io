@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Digital Danger Map</title>
-    
+
     <!-- Mapbox GL JS stylesheet -->
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
@@ -19,21 +19,22 @@
 
     <!-- Overlay container for animated red lines -->
     <div id="overlay">
-      <!-- Cross lines (horizontal & vertical) -->
+      <!-- Cross Lines (Horizontal & Vertical) -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
       
-      <!-- Triangle drawn via an inline SVG -->
-      <svg id="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <!-- Top side: from (30,35) to (70,35) -->
-        <line class="triangle-line" x1="30" y1="35" x2="70" y2="35" />
-        <!-- Right side: from (70,35) to (50,80) -->
-        <line class="triangle-line" x1="70" y1="35" x2="50" y2="80" />
-        <!-- Left side: from (50,80) to (30,35) -->
-        <line class="triangle-line" x1="50" y1="80" x2="30" y2="35" />
-      </svg>
+      <!-- Triangle Lines – these three divs use the same style as the other lines -->
+      <!-- Vertex positions (in viewport percentages):
+           • Top left vertex: left edge (25%) & vertical position 65%
+           • Top right vertex: right edge (75%) & vertical position 65%
+           • Bottom (apex) vertex: center (50%) & vertical position 30%
+           The horizontal (base) line spans between the left and right vertices,
+           and the other two diagonal lines connect each top vertex to the bottom vertex. -->
+      <div class="line triangle ab"></div>
+      <div class="line triangle ac"></div>
+      <div class="line triangle bc"></div>
     </div>
 
     <!-- Info container for status message and clock (positioned top-right) -->
