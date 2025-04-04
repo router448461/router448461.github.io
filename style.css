@@ -1,14 +1,19 @@
+/* 
+  CSS Variables for customization.
+*/
 :root {
-  --edge-color: red;
-  --center-color: darkred;
-  --min-thickness: 0.2px;
-  --max-thickness: 2px;
-  --line-duration: 2.5s;
-  --box-shadow-color: rgba(255, 0, 0, 0.9);
-  --shadow-blur: 5px;
-  --shadow-spread: 2px;
+  --edge-color: darkred;
+  --center-color: red;
+  --min-thickness: 0.5px;
+  --max-thickness: 4px;
+  --line-duration: 3s;      /* Red lines animate over 3 seconds */
+  --animation-delay: 0s;    /* Start at the same time */
+  --box-shadow-color: rgba(139, 0, 0, 0.9);
+  --shadow-blur: 10px;
+  --shadow-spread: 3px;
 }
 
+/* Reset and fill the viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -17,24 +22,29 @@ html, body {
   overflow: hidden;
 }
 
+/* Map container: full screen */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* Initially hidden to avoid label flicker; will be made visible once layers are removed */
   visibility: hidden;
 }
 
+/* Default arrow cursor on Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
+/* Timers container positioned in top-right */
 #timers {
   position: fixed;
   top: 20px;
@@ -44,12 +54,17 @@ html, body {
   color: white;
   text-align: right;
 }
-
-#clock {
+#clock, #countdown {
   font-size: 20px;
   margin-bottom: 5px;
 }
+#cmd-text {
+  font-size: 16px;
+  color: white;
+  margin-top: 5px;
+}
 
+/* Overlay container for the red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -60,6 +75,7 @@ html, body {
   z-index: 10;
 }
 
+/* --- Animated Red Lines --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -67,35 +83,61 @@ html, body {
 }
 @keyframes pulseLine {
   from { filter: brightness(1); }
-  to { filter: brightness(1.3); }
+  to { filter: brightness(1.2); }
 }
 .line.horizontal {
   top: 50%;
-  width: 100vw;
+  width: 50vw;
   height: var(--min-thickness);
-  background: var(--edge-color);
+  background: linear-gradient(
+    to right,
+    black 0%,
+    var(--edge-color) 20%,
+    var(--edge-color) 30%,
+    var(--center-color) 50%,
+    var(--edge-color) 70%,
+    var(--edge-color) 80%,
+    black 100%
+  );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
 }
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 .line.vertical {
   left: 50%;
-  height: 100vh;
+  height: 50vh;
   width: var(--min-thickness);
-  background: var(--edge-color);
+  background: linear-gradient(
+    to bottom,
+    black 0%,
+    var(--edge-color) 20%,
+    var(--edge-color) 30%,
+    var(--center-color) 50%,
+    var(--edge-color) 70%,
+    var(--edge-color) 80%,
+    black 100%
+  );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards,
+             growThicknessV var(--line-duration) forwards;
 }
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 @keyframes expandHorizontal { to { transform: scaleX(1); } }
 @keyframes expandVertical { to { transform: scaleY(1); } }
+@keyframes growThicknessH { from { height: var(--min-thickness); } to { height: var(--max-thickness); } }
+@keyframes growThicknessV { from { width: var(--min-thickness); } to { width: var(--max-thickness); } }
+
+/* Green markers styling is handled by Mapbox's Marker options */
