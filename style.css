@@ -26,7 +26,6 @@ body {
   background-color: #000;
 }
 
-/* Map container */
 #map {
   position: absolute;
   top: 0;
@@ -45,7 +44,6 @@ body {
   display: none !important;
 }
 
-/* Overlay for red animated lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -65,7 +63,7 @@ body {
 
 @keyframes pulseLine {
   from { filter: brightness(1); }
-  to   { filter: brightness(1.2); }
+  to { filter: brightness(1.2); }
 }
 
 .line.horizontal {
@@ -94,12 +92,12 @@ body {
 
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
+  to { transform: scaleX(1); }
 }
 
 @keyframes growThickness {
   from { height: var(--min-thickness); }
-  to   { height: var(--max-thickness); }
+  to { height: var(--max-thickness); }
 }
 
 .line.vertical {
@@ -128,15 +126,14 @@ body {
 
 @keyframes expandVertical {
   from { transform: scaleY(0); }
-  to   { transform: scaleY(1); }
+  to { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
-  to   { width: var(--max-thickness); }
+  to { width: var(--max-thickness); }
 }
 
-/* Lens effect overlay */
 #lens-effect {
   pointer-events: none;
   position: absolute;
@@ -148,7 +145,6 @@ body {
   background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.9) 100%);
 }
 
-/* Scanlines effect */
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -172,7 +168,6 @@ body {
   to { transform: translateY(-4px); }
 }
 
-/* Grainy noise overlay */
 #noise {
   pointer-events: none;
   position: absolute;
