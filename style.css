@@ -4,16 +4,15 @@
   --center-color: #FF0000;     /* bright red */
   --min-thickness: 0.5px;      /* very thin at the edges */
   --max-thickness: 2px;        /* slightly thicker in the center */
-  --line-duration: 3s;         /* each line animates over 3 seconds */
-  --animation-delay: 3s;       /* start animations 3 seconds after load */
+  --line-duration: 3s;         /* duration for each line animation */
+  --animation-delay: 3s;       /* delay before starting animations */
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
 /* Reset and fill the viewport */
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -21,7 +20,7 @@ body {
   overflow: hidden;
 }
 
-/* Map container (initially hidden to avoid visual flicker) */
+/* Map container */
 #map {
   position: absolute;
   top: 0;
@@ -53,7 +52,7 @@ body {
   z-index: 10;
 }
 
-/* --- Cross Lines (Horizontal & Vertical) --- */
+/* --- Cross lines (Horizontal & Vertical) --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -66,18 +65,18 @@ body {
   to { filter: brightness(1.2); }
 }
 
-/* Horizontal lines: extend from the center to the screen sides */
+/* Horizontal lines from the center outward */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
@@ -102,18 +101,18 @@ body {
   to { height: var(--max-thickness); }
 }
 
-/* Vertical lines: extend from center to top and bottom edges */
+/* Vertical lines from the center outward */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
@@ -138,94 +137,31 @@ body {
   to { width: var(--max-thickness); }
 }
 
-/* --- Diagonal Lines Forming a Triangle (from screen edges inward) --- */
-
-/* Top‑left diagonal: starts at top left, fixed at that corner */
-.line.diagonal.tl {
+/* --- Triangle drawn via SVG --- */
+#triangle-svg {
   position: absolute;
   top: 0;
   left: 0;
-  transform-origin: left top;
-  width: 70vmin;
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  animation: expandDiagonalTL var(--line-duration) forwards,
-             growThicknessDiag var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
+  width: 100%;
+  height: 100%;
 }
 
-@keyframes expandDiagonalTL {
-  from { transform: rotate(45deg) scaleX(0); }
-  to { transform: rotate(45deg) scaleX(1); }
+/* Each triangle line will be “drawn” using a stroke-dasharray animation */
+.triangle-line {
+  stroke: var(--center-color);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: drawLine 3s forwards;
+  animation-delay: var(--animation-delay);
 }
 
-/* Top‑right diagonal: starts at top right */
-.line.diagonal.tr {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform-origin: right top;
-  width: 70vmin;
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  animation: expandDiagonalTR var(--line-duration) forwards,
-             growThicknessDiag var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
 }
 
-@keyframes expandDiagonalTR {
-  from { transform: rotate(-45deg) scaleX(0); }
-  to { transform: rotate(-45deg) scaleX(1); }
-}
-
-/* Bottom‑middle diagonal: starts at bottom center */
-.line.diagonal.bm {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform-origin: bottom center;
-  width: 50vmin;
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  /* Note the transform now includes a translate to center it horizontally */
-  animation: expandDiagonalBM var(--line-duration) forwards,
-             growThicknessDiag var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-  transform: translateX(-50%) rotate(90deg) scaleX(0);
-}
-
-@keyframes expandDiagonalBM {
-  from { transform: translateX(-50%) rotate(90deg) scaleX(0); }
-  to { transform: translateX(-50%) rotate(90deg) scaleX(1); }
-}
-
-@keyframes growThicknessDiag {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
-}
-
-/* --- Info Container --- */
+/* --- Info container (status and clock) --- */
 #info {
   position: fixed;
   top: 20px;
@@ -237,12 +173,25 @@ body {
   font-size: 20px;
 }
 
-/* --- Screen Flash Effect --- */
-@keyframes flashScreen {
-  0% { background-color: transparent; }
-  50% { background-color: rgba(255,255,255,0.8); }
-  100% { background-color: transparent; }
+/* --- Flash overlay (for full-screen flash) --- */
+#flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2000;
 }
-.flashScreen {
-  animation: flashScreen 0.5s ease;
+
+.flash {
+  animation: flashAnim 0.5s ease forwards;
+}
+
+@keyframes flashAnim {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }
