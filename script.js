@@ -32,6 +32,8 @@ function applyGlitchToLines() {
 }
 map.on('load', function() {
   const lens = document.getElementById('lens-effect');
-  if (lens) { applyGlitchEffect(lens, 2); }
+  if (lens) {
+    applyGlitchEffect(lens, 2);
+  }
   applyGlitchToLines();
 });
