@@ -29,13 +29,13 @@ body {
   background-color: #000;
 }
 
+/* The map container is now visible immediately (no hidden visibility) */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  visibility: hidden;
   filter: contrast(1.2) brightness(0.9);
 }
 
