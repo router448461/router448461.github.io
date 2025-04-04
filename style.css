@@ -26,7 +26,7 @@ body {
   background-color: #000;
 }
 
-/* Hide the map container initially to prevent any flash of labels */
+/* The map container is shown immediately */
 #map {
   position: absolute;
   top: 0;
@@ -34,7 +34,6 @@ body {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9);
-  visibility: hidden;
 }
 
 .mapboxgl-canvas {
@@ -57,12 +56,11 @@ body {
   z-index: 10;
 }
 
-/* Red lines styling */
+/* Red lines styling – animations run immediately */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
-  /* Start animation immediately */
   animation-play-state: running;
 }
 
