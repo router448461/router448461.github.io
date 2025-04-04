@@ -9,7 +9,7 @@
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
-    <!-- Digital font from Google Fonts -->
+    <!-- Google Font for a digital look -->
     <link
       href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
       rel="stylesheet"
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Map container -->
+    <!-- Map container (displayed as soon as it is loaded) -->
     <div id="map"></div>
 
     <!-- Overlay for the four cross lines -->
@@ -28,16 +28,27 @@
       <div class="line vertical bottom"></div>
     </div>
     
-    <!-- Digital stopwatch clock (appears immediately) -->
+    <!-- Digital stopwatch clock (top right) -->
     <div id="clock">00:00:000</div>
     
-    <!-- Scanline overlay for an extra digital vibe -->
+    <!-- Status messages (top left) -->
+    <div id="status-container">
+      <div id="status">TARGET LOCKED</div>
+      <div id="extra-status">PROTOCOL INITIATED</div>
+    </div>
+    
+    <!-- Radar sweep overlay (centered) -->
+    <div id="radar"></div>
+    
+    <!-- Scanline overlay for a CRT/digital feel -->
     <div id="scanlines"></div>
     
-    <!-- Audio placeholder (supply your own file) -->
-    <audio id="audio" src="your-audio-file.mp3" preload="auto"></audio>
+    <!-- Audio elements (replace src with your own audio file paths) -->
+    <audio id="audio-bg" src="your-background-audio.mp3" preload="auto"></audio>
+    <audio id="audio-alert" src="your-alert-audio.mp3" preload="auto"></audio>
     
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
+
