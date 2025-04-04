@@ -11,12 +11,13 @@
   --shadow-spread: 1px;
 }
 
-/* Prevent text selection and copying everywhere */
+/* Prevent text selection and disable highlighter cursor globally */
 * {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  cursor: default;
 }
 
 html,
@@ -47,7 +48,7 @@ body {
   display: none !important;
 }
 
-/* Overlay containing the cross lines */
+/* Overlay for the cross lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -58,11 +59,11 @@ body {
   z-index: 10;
 }
 
-/* Base style for all lines; they remain paused until unpaused by script */
+/* Base styling for all lines – they start paused */
 .line {
   position: absolute;
-  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* A gentle pulse effect */
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread)
+    var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
   animation-play-state: paused;
 }
@@ -92,7 +93,7 @@ body {
   transform: scaleX(0);
   transform-origin: left center;
   animation: expandHorizontal var(--line-duration) forwards,
-             growThickness var(--line-duration) forwards;
+    growThickness var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
@@ -100,32 +101,6 @@ body {
   right: 0;
   left: auto;
   transform-origin: right center;
-}
-
-/* Vertical lines */
-.line.vertical {
-  left: 50%;
-  height: 50vh;
-  width: var(--min-thickness);
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  transform: scaleY(0);
-  transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards,
-             growThicknessV var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-}
-
-.line.vertical.bottom {
-  bottom: 0;
-  top: auto;
-  transform-origin: bottom center;
 }
 
 @keyframes expandHorizontal {
@@ -144,6 +119,32 @@ body {
   to {
     height: var(--max-thickness);
   }
+}
+
+/* Vertical lines */
+.line.vertical {
+  left: 50%;
+  height: 50vh;
+  width: var(--min-thickness);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: expandVertical var(--line-duration) forwards,
+    growThicknessV var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+}
+
+.line.vertical.bottom {
+  bottom: 0;
+  top: auto;
+  transform-origin: bottom center;
 }
 
 @keyframes expandVertical {
@@ -177,8 +178,8 @@ body {
   z-index: 2000;
 }
 
-/* Flash animation lasting 1 millisecond */
 .flash {
+  /* Flash the entire screen white for 1 millisecond */
   animation: flashAnim 0.001s ease forwards;
 }
 
@@ -194,7 +195,7 @@ body {
   }
 }
 
-/* Stopwatch clock; positioned at top right */
+/* Stopwatch clock styling; positioned at the top right */
 #clock {
   display: none;
   position: fixed;
@@ -205,4 +206,5 @@ body {
   color: var(--center-color);
   text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
   background-color: transparent;
+  cursor: default;
 }
