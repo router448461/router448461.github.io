@@ -27,15 +27,16 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* Hide initially to avoid flicker before style adjustments */
   visibility: hidden;
 }
 
-/* Default cursor */
+/* Default cursor on Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide Mapbox control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
@@ -52,11 +53,11 @@ html, body {
   z-index: 10;
 }
 
-/* --- Cross lines (Horizontal & Vertical) --- */
+/* --- Base Style for All Lines --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Subtle pulsing effect */
+  /* Subtle pulsing effect for a digital feel */
   animation: pulseLine 1.5s infinite alternate;
 }
 
@@ -65,18 +66,19 @@ html, body {
   to { filter: brightness(1.2); }
 }
 
-/* Horizontal lines from the center outward */
+/* --- Cross Lines --- */
+/* Horizontal lines extending from the center to the sides */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
@@ -101,18 +103,18 @@ html, body {
   to { height: var(--max-thickness); }
 }
 
-/* Vertical lines from the center outward */
+/* Vertical lines extending from the center upward/downward */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
@@ -137,31 +139,83 @@ html, body {
   to { width: var(--max-thickness); }
 }
 
-/* --- Triangle drawn via SVG --- */
-#triangle-svg {
+/* --- Triangle Lines --- */
+/* These three lines use similar backgrounds and animations as the cross lines. 
+   Their positions are fixed so that:
+   • The horizontal (base) triangle line spans from 25% to 75% (ab)
+   • The left diagonal (ac) starts at (25%,65%) and rotates toward (50%,30%)
+   • The right diagonal (bc) starts at (75%,65%) and rotates toward (50%,30%) */
+   
+/* Horizontal triangle line – spans the top edge of the triangle */
+.line.triangle.ab {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 65%;
+  left: 25%;
+  width: 50%;
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Each triangle line will be “drawn” using a stroke-dasharray animation */
-.triangle-line {
-  stroke: var(--center-color);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-dasharray: 50;
-  stroke-dashoffset: 50;
-  animation: drawLine 3s forwards;
-  animation-delay: var(--animation-delay);
+/* Left diagonal triangle line – goes from (25%,65%) toward (50%,30%) */
+.line.triangle.ac {
+  position: absolute;
+  top: 65%;
+  left: 25%;
+  /* Fixed length approximated in vw */
+  width: 35vw;
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  /* The angle from (25%,65%) to (50%,30%) is roughly –55° */
+  transform: rotate(-55deg) scaleX(0);
+  transform-origin: left;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-@keyframes drawLine {
-  to { stroke-dashoffset: 0; }
+/* Right diagonal triangle line – goes from (75%,65%) toward (50%,30%) */
+.line.triangle.bc {
+  position: absolute;
+  top: 65%;
+  right: 25%;
+  width: 35vw;
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  /* The angle from (75%,65%) to (50%,30%) is roughly 55° */
+  transform: rotate(55deg) scaleX(0);
+  transform-origin: right;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThicknessH var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* --- Info container (status and clock) --- */
+/* --- Info Container --- */
 #info {
   position: fixed;
   top: 20px;
@@ -173,7 +227,7 @@ html, body {
   font-size: 20px;
 }
 
-/* --- Flash overlay (for full-screen flash) --- */
+/* --- Flash Overlay --- */
 #flash-overlay {
   position: fixed;
   top: 0;
