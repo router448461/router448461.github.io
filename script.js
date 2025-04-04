@@ -13,17 +13,6 @@ map.doubleClickZoom.disable();
 map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
-function applyGlitchEffect(element, intensity) {
-  intensity = intensity || 2;
-  function glitch() {
-    const dx = (Math.random() * intensity * 2) - intensity;
-    const dy = (Math.random() * intensity * 2) - intensity;
-    const skew = (Math.random() * intensity * 0.2) - (intensity * 0.1);
-    element.style.transform = `translate(${dx}px, ${dy}px) skew(${skew}deg)`;
-    setTimeout(glitch, Math.random() * 200 + 50);
-  }
-  glitch();
-}
 document.addEventListener('mousemove', function(e) {
   const x = (e.clientX / window.innerWidth - 0.5) * 10;
   const y = (e.clientY / window.innerHeight - 0.5) * 10;
@@ -36,3 +25,14 @@ map.on('load', function() {
     applyGlitchEffect(lens, 2);
   }
 });
+function applyGlitchEffect(element, intensity) {
+  intensity = intensity || 2;
+  function glitch() {
+    const dx = (Math.random() * intensity * 2) - intensity;
+    const dy = (Math.random() * intensity * 2) - intensity;
+    const skew = (Math.random() * intensity * 0.2) - (intensity * 0.1);
+    element.style.transform = `translate(${dx}px, ${dy}px) skew(${skew}deg)`;
+    setTimeout(glitch, Math.random() * 200 + 50);
+  }
+  glitch();
+}
