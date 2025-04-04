@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>router448461</title>
     
-    <!-- Mapbox GL JS styles -->
+    
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
-    <!-- Custom font -->
+    
     <link
       href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
       rel="stylesheet"
     />
-    <!-- Custom CSS -->
+    
     <link rel="stylesheet" href="style.css" />
     <style>
-      /* Hide elements initially */
+      
       #overlay, #radar {
         display: none;
       }
@@ -26,10 +26,10 @@
   </head>
   <body>
     
-    <!-- Map container -->
+    
     <div id="map"></div>
 
-    <!-- Overlay for animated lines -->
+    
     <div id="overlay">
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
@@ -37,20 +37,20 @@
       <div class="line vertical bottom"></div>
     </div>
     
-    <!-- Radar element -->
+    
     <div id="radar"></div>
     
-    <!-- Note: Removed "scanlines" and "noise" divs which created the CRT effect -->
+    
 
-    <!-- Audio elements -->
+    
     <audio id="audio-bg" src="your-background-audio.mp3" preload="auto"></audio>
     <audio id="audio-alert" src="your-alert-audio.mp3" preload="auto"></audio>
     
-    <!-- Mapbox GL JS -->
+    
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <!-- SunCalc library to compute sun positions -->
+    
     <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-    <!-- Your custom JavaScript -->
+    
     <script src="script.js"></script>
   </body>
 </html>
