@@ -9,7 +9,7 @@
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
-    <!-- Google Font for a digital look (VT323) -->
+    <!-- Google Font for digital styling -->
     <link
       href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
       rel="stylesheet"
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Map container (will become visible once fully loaded) -->
+    <!-- Map container (will become visible once the map loads) -->
     <div id="map"></div>
 
     <!-- Overlay for the four cross lines -->
@@ -28,18 +28,16 @@
       <div class="line vertical bottom"></div>
     </div>
     
-    <!-- HUD panel (top right) containing the timer -->
-    <div id="hud">
-      <div id="timer">00:00:000</div>
-    </div>
-    
-    <!-- Radar sweep overlay (centered) -->
+    <!-- Radar sweep overlay (rotating red circle) -->
     <div id="radar"></div>
     
-    <!-- Scanlines overlay for a digital CRT feel -->
+    <!-- Scanlines overlay for a digital CRT effect -->
     <div id="scanlines"></div>
     
-    <!-- Audio elements (update the src attributes as needed) -->
+    <!-- Noise overlay for interference/static effect -->
+    <div id="noise"></div>
+    
+    <!-- Audio elements (update src with your files later) -->
     <audio id="audio-bg" src="your-background-audio.mp3" preload="auto"></audio>
     <audio id="audio-alert" src="your-alert-audio.mp3" preload="auto"></audio>
     
