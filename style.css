@@ -3,9 +3,7 @@
   --center-color: #FF0000;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  /* Cross lines draw over 9 seconds */
   --line-duration: 9s;
-  /* We'll set horizontal delays to 0, vertical lines get a 0.5s delay */
   --horiz-delay: 0s;
   --vert-delay: 0.5s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
@@ -13,7 +11,6 @@
   --shadow-spread: 1px;
 }
 
-/* Disable text selection and force default pointer everywhere */
 * {
   user-select: none;
   -webkit-user-select: none;
@@ -29,17 +26,16 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #000; /* Black background for a tactical look */
+  background-color: #000;
 }
 
-/* Map styling – high-contrast/brightness filter for a tactical appearance */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  visibility: hidden; /* Revealed only after the map fully loads */
+  visibility: hidden;
   filter: contrast(1.2) brightness(0.9);
 }
 
@@ -52,7 +48,6 @@ body {
   display: none !important;
 }
 
-/* Overlay for the cross lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -63,7 +58,6 @@ body {
   z-index: 10;
 }
 
-/* Base style for cross lines – animations are paused until map loads */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -71,13 +65,11 @@ body {
   animation-play-state: paused;
 }
 
-/* Simple pulse effect */
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to   { filter: brightness(1.2); }
 }
 
-/* Horizontal cross lines styling */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -92,7 +84,6 @@ body {
   );
   transform: scaleX(0);
   transform-origin: left center;
-  /* Horizontal lines start immediately */
   animation: expandHorizontal var(--line-duration) forwards,
              growThickness var(--line-duration) forwards;
   animation-delay: var(--horiz-delay), var(--horiz-delay);
@@ -114,7 +105,6 @@ body {
   to   { height: var(--max-thickness); }
 }
 
-/* Vertical cross lines styling */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -129,7 +119,6 @@ body {
   );
   transform: scaleY(0);
   transform-origin: top center;
-  /* Vertical lines start 0.5s later for a layered effect */
   animation: expandVertical var(--line-duration) forwards,
              growThicknessV var(--line-duration) forwards;
   animation-delay: var(--vert-delay), var(--vert-delay);
@@ -151,7 +140,6 @@ body {
   to   { width: var(--max-thickness); }
 }
 
-/* Scanlines overlay for a digital CRT feel */
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -169,7 +157,6 @@ body {
   );
 }
 
-/* Noise overlay to simulate interference/static */
 #noise {
   pointer-events: none;
   position: absolute;
@@ -178,14 +165,12 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 17;
-  opacity: 0.15; /* Adjust the opacity for subtle effect */
-  /* A small 16x16 noise pattern in Base64 */
+  opacity: 0.15;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABBklEQVR42mL8//8/AymAiSTU2dOjRIMwS0iK/Ezk5OTUzODjQh73//4xDarQ7XN7M8uTJx84dOjB/2PT9d3fXDgD7gxEwMDD8+PDwoXgGYGxTxlvP379++fCJBEi3S7cmSp+yPdv3//+cvv7+8ebgUUYiGp/++uPNPynzZv3b4+fAQBhGtp2dmW0bJgIhg+wPPmqjC01N/fPnjsQABVJ/XGgDSMLBAAxCvcLhh0z8wAAAAASUVORK5CYII=");
   background-repeat: repeat;
   background-size: 16px auto;
 }
 
-/* Radar sweep overlay – a rotating semi-transparent red circle */
 #radar {
   pointer-events: none;
   position: absolute;
