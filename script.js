@@ -19,4 +19,25 @@ document.addEventListener('mousemove', function(e) {
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
 });
-map.on('load', function() {});
+map.on('load', function() {
+  map.addSource('blast-radius', {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [0, 0]
+      }
+    }
+  });
+  map.addLayer({
+    id: 'blast-radius-layer',
+    type: 'circle',
+    source: 'blast-radius',
+    paint: {
+      'circle-radius': 100,
+      'circle-color': 'red',
+      'circle-opacity': 0.3
+    }
+  });
+});
