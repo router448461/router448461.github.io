@@ -1,4 +1,3 @@
-// Set Mapbox access token and initialize the map.
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
@@ -10,7 +9,6 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-// Disable user interactions.
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -19,7 +17,6 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Hide undesired map labels and boundaries.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -36,17 +33,16 @@ function hideMapElements() {
   });
 }
 
-// Start everything only after the map has fully loaded.
 map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
 
-  // Unpause the cross-line animations.
+
   document.querySelectorAll('.line').forEach((el) => {
     el.style.animationPlayState = 'running';
   });
 
-  // Play the background audio.
+
   const audioBg = document.getElementById('audio-bg');
   if (audioBg) {
     audioBg.play().catch((e) =>
@@ -54,7 +50,7 @@ map.on('load', () => {
     );
   }
 
-  // After cross lines finish drawing (9 seconds), play the alert audio.
+  
   setTimeout(() => {
     const audioAlert = document.getElementById('audio-alert');
     if (audioAlert) {
