@@ -1,4 +1,4 @@
-// Set access token and create the Mapbox map.
+// Mapbox access token and map initialization.
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
@@ -19,7 +19,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// A helper function to remove undesired map elements.
+// Hide undesired map labels and boundaries.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -40,23 +40,23 @@ map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
 
-  // After an initial 4-second wait...
+  // Wait 4 seconds before starting the sequence.
   setTimeout(() => {
-    // Flash for 1 millisecond.
+    // Flash the entire screen white for 1 millisecond.
     const flashEl = document.getElementById('flash-overlay');
     flashEl.classList.add('flash');
     setTimeout(() => {
       flashEl.classList.remove('flash');
-      // Unpause all cross-line animations.
+      // Unpause all cross-line animations to start drawing.
       document.querySelectorAll('.line').forEach((el) => {
         el.style.animationPlayState = 'running';
       });
     }, 1);
 
-    // After the drawing animation completes (2.015 seconds), blink the lines.
+    // After the drawing animation completes (2.015 seconds), start the flicker.
     setTimeout(() => {
       blinkCrossLines(() => {
-        // Once blinking is complete, display and start the stopwatch.
+        // When blinking is finished, show and start the stopwatch clock.
         document.getElementById('clock').style.display = 'block';
         startStopwatch();
       });
@@ -64,29 +64,32 @@ map.on('load', () => {
   }, 4000);
 });
 
-// Blink the cross lines (both horizontal and vertical) 3 times at 3ms intervals.
+// Blink (flicker) the four cross lines three times
+// The sequence will toggle opacity (on/off) six times (3 cycles)
+// with each toggle occurring after 3ms.
 function blinkCrossLines(callback) {
   const lines = document.querySelectorAll('.line.horizontal, .line.vertical');
-  let blinkCount = 0;
-  
-  function doBlink() {
-    lines.forEach((el) => (el.style.opacity = '0'));
-    setTimeout(() => {
+  let toggleCount = 0;
+
+  function toggleBlink() {
+    if (toggleCount >= 6) {
+      // Ensure the final state is "on" (opacity = 1) and call the callback.
       lines.forEach((el) => (el.style.opacity = '1'));
-      blinkCount++;
-      if (blinkCount < 3) {
-        setTimeout(doBlink, 3);
-      } else {
-        // After final blink, call the callback.
-        callback();
-      }
-    }, 3);
+      callback();
+    } else {
+      lines.forEach((el) => {
+        const current = window.getComputedStyle(el).opacity;
+        el.style.opacity = current === '1' ? '0' : '1';
+      });
+      toggleCount++;
+      setTimeout(toggleBlink, 3);
+    }
   }
-  
-  doBlink();
+
+  toggleBlink();
 }
 
-// Stopwatch functionality: counts upward from 00:00:000.
+// Stopwatch functionality.
 let stopwatchStart = null;
 function startStopwatch() {
   stopwatchStart = Date.now();
