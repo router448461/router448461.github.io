@@ -39,19 +39,9 @@ document.addEventListener('mousemove', function(e) {
   document.getElementById('hud').style.transform = `translate(${x/2}px, ${y/2}px)`;
 });
 
-// Generate random comms text
-function randomString(length) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-const messages = ["TARGET LOCKED", "WEAPON ARMED", "SYSTEMS ONLINE", "ENEMY DETECTED"];
-let commsText = "";
-for (let i = 0; i < 100; i++) {
-  commsText += randomString(20) + " " + messages[i % messages.length] + " ";
-}
-document.getElementById("comms-text").innerText = commsText;
+// Move the reticle with the mouse
+document.addEventListener('mousemove', function(e) {
+  const reticle = document.getElementById('reticle');
+  reticle.style.left = `${e.clientX}px`;
+  reticle.style.top = `${e.clientY}px`;
+});
