@@ -1,3 +1,4 @@
+// Set access token and create the Mapbox map.
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
@@ -9,7 +10,7 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-// Disable all user interactions
+// Disable all user interactions.
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -18,10 +19,11 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
+// A helper function to remove undesired map elements.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
-  style.layers.forEach(layer => {
+  style.layers.forEach((layer) => {
     if (
       layer.type === 'symbol' ||
       (layer.id &&
@@ -38,66 +40,69 @@ map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
 
-  // Wait 4 seconds before starting the sequence.
+  // After an initial 4-second wait...
   setTimeout(() => {
-    // Flash overlay for 100ms.
+    // Flash for 1 millisecond.
     const flashEl = document.getElementById('flash-overlay');
     flashEl.classList.add('flash');
     setTimeout(() => {
       flashEl.classList.remove('flash');
-      // Unpause all line animations.
-      document.querySelectorAll('.line').forEach(el => {
+      // Unpause all cross-line animations.
+      document.querySelectorAll('.line').forEach((el) => {
         el.style.animationPlayState = 'running';
       });
-    }, 100);
+    }, 1);
 
-    // Wait until the drawing completes (2.015 seconds) then trigger triangle blinking.
+    // After the drawing animation completes (2.015 seconds), blink the lines.
     setTimeout(() => {
-      blinkTriangles(() => {
-        // After blinking, show the clock.
+      blinkCrossLines(() => {
+        // Once blinking is complete, display and start the stopwatch.
         document.getElementById('clock').style.display = 'block';
-        startClock();
+        startStopwatch();
       });
     }, 2015);
-    
   }, 4000);
 });
 
-function startClock() {
-  updateClock();
-  setInterval(updateClock, 50);
-}
-
-function updateClock() {
-  const clockEl = document.getElementById('clock');
-  const now = new Date();
-  // Format time as HH:MM:SS:ms (military style, with leading zeros)
-  const hours = now.getHours().toString().padStart(2, '0');
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const seconds = now.getSeconds().toString().padStart(2, '0');
-  const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-  clockEl.textContent = `${hours}:${minutes}:${seconds}:${milliseconds}`;
-}
-
-function blinkTriangles(callback) {
-  const triangles = document.querySelectorAll('.line.triangle');
+// Blink the cross lines (both horizontal and vertical) 3 times at 3ms intervals.
+function blinkCrossLines(callback) {
+  const lines = document.querySelectorAll('.line.horizontal, .line.vertical');
   let blinkCount = 0;
   
   function doBlink() {
-    // Hide triangle lines.
-    triangles.forEach(el => (el.style.opacity = '0'));
+    lines.forEach((el) => (el.style.opacity = '0'));
     setTimeout(() => {
-      // Show triangle lines.
-      triangles.forEach(el => (el.style.opacity = '1'));
+      lines.forEach((el) => (el.style.opacity = '1'));
       blinkCount++;
       if (blinkCount < 3) {
-        setTimeout(doBlink, 1000);
+        setTimeout(doBlink, 3);
       } else {
-        // After three blinks, wait one final second then call the callback.
-        setTimeout(callback, 1000);
+        // After final blink, call the callback.
+        callback();
       }
-    }, 100);
+    }, 3);
   }
   
   doBlink();
+}
+
+// Stopwatch functionality: counts upward from 00:00:000.
+let stopwatchStart = null;
+function startStopwatch() {
+  stopwatchStart = Date.now();
+  updateStopwatch();
+  setInterval(updateStopwatch, 50);
+}
+
+function updateStopwatch() {
+  const clockEl = document.getElementById('clock');
+  const elapsed = Date.now() - stopwatchStart;
+  const minutes = Math.floor(elapsed / 60000)
+    .toString()
+    .padStart(2, '0');
+  const seconds = Math.floor((elapsed % 60000) / 1000)
+    .toString()
+    .padStart(2, '0');
+  const milliseconds = (elapsed % 1000).toString().padStart(3, '0');
+  clockEl.textContent = `${minutes}:${seconds}:${milliseconds}`;
 }
