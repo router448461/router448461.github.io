@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>router448461</title>
-    
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
@@ -12,26 +11,23 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    
     <div id="map"></div>
 
     <div id="overlay">
-      <!-- Cross lines -->
+      <!-- Cross Lines -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
       
-      <!-- Triangle lines (styled the same as the cross lines) -->
+      <!-- Triangle Lines -->
       <div class="line triangle ab"></div>
       <div class="line triangle ac"></div>
       <div class="line triangle bc"></div>
     </div>
 
-    <div id="info">
-      <div id="status">ESTABLISHING VIDEO UPLINK...</div>
-      <div id="clock" style="display: none;"></div>
-    </div>
+    <!-- Clock (initially hidden) -->
+    <div id="clock"></div>
 
     <div id="flash-overlay"></div>
 
