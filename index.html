@@ -3,24 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>router448461.com</title>
-
+    <title>Australian Military Bases Map</title>
+    <!-- Link to CSS -->
     <link rel="stylesheet" href="style.css" />
+    <!-- Mapbox GL JS stylesheet -->
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
       rel="stylesheet"
     />
   </head>
   <body>
+    <!-- Map container -->
     <div id="map"></div>
+
+    <!-- Timers container in top-right -->
     <div id="timers">
       <div id="clock"></div>
+      <div id="countdown"></div>
+      <div id="cmd-text">cmd + R</div>
     </div>
+
+    <!-- Overlay container for animated red lines -->
     <div id="overlay">
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
     </div>
+
+    <!-- Mapbox GL JS library -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <!-- Link to JavaScript -->
+    <script src="script.js"></script>
   </body>
 </html>
