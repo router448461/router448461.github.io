@@ -1,13 +1,13 @@
 :root {
-  --edge-color: #8B0000;
-  --center-color: #FF0000;
+  --edge-color: #4B5320;  /* Military green for edges */
+  --center-color: #556B2F; /* Military green for center */
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 9s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(255,0,0,0.7);
-  --sweep-duration: 4s;  /* Scan bars sweep every 4 seconds */
+  --box-shadow-color: rgba(85, 107, 47, 0.7); /* Military green shadow */
+  --sweep-duration: 4s;  /* Scan lines sweep every 4 seconds */
 }
 
 * {
@@ -42,10 +42,10 @@ html, body {
   width: 100%;
   height: 100%;
   background: repeating-linear-gradient(
-    0deg, transparent, transparent 19px, rgba(255, 0, 0, 0.1) 20px
+    0deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
   ),
   repeating-linear-gradient(
-    90deg, transparent, transparent 19px, rgba(255, 0, 0, 0.1) 20px
+    90deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
   );
   pointer-events: none;
   z-index: 5;
@@ -184,9 +184,9 @@ html, body {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: rgba(255, 0, 0, 0.8);
+  background: rgba(85, 107, 47, 0.8); /* Military green */
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
 }
 
 #laser-scan-vertical {
@@ -195,9 +195,9 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: rgba(255, 0, 0, 0.8);
+  background: rgba(85, 107, 47, 0.8); /* Military green */
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
 }
 
 @keyframes sweepHorizontal {
@@ -211,8 +211,8 @@ html, body {
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8); }
-  to { box-shadow: 0 0 15px 3px rgba(255, 0, 0, 1); }
+  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
+  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1); }
 }
 
 #hud {
@@ -222,17 +222,17 @@ html, body {
   color: #fff;
   font-size: 14px;
   font-family: 'Courier New', monospace;
-  text-shadow: 0 0 5px #f00;
+  text-shadow: 0 0 5px #556B2F; /* Military green shadow */
   z-index: 15;
 }
 
-#comms-marquee {
+#reticle {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 30px;
-  overflow: hidden;
-  background: rgba(0,0,0,0.8);
-  color: #f00;
-  font-size: 16px
+  width: 20px;
+  height: 20px;
+  border: 2px solid #556B2F; /* Military green */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 25;
+  transform: translate(-50%, -50%);
+}
