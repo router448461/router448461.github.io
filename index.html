@@ -6,41 +6,22 @@
     <title>router448461</title>
     
     <!-- Mapbox GL JS styles -->
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
-      rel="stylesheet"
-    />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
     <!-- Custom font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    
     <!-- Map container -->
     <div id="map"></div>
 
-    <!-- Overlay container for red lines and triangle -->
+    <!-- Overlay for the red lines -->
     <div id="overlay">
-      <!-- Four animated red lines -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
-      
-      <!-- SVG triangle replacing the radar -->
-      <svg id="triangle" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <!--
-          The points define a triangle whose vertices are:
-          • (0,0): top–left,
-          • (100,0): top–right, and
-          • (50,100): bottom–middle.
-        -->
-        <polygon points="0,0 100,0 50,100" />
-      </svg>
     </div>
 
     <!-- Mapbox GL JS -->
