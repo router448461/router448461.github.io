@@ -24,23 +24,15 @@ function applyGlitchEffect(element, intensity) {
   }
   glitch();
 }
-function applyGlitchToLines() {
-  const lines = document.querySelectorAll('.line');
-  lines.forEach(line => {
-    applyGlitchEffect(line, 1.5);
-  });
-}
-function parallax(e) {
+document.addEventListener('mousemove', function(e) {
   const x = (e.clientX / window.innerWidth - 0.5) * 10;
   const y = (e.clientY / window.innerHeight - 0.5) * 10;
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
-}
-document.addEventListener('mousemove', parallax);
+});
 map.on('load', function() {
   const lens = document.getElementById('lens-effect');
   if (lens) {
     applyGlitchEffect(lens, 2);
   }
-  applyGlitchToLines();
 });
