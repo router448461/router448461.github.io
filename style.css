@@ -5,13 +5,15 @@
   --max-thickness: 2px;
   /* Cross lines draw over 9 seconds */
   --line-duration: 9s;
-  --animation-delay: 0s;
+  /* We'll set horizontal delays to 0, vertical lines get a 0.5s delay */
+  --horiz-delay: 0s;
+  --vert-delay: 0.5s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
-/* Disable text selection and ensure a default cursor everywhere */
+/* Disable text selection and force default pointer everywhere */
 * {
   user-select: none;
   -webkit-user-select: none;
@@ -27,16 +29,17 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: #000; /* Black background for a tactical look */
 }
 
-/* Map styling – filtered for extra contrast/brightness to evoke military tech */
+/* Map styling – high-contrast/brightness filter for a tactical appearance */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  visibility: hidden; /* becomes visible when the map fully loads */
+  visibility: hidden; /* Revealed only after the map fully loads */
   filter: contrast(1.2) brightness(0.9);
 }
 
@@ -60,7 +63,7 @@ body {
   z-index: 10;
 }
 
-/* Base style for all cross lines – they begin paused */
+/* Base style for cross lines – animations are paused until map loads */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -68,29 +71,31 @@ body {
   animation-play-state: paused;
 }
 
+/* Simple pulse effect */
 @keyframes pulseLine {
   from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  to   { filter: brightness(1.2); }
 }
 
-/* Horizontal cross lines */
+/* Horizontal cross lines styling */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
+  /* Horizontal lines start immediately */
   animation: expandHorizontal var(--line-duration) forwards,
              growThickness var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
+  animation-delay: var(--horiz-delay), var(--horiz-delay);
 }
 
 .line.horizontal.right {
@@ -101,32 +106,33 @@ body {
 
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  to   { transform: scaleX(1); }
 }
 
 @keyframes growThickness {
   from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
+  to   { height: var(--max-thickness); }
 }
 
-/* Vertical cross lines */
+/* Vertical cross lines styling */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
+  /* Vertical lines start 0.5s later for a layered effect */
   animation: expandVertical var(--line-duration) forwards,
              growThicknessV var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
+  animation-delay: var(--vert-delay), var(--vert-delay);
 }
 
 .line.vertical.bottom {
@@ -137,15 +143,15 @@ body {
 
 @keyframes expandVertical {
   from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  to   { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
+  to   { width: var(--max-thickness); }
 }
 
-/* Scanlines overlay for a digital CRT look */
+/* Scanlines overlay for a digital CRT feel */
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -156,14 +162,30 @@ body {
   z-index: 15;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0.15) 1px,
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.15) 1px,
     transparent 1px,
     transparent 3px
   );
 }
 
-/* Radar sweep overlay (rotating circle) */
+/* Noise overlay to simulate interference/static */
+#noise {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 17;
+  opacity: 0.15; /* Adjust the opacity for subtle effect */
+  /* A small 16x16 noise pattern in Base64 */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABBklEQVR42mL8//8/AymAiSTU2dOjRIMwS0iK/Ezk5OTUzODjQh73//4xDarQ7XN7M8uTJx84dOjB/2PT9d3fXDgD7gxEwMDD8+PDwoXgGYGxTxlvP379++fCJBEi3S7cmSp+yPdv3//+cvv7+8ebgUUYiGp/++uPNPynzZv3b4+fAQBhGtp2dmW0bJgIhg+wPPmqjC01N/fPnjsQABVJ/XGgDSMLBAAxCvcLhh0z8wAAAAASUVORK5CYII=");
+  background-repeat: repeat;
+  background-size: 16px auto;
+}
+
+/* Radar sweep overlay – a rotating semi-transparent red circle */
 #radar {
   pointer-events: none;
   position: absolute;
@@ -174,75 +196,12 @@ body {
   margin-left: -150px;
   margin-top: -150px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,0,0,0.2) 0%, transparent 70%);
   animation: radarRotate 3s linear infinite;
   z-index: 20;
 }
 
 @keyframes radarRotate {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Stopwatch clock styling – uses a digital font and a subtle glitch effect */
-#clock {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-family: 'VT323', monospace;
-  font-size: 24px;
-  color: var(--center-color);
-  text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
-  background-color: transparent;
-  cursor: default;
-  animation: glitch 1s infinite alternate;
-}
-
-/* Glitch effect keyframes for clock and status messages */
-@keyframes glitch {
-  0% {
-    transform: translate(0);
-    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-    text-shadow: -2px 2px 0 var(--edge-color), 2px -2px 0 var(--center-color);
-  }
-  40% {
-    transform: translate(2px, -2px);
-    text-shadow: 2px -2px 0 var(--edge-color), -2px 2px 0 var(--center-color);
-  }
-  60% {
-    transform: translate(-2px, -2px);
-    text-shadow: -2px -2px 0 var(--edge-color), 2px 2px 0 var(--center-color);
-  }
-  80% {
-    transform: translate(2px, 2px);
-    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
-  }
-  100% {
-    transform: translate(0);
-    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
-  }
-}
-
-/* Status messages container (top left) */
-#status-container {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 20;
-}
-
-#status,
-#extra-status {
-  font-family: 'VT323', monospace;
-  font-size: 20px;
-  color: var(--center-color);
-  text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
-  background-color: transparent;
-  cursor: default;
-  animation: glitch 1.5s infinite alternate;
-  margin: 0;
-  padding: 0;
+  to   { transform: rotate(360deg); }
 }
