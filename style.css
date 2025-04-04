@@ -11,7 +11,7 @@
   --shadow-spread: 1px;
 }
 
-/* Prevent text selection and disable the highlighter cursor on all elements */
+/* Prevent text selection and disable the highlighter cursor globally */
 * {
   user-select: none;
   -webkit-user-select: none;
@@ -29,14 +29,15 @@ body {
   overflow: hidden;
 }
 
-/* Map styling */
+/* Map styling with a slight contrast/brightness filter for a militaristic vibe */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  visibility: hidden; /* becomes visible when the map loads */
+  visibility: hidden;
+  filter: contrast(1.2) brightness(0.9);
 }
 
 .mapboxgl-canvas {
@@ -59,7 +60,7 @@ body {
   z-index: 10;
 }
 
-/* Base styling for all lines – they are initially paused. */
+/* Base styling for all lines – they start paused until unpaused by JS */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -76,18 +77,18 @@ body {
   }
 }
 
-/* Horizontal lines styling */
+/* Horizontal lines */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
@@ -120,18 +121,18 @@ body {
   }
 }
 
-/* Vertical lines styling */
+/* Vertical lines */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
@@ -164,17 +165,62 @@ body {
   }
 }
 
-/* Stopwatch clock styling – digital, militaristic look */
+/* Scanline overlay for a digital CRT feel */
+#scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 15;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Stopwatch clock styling with digital font and a subtle glitch effect */
 #clock {
-  display: block;
   position: fixed;
   top: 20px;
   right: 20px;
-  /* You could use a digital font – for example, via Google Fonts (e.g., 'Digital-7') */
-  font-family: 'Digital-7', monospace;
+  font-family: 'VT323', monospace;
   font-size: 24px;
   color: var(--center-color);
   text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
   background-color: transparent;
   cursor: default;
+  animation: glitch 1s infinite alternate;
+}
+
+/* Glitch effect keyframes for the clock */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+    text-shadow: -2px 2px 0 var(--edge-color), 2px -2px 0 var(--center-color);
+  }
+  40% {
+    transform: translate(2px, -2px);
+    text-shadow: 2px -2px 0 var(--edge-color), -2px 2px 0 var(--center-color);
+  }
+  60% {
+    transform: translate(-2px, -2px);
+    text-shadow: -2px -2px 0 var(--edge-color), 2px 2px 0 var(--center-color);
+  }
+  80% {
+    transform: translate(2px, 2px);
+    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
+  }
 }
