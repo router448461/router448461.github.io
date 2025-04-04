@@ -29,7 +29,7 @@ body {
   background-color: #000;
 }
 
-/* The map container is now visible immediately (no hidden visibility) */
+/* The map container is now visible immediately */
 #map {
   position: absolute;
   top: 0;
