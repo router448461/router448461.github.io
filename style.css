@@ -29,14 +29,16 @@ body {
   background-color: #000;
 }
 
-/* The map container is now visible immediately */
+/* Hide the map initially to prevent flashing labels */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  opacity: 0;              /* Initially hidden */
   filter: contrast(1.2) brightness(0.9);
+  transition: opacity 0.5s ease;  /* Fade in once ready */
 }
 
 .mapboxgl-canvas {
@@ -58,9 +60,11 @@ body {
   z-index: 10;
 }
 
+/* Lines are initially paused */
 .line {
   position: absolute;
-  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread)
+    var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
   animation-play-state: paused;
 }
@@ -140,6 +144,7 @@ body {
   to   { width: var(--max-thickness); }
 }
 
+/* Radar element is also paused by default */
 #radar {
   pointer-events: none;
   position: absolute;
@@ -150,8 +155,13 @@ body {
   margin-left: -150px;
   margin-top: -150px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 0, 0, 0.2) 0%,
+    transparent 70%
+  );
   animation: radarRotate 3s linear infinite;
+  animation-play-state: paused;
   z-index: 20;
 }
 
