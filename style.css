@@ -1,17 +1,18 @@
 :root {
-  --edge-color: darkred;
-  --center-color: red;
-  --min-thickness: 0.5px;
-  --max-thickness: 4px;
-  --line-duration: 3s;      /* Red lines animate over 3 seconds */
-  --animation-delay: 0s;    /* Start animation instantly */
-  --box-shadow-color: rgba(139, 0, 0, 0.9);
-  --shadow-blur: 10px;
-  --shadow-spread: 3px;
+  --edge-color: #8B0000;         /* dark red */
+  --center-color: #FF0000;       /* bright red */
+  --min-thickness: 0.5px;        /* very thin at the edges */
+  --max-thickness: 2px;          /* moderately thicker in the middle */
+  --line-duration: 3s;           /* red lines animate over 3 seconds */
+  --animation-delay: 3s;         /* wait 3 seconds before starting red line animation */
+  --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --shadow-blur: 5px;
+  --shadow-spread: 1px;
 }
 
-/* Reset and fill the viewport */
-html, body {
+/* Reset and occupy full viewport */
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -26,22 +27,22 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Initially hidden to avoid flickering until styling is adjusted */
+  /* Initially hidden to prevent flickering until style corrections */
   visibility: hidden;
 }
 
-/* Default arrow cursor on Mapbox canvas */
+/* Default cursor on Mapbox canvas */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox attribution/control elements */
+/* Hide Mapbox control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay container for the red lines */
+/* Overlay container for red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -52,7 +53,7 @@ html, body {
   z-index: 10;
 }
 
-/* --- Animated Red Lines --- */
+/* Animated Red Lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -60,78 +61,119 @@ html, body {
 }
 
 @keyframes pulseLine {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.2);
+  }
 }
 
+/* Horizontal line styles */
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    black 0%,
-    var(--edge-color) 20%,
-    var(--edge-color) 30%,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
     var(--center-color) 50%,
-    var(--edge-color) 70%,
-    var(--edge-color) 80%,
-    black 100%
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards, growThicknessH var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
-  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
+@keyframes expandHorizontal {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes growThicknessH {
+  from {
+    height: var(--min-thickness);
+  }
+  to {
+    height: var(--max-thickness);
+  }
+}
+
+/* Vertical line styles */
 .line.vertical {
   left: 50%;
   height: 50vh;
   width: var(--min-thickness);
   background: linear-gradient(
     to bottom,
-    black 0%,
-    var(--edge-color) 20%,
-    var(--edge-color) 30%,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
     var(--center-color) 50%,
-    var(--edge-color) 70%,
-    var(--edge-color) 80%,
-    black 100%
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards,
-             growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-}
-
-@keyframes expandHorizontal {
-  to { transform: scaleX(1); }
 }
 
 @keyframes expandVertical {
-  to { transform: scaleY(1); }
-}
-
-@keyframes growThicknessH {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 @keyframes growThicknessV {
-  from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
+  from {
+    width: var(--min-thickness);
+  }
+  to {
+    width: var(--max-thickness);
+  }
+}
+
+/* Info container for status and clock (positioned top right) */
+#info {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: monospace;
+  color: white;
+  text-align: right;
+  font-size: 20px;
+}
+
+/* Flash animation for the status message */
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flash {
+  animation: flash 0.5s ease;
 }
