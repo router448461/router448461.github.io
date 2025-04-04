@@ -1,17 +1,15 @@
 :root {
-  /* Colors and dimensions for a “digital/dangerous” look */
-  --edge-color: #8B0000;       /* dark red */
-  --center-color: #FF0000;     /* bright red */
-  --min-thickness: 0.5px;      /* very thin at the edges */
-  --max-thickness: 2px;        /* slightly thicker in the center */
-  --line-duration: 3s;         /* duration for each line animation */
-  --animation-delay: 3s;       /* delay before starting animations */
+  --edge-color: #8B0000;
+  --center-color: #FF0000;
+  --min-thickness: 0.5px;
+  --max-thickness: 2px;
+  --line-duration: 3s;
+  --animation-delay: 3s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
-/* Reset and fill the viewport */
 html, body {
   margin: 0;
   padding: 0;
@@ -20,29 +18,24 @@ html, body {
   overflow: hidden;
 }
 
-/* Map container */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Hide initially to avoid flicker */
   visibility: hidden;
 }
 
-/* Default cursor */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
-/* Overlay container for all red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -53,11 +46,9 @@ html, body {
   z-index: 10;
 }
 
-/* --- Base Style for All Lines --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Subtle pulsing effect */
   animation: pulseLine 1.5s infinite alternate;
 }
 
@@ -66,9 +57,6 @@ html, body {
   to { filter: brightness(1.2); }
 }
 
-/* --- Cross Lines --- */
-
-/* Horizontal cross lines: extend from center outwards */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -104,7 +92,6 @@ html, body {
   to { height: var(--max-thickness); }
 }
 
-/* Vertical cross lines: extend from center upward/downward */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -140,15 +127,6 @@ html, body {
   to { width: var(--max-thickness); }
 }
 
-/* --- Triangle Lines --- */
-/* These lines use the same background and animation as the cross lines.  
-   Their fixed positions are chosen so that their endpoints come from:
-   • Top left: (25%, 35%)
-   • Top right: (75%, 35%)
-   • Middle bottom: (50%, 75%)
-   This forms an inverted triangle (base at top, apex at bottom) that surrounds the crosshair. */
-
-/* Horizontal triangle side (base) */
 .line.triangle.ab {
   position: absolute;
   top: 35%;
@@ -170,12 +148,11 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Left diagonal triangle side from top left vertex [(25%,35%)] to bottom apex [(50%,75%)] */
 .line.triangle.ac {
   position: absolute;
   top: 35%;
   left: 25%;
-  width: 35vw; /* Adjust as needed for fixed length */
+  width: 35vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
@@ -185,7 +162,7 @@ html, body {
     var(--edge-color) 85%,
     rgba(0,0,0,0.9) 100%
   );
-  /* Rotate so it points from (25%,35%) toward (50%,75%); angle ~55deg */
+  
   transform: rotate(55deg) scaleX(0);
   transform-origin: left;
   animation: expandHorizontal var(--line-duration) forwards,
@@ -193,7 +170,6 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Right diagonal triangle side from top right vertex [(75%,35%)] to bottom apex [(50%,75%)] */
 .line.triangle.bc {
   position: absolute;
   top: 35%;
@@ -215,7 +191,6 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* --- Info Container --- */
 #info {
   position: fixed;
   top: 20px;
@@ -227,7 +202,6 @@ html, body {
   font-size: 20px;
 }
 
-/* --- Flash Overlay --- */
 #flash-overlay {
   position: fixed;
   top: 0;
