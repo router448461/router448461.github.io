@@ -3,14 +3,17 @@
   --center-color: #FF0000;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  --line-duration: 3s;
-  --animation-delay: 3s;
+  /* Total drawing time for all lines: 2 seconds and 15 milliseconds */
+  --line-duration: 2.015s;
+  /* Animations start immediately when unpaused */
+  --animation-delay: 0s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -46,19 +49,29 @@ html, body {
   z-index: 10;
 }
 
-/* Common styling for all lines */
+/* All lines share the same base styling and remain paused until unpaused by the script */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
+  /* Start paused */
+  animation-play-state: paused;
 }
 
 @keyframes pulseLine {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.2);
+  }
 }
 
-/* Horizontal lines */
+/* --------------------------
+   Cross Lines (Horizontal & Vertical)
+-------------------------- */
+
+/* Horizontal Lines */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -84,7 +97,25 @@ html, body {
   transform-origin: right center;
 }
 
-/* Vertical lines */
+@keyframes expandHorizontal {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes growThickness {
+  from {
+    height: var(--min-thickness);
+  }
+  to {
+    height: var(--max-thickness);
+  }
+}
+
+/* Vertical Lines */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -110,41 +141,47 @@ html, body {
   transform-origin: bottom center;
 }
 
-@keyframes expandHorizontal {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@keyframes growThickness {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
-}
-
 @keyframes expandVertical {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 @keyframes growThicknessV {
-  from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
+  from {
+    width: var(--min-thickness);
+  }
+  to {
+    width: var(--max-thickness);
+  }
 }
 
-/* Triangle lines – using the same style as horizontal lines */
+/* --------------------------
+   Triangle Lines (Same Styling as Cross Lines)
+   --------------------------
+   Define triangle vertices at:
+   A: (15% from left, 15% from top)
+   B: (85% from left, 15% from top)
+   C: (50% from left, 85% from top)
+*/
+
+/* Side AB: top horizontal */
 .line.triangle.ab {
   position: absolute;
-  /* Vertex A to Vertex B (top horizontal side) */
   top: 15%;
   left: 15%;
   width: 70%;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left;
@@ -153,20 +190,20 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
+/* Side AC: from Vertex A (15%,15%) to Vertex C (50%,85%) */
 .line.triangle.ac {
   position: absolute;
-  /* From Vertex A (top left) to Vertex C (bottom center) */
   top: 15%;
   left: 15%;
-  width: 50vw;
+  width: 50vw; /* approximate length */
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: rotate(63deg) scaleX(0);
   transform-origin: left;
@@ -175,20 +212,20 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
+/* Side BC: from Vertex B (85%,15%) to Vertex C (50%,85%) */
 .line.triangle.bc {
   position: absolute;
-  /* From Vertex B (top right) to Vertex C (bottom center) */
   top: 15%;
   right: 15%;
-  width: 50vw;
+  width: 50vw; /* approximate length */
   height: var(--min-thickness);
   background: linear-gradient(
     to left,
-    rgba(0,0,0,0.9) 0%,
+    rgba(0, 0, 0, 0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0,0,0,0.9) 100%
+    rgba(0, 0, 0, 0.9) 100%
   );
   transform: rotate(-63deg) scaleX(0);
   transform-origin: right;
@@ -197,16 +234,9 @@ html, body {
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-#info {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  font-family: monospace;
-  color: white;
-  text-align: right;
-  font-size: 20px;
-}
+/* --------------------------
+   Flash Overlay
+-------------------------- */
 
 #flash-overlay {
   position: fixed;
@@ -221,11 +251,33 @@ html, body {
 }
 
 .flash {
-  animation: flashAnim 0.5s ease forwards;
+  /* Flash duration: 0.1s = 100ms */
+  animation: flashAnim 0.1s ease forwards;
 }
 
 @keyframes flashAnim {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --------------------------
+   Clock Styling (matches the red-line style)
+-------------------------- */
+#clock {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-family: monospace;
+  font-size: 24px;
+  color: var(--center-color);
+  text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
+  background-color: transparent;
 }
