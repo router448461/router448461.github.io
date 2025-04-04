@@ -16,7 +16,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Real-time coordinate tracking
+// Real-time coordinate tracking with fixed formatting
 map.on('load', () => {
   const mapContainer = map.getContainer();
   mapContainer.addEventListener('mousemove', (e) => {
@@ -24,8 +24,8 @@ map.on('load', () => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
     const coords = map.unproject([mouseX, mouseY]);
-    const lat = coords.lat.toFixed(3);
-    const lng = coords.lng.toFixed(3);
+    const lat = coords.lat.toFixed(3).padStart(7, ' ');
+    const lng = coords.lng.toFixed(3).padStart(7, ' ');
     document.getElementById('target-coords').innerText = `TARGET: ${lat}, ${lng}`;
   });
 });
@@ -45,3 +45,20 @@ document.addEventListener('mousemove', function(e) {
   reticle.style.left = `${e.clientX}px`;
   reticle.style.top = `${e.clientY}px`;
 });
+
+// Sound effect for scan lines
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep() {
+  const oscillator = audioContext.createOscillator();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+  oscillator.connect(audioContext.destination);
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+// Play beep every 9 seconds
+setInterval(playBeep, 9000);
+
+// Example: Change scan line color to blue
+// document.documentElement.style.setProperty('--scan-color', '#0000FF');
