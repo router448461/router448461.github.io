@@ -26,7 +26,7 @@ body {
   background-color: #000;
 }
 
-/* The map container is shown immediately */
+/* Map container */
 #map {
   position: absolute;
   top: 0;
@@ -45,7 +45,7 @@ body {
   display: none !important;
 }
 
-/* Overlay covers the entire viewport */
+/* Overlay for red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -56,7 +56,6 @@ body {
   z-index: 10;
 }
 
-/* Red lines styling – animations run immediately */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -83,8 +82,7 @@ body {
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThickness var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
   animation-delay: var(--horiz-delay), var(--horiz-delay);
 }
 
@@ -118,8 +116,7 @@ body {
   );
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards,
-             growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
   animation-delay: var(--vert-delay), var(--vert-delay);
 }
 
@@ -137,4 +134,65 @@ body {
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to   { width: var(--max-thickness); }
+}
+
+/* Lens effect overlay */
+#lens-effect {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 15;
+  background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.9) 100%);
+  animation: glitch 0.5s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0, 0) skew(0deg); }
+  20% { transform: translate(-1px, 1px) skew(-0.5deg); }
+  40% { transform: translate(1px, -1px) skew(0.5deg); }
+  60% { transform: translate(-0.5px, 0.5px) skew(-0.5deg); }
+  80% { transform: translate(0.5px, -0.5px) skew(0.5deg); }
+  100% { transform: translate(0, 0) skew(0deg); }
+}
+
+/* Scanlines effect */
+#scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: moveScanlines 0.2s infinite linear;
+}
+
+@keyframes moveScanlines {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
+/* Grainy noise overlay */
+#noise {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.05;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-size: cover;
+  z-index: 15;
 }
