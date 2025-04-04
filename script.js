@@ -1,4 +1,4 @@
-// Mapbox access token and map initialization.
+// Set Mapbox access token and initialize the map.
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
@@ -19,7 +19,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Hide undesired map labels and boundaries.
+// Hide undesirable map elements.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -39,60 +39,28 @@ function hideMapElements() {
 map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
-
-  // Wait 4 seconds before starting the sequence.
-  setTimeout(() => {
-    // Flash the entire screen white for 1 millisecond.
-    const flashEl = document.getElementById('flash-overlay');
-    flashEl.classList.add('flash');
-    setTimeout(() => {
-      flashEl.classList.remove('flash');
-      // Unpause all cross-line animations to start drawing.
-      document.querySelectorAll('.line').forEach((el) => {
-        el.style.animationPlayState = 'running';
-      });
-    }, 1);
-
-    // After the drawing animation completes (2.015 seconds), start the flicker.
-    setTimeout(() => {
-      blinkCrossLines(() => {
-        // When blinking is finished, show and start the stopwatch clock.
-        document.getElementById('clock').style.display = 'block';
-        startStopwatch();
-      });
-    }, 2015);
-  }, 4000);
+  
+  // Start the cross-line animations immediately.
+  document.querySelectorAll('.line').forEach((el) => {
+    el.style.animationPlayState = 'running';
+  });
+  
+  // Start the stopwatch immediately.
+  startStopwatch();
+  
+  // Play audio (if supplied).
+  const audio = document.getElementById('audio');
+  if (audio) {
+    // For autoplay to work in some browsers, additional user gesture might be required.
+    audio.play().catch(function (e) {
+      console.log("Audio play was prevented:", e);
+    });
+  }
 });
 
-// Blink (flicker) the four cross lines three times
-// The sequence will toggle opacity (on/off) six times (3 cycles)
-// with each toggle occurring after 3ms.
-function blinkCrossLines(callback) {
-  const lines = document.querySelectorAll('.line.horizontal, .line.vertical');
-  let toggleCount = 0;
-
-  function toggleBlink() {
-    if (toggleCount >= 6) {
-      // Ensure the final state is "on" (opacity = 1) and call the callback.
-      lines.forEach((el) => (el.style.opacity = '1'));
-      callback();
-    } else {
-      lines.forEach((el) => {
-        const current = window.getComputedStyle(el).opacity;
-        el.style.opacity = current === '1' ? '0' : '1';
-      });
-      toggleCount++;
-      setTimeout(toggleBlink, 3);
-    }
-  }
-
-  toggleBlink();
-}
-
 // Stopwatch functionality.
-let stopwatchStart = null;
+let stopwatchStart = Date.now();
 function startStopwatch() {
-  stopwatchStart = Date.now();
   updateStopwatch();
   setInterval(updateStopwatch, 50);
 }
