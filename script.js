@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map centered on [0, 0] (the middle of the world)
+// Initialize the Mapbox map centered on [0, 0]
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-// Disable interactive controls so the presentation remains static.
+// Disable interactive controls to keep the presentation static.
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide unwanted map labels and boundaries.
+// Function to hide unwanted labels/boundaries on the map.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -28,21 +28,21 @@ function hideMapElements() {
     if (
       layer.type === 'symbol' ||
       (layer.id &&
-        (layer.id.includes('boundary') ||
-         layer.id.includes('admin-0') ||
-         layer.id.includes('admin-1')))
+       (layer.id.includes('boundary') ||
+        layer.id.includes('admin-0') ||
+        layer.id.includes('admin-1')))
     ) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
 }
 
-// Once the map loads, reveal it and schedule the flash and clock.
 map.on('load', () => {
   hideMapElements();
+  // Reveal the map once styles are adjusted.
   document.getElementById('map').style.visibility = 'visible';
 
-  // After 6 seconds, trigger a full-screen flash,
+  // After 6 seconds (3s delay + 3s animation), trigger the full-screen flash
   // then remove the status message and show the clock.
   setTimeout(() => {
     const flashEl = document.getElementById('flash-overlay');
@@ -60,13 +60,12 @@ map.on('load', () => {
 
 map.on('styledata', hideMapElements);
 
-// Starts the clock updating every 50ms.
+// Start and update the local clock.
 function startClock() {
-  updateClock();
+  updateClock(); // update immediately
   setInterval(updateClock, 50);
 }
 
-// Update the clock element with local time (HH:MM:SS:ms with ms padded to three digits)
 function updateClock() {
   const clockEl = document.getElementById('clock');
   const now = new Date();
