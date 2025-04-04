@@ -67,7 +67,7 @@ html, body {
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate;
+  animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
 .line.horizontal {
@@ -163,8 +163,32 @@ html, body {
   background: rgba(255,0,0,0.8);
   z-index: 13;
   animation: sweep var(--sweep-duration) linear infinite;
+  box-shadow: 0 0 10px 2px rgba(255,0,0,0.8);
 }
 @keyframes sweep {
   from { left: -2px; }
   to { left: 100vw; }
+}
+#reticle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid red;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: moveReticle 5s infinite alternate;
+  z-index: 15;
+}
+@keyframes moveReticle {
+  0% { top: 40%; left: 40%; }
+  25% { top: 60%; left: 40%; }
+  50% { top: 60%; left: 60%; }
+  75% { top: 40%; left: 60%; }
+  100% { top: 40%; left: 40%; }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
