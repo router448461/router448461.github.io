@@ -19,7 +19,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Hide undesired map elements.
+// Hide undesired map labels and boundaries.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -41,46 +41,26 @@ map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
 
-  // Unpause the cross-line animations so they draw over 9 seconds.
+  // Unpause the cross-line animations.
   document.querySelectorAll('.line').forEach((el) => {
     el.style.animationPlayState = 'running';
   });
 
-  // Start the stopwatch timer immediately.
-  startStopwatch();
-
-  // Play background audio.
+  // Play the background audio.
   const audioBg = document.getElementById('audio-bg');
   if (audioBg) {
-    audioBg.play().catch((e) => console.log("Background audio play was prevented:", e));
+    audioBg.play().catch((e) =>
+      console.log("Background audio play was prevented:", e)
+    );
   }
 
-  // After the cross lines finish drawing (9 seconds), play the alert audio.
+  // After cross lines finish drawing (9 seconds), play the alert audio.
   setTimeout(() => {
     const audioAlert = document.getElementById('audio-alert');
     if (audioAlert) {
-      audioAlert.play().catch((e) => console.log("Alert audio play was prevented:", e));
+      audioAlert.play().catch((e) =>
+        console.log("Alert audio play was prevented:", e)
+      );
     }
   }, 9000);
 });
-
-// Stopwatch functionality.
-let stopwatchStart = Date.now();
-function startStopwatch() {
-  updateStopwatch();
-  setInterval(updateStopwatch, 50);
-}
-
-function updateStopwatch() {
-  const timerEl = document.getElementById('timer');
-  const elapsed = Date.now() - stopwatchStart;
-  const minutes = Math.floor(elapsed / 60000)
-    .toString()
-    .padStart(2, '0');
-  const seconds = Math.floor((elapsed % 60000) / 1000)
-    .toString()
-    .padStart(2, '0');
-  const milliseconds = (elapsed % 1000).toString().padStart(3, '0');
-  // Format as "mm:ss:ms" (ms always three digits)
-  timerEl.textContent = `${minutes}:${seconds}:${milliseconds}`;
-}
