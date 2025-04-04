@@ -9,6 +9,7 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
+// Disable all user interactions
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -24,9 +25,9 @@ function hideMapElements() {
     if (
       layer.type === 'symbol' ||
       (layer.id &&
-       (layer.id.includes('boundary') ||
-        layer.id.includes('admin-0') ||
-        layer.id.includes('admin-1')))
+        (layer.id.includes('boundary') ||
+         layer.id.includes('admin-0') ||
+         layer.id.includes('admin-1')))
     ) {
       map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
@@ -35,9 +36,9 @@ function hideMapElements() {
 
 map.on('load', () => {
   hideMapElements();
-  
   document.getElementById('map').style.visibility = 'visible';
 
+  // Trigger the flash and clock (matching the start of line animations)
   setTimeout(() => {
     const flashEl = document.getElementById('flash-overlay');
     flashEl.classList.add('flash');
@@ -49,7 +50,7 @@ map.on('load', () => {
     const clockEl = document.getElementById('clock');
     clockEl.style.display = 'block';
     startClock();
-  }, 6000);
+  }, 3000);
 });
 
 map.on('styledata', hideMapElements);
