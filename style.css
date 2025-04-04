@@ -1,13 +1,10 @@
-/* 
-  CSS Variables for customization.
-*/
 :root {
   --edge-color: darkred;
   --center-color: red;
   --min-thickness: 0.5px;
   --max-thickness: 4px;
   --line-duration: 3s;      /* Red lines animate over 3 seconds */
-  --animation-delay: 0s;    /* Start at the same time */
+  --animation-delay: 0s;    /* Start animation instantly */
   --box-shadow-color: rgba(139, 0, 0, 0.9);
   --shadow-blur: 10px;
   --shadow-spread: 3px;
@@ -29,7 +26,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Initially hidden to avoid label flicker; will be made visible once layers are removed */
+  /* Initially hidden to avoid flickering until styling is adjusted */
   visibility: hidden;
 }
 
@@ -42,26 +39,6 @@ html, body {
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
-}
-
-/* Timers container positioned in top-right */
-#timers {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  font-family: monospace;
-  color: white;
-  text-align: right;
-}
-#clock, #countdown {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-#cmd-text {
-  font-size: 16px;
-  color: white;
-  margin-top: 5px;
 }
 
 /* Overlay container for the red lines */
@@ -81,10 +58,12 @@ html, body {
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
 }
+
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
 }
+
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -104,12 +83,14 @@ html, body {
   animation: expandHorizontal var(--line-duration) forwards,
              growThicknessH var(--line-duration) forwards;
 }
+
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
+
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -129,15 +110,28 @@ html, body {
   animation: expandVertical var(--line-duration) forwards,
              growThicknessV var(--line-duration) forwards;
 }
+
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
-@keyframes expandHorizontal { to { transform: scaleX(1); } }
-@keyframes expandVertical { to { transform: scaleY(1); } }
-@keyframes growThicknessH { from { height: var(--min-thickness); } to { height: var(--max-thickness); } }
-@keyframes growThicknessV { from { width: var(--min-thickness); } to { width: var(--max-thickness); } }
 
-/* Green markers styling is handled by Mapbox's Marker options */
+@keyframes expandHorizontal {
+  to { transform: scaleX(1); }
+}
+
+@keyframes expandVertical {
+  to { transform: scaleY(1); }
+}
+
+@keyframes growThicknessH {
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
+}
+
+@keyframes growThicknessV {
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
+}
