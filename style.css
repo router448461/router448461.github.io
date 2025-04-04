@@ -4,11 +4,11 @@
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 9s;
-  --flicker-duration: 1.5s;
-  --intensity: 2;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --sweep-duration: 3s;
+  --pulse-duration: 3s;
 }
 * {
   user-select: none;
@@ -29,13 +29,13 @@ html, body {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9);
-  border: 5px solid rgba(255, 0, 0, 0.7);
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.5);
+  border: 5px solid rgba(255,0,0,0.7);
+  box-shadow: 0 0 10px rgba(255,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.5);
   animation: glow 1.5s infinite alternate;
 }
 @keyframes glow {
-  from { box-shadow: 0 0 5px rgba(255, 0, 0, 0.7), inset 0 0 5px rgba(255, 0, 0, 0.4); }
-  to { box-shadow: 0 0 15px rgba(255, 0, 0, 1), inset 0 0 15px rgba(255, 0, 0, 0.6); }
+  from { box-shadow: 0 0 5px rgba(255,0,0,0.7), inset 0 0 5px rgba(255,0,0,0.4); }
+  to { box-shadow: 0 0 15px rgba(255,0,0,1), inset 0 0 15px rgba(255,0,0,0.6); }
 }
 .mapboxgl-canvas {
   cursor: default !important;
@@ -55,8 +55,7 @@ html, body {
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate, flicker var(--flicker-duration) infinite alternate, pixelate 0.5s infinite alternate;
-  animation-play-state: running;
+  animation: pulseLine 1.5s infinite alternate;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
 .line::before, .line::after {
@@ -69,14 +68,14 @@ html, body {
   background: inherit;
   box-shadow: inherit;
   opacity: 0.5;
-  animation: pulseLine 1.5s infinite alternate, flicker var(--flicker-duration) infinite alternate, pixelate 0.5s infinite alternate;
+  animation: pulseLine 1.5s infinite alternate;
 }
 .line.horizontal {
   top: 50%;
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards, flicker var(--flicker-duration) infinite alternate, pixelate 0.5s infinite alternate;
+  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
 }
 .line.horizontal.right {
   right: 0;
@@ -89,7 +88,7 @@ html, body {
   height: 50vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards, flicker var(--flicker-duration) infinite alternate, pixelate 0.5s infinite alternate;
+  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
 .line.vertical.bottom {
   bottom: 0;
@@ -115,19 +114,6 @@ html, body {
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
-}
-@keyframes flicker {
-  0% { filter: brightness(1) hue-rotate(0deg); }
-  20% { filter: brightness(1.3) hue-rotate(5deg); }
-  40% { filter: brightness(0.8) hue-rotate(-5deg); }
-  60% { filter: brightness(1) hue-rotate(0deg); }
-  80% { filter: brightness(1.2) hue-rotate(3deg); }
-  100% { filter: brightness(1) hue-rotate(0deg); }
-}
-@keyframes pixelate {
-  0% { filter: none; }
-  50% { filter: blur(1px) contrast(1.5); }
-  100% { filter: none; }
 }
 #lens-effect {
   pointer-events: none;
@@ -191,11 +177,11 @@ html, body {
   height: 100vh;
   background: rgba(255,0,0,0.8);
   z-index: 13;
-  animation: sweep 3s linear infinite;
+  animation: sweep var(--sweep-duration) linear infinite;
 }
 @keyframes sweep {
-  0% { left: -2px; }
-  100% { left: 100vw; }
+  from { left: -2px; }
+  to { left: 100vw; }
 }
 #pulse-ring {
   pointer-events: none;
@@ -208,9 +194,36 @@ html, body {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   z-index: 14;
-  animation: pulse 2s infinite;
+  animation: pulse var(--pulse-duration) infinite;
 }
 @keyframes pulse {
   0% { width: 10px; height: 10px; opacity: 1; }
   100% { width: 200px; height: 200px; opacity: 0; }
+}
+#circuit-background {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url("circuit-pattern.svg");
+  opacity: 0.1;
+  z-index: 8;
+}
+#static-jitter {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(to bottom, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 4px);
+  animation: phaseShift 0.1s infinite linear;
+  z-index: 9;
+}
+@keyframes phaseShift {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
 }
