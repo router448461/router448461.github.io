@@ -53,7 +53,7 @@ if (navigator.geolocation) {
     (position) => {
       const { latitude, longitude } = position.coords;
       const sunPos = SunCalc.getPosition(new Date(), latitude, longitude);
-      // if sun altitude > 0, it's day; otherwise, it's night.
+      // If sun altitude > 0, it's day; otherwise, it's night.
       const isDay = sunPos.altitude > 0;
       const gradient = isDay
         ? 'linear-gradient(to bottom, rgba(255, 255, 0, 0.2), rgba(255, 255, 0, 0))'
@@ -62,7 +62,7 @@ if (navigator.geolocation) {
     },
     (err) => {
       console.error("Error fetching geolocation:", err);
-      // If geolocation fails, the default (day) overlay remains.
+      // If geolocation fails (or is denied), the default (day) overlay remains.
     }
   );
 } else {
@@ -72,25 +72,8 @@ if (navigator.geolocation) {
 map.on('load', () => {
   hideMapElements();
 
-  // With CSS changed, the map is visible immediately.
-  // Start the line animations.
+  // Start the line animations immediately.
   document.querySelectorAll('.line').forEach((el) => {
     el.style.animationPlayState = 'running';
   });
-
-  // Play background audio instantly.
-  const audioBg = document.getElementById('audio-bg');
-  if (audioBg) {
-    audioBg.play().catch((e) =>
-      console.log("Background audio play was prevented:", e)
-    );
-  }
-
-  // Play alert audio instantly (no delay).
-  const audioAlert = document.getElementById('audio-alert');
-  if (audioAlert) {
-    audioAlert.play().catch((e) =>
-      console.log("Alert audio play was prevented:", e)
-    );
-  }
 });
