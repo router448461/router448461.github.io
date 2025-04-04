@@ -1,85 +1,207 @@
-// Set Mapbox access token and initialize the map.
-mapboxgl.accessToken =
-  'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
-
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v10',
-  center: [0, 0],
-  zoom: 2,
-  attributionControl: false,
-});
-
-// Disable all user interactions.
-map.dragPan.disable();
-map.dragRotate.disable();
-map.scrollZoom.disable();
-map.doubleClickZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-map.touchZoomRotate.disable();
-
-// Hide undesired map labels and boundaries.
-function hideMapElements() {
-  const style = map.getStyle();
-  if (!style || !style.layers) return;
-  style.layers.forEach((layer) => {
-    if (
-      layer.type === 'symbol' ||
-      (layer.id &&
-        (layer.id.includes('boundary') ||
-         layer.id.includes('admin-0') ||
-         layer.id.includes('admin-1')))
-    ) {
-      map.setLayoutProperty(layer.id, 'visibility', 'none');
-    }
-  });
+:root {
+  --edge-color: #8B0000;
+  --center-color: #FF0000;
+  --min-thickness: 0.5px;
+  --max-thickness: 2px;
+  /* Cross lines draw over 9 seconds */
+  --line-duration: 9s;
+  --animation-delay: 0s;
+  --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --shadow-blur: 5px;
+  --shadow-spread: 1px;
 }
 
-// When the map has fully loaded, reveal it and start all animations.
-map.on('load', () => {
-  hideMapElements();
-  document.getElementById('map').style.visibility = 'visible';
-  
-  // Unpause the cross-line animations.
-  document.querySelectorAll('.line').forEach((el) => {
-    el.style.animationPlayState = 'running';
-  });
-  
-  // Start the stopwatch immediately.
-  startStopwatch();
-  
-  // Play background audio.
-  const audioBg = document.getElementById('audio-bg');
-  if (audioBg) {
-    audioBg.play().catch((e) => console.log("Background audio play was prevented:", e));
-  }
-  
-  // After the cross lines finish drawing (9 seconds), play the alert audio.
-  setTimeout(() => {
-    const audioAlert = document.getElementById('audio-alert');
-    if (audioAlert) {
-      audioAlert.play().catch((e) => console.log("Alert audio play was prevented:", e));
-    }
-  }, 9000);
-});
-
-// Stopwatch functionality.
-let stopwatchStart = Date.now();
-function startStopwatch() {
-  updateStopwatch();
-  setInterval(updateStopwatch, 50);
+/* Disable text selection and always use default pointer */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 
-function updateStopwatch() {
-  const clockEl = document.getElementById('clock');
-  const elapsed = Date.now() - stopwatchStart;
-  const minutes = Math.floor(elapsed / 60000)
-    .toString()
-    .padStart(2, '0');
-  const seconds = Math.floor((elapsed % 60000) / 1000)
-    .toString()
-    .padStart(2, '0');
-  const milliseconds = (elapsed % 1000).toString().padStart(3, '0');
-  clockEl.textContent = `${minutes}:${seconds}:${milliseconds}`;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Map styling – filtered for increased contrast and a tactical look */
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;  /* will be enabled when the map has fully loaded */
+  filter: contrast(1.2) brightness(0.9);
+}
+
+.mapboxgl-canvas {
+  cursor: default !important;
+}
+
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}
+
+/* Overlay for the cross lines */
+#overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+}
+
+/* Base style for cross lines – animations start paused */
+.line {
+  position: absolute;
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  animation: pulseLine 1.5s infinite alternate;
+  animation-play-state: paused;
+}
+
+/* Simple pulse for visual effect */
+@keyframes pulseLine {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+
+/* Horizontal cross lines */
+.line.horizontal {
+  top: 50%;
+  width: 50vw;
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: expandHorizontal var(--line-duration) forwards,
+             growThickness var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+}
+
+.line.horizontal.right {
+  right: 0;
+  left: auto;
+  transform-origin: right center;
+}
+
+@keyframes expandHorizontal {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes growThickness {
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
+}
+
+/* Vertical cross lines */
+.line.vertical {
+  left: 50%;
+  height: 50vh;
+  width: var(--min-thickness);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: expandVertical var(--line-duration) forwards,
+             growThicknessV var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+}
+
+.line.vertical.bottom {
+  bottom: 0;
+  top: auto;
+  transform-origin: bottom center;
+}
+
+@keyframes expandVertical {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes growThicknessV {
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
+}
+
+/* Scanlines overlay for a digital CRT effect */
+#scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 15;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Radar sweep overlay – a rotating red circle in the center */
+#radar {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  margin-left: -150px; /* half the width */
+  margin-top: -150px;  /* half the height */
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+  animation: radarRotate 3s linear infinite;
+  z-index: 20;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* HUD styling for the top-right panel */
+#hud {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--center-color);
+  border-radius: 4px;
+  font-family: 'VT323', monospace;
+  color: var(--center-color);
+  font-size: 24px;
+  text-align: right;
+  z-index: 25;
+}
+
+/* Timer styling inside the HUD */
+#timer {
+  margin: 0;
 }
