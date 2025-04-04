@@ -27,11 +27,11 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Hide initially to avoid flicker before style adjustments */
+  /* Hide initially to avoid flicker */
   visibility: hidden;
 }
 
-/* Default cursor on Mapbox canvas */
+/* Default cursor */
 .mapboxgl-canvas {
   cursor: default !important;
 }
@@ -42,7 +42,7 @@ html, body {
   display: none !important;
 }
 
-/* Overlay container for red lines */
+/* Overlay container for all red lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -57,7 +57,7 @@ html, body {
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  /* Subtle pulsing effect for a digital feel */
+  /* Subtle pulsing effect */
   animation: pulseLine 1.5s infinite alternate;
 }
 
@@ -67,7 +67,8 @@ html, body {
 }
 
 /* --- Cross Lines --- */
-/* Horizontal lines extending from the center to the sides */
+
+/* Horizontal cross lines: extend from center outwards */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -83,7 +84,7 @@ html, body {
   transform: scaleX(0);
   transform-origin: left center;
   animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+             growThickness var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
@@ -98,12 +99,12 @@ html, body {
   to { transform: scaleX(1); }
 }
 
-@keyframes growThicknessH {
+@keyframes growThickness {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* Vertical lines extending from the center upward/downward */
+/* Vertical cross lines: extend from center upward/downward */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -140,78 +141,77 @@ html, body {
 }
 
 /* --- Triangle Lines --- */
-/* These three lines use similar backgrounds and animations as the cross lines. 
-   Their positions are fixed so that:
-   • The horizontal (base) triangle line spans from 25% to 75% (ab)
-   • The left diagonal (ac) starts at (25%,65%) and rotates toward (50%,30%)
-   • The right diagonal (bc) starts at (75%,65%) and rotates toward (50%,30%) */
-   
-/* Horizontal triangle line – spans the top edge of the triangle */
+/* These lines use the same background and animation as the cross lines.  
+   Their fixed positions are chosen so that their endpoints come from:
+   • Top left: (25%, 35%)
+   • Top right: (75%, 35%)
+   • Middle bottom: (50%, 75%)
+   This forms an inverted triangle (base at top, apex at bottom) that surrounds the crosshair. */
+
+/* Horizontal triangle side (base) */
 .line.triangle.ab {
   position: absolute;
-  top: 65%;
+  top: 35%;
   left: 25%;
   width: 50%;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
   transform: scaleX(0);
   transform-origin: left;
   animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+             growThickness var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Left diagonal triangle line – goes from (25%,65%) toward (50%,30%) */
+/* Left diagonal triangle side from top left vertex [(25%,35%)] to bottom apex [(50%,75%)] */
 .line.triangle.ac {
   position: absolute;
-  top: 65%;
+  top: 35%;
   left: 25%;
-  /* Fixed length approximated in vw */
-  width: 35vw;
+  width: 35vw; /* Adjust as needed for fixed length */
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
-  /* The angle from (25%,65%) to (50%,30%) is roughly –55° */
-  transform: rotate(-55deg) scaleX(0);
+  /* Rotate so it points from (25%,35%) toward (50%,75%); angle ~55deg */
+  transform: rotate(55deg) scaleX(0);
   transform-origin: left;
   animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+             growThickness var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Right diagonal triangle line – goes from (75%,65%) toward (50%,30%) */
+/* Right diagonal triangle side from top right vertex [(75%,35%)] to bottom apex [(50%,75%)] */
 .line.triangle.bc {
   position: absolute;
-  top: 65%;
+  top: 35%;
   right: 25%;
   width: 35vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to left,
-    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0,0,0,0.9) 0%,
     var(--edge-color) 15%,
     var(--center-color) 50%,
     var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0,0,0,0.9) 100%
   );
-  /* The angle from (75%,65%) to (50%,30%) is roughly 55° */
-  transform: rotate(55deg) scaleX(0);
+  transform: rotate(-55deg) scaleX(0);
   transform-origin: right;
   animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+             growThickness var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
