@@ -3,7 +3,7 @@ const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
   center: [0, 0],
-  zoom: 2,
+  zoom: 1.5,  // Zoomed out to show the entire world
   attributionControl: false
 });
 
@@ -16,25 +16,27 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Update overlay and target coordinates on mouse move
+// Real-time coordinate tracking
+map.on('load', () => {
+  const mapContainer = map.getContainer();
+  mapContainer.addEventListener('mousemove', (e) => {
+    const rect = mapContainer.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const coords = map.unproject([mouseX, mouseY]);
+    const lat = coords.lat.toFixed(3);
+    const lng = coords.lng.toFixed(3);
+    document.getElementById('target-coords').innerText = `TARGET: ${lat}, ${lng}`;
+  });
+});
+
+// Parallax effect for overlay, map, and HUD
 document.addEventListener('mousemove', function(e) {
-  // Parallax effect for overlay, map, and HUD
   const x = (e.clientX / window.innerWidth - 0.5) * 10;
   const y = (e.clientY / window.innerHeight - 0.5) * 10;
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
   document.getElementById('hud').style.transform = `translate(${x/2}px, ${y/2}px)`;
-
-  // Get mouse position relative to map container
-  const rect = map.getContainer().getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
-
-  // Convert to geographic coordinates
-  const coords = map.unproject([mouseX, mouseY]);
-  const lat = coords.lat.toFixed(3);
-  const lng = coords.lng.toFixed(3);
-  document.getElementById('target-coords').innerText = `TARGET: ${lat}, ${lng}`;
 });
 
 // Generate random comms text
