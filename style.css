@@ -29,6 +29,13 @@ html, body {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9);
+  border: 5px solid rgba(255, 0, 0, 0.7);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.5);
+  animation: glow 1.5s infinite alternate;
+}
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(255, 0, 0, 0.7), inset 0 0 5px rgba(255, 0, 0, 0.4); }
+  to { box-shadow: 0 0 15px rgba(255, 0, 0, 1), inset 0 0 15px rgba(255, 0, 0, 0.6); }
 }
 .mapboxgl-canvas {
   cursor: default !important;
@@ -159,4 +166,51 @@ html, body {
   background-repeat: repeat;
   background-size: cover;
   z-index: 15;
+}
+#scanning-grid {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 12;
+  background: repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,0,0,0.2) 20px), repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,0,0,0.2) 20px);
+  animation: scanGrid 5s linear infinite;
+}
+@keyframes scanGrid {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 20px 20px, 20px 20px; }
+}
+#laser-scan {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 2px;
+  height: 100vh;
+  background: rgba(255,0,0,0.8);
+  z-index: 13;
+  animation: sweep 3s linear infinite;
+}
+@keyframes sweep {
+  0% { left: -2px; }
+  100% { left: 100vw; }
+}
+#pulse-ring {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255,0,0,0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 14;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { width: 10px; height: 10px; opacity: 1; }
+  100% { width: 200px; height: 200px; opacity: 0; }
 }
