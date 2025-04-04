@@ -3,7 +3,7 @@ const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
   center: [0, 0],
-  zoom: 1.5,  // Zoomed out to show the entire world
+  zoom: 1.5,
   attributionControl: false
 });
 
@@ -32,8 +32,8 @@ map.on('load', () => {
 
 // Parallax effect for overlay, map, and HUD
 document.addEventListener('mousemove', function(e) {
-  const x = (e.clientX / window.innerWidth - 0.5) * 10;
-  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  const x = (e.clientX / window.innerWidth - 0.5) * 15;
+  const y = (e.clientY / window.innerHeight - 0.5) * 15;
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
   document.getElementById('hud').style.transform = `translate(${x/2}px, ${y/2}px)`;
