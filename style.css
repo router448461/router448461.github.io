@@ -46,6 +46,7 @@ html, body {
   z-index: 10;
 }
 
+/* Common styling for all lines */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -57,6 +58,7 @@ html, body {
   to { filter: brightness(1.2); }
 }
 
+/* Horizontal lines */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -82,16 +84,7 @@ html, body {
   transform-origin: right center;
 }
 
-@keyframes expandHorizontal {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@keyframes growThickness {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
-}
-
+/* Vertical lines */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -117,6 +110,16 @@ html, body {
   transform-origin: bottom center;
 }
 
+@keyframes expandHorizontal {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes growThickness {
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
+}
+
 @keyframes expandVertical {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
@@ -127,11 +130,13 @@ html, body {
   to { width: var(--max-thickness); }
 }
 
+/* Triangle lines – using the same style as horizontal lines */
 .line.triangle.ab {
   position: absolute;
-  top: 35%;
-  left: 25%;
-  width: 50%;
+  /* Vertex A to Vertex B (top horizontal side) */
+  top: 15%;
+  left: 15%;
+  width: 70%;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
@@ -150,9 +155,10 @@ html, body {
 
 .line.triangle.ac {
   position: absolute;
-  top: 35%;
-  left: 25%;
-  width: 35vw;
+  /* From Vertex A (top left) to Vertex C (bottom center) */
+  top: 15%;
+  left: 15%;
+  width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to right,
@@ -162,8 +168,7 @@ html, body {
     var(--edge-color) 85%,
     rgba(0,0,0,0.9) 100%
   );
-  
-  transform: rotate(55deg) scaleX(0);
+  transform: rotate(63deg) scaleX(0);
   transform-origin: left;
   animation: expandHorizontal var(--line-duration) forwards,
              growThickness var(--line-duration) forwards;
@@ -172,9 +177,10 @@ html, body {
 
 .line.triangle.bc {
   position: absolute;
-  top: 35%;
-  right: 25%;
-  width: 35vw;
+  /* From Vertex B (top right) to Vertex C (bottom center) */
+  top: 15%;
+  right: 15%;
+  width: 50vw;
   height: var(--min-thickness);
   background: linear-gradient(
     to left,
@@ -184,7 +190,7 @@ html, body {
     var(--edge-color) 85%,
     rgba(0,0,0,0.9) 100%
   );
-  transform: rotate(-55deg) scaleX(0);
+  transform: rotate(-63deg) scaleX(0);
   transform-origin: right;
   animation: expandHorizontal var(--line-duration) forwards,
              growThickness var(--line-duration) forwards;
