@@ -24,10 +24,16 @@
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
-      <!-- Diagonal lines forming a triangle from screen edges to center -->
-      <div class="line diagonal tl"></div>
-      <div class="line diagonal tr"></div>
-      <div class="line diagonal bm"></div>
+      
+      <!-- Triangle drawn via an inline SVG -->
+      <svg id="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <!-- Top side: from (30,35) to (70,35) -->
+        <line class="triangle-line" x1="30" y1="35" x2="70" y2="35" />
+        <!-- Right side: from (70,35) to (50,80) -->
+        <line class="triangle-line" x1="70" y1="35" x2="50" y2="80" />
+        <!-- Left side: from (50,80) to (30,35) -->
+        <line class="triangle-line" x1="50" y1="80" x2="30" y2="35" />
+      </svg>
     </div>
 
     <!-- Info container for status message and clock (positioned top-right) -->
@@ -35,6 +41,9 @@
       <div id="status">ESTABLISHING VIDEO UPLINK...</div>
       <div id="clock" style="display: none;"></div>
     </div>
+
+    <!-- Flash overlay for full-screen flash effect -->
+    <div id="flash-overlay"></div>
 
     <!-- Mapbox GL JS library -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
