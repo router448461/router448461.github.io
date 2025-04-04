@@ -3,7 +3,7 @@
   --center-color: #FF0000;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  /* Total drawing duration for the lines: 9 seconds */
+  /* Cross lines draw over 9 seconds */
   --line-duration: 9s;
   --animation-delay: 0s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
@@ -11,7 +11,7 @@
   --shadow-spread: 1px;
 }
 
-/* Prevent text selection and disable the highlighter cursor globally */
+/* Disable text selection and ensure a default cursor everywhere */
 * {
   user-select: none;
   -webkit-user-select: none;
@@ -29,14 +29,14 @@ body {
   overflow: hidden;
 }
 
-/* Map styling with a slight contrast/brightness filter for a militaristic vibe */
+/* Map styling – filtered for extra contrast/brightness to evoke military tech */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  visibility: hidden;
+  visibility: hidden; /* becomes visible when the map fully loads */
   filter: contrast(1.2) brightness(0.9);
 }
 
@@ -60,7 +60,7 @@ body {
   z-index: 10;
 }
 
-/* Base styling for all lines – they start paused until unpaused by JS */
+/* Base style for all cross lines – they begin paused */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
@@ -69,15 +69,11 @@ body {
 }
 
 @keyframes pulseLine {
-  from {
-    filter: brightness(1);
-  }
-  to {
-    filter: brightness(1.2);
-  }
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
 }
 
-/* Horizontal lines */
+/* Horizontal cross lines */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -104,24 +100,16 @@ body {
 }
 
 @keyframes expandHorizontal {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 @keyframes growThickness {
-  from {
-    height: var(--min-thickness);
-  }
-  to {
-    height: var(--max-thickness);
-  }
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
 }
 
-/* Vertical lines */
+/* Vertical cross lines */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -148,24 +136,16 @@ body {
 }
 
 @keyframes expandVertical {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
-  from {
-    width: var(--min-thickness);
-  }
-  to {
-    width: var(--max-thickness);
-  }
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
 }
 
-/* Scanline overlay for a digital CRT feel */
+/* Scanlines overlay for a digital CRT look */
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -183,7 +163,28 @@ body {
   );
 }
 
-/* Stopwatch clock styling with digital font and a subtle glitch effect */
+/* Radar sweep overlay (rotating circle) */
+#radar {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  margin-left: -150px;
+  margin-top: -150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+  animation: radarRotate 3s linear infinite;
+  z-index: 20;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Stopwatch clock styling – uses a digital font and a subtle glitch effect */
 #clock {
   position: fixed;
   top: 20px;
@@ -197,7 +198,7 @@ body {
   animation: glitch 1s infinite alternate;
 }
 
-/* Glitch effect keyframes for the clock */
+/* Glitch effect keyframes for clock and status messages */
 @keyframes glitch {
   0% {
     transform: translate(0);
@@ -223,4 +224,25 @@ body {
     transform: translate(0);
     text-shadow: 2px 2px 0 var(--edge-color), -2px -2px 0 var(--center-color);
   }
+}
+
+/* Status messages container (top left) */
+#status-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 20;
+}
+
+#status,
+#extra-status {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--center-color);
+  text-shadow: 0 0 var(--shadow-blur) var(--box-shadow-color);
+  background-color: transparent;
+  cursor: default;
+  animation: glitch 1.5s infinite alternate;
+  margin: 0;
+  padding: 0;
 }
