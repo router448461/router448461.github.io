@@ -1,5 +1,4 @@
-mapboxgl.accessToken =
-  'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -9,7 +8,7 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-// Disable all interactive gestures
+// Disable interactive gestures
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -34,54 +33,52 @@ function hideMapElements() {
   });
 }
 
-// Add a day-night overlay based on the visitor's location using SunCalc.
-function addDayNightOverlay(map) {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const sunPos = SunCalc.getPosition(new Date(), latitude, longitude);
-        // If the sun's altitude is greater than 0, it's day; otherwise, it's night.
-        const isDay = sunPos.altitude > 0;
-        const gradient = isDay
-          ? 'linear-gradient(to bottom, rgba(255, 255, 0, 0.2), rgba(255, 255, 0, 0))'
-          : 'linear-gradient(to bottom, rgba(0, 0, 139, 0.3), rgba(0, 0, 139, 0))';
+// Create the day–night overlay element immediately with a default "day" gradient.
+const dayNightOverlay = document.createElement('div');
+dayNightOverlay.id = 'dayNightOverlay';
+dayNightOverlay.style.position = 'absolute';
+dayNightOverlay.style.top = '0';
+dayNightOverlay.style.left = '0';
+dayNightOverlay.style.width = '100vw';
+dayNightOverlay.style.height = '100vh';
+dayNightOverlay.style.pointerEvents = 'none';
+dayNightOverlay.style.zIndex = '5';
+// Default overlay (day)
+dayNightOverlay.style.background = 'linear-gradient(to bottom, rgba(255,255,0,0.2), rgba(255,255,0,0))';
+document.body.appendChild(dayNightOverlay);
 
-        const overlay = document.createElement('div');
-        overlay.id = 'dayNightOverlay';
-        overlay.style.position = 'absolute';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.width = '100vw';
-        overlay.style.height = '100vh';
-        overlay.style.pointerEvents = 'none';
-        // Ensure the day/night overlay sits beneath the animated lines but above the map.
-        overlay.style.zIndex = '5';
-        overlay.style.background = gradient;
-
-        document.body.appendChild(overlay);
-      },
-      (err) => {
-        console.error("Error fetching geolocation:", err);
-      }
-    );
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-  }
+// Update the overlay based on the visitor's geolocation using SunCalc.
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const sunPos = SunCalc.getPosition(new Date(), latitude, longitude);
+      // if sun altitude > 0, it's day; otherwise, it's night.
+      const isDay = sunPos.altitude > 0;
+      const gradient = isDay
+        ? 'linear-gradient(to bottom, rgba(255, 255, 0, 0.2), rgba(255, 255, 0, 0))'
+        : 'linear-gradient(to bottom, rgba(0, 0, 139, 0.3), rgba(0, 0, 139, 0))';
+      dayNightOverlay.style.background = gradient;
+    },
+    (err) => {
+      console.error("Error fetching geolocation:", err);
+      // If geolocation fails, the default (day) overlay remains.
+    }
+  );
+} else {
+  console.error("Geolocation is not supported by this browser.");
 }
 
 map.on('load', () => {
   hideMapElements();
 
-  // Make the map visible immediately
-  document.getElementById('map').style.visibility = 'visible';
-
-  // Start the line animations immediately
+  // With CSS changed, the map is visible immediately.
+  // Start the line animations.
   document.querySelectorAll('.line').forEach((el) => {
     el.style.animationPlayState = 'running';
   });
 
-  // Play background audio instantly
+  // Play background audio instantly.
   const audioBg = document.getElementById('audio-bg');
   if (audioBg) {
     audioBg.play().catch((e) =>
@@ -89,14 +86,11 @@ map.on('load', () => {
     );
   }
 
-  // Play alert audio without delay
+  // Play alert audio instantly (no delay).
   const audioAlert = document.getElementById('audio-alert');
   if (audioAlert) {
     audioAlert.play().catch((e) =>
       console.log("Alert audio play was prevented:", e)
     );
   }
-
-  // Add the day–night overlay based on visitor location.
-  addDayNightOverlay(map);
 });
