@@ -13,9 +13,6 @@
 
 * {
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   cursor: default;
 }
 
@@ -29,7 +26,7 @@ body {
   background-color: #000;
 }
 
-/* Map container – shown immediately */
+/* Hide the map container initially to prevent any flash of labels */
 #map {
   position: absolute;
   top: 0;
@@ -37,8 +34,7 @@ body {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9);
-  opacity: 1;
-  transition: opacity 0.5s ease;
+  visibility: hidden;
 }
 
 .mapboxgl-canvas {
@@ -61,12 +57,13 @@ body {
   z-index: 10;
 }
 
-/* Red lines styling – initially paused */
+/* Red lines styling */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
-  animation-play-state: paused;
+  /* Start animation immediately */
+  animation-play-state: running;
 }
 
 @keyframes pulseLine {
@@ -101,12 +98,12 @@ body {
 
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  to   { transform: scaleX(1); }
 }
 
 @keyframes growThickness {
   from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
+  to   { height: var(--max-thickness); }
 }
 
 .line.vertical {
@@ -136,29 +133,10 @@ body {
 
 @keyframes expandVertical {
   from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  to   { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
-}
-
-/* Triangle styling – occupies the full overlay and uses the same pulse animation */
-#triangle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 11;
-}
-
-#triangle polygon {
-  fill: none;
-  stroke: var(--center-color);
-  stroke-width: var(--max-thickness);
-  animation: pulseLine 1.5s infinite alternate;
-  animation-play-state: paused;
+  to   { width: var(--max-thickness); }
 }
