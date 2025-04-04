@@ -24,9 +24,14 @@ function applyGlitchEffect(element, intensity) {
   }
   glitch();
 }
+function applyGlitchToLines() {
+  const lines = document.querySelectorAll('.line');
+  lines.forEach(line => {
+    applyGlitchEffect(line, 1.5);
+  });
+}
 map.on('load', function() {
   const lens = document.getElementById('lens-effect');
-  if (lens) {
-    applyGlitchEffect(lens, 2);
-  }
+  if (lens) { applyGlitchEffect(lens, 2); }
+  applyGlitchToLines();
 });
