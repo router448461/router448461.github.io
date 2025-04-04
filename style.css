@@ -1,17 +1,17 @@
 :root {
-  /* Colors and thicknesses */
+  /* Colors and dimensions for a “digital/dangerous” look */
   --edge-color: #8B0000;       /* dark red */
   --center-color: #FF0000;     /* bright red */
   --min-thickness: 0.5px;      /* very thin at the edges */
-  --max-thickness: 2px;        /* moderately thicker in the middle */
-  --line-duration: 3s;         /* each red line animates over 3 seconds */
-  --animation-delay: 3s;       /* wait 3 seconds before starting the animations */
+  --max-thickness: 2px;        /* slightly thicker in the center */
+  --line-duration: 3s;         /* each line animates over 3 seconds */
+  --animation-delay: 3s;       /* start animations 3 seconds after load */
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
 }
 
-/* Reset and occupy the full viewport */
+/* Reset and fill the viewport */
 html,
 body {
   margin: 0;
@@ -21,7 +21,7 @@ body {
   overflow: hidden;
 }
 
-/* Map container: full screen (initially hidden to prevent flicker) */
+/* Map container (initially hidden to avoid visual flicker) */
 #map {
   position: absolute;
   top: 0;
@@ -31,12 +31,12 @@ body {
   visibility: hidden;
 }
 
-/* Default cursor on Mapbox canvas */
+/* Default cursor */
 .mapboxgl-canvas {
   cursor: default !important;
 }
 
-/* Hide Mapbox control elements */
+/* Hide Mapbox attribution/control elements */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
@@ -53,10 +53,11 @@ body {
   z-index: 10;
 }
 
-/* --- Animated Red Lines (base style) --- */
+/* --- Cross Lines (Horizontal & Vertical) --- */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  /* Subtle pulsing effect */
   animation: pulseLine 1.5s infinite alternate;
 }
 
@@ -65,7 +66,7 @@ body {
   to { filter: brightness(1.2); }
 }
 
-/* Horizontal lines (from center to left/right edges) */
+/* Horizontal lines: extend from the center to the screen sides */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -92,6 +93,7 @@ body {
 }
 
 @keyframes expandHorizontal {
+  from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
 
@@ -100,7 +102,7 @@ body {
   to { height: var(--max-thickness); }
 }
 
-/* Vertical lines (from center to top/bottom edges) */
+/* Vertical lines: extend from center to top and bottom edges */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -127,6 +129,7 @@ body {
 }
 
 @keyframes expandVertical {
+  from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
 
@@ -135,13 +138,16 @@ body {
   to { width: var(--max-thickness); }
 }
 
-/* --- Diagonal Lines for the Triangle --- */
-/* They use a custom property "--rotate" so each element can “lock in” its rotation. */
-.line.diagonal {
+/* --- Diagonal Lines Forming a Triangle (from screen edges inward) --- */
+
+/* Top‑left diagonal: starts at top left, fixed at that corner */
+.line.diagonal.tl {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform-origin: left center;
+  top: 0;
+  left: 0;
+  transform-origin: left top;
+  width: 70vmin;
+  height: var(--min-thickness);
   background: linear-gradient(
     to right,
     rgba(0, 0, 0, 0.9) 0%,
@@ -150,48 +156,76 @@ body {
     var(--edge-color) 85%,
     rgba(0, 0, 0, 0.9) 100%
   );
-  animation: expandDiagonal var(--line-duration) forwards,
-             growThicknessDiagonal var(--line-duration) forwards;
+  animation: expandDiagonalTL var(--line-duration) forwards,
+             growThicknessDiag var(--line-duration) forwards;
   animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Top‑left diagonal: from center toward vertex near (30%,35%) */
-/* Computed length (approx): 25vmin; rotation set via custom property */
-.line.diagonal.tl {
-  width: 25vmin;
-  height: var(--min-thickness);
-  --rotate: -143deg;
-  transform: rotate(var(--rotate)) scaleX(0);
+@keyframes expandDiagonalTL {
+  from { transform: rotate(45deg) scaleX(0); }
+  to { transform: rotate(45deg) scaleX(1); }
 }
 
-/* Top‑right diagonal: from center toward vertex near (70%,35%) */
+/* Top‑right diagonal: starts at top right */
 .line.diagonal.tr {
-  width: 25vmin;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform-origin: right top;
+  width: 70vmin;
   height: var(--min-thickness);
-  --rotate: -37deg;
-  transform: rotate(var(--rotate)) scaleX(0);
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  animation: expandDiagonalTR var(--line-duration) forwards,
+             growThicknessDiag var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 
-/* Bottom‑middle diagonal: from center toward vertex near (50%,80%) */
-/* (This one is a vertical line when animated, but added here for the triangle effect.) */
+@keyframes expandDiagonalTR {
+  from { transform: rotate(-45deg) scaleX(0); }
+  to { transform: rotate(-45deg) scaleX(1); }
+}
+
+/* Bottom‑middle diagonal: starts at bottom center */
 .line.diagonal.bm {
-  width: 30vmin;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform-origin: bottom center;
+  width: 50vmin;
   height: var(--min-thickness);
-  --rotate: 90deg;
-  transform: rotate(var(--rotate)) scaleX(0);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  /* Note the transform now includes a translate to center it horizontally */
+  animation: expandDiagonalBM var(--line-duration) forwards,
+             growThicknessDiag var(--line-duration) forwards;
+  animation-delay: var(--animation-delay), var(--animation-delay);
+  transform: translateX(-50%) rotate(90deg) scaleX(0);
 }
 
-@keyframes expandDiagonal {
-  from { transform: rotate(var(--rotate)) scaleX(0); }
-  to { transform: rotate(var(--rotate)) scaleX(1); }
+@keyframes expandDiagonalBM {
+  from { transform: translateX(-50%) rotate(90deg) scaleX(0); }
+  to { transform: translateX(-50%) rotate(90deg) scaleX(1); }
 }
 
-@keyframes growThicknessDiagonal {
+@keyframes growThicknessDiag {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
 
-/* --- Info Container (for status message and clock) --- */
+/* --- Info Container --- */
 #info {
   position: fixed;
   top: 20px;
@@ -203,13 +237,12 @@ body {
   font-size: 20px;
 }
 
-/* Flash animation only applied to the status message */
-@keyframes flash {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+/* --- Screen Flash Effect --- */
+@keyframes flashScreen {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(255,255,255,0.8); }
+  100% { background-color: transparent; }
 }
-
-.flash {
-  animation: flash 0.5s ease;
+.flashScreen {
+  animation: flashScreen 0.5s ease;
 }
