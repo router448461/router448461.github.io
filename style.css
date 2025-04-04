@@ -1,6 +1,7 @@
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
+  --scan-color: #556B2F; /* Military green */
   --min-thickness: 0.5px;
   --max-thickness: 3px;
   --line-duration: 9s;
@@ -197,38 +198,38 @@ html, body {
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
-  left: -2px;
-  width: 2px;
-  height: 100vh;
-  background: rgba(85, 107, 47, 0.8);
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 15px 5px rgba(85, 107, 47, 1);
+  left: 0;
+  width: 100vw;
+  height: 2px;
+  background: var(--scan-color);
+  animation: scanVertical 9s linear infinite, pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 15px 5px var(--scan-color);
 }
 
 #laser-scan-vertical {
   position: absolute;
-  top: -2px;
+  top: 0;
   left: 0;
-  width: 100vw;
-  height: 2px;
-  background: rgba(85, 107, 47, 0.8);
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 15px 5px rgba(85, 107, 47, 1);
+  width: 2px;
+  height: 100vh;
+  background: var(--scan-color);
+  animation: scanHorizontal 9s linear infinite, pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 15px 5px var(--scan-color);
 }
 
-@keyframes sweepHorizontal {
-  from { left: -2px; }
-  to { left: 100vw; }
+@keyframes scanHorizontal {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
 }
 
-@keyframes sweepVertical {
-  from { top: -2px; }
-  to { top: 100vh; }
+@keyframes scanVertical {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
-  to { box-shadow: 0 0 20px 5px rgba(85, 107, 47, 1); }
+  from { box-shadow: 0 0 10px 2px var(--scan-color); }
+  to { box-shadow: 0 0 20px 5px var(--scan-color); }
 }
 
 #hud {
@@ -243,6 +244,15 @@ html, body {
   background: rgba(0, 0, 0, 0.3);
   padding: 10px;
   border: 1px solid #FF0000;
+}
+
+#target-coords {
+  animation: flickerCoords 0.1s infinite;
+}
+
+@keyframes flickerCoords {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 #reticle {
