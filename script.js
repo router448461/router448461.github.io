@@ -1,37 +1,183 @@
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
-
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v10',
-  center: [0, 0],
-  zoom: 2,
-  attributionControl: false,
-});
-
-// Disable map interactions
-map.dragPan.disable();
-map.dragRotate.disable();
-map.scrollZoom.disable();
-map.doubleClickZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
-map.touchZoomRotate.disable();
-
-// A JavaScript glitch effect applied to a given element using random transforms
-function applyGlitchEffect(element, intensity = 2) {
-  function glitch() {
-    const dx = (Math.random() * intensity * 2) - intensity;
-    const dy = (Math.random() * intensity * 2) - intensity;
-    const skew = (Math.random() * intensity * 0.2) - (intensity * 0.1);
-    element.style.transform = `translate(${dx}px, ${dy}px) skew(${skew}deg)`;
-    setTimeout(glitch, Math.random() * 200 + 50);
-  }
-  glitch();
+:root {
+  --edge-color: #8B0000;
+  --center-color: #FF0000;
+  --min-thickness: 0.5px;
+  --max-thickness: 2px;
+  --line-duration: 9s;
+  --horiz-delay: 0s;
+  --vert-delay: 0.5s;
+  --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --shadow-blur: 5px;
+  --shadow-spread: 1px;
 }
 
-map.on('load', () => {
-  const lens = document.getElementById('lens-effect');
-  if (lens) {
-    applyGlitchEffect(lens, 2);
-  }
-});
+* {
+  user-select: none;
+  cursor: default;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  filter: contrast(1.2) brightness(0.9);
+}
+
+.mapboxgl-canvas {
+  cursor: default !important;
+}
+
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}
+
+#overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+}
+
+.line {
+  position: absolute;
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  animation: pulseLine 1.5s infinite alternate;
+  animation-play-state: running;
+}
+
+@keyframes pulseLine {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+
+.line.horizontal {
+  top: 50%;
+  width: 50vw;
+  height: var(--min-thickness);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
+  animation-delay: var(--horiz-delay), var(--horiz-delay);
+}
+
+.line.horizontal.right {
+  right: 0;
+  left: auto;
+  transform-origin: right center;
+}
+
+@keyframes expandHorizontal {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes growThickness {
+  from { height: var(--min-thickness); }
+  to { height: var(--max-thickness); }
+}
+
+.line.vertical {
+  left: 50%;
+  height: 50vh;
+  width: var(--min-thickness);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation-delay: var(--vert-delay), var(--vert-delay);
+}
+
+.line.vertical.bottom {
+  bottom: 0;
+  top: auto;
+  transform-origin: bottom center;
+}
+
+@keyframes expandVertical {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes growThicknessV {
+  from { width: var(--min-thickness); }
+  to { width: var(--max-thickness); }
+}
+
+#lens-effect {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 15;
+  background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+#scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 20;
+  animation: moveScanlines 0.2s infinite linear;
+}
+
+@keyframes moveScanlines {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
+#noise {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.05;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-size: cover;
+  z-index: 15;
+}
