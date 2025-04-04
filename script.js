@@ -19,20 +19,4 @@ document.addEventListener('mousemove', function(e) {
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
 });
-map.on('load', function() {
-  const lens = document.getElementById('lens-effect');
-  if (lens) {
-    applyGlitchEffect(lens, 2);
-  }
-});
-function applyGlitchEffect(element, intensity) {
-  intensity = intensity || 2;
-  function glitch() {
-    const dx = (Math.random() * intensity * 2) - intensity;
-    const dy = (Math.random() * intensity * 2) - intensity;
-    const skew = (Math.random() * intensity * 0.2) - (intensity * 0.1);
-    element.style.transform = `translate(${dx}px, ${dy}px) skew(${skew}deg)`;
-    setTimeout(glitch, Math.random() * 200 + 50);
-  }
-  glitch();
-}
+map.on('load', function() {});
