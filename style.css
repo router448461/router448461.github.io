@@ -3,13 +3,20 @@
   --center-color: #FF0000;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  /* Total drawing time for all lines: 2 seconds and 15 milliseconds */
+  /* Drawing duration: 2 seconds and 15 milliseconds */
   --line-duration: 2.015s;
-  /* Animations start immediately when unpaused */
   --animation-delay: 0s;
   --box-shadow-color: rgba(255, 0, 0, 0.7);
   --shadow-blur: 5px;
   --shadow-spread: 1px;
+}
+
+/* Prevent text selection and copying everywhere */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 html,
@@ -21,6 +28,7 @@ body {
   overflow: hidden;
 }
 
+/* Map styling */
 #map {
   position: absolute;
   top: 0;
@@ -39,6 +47,7 @@ body {
   display: none !important;
 }
 
+/* Overlay containing the cross lines */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -49,12 +58,12 @@ body {
   z-index: 10;
 }
 
-/* All lines share the same base styling and remain paused until unpaused by the script */
+/* Base style for all lines; they remain paused until unpaused by script */
 .line {
   position: absolute;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  /* A gentle pulse effect */
   animation: pulseLine 1.5s infinite alternate;
-  /* Start paused */
   animation-play-state: paused;
 }
 
@@ -67,11 +76,7 @@ body {
   }
 }
 
-/* --------------------------
-   Cross Lines (Horizontal & Vertical)
--------------------------- */
-
-/* Horizontal Lines */
+/* Horizontal lines */
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -97,25 +102,7 @@ body {
   transform-origin: right center;
 }
 
-@keyframes expandHorizontal {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes growThickness {
-  from {
-    height: var(--min-thickness);
-  }
-  to {
-    height: var(--max-thickness);
-  }
-}
-
-/* Vertical Lines */
+/* Vertical lines */
 .line.vertical {
   left: 50%;
   height: 50vh;
@@ -141,6 +128,24 @@ body {
   transform-origin: bottom center;
 }
 
+@keyframes expandHorizontal {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes growThickness {
+  from {
+    height: var(--min-thickness);
+  }
+  to {
+    height: var(--max-thickness);
+  }
+}
+
 @keyframes expandVertical {
   from {
     transform: scaleY(0);
@@ -159,85 +164,7 @@ body {
   }
 }
 
-/* --------------------------
-   Triangle Lines (Same Styling as Cross Lines)
-   --------------------------
-   Define triangle vertices at:
-   A: (15% from left, 15% from top)
-   B: (85% from left, 15% from top)
-   C: (50% from left, 85% from top)
-*/
-
-/* Side AB: top horizontal */
-.line.triangle.ab {
-  position: absolute;
-  top: 15%;
-  left: 15%;
-  width: 70%;
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThickness var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-}
-
-/* Side AC: from Vertex A (15%,15%) to Vertex C (50%,85%) */
-.line.triangle.ac {
-  position: absolute;
-  top: 15%;
-  left: 15%;
-  width: 50vw; /* approximate length */
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  transform: rotate(63deg) scaleX(0);
-  transform-origin: left;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThickness var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-}
-
-/* Side BC: from Vertex B (85%,15%) to Vertex C (50%,85%) */
-.line.triangle.bc {
-  position: absolute;
-  top: 15%;
-  right: 15%;
-  width: 50vw; /* approximate length */
-  height: var(--min-thickness);
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
-  transform: rotate(-63deg) scaleX(0);
-  transform-origin: right;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThickness var(--line-duration) forwards;
-  animation-delay: var(--animation-delay), var(--animation-delay);
-}
-
-/* --------------------------
-   Flash Overlay
--------------------------- */
-
+/* Flash overlay for the brief flash effect */
 #flash-overlay {
   position: fixed;
   top: 0;
@@ -250,9 +177,9 @@ body {
   z-index: 2000;
 }
 
+/* Flash animation lasting 1 millisecond */
 .flash {
-  /* Flash duration: 0.1s = 100ms */
-  animation: flashAnim 0.1s ease forwards;
+  animation: flashAnim 0.001s ease forwards;
 }
 
 @keyframes flashAnim {
@@ -267,13 +194,11 @@ body {
   }
 }
 
-/* --------------------------
-   Clock Styling (matches the red-line style)
--------------------------- */
+/* Stopwatch clock; positioned at top right */
 #clock {
   display: none;
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   font-family: monospace;
   font-size: 24px;
