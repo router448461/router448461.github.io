@@ -2,7 +2,7 @@
 mapboxgl.accessToken =
   'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-// Initialize the Mapbox map centered on [0, 0]
+// Initialize the Mapbox map centered on [0, 0] (the middle of the world)
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10',
@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-// Disable interactive controls to keep the presentation static.
+// Disable interactive controls so the presentation remains static.
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
-// Function to hide unwanted labels/boundaries on the map.
+// Function to hide unwanted map labels and boundaries.
 function hideMapElements() {
   const style = map.getStyle();
   if (!style || !style.layers) return;
@@ -39,11 +39,11 @@ function hideMapElements() {
 
 map.on('load', () => {
   hideMapElements();
-  // Reveal the map once styles are adjusted.
+  // Reveal the map once style adjustments are complete.
   document.getElementById('map').style.visibility = 'visible';
 
-  // After 6 seconds (3s delay + 3s animation), trigger the full-screen flash
-  // then remove the status message and show the clock.
+  // After 6 seconds (3s delay + 3s animation), flash the screen,
+  // then remove the status text and show the clock.
   setTimeout(() => {
     const flashEl = document.getElementById('flash-overlay');
     flashEl.classList.add('flash');
@@ -51,6 +51,7 @@ map.on('load', () => {
       flashEl.classList.remove('flash');
     }, 500);
 
+    // Hide status and show clock.
     document.getElementById('status').style.display = 'none';
     const clockEl = document.getElementById('clock');
     clockEl.style.display = 'block';
@@ -62,7 +63,7 @@ map.on('styledata', hideMapElements);
 
 // Start and update the local clock.
 function startClock() {
-  updateClock(); // update immediately
+  updateClock();
   setInterval(updateClock, 50);
 }
 
