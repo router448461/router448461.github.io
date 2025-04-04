@@ -1,193 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>World Center Map</title>
-  <!-- Mapbox GL JS stylesheet -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
-  <style>
-    :root {
-      --edge-color: darkred;
-      --center-color: red;
-      --min-thickness: 0.5px;
-      --max-thickness: 4px;
-      --line-duration: 3s;      /* Red lines animate over 3 seconds */
-      --animation-delay: 0s;    /* Start at the same time */
-      --box-shadow-color: rgba(139, 0, 0, 0.9);
-      --shadow-blur: 10px;
-      --shadow-spread: 3px;
-    }
-    
-    /* Reset and fill the viewport */
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-    
-    /* Map container: full screen */
-    #map {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      /* Initially hidden to avoid label flicker; will be made visible once layers are removed */
-      visibility: hidden;
-    }
-    
-    /* Default arrow cursor on Mapbox canvas */
-    .mapboxgl-canvas {
-      cursor: default !important;
-    }
-    
-    /* Hide Mapbox attribution/control elements */
-    .mapboxgl-ctrl-attrib,
-    .mapboxgl-ctrl-bottom-left {
-      display: none !important;
-    }
-    
-    /* Overlay container for the red lines */
-    #overlay {
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 10;
-    }
-    
-    /* --- Animated Red Lines --- */
-    .line {
-      position: absolute;
-      box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-      animation: pulseLine 1.5s infinite alternate;
-    }
-    @keyframes pulseLine {
-      from { filter: brightness(1); }
-      to { filter: brightness(1.2); }
-    }
-    .line.horizontal {
-      top: 50%;
-      width: 50vw;
-      height: var(--min-thickness);
-      background: linear-gradient(
-        to right,
-        black 0%,
-        var(--edge-color) 20%,
-        var(--edge-color) 30%,
-        var(--center-color) 50%,
-        var(--edge-color) 70%,
-        var(--edge-color) 80%,
-        black 100%
-      );
-      transform: scaleX(0);
-      transform-origin: left center;
-      animation: expandHorizontal var(--line-duration) forwards,
-                 growThicknessH var(--line-duration) forwards;
-    }
-    .line.horizontal.right {
-      right: 0;
-      left: auto;
-      transform-origin: right center;
-      animation-delay: var(--animation-delay), var(--animation-delay);
-    }
-    .line.vertical {
-      left: 50%;
-      height: 50vh;
-      width: var(--min-thickness);
-      background: linear-gradient(
-        to bottom,
-        black 0%,
-        var(--edge-color) 20%,
-        var(--edge-color) 30%,
-        var(--center-color) 50%,
-        var(--edge-color) 70%,
-        var(--edge-color) 80%,
-        black 100%
-      );
-      transform: scaleY(0);
-      transform-origin: top center;
-      animation: expandVertical var(--line-duration) forwards,
-                 growThicknessV var(--line-duration) forwards;
-    }
-    .line.vertical.bottom {
-      bottom: 0;
-      top: auto;
-      transform-origin: bottom center;
-      animation-delay: var(--animation-delay), var(--animation-delay);
-    }
-    @keyframes expandHorizontal { to { transform: scaleX(1); } }
-    @keyframes expandVertical { to { transform: scaleY(1); } }
-    @keyframes growThicknessH { from { height: var(--min-thickness); } to { height: var(--max-thickness); } }
-    @keyframes growThicknessV { from { width: var(--min-thickness); } to { width: var(--max-thickness); } }
-  </style>
-</head>
-<body>
-  <!-- Map container -->
-  <div id="map"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World Center Map</title>
+    <!-- Mapbox GL JS stylesheet -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Map container -->
+    <div id="map"></div>
 
-  <!-- Overlay container for animated red lines -->
-  <div id="overlay">
-    <div class="line horizontal left"></div>
-    <div class="line horizontal right"></div>
-    <div class="line vertical top"></div>
-    <div class="line vertical bottom"></div>
-  </div>
+    <!-- Overlay container for animated red lines -->
+    <div id="overlay">
+      <div class="line horizontal left"></div>
+      <div class="line horizontal right"></div>
+      <div class="line vertical top"></div>
+      <div class="line vertical bottom"></div>
+    </div>
 
-  <!-- Mapbox GL JS library -->
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-  <script>
-    // Replace with your valid Mapbox API key.
-    mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
-
-    // Initialize the Mapbox map centered at [0, 0] for the perfect middle of the world.
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/dark-v10',
-      center: [0, 0],
-      zoom: 2,
-      attributionControl: false,
-    });
-
-    // Disable interactive controls for a static presentation.
-    map.dragPan.disable();
-    map.dragRotate.disable();
-    map.scrollZoom.disable();
-    map.doubleClickZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-    map.touchZoomRotate.disable();
-
-    // Function to hide unwanted labels and boundaries.
-    function hideMapElements() {
-      const style = map.getStyle();
-      if (!style || !style.layers) return;
-      style.layers.forEach(layer => {
-        if (
-          layer.type === 'symbol' ||
-          (layer.id && (layer.id.includes('boundary') ||
-                        layer.id.includes('admin-0') ||
-                        layer.id.includes('admin-1')))
-        ) {
-          map.setLayoutProperty(layer.id, 'visibility', 'none');
-        }
-      });
-    }
-
-    // When the map is loaded:
-    map.on('load', () => {
-      hideMapElements(); // Hide unwanted labels/boundaries.
-      // Make the map visible once the style is ready to avoid flickering.
-      document.getElementById('map').style.visibility = 'visible';
-    });
-
-    // Re-hide elements if style data changes.
-    map.on('styledata', hideMapElements);
-  </script>
-</body>
+    <!-- Mapbox GL JS library -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <!-- Link to external JavaScript -->
+    <script src="script.js"></script>
+  </body>
 </html>
