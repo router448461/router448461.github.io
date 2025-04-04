@@ -4,27 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>router448461</title>
+    <!-- Mapbox CSS -->
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <!-- Digital font from Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Mapbox map container -->
+    <!-- Map container -->
     <div id="map"></div>
 
-    <!-- Overlay containing the four cross lines -->
+    <!-- Overlay for the four cross lines -->
     <div id="overlay">
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
     </div>
-
-    <!-- Stopwatch-style digital clock (appears immediately) -->
+    
+    <!-- Digital stopwatch clock (appears immediately) -->
     <div id="clock">00:00:000</div>
-
+    
+    <!-- Scanline overlay for an extra digital vibe -->
+    <div id="scanlines"></div>
+    
+    <!-- Audio placeholder (supply your own file) -->
+    <audio id="audio" src="your-audio-file.mp3" preload="auto"></audio>
+    
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <script src="script.js"></script>
   </body>
