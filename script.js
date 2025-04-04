@@ -7,6 +7,7 @@ const map = new mapboxgl.Map({
   attributionControl: false
 });
 
+// Disable map interactions
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -15,18 +16,28 @@ map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
 
+// Update overlay and target coordinates on mouse move
 document.addEventListener('mousemove', function(e) {
+  // Parallax effect for overlay, map, and HUD
   const x = (e.clientX / window.innerWidth - 0.5) * 10;
   const y = (e.clientY / window.innerHeight - 0.5) * 10;
   document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
   document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
   document.getElementById('hud').style.transform = `translate(${x/2}px, ${y/2}px)`;
+
+  // Get mouse position relative to map container
+  const rect = map.getContainer().getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  // Convert to geographic coordinates
+  const coords = map.unproject([mouseX, mouseY]);
+  const lat = coords.lat.toFixed(3);
+  const lng = coords.lng.toFixed(3);
+  document.getElementById('target-coords').innerText = `TARGET: ${lat}, ${lng}`;
 });
 
-map.on('load', function() {
-  // Blast Radius source and layer removed
-});
-
+// Generate random comms text
 function randomString(length) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
   let result = "";
@@ -42,28 +53,3 @@ for (let i = 0; i < 100; i++) {
   commsText += randomString(20) + " " + messages[i % messages.length] + " ";
 }
 document.getElementById("comms-text").innerText = commsText;
-
-setInterval(() => {
-  const lat = (Math.random() * 180 - 90).toFixed(3);
-  const lon = (Math.random() * 360 - 180).toFixed(3);
-  document.getElementById("target-coords").innerText = `TARGET: ${lat}, ${lon}`;
-
-  const statuses = ["ONLINE", "CHARGING", "FIRING", "COOLING"];
-  document.getElementById("weapon-status").innerText = `WEAPON: ${statuses[Math.floor(Math.random() * statuses.length)]}`;
-
-  const threats = ["LOW", "MEDIUM", "HIGH"];
-  const threat = threats[Math.floor(Math.random() * threats.length)];
-  document.getElementById("threat-level").innerText = `THREAT: ${threat}`;
-
-  const threatBar = document.getElementById("threat-bar");
-  if (threat === "LOW") {
-    threatBar.style.width = "30%";
-    threatBar.style.backgroundColor = "green";
-  } else if (threat === "MEDIUM") {
-    threatBar.style.width = "60%";
-    threatBar.style.backgroundColor = "yellow";
-  } else {
-    threatBar.style.width = "100%";
-    threatBar.style.backgroundColor = "red";
-  }
-}, 2000);
