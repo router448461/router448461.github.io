@@ -28,50 +28,53 @@ function hideMapElements() {
     if (
       layer.type === 'symbol' ||
       (layer.id &&
-        (layer.id.includes("boundary") ||
-         layer.id.includes("admin-0") ||
-         layer.id.includes("admin-1")))
+        (layer.id.includes('boundary') ||
+         layer.id.includes('admin-0') ||
+         layer.id.includes('admin-1')))
     ) {
-      map.setLayoutProperty(layer.id, "visibility", "none");
+      map.setLayoutProperty(layer.id, 'visibility', 'none');
     }
   });
 }
 
-// When the map is loaded:
-map.on("load", () => {
+// Once the map style is loaded:
+map.on('load', () => {
   hideMapElements();
-  // Make the map visible after style adjustments.
-  document.getElementById("map").style.visibility = "visible";
+  // Make the map visible after the style is adjusted.
+  document.getElementById('map').style.visibility = 'visible';
 
-  // After 3 seconds, trigger a flash on the status message.
+  // After 3 seconds, add a flash effect to the status message.
   setTimeout(() => {
-    const statusEl = document.getElementById("status");
-    statusEl.classList.add("flash");
+    const statusEl = document.getElementById('status');
+    statusEl.classList.add('flash');
   }, 3000);
 
-  // After 6 seconds (3s delay + 3s red line animation), hide the status message and show the clock.
+  // After 6 seconds, remove the status text and show the clock.
   setTimeout(() => {
-    document.getElementById("status").style.display = "none";
-    document.getElementById("clock").style.display = "block";
+    document.getElementById('status').style.display = 'none';
+    const clockEl = document.getElementById('clock');
+    clockEl.style.display = 'block';
     startClock();
   }, 6000);
 });
 
-// Re-apply the hideMapElements function if the style data changes.
-map.on("styledata", hideMapElements);
+// Re-apply hideMapElements if the style data changes.
+map.on('styledata', hideMapElements);
 
-// Function to start the local time clock.
+// Start the clock that shows local time with milliseconds.
 function startClock() {
-  updateClock(); // Update immediately.
-  setInterval(updateClock, 1000);
+  updateClock(); // update immediately
+  // Update the clock every 50 milliseconds
+  setInterval(updateClock, 50);
 }
 
-// Update the clock element with the visitor's local time (HH:MM:SS format).
+// Update the clock element to display HH:MM:SS:ms (milliseconds padded to 3 digits).
 function updateClock() {
-  const clockEl = document.getElementById("clock");
+  const clockEl = document.getElementById('clock');
   const now = new Date();
-  const hours = now.getHours().toString().padStart(2, "0");
-  const minutes = now.getMinutes().toString().padStart(2, "0");
-  const seconds = now.getSeconds().toString().padStart(2, "0");
-  clockEl.innerText = `${hours}:${minutes}:${seconds}`;
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+  clockEl.innerText = `${hours}:${minutes}:${seconds}:${milliseconds}`;
 }
