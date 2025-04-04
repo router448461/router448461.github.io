@@ -23,23 +23,28 @@
     <!-- Map container -->
     <div id="map"></div>
 
-    <!-- Overlay for animated lines (which will start 1 second after map load) -->
+    <!-- Overlay container for red lines and triangle -->
     <div id="overlay">
+      <!-- Four animated red lines -->
       <div class="line horizontal left"></div>
       <div class="line horizontal right"></div>
       <div class="line vertical top"></div>
       <div class="line vertical bottom"></div>
+      
+      <!-- SVG triangle replacing the radar -->
+      <svg id="triangle" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <!--
+          The points define a triangle whose vertices are:
+          • (0,0): top–left,
+          • (100,0): top–right, and
+          • (50,100): bottom–middle.
+        -->
+        <polygon points="0,0 100,0 50,100" />
+      </svg>
     </div>
-    
-    <!-- Radar element (its animation is also delayed) -->
-    <div id="radar"></div>
-    
-    <!-- Removed audio elements and CRT effects -->
 
     <!-- Mapbox GL JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <!-- SunCalc Library for sun position calculations -->
-    <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
     <!-- Your custom JavaScript -->
     <script src="script.js"></script>
   </body>
