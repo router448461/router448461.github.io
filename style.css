@@ -1,13 +1,12 @@
 :root {
-  --edge-color: darkred;
-  --center-color: red;
-  --min-thickness: 0.5px;
-  --max-thickness: 4px;
-  --line-duration: 3s;
-  --animation-delay: 0s;
-  --box-shadow-color: rgba(139, 0, 0, 0.9);
-  --shadow-blur: 10px;
-  --shadow-spread: 3px;
+  --edge-color: red;
+  --center-color: darkred;
+  --min-thickness: 0.2px;
+  --max-thickness: 2px;
+  --line-duration: 2.5s;
+  --box-shadow-color: rgba(255, 0, 0, 0.9);
+  --shadow-blur: 5px;
+  --shadow-spread: 2px;
 }
 
 html, body {
@@ -45,14 +44,10 @@ html, body {
   color: white;
   text-align: right;
 }
-#clock, #countdown {
+
+#clock {
   font-size: 20px;
   margin-bottom: 5px;
-}
-#cmd-text {
-  font-size: 16px;
-  color: white;
-  margin-top: 5px;
 }
 
 #overlay {
@@ -72,59 +67,35 @@ html, body {
 }
 @keyframes pulseLine {
   from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  to { filter: brightness(1.3); }
 }
 .line.horizontal {
   top: 50%;
-  width: 50vw;
+  width: 100vw;
   height: var(--min-thickness);
-  background: linear-gradient(
-    to right,
-    black 0%,
-    var(--edge-color) 20%,
-    var(--edge-color) 30%,
-    var(--center-color) 50%,
-    var(--edge-color) 70%,
-    var(--edge-color) 80%,
-    black 100%
-  );
+  background: var(--edge-color);
   transform: scaleX(0);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards,
-             growThicknessH var(--line-duration) forwards;
+  animation: expandHorizontal var(--line-duration) forwards;
 }
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
-  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 .line.vertical {
   left: 50%;
-  height: 50vh;
+  height: 100vh;
   width: var(--min-thickness);
-  background: linear-gradient(
-    to bottom,
-    black 0%,
-    var(--edge-color) 20%,
-    var(--edge-color) 30%,
-    var(--center-color) 50%,
-    var(--edge-color) 70%,
-    var(--edge-color) 80%,
-    black 100%
-  );
+  background: var(--edge-color);
   transform: scaleY(0);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards,
-             growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--line-duration) forwards;
 }
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
-  animation-delay: var(--animation-delay), var(--animation-delay);
 }
 @keyframes expandHorizontal { to { transform: scaleX(1); } }
 @keyframes expandVertical { to { transform: scaleY(1); } }
-@keyframes growThicknessH { from { height: var(--min-thickness); } to { height: var(--max-thickness); } }
-@keyframes growThicknessV { from { width: var(--min-thickness); } to { width: var(--max-thickness); } }
