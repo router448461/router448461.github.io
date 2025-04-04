@@ -38,22 +38,30 @@ map.on('load', () => {
   hideMapElements();
   document.getElementById('map').style.visibility = 'visible';
 
-  // Trigger the flash and clock (matching the start of line animations)
+  // Wait 4 seconds before starting the sequence.
   setTimeout(() => {
+    // Flash overlay for 100ms.
     const flashEl = document.getElementById('flash-overlay');
     flashEl.classList.add('flash');
     setTimeout(() => {
       flashEl.classList.remove('flash');
-    }, 500);
+      // Unpause all line animations.
+      document.querySelectorAll('.line').forEach(el => {
+        el.style.animationPlayState = 'running';
+      });
+    }, 100);
 
-    document.getElementById('status').style.display = 'none';
-    const clockEl = document.getElementById('clock');
-    clockEl.style.display = 'block';
-    startClock();
-  }, 3000);
+    // Wait until the drawing completes (2.015 seconds) then trigger triangle blinking.
+    setTimeout(() => {
+      blinkTriangles(() => {
+        // After blinking, show the clock.
+        document.getElementById('clock').style.display = 'block';
+        startClock();
+      });
+    }, 2015);
+    
+  }, 4000);
 });
-
-map.on('styledata', hideMapElements);
 
 function startClock() {
   updateClock();
@@ -63,9 +71,33 @@ function startClock() {
 function updateClock() {
   const clockEl = document.getElementById('clock');
   const now = new Date();
+  // Format time as HH:MM:SS:ms (military style, with leading zeros)
   const hours = now.getHours().toString().padStart(2, '0');
   const minutes = now.getMinutes().toString().padStart(2, '0');
   const seconds = now.getSeconds().toString().padStart(2, '0');
   const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-  clockEl.innerText = `${hours}:${minutes}:${seconds}:${milliseconds}`;
+  clockEl.textContent = `${hours}:${minutes}:${seconds}:${milliseconds}`;
+}
+
+function blinkTriangles(callback) {
+  const triangles = document.querySelectorAll('.line.triangle');
+  let blinkCount = 0;
+  
+  function doBlink() {
+    // Hide triangle lines.
+    triangles.forEach(el => (el.style.opacity = '0'));
+    setTimeout(() => {
+      // Show triangle lines.
+      triangles.forEach(el => (el.style.opacity = '1'));
+      blinkCount++;
+      if (blinkCount < 3) {
+        setTimeout(doBlink, 1000);
+      } else {
+        // After three blinks, wait one final second then call the callback.
+        setTimeout(callback, 1000);
+      }
+    }, 100);
+  }
+  
+  doBlink();
 }
