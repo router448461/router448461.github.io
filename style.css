@@ -29,16 +29,16 @@ body {
   background-color: #000;
 }
 
-/* Hide the map initially to prevent flashing labels */
+/* Map container – shown immediately */
 #map {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  opacity: 0;              /* Initially hidden */
   filter: contrast(1.2) brightness(0.9);
-  transition: opacity 0.5s ease;  /* Fade in once ready */
+  opacity: 1;
+  transition: opacity 0.5s ease;
 }
 
 .mapboxgl-canvas {
@@ -50,6 +50,7 @@ body {
   display: none !important;
 }
 
+/* Overlay covers the entire viewport */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -60,11 +61,10 @@ body {
   z-index: 10;
 }
 
-/* Lines are initially paused */
+/* Red lines styling – initially paused */
 .line {
   position: absolute;
-  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread)
-    var(--box-shadow-color);
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
   animation: pulseLine 1.5s infinite alternate;
   animation-play-state: paused;
 }
@@ -101,12 +101,12 @@ body {
 
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
+  to { transform: scaleX(1); }
 }
 
 @keyframes growThickness {
   from { height: var(--min-thickness); }
-  to   { height: var(--max-thickness); }
+  to { height: var(--max-thickness); }
 }
 
 .line.vertical {
@@ -136,36 +136,29 @@ body {
 
 @keyframes expandVertical {
   from { transform: scaleY(0); }
-  to   { transform: scaleY(1); }
+  to { transform: scaleY(1); }
 }
 
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
-  to   { width: var(--max-thickness); }
+  to { width: var(--max-thickness); }
 }
 
-/* Radar element is also paused by default */
-#radar {
-  pointer-events: none;
+/* Triangle styling – occupies the full overlay and uses the same pulse animation */
+#triangle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  margin-left: -150px;
-  margin-top: -150px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 0, 0, 0.2) 0%,
-    transparent 70%
-  );
-  animation: radarRotate 3s linear infinite;
-  animation-play-state: paused;
-  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 11;
 }
 
-@keyframes radarRotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+#triangle polygon {
+  fill: none;
+  stroke: var(--center-color);
+  stroke-width: var(--max-thickness);
+  animation: pulseLine 1.5s infinite alternate;
+  animation-play-state: paused;
 }
