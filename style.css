@@ -1,20 +1,17 @@
 :root {
-  --edge-color: #4B5320;
-  --center-color: #556B2F;
+  --edge-color: #8B0000;
+  --center-color: #FF0000;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  --line-duration: 9s;
+  --line-duration: 30s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(85, 107, 47, 0.7);
-  --sweep-duration: 4s;
+  --box-shadow-color: rgba(139, 0, 0, 0.7);
+  --sweep-duration: 60s;
 }
-
 * {
   user-select: none;
-  cursor: default;
 }
-
 html, body {
   margin: 0;
   padding: 0;
@@ -24,7 +21,9 @@ html, body {
   background-color: #000;
   font-family: 'Quantico', sans-serif;
 }
-
+body, #map {
+  cursor: none;
+}
 #map {
   position: absolute;
   top: 0;
@@ -33,7 +32,6 @@ html, body {
   height: 100vh;
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
 }
-
 #map::before {
   content: '';
   position: absolute;
@@ -50,15 +48,12 @@ html, body {
   pointer-events: none;
   z-index: 5;
 }
-
 .mapboxgl-canvas {
-  cursor: default !important;
+  cursor: none !important;
 }
-
 .mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
-
 #depth-overlay {
   pointer-events: none;
   position: absolute;
@@ -70,7 +65,6 @@ html, body {
   background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.7) 100%);
   filter: blur(4px);
 }
-
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -80,14 +74,12 @@ html, body {
   height: 100vh;
   z-index: 10;
 }
-
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
-
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -95,13 +87,11 @@ html, body {
   transform-origin: left center;
   animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
 }
-
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
 }
-
 .line.vertical {
   left: 50%;
   width: var(--min-thickness);
@@ -110,43 +100,35 @@ html, body {
   transform-origin: top center;
   animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
-
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
 }
-
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
 }
-
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
 }
-
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
-
 @keyframes growThickness {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
-
 @keyframes expandVertical {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
-
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
 }
-
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -158,12 +140,10 @@ html, body {
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
 }
-
 @keyframes moveScanlines {
   from { transform: translateY(0); }
   to { transform: translateY(-4px); }
 }
-
 #noise {
   pointer-events: none;
   position: absolute;
@@ -171,13 +151,12 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  opacity: 0.05;
+  opacity: 0.1;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   background-repeat: repeat;
   background-size: cover;
   z-index: 15;
 }
-
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
@@ -186,9 +165,8 @@ html, body {
   height: 100vh;
   background: rgba(85, 107, 47, 0.8);
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5);
 }
-
 #laser-scan-vertical {
   position: absolute;
   top: -2px;
@@ -197,24 +175,24 @@ html, body {
   height: 2px;
   background: rgba(85, 107, 47, 0.8);
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5);
 }
-
 @keyframes sweepHorizontal {
-  from { left: -2px; }
-  to { left: 100vw; }
+  0% { left: -2px; opacity: 1; }
+  50% { left: 100vw; opacity: 1; }
+  50.01% { left: -2px; opacity: 0; }
+  100% { left: -2px; opacity: 0; }
 }
-
 @keyframes sweepVertical {
-  from { top: -2px; }
-  to { top: 100vh; }
+  0% { top: -2px; opacity: 1; }
+  50% { top: 100vh; opacity: 1; }
+  50.01% { top: -2px; opacity: 0; }
+  100% { top: -2px; opacity: 0; }
 }
-
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1); }
+  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5); }
+  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(255, 0, 0, 0.7); }
 }
-
 #hud {
   position: absolute;
   top: 20px;
@@ -225,7 +203,6 @@ html, body {
   text-shadow: 0 0 5px #556B2F;
   z-index: 15;
 }
-
 #reticle {
   position: absolute;
   width: 20px;
