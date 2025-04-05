@@ -10,11 +10,9 @@
   --box-shadow-color: rgba(255, 0, 0, 0.8);
   --sweep-duration: 10s;
 }
-
 * {
   user-select: none;
 }
-
 html, body {
   margin: 0;
   padding: 0;
@@ -25,7 +23,6 @@ html, body {
   font-family: 'Quantico', sans-serif;
   cursor: none;
 }
-
 #map {
   position: absolute;
   top: 0;
@@ -34,11 +31,9 @@ html, body {
   height: 100vh;
   filter: grayscale(0.1) contrast(1.2) brightness(1.1) saturate(1.2) hue-rotate(-5deg);
 }
-
 .mapboxgl-canvas {
   cursor: none !important;
 }
-
 #depth-overlay {
   pointer-events: none;
   position: absolute;
@@ -50,7 +45,6 @@ html, body {
   background: radial-gradient(circle, transparent 30%, rgba(0,0,0,1) 100%);
   filter: blur(4px);
 }
-
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -61,14 +55,12 @@ html, body {
   z-index: 10;
   animation: digitalGlitch 0.5s infinite linear;
 }
-
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
-
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -76,13 +68,11 @@ html, body {
   transform-origin: left center;
   animation: lineAnimationHorizontal 10s linear forwards;
 }
-
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
 }
-
 .line.vertical {
   left: 50%;
   width: var(--min-thickness);
@@ -91,33 +81,51 @@ html, body {
   transform-origin: top center;
   animation: lineAnimationVertical 10s linear forwards;
 }
-
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
 }
-
 @keyframes lineAnimationHorizontal {
-  0% { transform: scaleX(0); height: var(--min-thickness); opacity: 1; }
-  100% { transform: scaleX(1); height: var(--max-thickness); opacity: 1; }
+  0% {
+    transform: scaleX(0);
+    height: var(--min-thickness);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    height: var(--max-thickness);
+    opacity: 1;
+  }
 }
-
 @keyframes lineAnimationVertical {
-  0% { transform: scaleY(0); width: var(--min-thickness); opacity: 1; }
-  100% { transform: scaleY(1); width: var(--max-thickness); opacity: 1; }
+  0% {
+    transform: scaleY(0);
+    width: var(--min-thickness);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    width: var(--max-thickness);
+    opacity: 1;
+  }
 }
-
 @keyframes pulseLine {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.2);
+  }
 }
-
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
-
 #scanlines-horizontal {
   pointer-events: none;
   position: absolute;
@@ -125,11 +133,10 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
+  background: repeating-linear-gradient(to bottom, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: scanOverlayVertical 10s linear forwards;
+  animation: scanOverlayVertical 5s linear infinite;
 }
-
 #scanlines-vertical {
   pointer-events: none;
   position: absolute;
@@ -137,29 +144,24 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to right, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
+  background: repeating-linear-gradient(to right, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: scanOverlayHorizontal 10s linear forwards;
+  animation: scanOverlayHorizontal 5s linear infinite;
 }
-
 @keyframes scanOverlayVertical {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { transform: translateY(0); opacity: 1; }
-  40% { transform: translateY(50vh); opacity: 1; }
-  60% { transform: translateY(50vh); opacity: 1; }
-  70% { transform: translateY(50vh); opacity: 0; }
-  100% { transform: translateY(50vh); opacity: 0; }
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { transform: translateY(0); opacity: 1; }
+  50%  { transform: translateY(100vh); opacity: 1; }
+  90%  { transform: translateY(100vh); opacity: 0; }
+  100% { transform: translateY(-100%); opacity: 0; }
 }
-
 @keyframes scanOverlayHorizontal {
-  0% { transform: translateX(0); opacity: 0; }
-  10% { transform: translateX(0); opacity: 1; }
-  40% { transform: translateX(50vw); opacity: 1; }
-  60% { transform: translateX(50vw); opacity: 1; }
-  70% { transform: translateX(50vw); opacity: 0; }
-  100% { transform: translateX(50vw); opacity: 0; }
+  0%   { transform: translateX(-100%); opacity: 0; }
+  10%  { transform: translateX(0); opacity: 1; }
+  50%  { transform: translateX(100vw); opacity: 1; }
+  90%  { transform: translateX(100vw); opacity: 0; }
+  100% { transform: translateX(-100%); opacity: 0; }
 }
-
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
@@ -170,7 +172,6 @@ html, body {
   animation: scanVertical 10s linear forwards;
   box-shadow: 0 0 15px 5px var(--center-color);
 }
-
 #laser-scan-vertical {
   position: absolute;
   top: 0;
@@ -181,19 +182,16 @@ html, body {
   animation: scanHorizontal 10s linear forwards;
   box-shadow: 0 0 15px 5px var(--center-color);
 }
-
 @keyframes scanVertical {
   0% { transform: translateY(0); opacity: 0; }
   10% { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(50vh); opacity: 1; }
 }
-
 @keyframes scanHorizontal {
   0% { transform: translateX(0); opacity: 0; }
   10% { transform: translateX(0); opacity: 1; }
   100% { transform: translateX(50vw); opacity: 1; }
 }
-
 #hud {
   position: absolute;
   top: 20px;
@@ -208,17 +206,14 @@ html, body {
   border: 1px solid #FF0000;
   user-select: none;
 }
-
 #target-coords {
   user-select: none;
   animation: flickerCoords 0.1s infinite;
 }
-
 @keyframes flickerCoords {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
 }
-
 #reticle {
   position: absolute;
   width: 20px;
@@ -230,7 +225,6 @@ html, body {
   transform: translate(-50%, -50%);
   box-shadow: 0 0 10px 3px #FF0000, 0 0 20px 5px #FF4500;
 }
-
 #reticle::after {
   content: '';
   position: absolute;
@@ -241,7 +235,6 @@ html, body {
   background: #FF0000;
   transform: translate(-50%, -50%);
 }
-
 #red-line-horizontal {
   position: absolute;
   top: 50%;
@@ -254,7 +247,6 @@ html, body {
   display: none;
   z-index: 30;
 }
-
 #red-line-vertical {
   position: absolute;
   top: 50%;
@@ -267,12 +259,11 @@ html, body {
   display: none;
   z-index: 30;
 }
-
 @keyframes digitalGlitch {
   0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(2px, -2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(2px, 2px); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
   100% { transform: translate(0); }
 }
