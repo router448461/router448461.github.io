@@ -59,19 +59,34 @@ function formatCoord(num) {
   }
   return (num >= 0 ? '+' : '-') + formatted;
 }
-function updateCoordinates(e) {
+let isUpdating = false;
+function innerUpdate(e) {
   const rect = map.getContainer().getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
+  let clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+  let clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
+  const mouseX = clientX - rect.left;
+  const mouseY = clientY - rect.top;
   const coords = map.unproject([mouseX, mouseY]);
   const latVal = coords.lat;
   const lngVal = coords.lng;
   const formattedLat = formatCoord(latVal);
   const formattedLng = formatCoord(lngVal);
   targetCoords.innerText = `TARGET: LAT ${formattedLat}, LON ${formattedLng}`;
-  reticle.style.left = `${e.clientX}px`;
-  reticle.style.top = `${e.clientY}px`;
+  reticle.style.left = `${clientX}px`;
+  reticle.style.top = `${clientY}px`;
   let circleGeoJSON = createGeoJSONCircle([lngVal, latVal], 9656, 64);
-  if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
+  if (map.getSource('blast-radius')) {
+    map.getSource('blast-radius').setData(circleGeoJSON);
+  }
 }
-document.addEventListener('mousemove', updateCoordinates);
+function handleUpdate(e) {
+  if (!isUpdating) {
+    window.requestAnimationFrame(() => {
+      innerUpdate(e);
+      isUpdating = false;
+    });
+    isUpdating = true;
+  }
+}
+document.addEventListener('mousemove', handleUpdate);
+document.addEventListener('touchmove', handleUpdate);
