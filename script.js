@@ -6,7 +6,6 @@ const map = new mapboxgl.Map({
   zoom: 1.5,
   attributionControl: false
 });
-
 map.dragPan.disable();
 map.dragRotate.disable();
 map.scrollZoom.disable();
@@ -14,7 +13,6 @@ map.doubleClickZoom.disable();
 map.boxZoom.disable();
 map.keyboard.disable();
 map.touchZoomRotate.disable();
-
 map.on('load', () => {
   const mapContainer = map.getContainer();
   mapContainer.addEventListener('mousemove', (e) => {
@@ -27,15 +25,6 @@ map.on('load', () => {
     document.getElementById('target-coords').innerText = `TARGET: ${lat}, ${lng}`;
   });
 });
-
-document.addEventListener('mousemove', function(e) {
-  const x = (e.clientX / window.innerWidth - 0.5) * 10;
-  const y = (e.clientY / window.innerHeight - 0.5) * 10;
-  document.getElementById('overlay').style.transform = `translate(${x}px, ${y}px)`;
-  document.getElementById('map').style.transform = `translate(${x/2}px, ${y/2}px)`;
-  document.getElementById('hud').style.transform = `translate(${x/2}px, ${y/2}px)`;
-});
-
 document.addEventListener('mousemove', function(e) {
   const reticle = document.getElementById('reticle');
   reticle.style.left = `${e.clientX}px`;
