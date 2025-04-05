@@ -75,7 +75,3 @@ function updateCoordinates(e) {
   if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
 }
 document.addEventListener('mousemove', updateCoordinates);
-setTimeout(() => {
-  document.getElementById('red-line-horizontal').style.display = 'block';
-  document.getElementById('red-line-vertical').style.display = 'block';
-}, 10000);
