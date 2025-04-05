@@ -1,18 +1,18 @@
 :root {
-  --military-red: #8B0000;
-  --military-blue: #4682B4;
+  --edge-color: #4B5320;
+  --center-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  --line-duration: 30s;
+  --line-duration: 9s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(139, 0, 0, 0.7);
-  --sweep-duration: 30s;
+  --box-shadow-color: rgba(85, 107, 47, 0.7);
+  --sweep-duration: 4s;
 }
 
 * {
   user-select: none;
-  cursor: none;
+  cursor: default;
 }
 
 html, body {
@@ -42,17 +42,17 @@ html, body {
   width: 100%;
   height: 100%;
   background: repeating-linear-gradient(
-    0deg, transparent, transparent 19px, var(--military-blue) 20px
+    0deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
   ),
   repeating-linear-gradient(
-    90deg, transparent, transparent 19px, var(--military-blue) 20px
+    90deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
   );
   pointer-events: none;
   z-index: 5;
 }
 
 .mapboxgl-canvas {
-  cursor: none !important;
+  cursor: default !important;
 }
 
 .mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
@@ -67,7 +67,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.7) 100%);
   filter: blur(4px);
 }
 
@@ -83,8 +83,8 @@ html, body {
 
 .line {
   position: absolute;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate;
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
+  animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
 
@@ -106,7 +106,7 @@ html, body {
   left: 50%;
   width: var(--min-thickness);
   height: 50vh;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
   animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
@@ -120,6 +120,11 @@ html, body {
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 @keyframes expandHorizontal {
@@ -149,7 +154,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, var(--military-red) 0px, var(--military-red) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
 }
@@ -159,15 +164,29 @@ html, body {
   to { transform: translateY(-4px); }
 }
 
+#noise {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.05;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-size: cover;
+  z-index: 15;
+}
+
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: var(--military-red);
-  animation: sweepHorizontal 90s linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px var(--military-red);
+  background: rgba(85, 107, 47, 0.8);
+  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
 }
 
 #laser-scan-vertical {
@@ -176,26 +195,24 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: var(--military-red);
-  animation: sweepVertical 90s linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px var(--military-red);
+  background: rgba(85, 107, 47, 0.8);
+  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
 }
 
 @keyframes sweepHorizontal {
-  0% { left: -2px; }
-  33.33% { left: 100vw; }
-  100% { left: 100vw; }
+  from { left: -2px; }
+  to { left: 100vw; }
 }
 
 @keyframes sweepVertical {
-  0% { top: -2px; }
-  33.33% { top: 100vh; }
-  100% { top: 100vh; }
+  from { top: -2px; }
+  to { top: 100vh; }
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px var(--military-red); }
-  to { box-shadow: 0 0 15px 3px var(--military-red); }
+  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
+  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1); }
 }
 
 #hud {
@@ -203,9 +220,9 @@ html, body {
   top: 20px;
   right: 20px;
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
   font-family: 'Courier New', monospace;
-  text-shadow: 0 0 5px var(--military-red);
+  text-shadow: 0 0 5px #556B2F;
   z-index: 15;
 }
 
@@ -213,34 +230,9 @@ html, body {
   position: absolute;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--military-red);
+  border: 2px solid #556B2F;
   border-radius: 50%;
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
-  animation: pulseReticle 2s infinite;
-}
-
-@keyframes pulseReticle {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.1); }
-}
-
-#glitch-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: transparent;
-  pointer-events: none;
-  z-index: 30;
-  opacity: 0;
-  transition: opacity 0.1s;
-}
-
-.glitch {
-  opacity: 1;
-  background: rgba(255, 0, 0, 0.1);
-  filter: blur(2px) contrast(10);
 }
