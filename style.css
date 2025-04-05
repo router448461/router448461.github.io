@@ -1,18 +1,19 @@
 :root {
-  --edge-color: #4B5320;
-  --center-color: #556B2F;
+  --military-red: #8B0000;
+  --military-green: #556B2F;
   --min-thickness: 0.5px;
-  --max-thickness: 2px;
-  --line-duration: 9s;
+  --max-thickness: 3px;
+  --line-duration: 30s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(85, 107, 47, 0.7);
-  --sweep-duration: 4s;
+  --box-shadow-color: rgba(139, 0, 0, 0.7);
+  --sweep-duration: 30s;
+  --sweep-repeat: 60s;
 }
 
 * {
   user-select: none;
-  cursor: default;
+  cursor: none;
 }
 
 html, body {
@@ -22,7 +23,6 @@ html, body {
   height: 100vh;
   overflow: hidden;
   background-color: #000;
-  font-family: 'Quantico', sans-serif;
 }
 
 #map {
@@ -34,31 +34,6 @@ html, body {
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
 }
 
-#map::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
-  ),
-  repeating-linear-gradient(
-    90deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
-  );
-  pointer-events: none;
-  z-index: 5;
-}
-
-.mapboxgl-canvas {
-  cursor: default !important;
-}
-
-.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
-  display: none !important;
-}
-
 #depth-overlay {
   pointer-events: none;
   position: absolute;
@@ -67,7 +42,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.7) 100%);
+  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
   filter: blur(4px);
 }
 
@@ -83,9 +58,10 @@ html, body {
 
 .line {
   position: absolute;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
+  animation: pulseLine 1.5s infinite alternate, expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  will-change: transform, height, width;
 }
 
 .line.horizontal {
@@ -93,7 +69,6 @@ html, body {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
 }
 
 .line.horizontal.right {
@@ -106,9 +81,9 @@ html, body {
   left: 50%;
   width: var(--min-thickness);
   height: 50vh;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
+  animation: pulseLine 1.5s infinite alternate, expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
 
 .line.vertical.bottom {
@@ -120,11 +95,6 @@ html, body {
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
 }
 
 @keyframes expandHorizontal {
@@ -154,9 +124,10 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(to bottom, var(--military-green) 0px, var(--military-green) 1px, transparent 1px, transparent 3px);
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
+  will-change: transform;
 }
 
 @keyframes moveScanlines {
@@ -171,7 +142,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  opacity: 0.05;
+  opacity: 0.02;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   background-repeat: repeat;
   background-size: cover;
@@ -184,9 +155,10 @@ html, body {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: rgba(85, 107, 47, 0.8);
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  background: var(--military-green);
+  animation: sweepHorizontal var(--sweep-repeat) linear infinite;
+  box-shadow: 0 0 10px 2px var(--military-green);
+  will-change: left;
 }
 
 #laser-scan-vertical {
@@ -195,44 +167,37 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: rgba(85, 107, 47, 0.8);
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  background: var(--military-green);
+  animation: sweepVertical var(--sweep-repeat) linear infinite;
+  box-shadow: 0 0 10px 2px var(--military-green);
+  will-change: top;
 }
 
 @keyframes sweepHorizontal {
-  from { left: -2px; }
-  to { left: 100vw; }
+  0% { left: -2px; }
+  50% { left: 100vw; } /* Completes sweep in 30s (half of 60s) */
+  100% { left: 100vw; }
 }
 
 @keyframes sweepVertical {
-  from { top: -2px; }
-  to { top: 100vh; }
-}
-
-@keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1); }
-}
-
-#hud {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  color: #fff;
-  font-size: 14px;
-  font-family: 'Courier New', monospace;
-  text-shadow: 0 0 5px #556B2F;
-  z-index: 15;
+  0% { top: -2px; }
+  50% { top: 100vh; } /* Completes sweep in 30s (half of 60s) */
+  100% { top: 100vh; }
 }
 
 #reticle {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #556B2F;
+  width: 25px;
+  height: 25px;
+  border: 2px solid var(--military-red);
   border-radius: 50%;
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
+  animation: pulseReticle 2s infinite;
+}
+
+@keyframes pulseReticle {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
 }
