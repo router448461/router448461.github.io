@@ -1,6 +1,8 @@
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
+  --green-edge-color: #4B5320;
+  --green-center-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 30s;
@@ -163,9 +165,9 @@ body, #map {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: rgba(85, 107, 47, 0.8);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 #laser-scan-vertical {
   position: absolute;
@@ -173,9 +175,9 @@ body, #map {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: rgba(85, 107, 47, 0.8);
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 @keyframes sweepHorizontal {
   0% { left: -2px; opacity: 1; }
@@ -190,8 +192,8 @@ body, #map {
   100% { top: -2px; opacity: 0; }
 }
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(255, 0, 0, 0.5); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(255, 0, 0, 0.7); }
+  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5); }
+  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(85, 107, 47, 0.7); }
 }
 #hud {
   position: absolute;
@@ -202,6 +204,15 @@ body, #map {
   font-family: 'Courier New', monospace;
   text-shadow: 0 0 5px #556B2F;
   z-index: 15;
+}
+#target-coords {
+  margin-bottom: 5px;
+  display: flex;
+  gap: 10px;
+}
+#target-coords span {
+  display: inline-block;
+  width: 100px; /* Fixed width for alignment */
 }
 #reticle {
   position: absolute;
