@@ -85,7 +85,6 @@ function updateCoordinates(e) {
     map.getSource('blast-radius').setData(circleGeoJSON);
 }
 document.addEventListener('mousemove', updateCoordinates);
-setInterval(playBeep, 9000);
 setTimeout(() => {
   document.getElementById('laser-scan-horizontal').style.display = 'none';
   document.getElementById('laser-scan-vertical').style.display = 'none';
