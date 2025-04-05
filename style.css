@@ -107,6 +107,7 @@ html, body {
   background: repeating-linear-gradient(to bottom, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
   animation: scanOverlayVertical 60s linear infinite;
+  will-change: transform, opacity;
 }
 #scanlines-vertical {
   pointer-events: none;
@@ -118,6 +119,7 @@ html, body {
   background: repeating-linear-gradient(to right, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
   animation: scanOverlayHorizontal 60s linear infinite;
+  will-change: transform, opacity;
 }
 @keyframes scanOverlayVertical {
   0% { transform: translateY(-100%); opacity: 1; }
@@ -173,6 +175,7 @@ html, body {
   z-index: 25;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 10px 3px #FF0000, 0 0 20px 5px #FF4500;
+  will-change: transform;
 }
 #reticle::after {
   content: '';
@@ -183,4 +186,10 @@ html, body {
   height: 4px;
   background: #FF0000;
   transform: translate(-50%, -50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  #scanlines-horizontal, #scanlines-vertical, .line {
+    animation-duration: 0s;
+    animation: none;
+  }
 }
