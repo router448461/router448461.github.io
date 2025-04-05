@@ -1,20 +1,19 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/dark-v10',
+  style: 'mapbox://styles/mapbox/night-v1',
   center: [0, 0],
   zoom: 1.5,
   attributionControl: false
 });
 map.dragPan.disable();
-map.dragRotate.disable();
 map.scrollZoom.disable();
 map.doubleClickZoom.disable();
-map.boxZoom.disable();
-map.keyboard.disable();
 map.touchZoomRotate.disable();
+
 const reticle = document.getElementById('reticle');
 const targetCoords = document.getElementById('target-coords');
+
 map.on('load', () => {
   let circleGeoJSON = createGeoJSONCircle([0, 0], 9656, 64);
   map.addSource('blast-radius', { type: 'geojson', data: circleGeoJSON });
@@ -22,8 +21,7 @@ map.on('load', () => {
     id: 'blast-radius-layer',
     type: 'fill',
     source: 'blast-radius',
-    layout: {},
-    paint: { 'fill-color': '#FF0000', 'fill-opacity': 0.2 }
+    paint: { 'fill-color': '#006699', 'fill-opacity': 0.2 }
   });
   let start = performance.now();
   function animateBlast() {
@@ -35,6 +33,7 @@ map.on('load', () => {
   }
   animateBlast();
 });
+
 function createGeoJSONCircle(center, radiusInMeters, points) {
   const coords = { latitude: center[1], longitude: center[0] };
   const km = radiusInMeters / 1000;
@@ -50,28 +49,23 @@ function createGeoJSONCircle(center, radiusInMeters, points) {
   ret.push(ret[0]);
   return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ret] } };
 }
+
 function formatCoord(num) {
-  let absVal = Math.abs(num);
-  let formatted = absVal.toFixed(3);
-  let parts = formatted.split('.');
-  if (parts[0].length < 2) {
-    formatted = '0' + formatted;
-  }
-  return (num >= 0 ? '+' : '-') + formatted;
+  return num.toFixed(3).padStart(7, ' ');
 }
+
 function updateCoordinates(e) {
   const rect = map.getContainer().getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
   const coords = map.unproject([mouseX, mouseY]);
-  const latVal = coords.lat;
-  const lngVal = coords.lng;
-  const formattedLat = formatCoord(latVal);
-  const formattedLng = formatCoord(lngVal);
+  const formattedLat = formatCoord(coords.lat);
+  const formattedLng = formatCoord(coords.lng);
   targetCoords.innerText = `TARGET: LAT ${formattedLat}, LON ${formattedLng}`;
   reticle.style.left = `${e.clientX}px`;
   reticle.style.top = `${e.clientY}px`;
-  let circleGeoJSON = createGeoJSONCircle([lngVal, latVal], 9656, 64);
+  let circleGeoJSON = createGeoJSONCircle([coords.lng, coords.lat], 9656, 64);
   if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
 }
+
 document.addEventListener('mousemove', updateCoordinates);
