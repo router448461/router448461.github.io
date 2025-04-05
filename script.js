@@ -23,10 +23,7 @@ map.on('load', () => {
     type: 'fill',
     source: 'blast-radius',
     layout: {},
-    paint: {
-      'fill-color': '#FF0000',
-      'fill-opacity': 0.2
-    }
+    paint: { 'fill-color': '#FF0000', 'fill-opacity': 0.2 }
   });
   let start = performance.now();
   function animateBlast() {
@@ -53,6 +50,15 @@ function createGeoJSONCircle(center, radiusInMeters, points) {
   ret.push(ret[0]);
   return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ret] } };
 }
+function formatCoord(num) {
+  let absVal = Math.abs(num);
+  let formatted = absVal.toFixed(3);
+  let parts = formatted.split('.');
+  if (parts[0].length < 2) {
+    formatted = '0' + formatted;
+  }
+  return (num >= 0 ? '+' : '-') + formatted;
+}
 function updateCoordinates(e) {
   const rect = map.getContainer().getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -60,14 +66,13 @@ function updateCoordinates(e) {
   const coords = map.unproject([mouseX, mouseY]);
   const latVal = coords.lat;
   const lngVal = coords.lng;
-  const formattedLat = (latVal >= 0 ? '+' : '') + latVal.toFixed(3).padStart(7, ' ');
-  const formattedLng = (lngVal >= 0 ? '+' : '') + lngVal.toFixed(3).padStart(7, ' ');
+  const formattedLat = formatCoord(latVal);
+  const formattedLng = formatCoord(lngVal);
   targetCoords.innerText = `TARGET: LAT ${formattedLat}, LON ${formattedLng}`;
   reticle.style.left = `${e.clientX}px`;
   reticle.style.top = `${e.clientY}px`;
   let circleGeoJSON = createGeoJSONCircle([lngVal, latVal], 9656, 64);
-  if (map.getSource('blast-radius'))
-    map.getSource('blast-radius').setData(circleGeoJSON);
+  if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
 }
 document.addEventListener('mousemove', updateCoordinates);
 setTimeout(() => {
