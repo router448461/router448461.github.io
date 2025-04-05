@@ -15,18 +15,6 @@ map.keyboard.disable();
 map.touchZoomRotate.disable();
 const reticle = document.getElementById('reticle');
 const targetCoords = document.getElementById('target-coords');
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-function playHum() {
-  const osc = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(60, audioContext.currentTime);
-  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
-  osc.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-  osc.start();
-  osc.stop(audioContext.currentTime + 0.5);
-}
 map.on('load', () => {
   let circleGeoJSON = createGeoJSONCircle([0, 0], 9656, 64);
   map.addSource('blast-radius', { type: 'geojson', data: circleGeoJSON });
@@ -35,7 +23,10 @@ map.on('load', () => {
     type: 'fill',
     source: 'blast-radius',
     layout: {},
-    paint: { 'fill-color': '#FF0000', 'fill-opacity': 0.2 }
+    paint: {
+      'fill-color': '#FF0000',
+      'fill-opacity': 0.2
+    }
   });
   let start = performance.now();
   function animateBlast() {
@@ -75,11 +66,11 @@ function updateCoordinates(e) {
   reticle.style.left = `${e.clientX}px`;
   reticle.style.top = `${e.clientY}px`;
   let circleGeoJSON = createGeoJSONCircle([lngVal, latVal], 9656, 64);
-  if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
+  if (map.getSource('blast-radius'))
+    map.getSource('blast-radius').setData(circleGeoJSON);
 }
 document.addEventListener('mousemove', updateCoordinates);
 setTimeout(() => {
   document.getElementById('red-line-horizontal').style.display = 'block';
   document.getElementById('red-line-vertical').style.display = 'block';
 }, 10000);
-setInterval(playHum, 5000);
