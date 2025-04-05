@@ -4,16 +4,15 @@
   --scan-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 3px;
-  --line-duration: 9s;
+  --line-duration: 10s;
   --shadow-blur: 15px;
   --shadow-spread: 3px;
   --box-shadow-color: rgba(255, 0, 0, 0.8);
-  --sweep-duration: 9s;
+  --sweep-duration: 10s;
 }
 
 * {
   user-select: none;
-  cursor: default;
 }
 
 html, body {
@@ -24,6 +23,7 @@ html, body {
   overflow: hidden;
   background-color: #111111;
   font-family: 'Quantico', sans-serif;
+  cursor: none;
 }
 
 #map {
@@ -32,29 +32,11 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: grayscale(0.7) contrast(2) brightness(0.8) saturate(1.2) hue-rotate(-15deg);
-}
-
-#map::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(85,107,47,0.1) 20px),
-              repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(85,107,47,0.1) 20px);
-  pointer-events: none;
-  z-index: 5;
+  filter: grayscale(0.1) contrast(1.2) brightness(1.1) saturate(1.2) hue-rotate(-5deg);
 }
 
 .mapboxgl-canvas {
-  cursor: default !important;
-}
-
-.mapboxgl-ctrl-attrib,
-.mapboxgl-ctrl-bottom-left {
-  display: none !important;
+  cursor: none !important;
 }
 
 #depth-overlay {
@@ -92,7 +74,7 @@ html, body {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: lineAnimationHorizontal 9s infinite;
+  animation: lineAnimationHorizontal 10s linear forwards;
 }
 
 .line.horizontal.right {
@@ -107,7 +89,7 @@ html, body {
   height: 50vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
-  animation: lineAnimationVertical 9s infinite;
+  animation: lineAnimationVertical 10s linear forwards;
 }
 
 .line.vertical.bottom {
@@ -117,57 +99,23 @@ html, body {
 }
 
 @keyframes lineAnimationHorizontal {
-  0% {
-    transform: scaleX(0);
-    height: var(--min-thickness);
-    opacity: 1;
-  }
-  90% {
-    transform: scaleX(1);
-    height: var(--max-thickness);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleX(1);
-    height: var(--max-thickness);
-    opacity: 0;
-  }
+  0% { transform: scaleX(0); height: var(--min-thickness); opacity: 1; }
+  100% { transform: scaleX(1); height: var(--max-thickness); opacity: 1; }
 }
 
 @keyframes lineAnimationVertical {
-  0% {
-    transform: scaleY(0);
-    width: var(--min-thickness);
-    opacity: 1;
-  }
-  90% {
-    transform: scaleY(1);
-    width: var(--max-thickness);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleY(1);
-    width: var(--max-thickness);
-    opacity: 0;
-  }
+  0% { transform: scaleY(0); width: var(--min-thickness); opacity: 1; }
+  100% { transform: scaleY(1); width: var(--max-thickness); opacity: 1; }
 }
 
 @keyframes pulseLine {
-  from {
-    filter: brightness(1);
-  }
-  to {
-    filter: brightness(1.2);
-  }
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
 }
 
 @keyframes flicker {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 #scanlines-horizontal {
@@ -177,9 +125,9 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, transparent, transparent 20px, var(--scan-color) 20px, var(--scan-color) 21px, transparent 21px, transparent 40px);
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: moveScanlinesHorizontal 0.1s linear infinite;
+  animation: scanOverlayVertical 10s linear forwards;
 }
 
 #scanlines-vertical {
@@ -189,41 +137,27 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to right, transparent, transparent 20px, var(--scan-color) 20px, var(--scan-color) 21px, transparent 21px, transparent 40px);
+  background: repeating-linear-gradient(to right, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: moveScanlinesVertical 0.1s linear infinite;
+  animation: scanOverlayHorizontal 10s linear forwards;
 }
 
-@keyframes moveScanlinesHorizontal {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-2px);
-  }
+@keyframes scanOverlayVertical {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  40% { transform: translateY(50vh); opacity: 1; }
+  60% { transform: translateY(50vh); opacity: 1; }
+  70% { transform: translateY(50vh); opacity: 0; }
+  100% { transform: translateY(50vh); opacity: 0; }
 }
 
-@keyframes moveScanlinesVertical {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-2px);
-  }
-}
-
-#noise {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.1;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
-  background-repeat: repeat;
-  background-size: cover;
-  z-index: 15;
+@keyframes scanOverlayHorizontal {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { transform: translateX(0); opacity: 1; }
+  40% { transform: translateX(50vw); opacity: 1; }
+  60% { transform: translateX(50vw); opacity: 1; }
+  70% { transform: translateX(50vw); opacity: 0; }
+  100% { transform: translateX(50vw); opacity: 0; }
 }
 
 #laser-scan-horizontal {
@@ -232,9 +166,9 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: var(--scan-color);
-  animation: scanVertical 9s linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 15px 5px var(--scan-color);
+  background: var(--center-color);
+  animation: scanVertical 10s linear forwards;
+  box-shadow: 0 0 15px 5px var(--center-color);
 }
 
 #laser-scan-vertical {
@@ -243,36 +177,21 @@ html, body {
   left: 0;
   width: 2px;
   height: 100vh;
-  background: var(--scan-color);
-  animation: scanHorizontal 9s linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 15px 5px var(--scan-color);
-}
-
-@keyframes scanHorizontal {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100vw);
-  }
+  background: var(--center-color);
+  animation: scanHorizontal 10s linear forwards;
+  box-shadow: 0 0 15px 5px var(--center-color);
 }
 
 @keyframes scanVertical {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100vh);
-  }
+  0% { transform: translateY(0); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(50vh); opacity: 1; }
 }
 
-@keyframes pulseGlow {
-  from {
-    box-shadow: 0 0 10px 2px var(--scan-color);
-  }
-  to {
-    box-shadow: 0 0 20px 5px var(--scan-color);
-  }
+@keyframes scanHorizontal {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(50vw); opacity: 1; }
 }
 
 #hud {
@@ -287,19 +206,17 @@ html, body {
   background: rgba(0, 0, 0, 0.3);
   padding: 10px;
   border: 1px solid #FF0000;
+  user-select: none;
 }
 
 #target-coords {
+  user-select: none;
   animation: flickerCoords 0.1s infinite;
 }
 
 @keyframes flickerCoords {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 #reticle {
@@ -325,23 +242,37 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
+#red-line-horizontal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 2px;
+  background: var(--center-color);
+  box-shadow: 0 0 15px 5px var(--center-color);
+  transform: translateX(-50%);
+  display: none;
+  z-index: 30;
+}
+
+#red-line-vertical {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 200px;
+  background: var(--center-color);
+  box-shadow: 0 0 15px 5px var(--center-color);
+  transform: translateY(-50%);
+  display: none;
+  z-index: 30;
+}
+
 @keyframes digitalGlitch {
-  0% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-  }
-  40% {
-    transform: translate(2px, -2px);
-  }
-  60% {
-    transform: translate(-2px, -2px);
-  }
-  80% {
-    transform: translate(2px, 2px);
-  }
-  100% {
-    transform: translate(0);
-  }
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(2px, 2px); }
+  100% { transform: translate(0); }
 }
