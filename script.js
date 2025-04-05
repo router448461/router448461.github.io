@@ -75,4 +75,3 @@ function updateCoordinates(e) {
   if (map.getSource('blast-radius')) map.getSource('blast-radius').setData(circleGeoJSON);
 }
 document.addEventListener('mousemove', updateCoordinates);
-```
