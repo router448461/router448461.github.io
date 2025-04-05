@@ -1,6 +1,6 @@
 :root {
-  --military-red: #8B0000; /* Deep, menacing red */
-  --military-blue: #4682B4; /* Cold, tactical blue */
+  --military-red: #8B0000;
+  --military-blue: #4682B4;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 30s;
@@ -12,7 +12,7 @@
 
 * {
   user-select: none;
-  cursor: none; /* Hide default cursor */
+  cursor: none;
 }
 
 html, body {
