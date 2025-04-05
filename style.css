@@ -1,13 +1,14 @@
 :root {
-  --edge-color: #4B5320;  /* Military green for edges */
-  --center-color: #556B2F; /* Military green for center */
+  --edge-color: #4B5320;
+  --center-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  --line-duration: 9s;
+  --line-duration: 30s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(85, 107, 47, 0.7); /* Military green shadow */
-  --sweep-duration: 4s;  /* Scan lines sweep every 4 seconds */
+  --box-shadow-color: rgba(85, 107, 47, 0.7);
+  --sweep-duration: 30s;
+  --sweep-delay: 60s;
 }
 
 * {
@@ -86,6 +87,7 @@ html, body {
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  will-change: transform, height, width;
 }
 
 .line.horizontal {
@@ -157,6 +159,7 @@ html, body {
   background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
+  will-change: transform;
 }
 
 @keyframes moveScanlines {
@@ -184,9 +187,11 @@ html, body {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: rgba(85, 107, 47, 0.8); /* Military green */
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  background: rgba(85, 107, 47, 0.8);
+  animation: sweepHorizontal 90s linear infinite, pulseGlow 1s infinite alternate;
+  animation-delay: 0s, 0s;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  will-change: left, box-shadow;
 }
 
 #laser-scan-vertical {
@@ -195,19 +200,23 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: rgba(85, 107, 47, 0.8); /* Military green */
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  background: rgba(85, 107, 47, 0.8);
+  animation: sweepVertical 90s linear infinite, pulseGlow 1s infinite alternate;
+  animation-delay: 0s, 0s;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
+  will-change: top, box-shadow;
 }
 
 @keyframes sweepHorizontal {
-  from { left: -2px; }
-  to { left: 100vw; }
+  0% { left: -2px; }
+  33.33% { left: 100vw; }
+  100% { left: 100vw; }
 }
 
 @keyframes sweepVertical {
-  from { top: -2px; }
-  to { top: 100vh; }
+  0% { top: -2px; }
+  33.33% { top: 100vh; }
+  100% { top: 100vh; }
 }
 
 @keyframes pulseGlow {
@@ -220,9 +229,9 @@ html, body {
   top: 20px;
   right: 20px;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'Courier New', monospace;
-  text-shadow: 0 0 5px #556B2F; /* Military green shadow */
+  text-shadow: 0 0 5px #556B2F;
   z-index: 15;
 }
 
@@ -230,9 +239,36 @@ html, body {
   position: absolute;
   width: 20px;
   height: 20px;
-  border: 2px solid #556B2F; /* Military green */
+  border: 2px solid #556B2F;
   border-radius: 50%;
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
+  box-shadow: 0 0 5px #556B2F;
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+@media (max-width: 600px) {
+  #hud {
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+  }
+  #reticle {
+    width: 15px;
+    height: 15px;
+  }
 }
