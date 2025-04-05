@@ -29,7 +29,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: grayscale(0.1) contrast(1.2) brightness(1.1) saturate(1.2) hue-rotate(-5deg);
+  filter: grayscale(0.1) contrast(1.8) brightness(1.1) saturate(1.2) hue-rotate(-5deg);
 }
 .mapboxgl-canvas {
   cursor: none !important;
@@ -169,7 +169,7 @@ html, body {
   width: 100vw;
   height: 2px;
   background: var(--center-color);
-  animation: scanVertical 10s linear forwards;
+  animation: redScanVertical 5s linear infinite;
   box-shadow: 0 0 15px 5px var(--center-color);
 }
 #laser-scan-vertical {
@@ -179,8 +179,18 @@ html, body {
   width: 2px;
   height: 100vh;
   background: var(--center-color);
-  animation: scanHorizontal 10s linear forwards;
+  animation: redScanHorizontal 5s linear infinite;
   box-shadow: 0 0 15px 5px var(--center-color);
+}
+@keyframes redScanVertical {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 1; }
+}
+@keyframes redScanHorizontal {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100vw); opacity: 1; }
 }
 @keyframes scanVertical {
   0% { transform: translateY(0); opacity: 0; }
@@ -209,6 +219,7 @@ html, body {
 #target-coords {
   user-select: none;
   animation: flickerCoords 0.1s infinite;
+  min-width: 220px;
 }
 @keyframes flickerCoords {
   0%, 100% { opacity: 1; }
@@ -261,9 +272,9 @@ html, body {
 }
 @keyframes digitalGlitch {
   0% { transform: translate(0); }
-  20% { transform: translate(-1px, 1px); }
-  40% { transform: translate(1px, -1px); }
-  60% { transform: translate(-1px, -1px); }
-  80% { transform: translate(1px, 1px); }
+  20% { transform: translate(-0.3px, 0.3px); }
+  40% { transform: translate(0.3px, -0.3px); }
+  60% { transform: translate(-0.3px, -0.3px); }
+  80% { transform: translate(0.3px, 0.3px); }
   100% { transform: translate(0); }
 }
