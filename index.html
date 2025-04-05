@@ -3,31 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Interactive tactical map with military-themed overlays">
-  <meta name="keywords" content="mapbox, tactical map, military design">
-  <meta property="og:title" content="Tactical Map Display">
   <title>Tactical Map Interface</title>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="loading">Loading...</div>
   <div id="map"></div>
   <div id="depth-overlay"></div>
   <div id="overlay">
-    <div class="line horizontal left"></div>
+    <div class="line horizontal"></div>
     <div class="line horizontal right"></div>
-    <div class="line vertical top"></div>
+    <div class="line vertical"></div>
     <div class="line vertical bottom"></div>
+    <div id="laser-scan-horizontal"></div>
+    <div id="laser-scan-vertical"></div>
+    <div id="scanlines"></div>
+    <div id="glitch-overlay"></div> <!-- Glitch effect overlay -->
   </div>
-  <div id="scanlines"></div>
-  <div id="noise"></div>
-  <div id="laser-scan-horizontal"></div>
-  <div id="laser-scan-vertical"></div>
   <div id="hud">
-    <div id="target-coords">TARGET: 0.000, 0.000</div>
-    <div id="map-status">Map Locked for Tactical Display</div>
+    <span id="target-coords">TARGET: 0.000, 0.000</span>
   </div>
   <div id="reticle"></div>
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
