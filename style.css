@@ -135,7 +135,7 @@ html, body {
   height: 100vh;
   background: repeating-linear-gradient(to bottom, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: scanOverlayVertical 5s linear infinite;
+  animation: scanOverlayVertical 30s linear infinite;
 }
 #scanlines-vertical {
   pointer-events: none;
@@ -146,7 +146,7 @@ html, body {
   height: 100vh;
   background: repeating-linear-gradient(to right, var(--scan-color) 0px, var(--scan-color) 1px, transparent 1px, transparent 2px);
   z-index: 20;
-  animation: scanOverlayHorizontal 5s linear infinite;
+  animation: scanOverlayHorizontal 30s linear infinite;
 }
 @keyframes scanOverlayVertical {
   0%   { transform: translateY(-100%); opacity: 0; }
@@ -169,7 +169,7 @@ html, body {
   width: 100vw;
   height: 2px;
   background: var(--center-color);
-  animation: redScanVertical 5s linear infinite;
+  animation: redScanVertical 10s linear infinite;
   box-shadow: 0 0 15px 5px var(--center-color);
 }
 #laser-scan-vertical {
@@ -179,7 +179,7 @@ html, body {
   width: 2px;
   height: 100vh;
   background: var(--center-color);
-  animation: redScanHorizontal 5s linear infinite;
+  animation: redScanHorizontal 10s linear infinite;
   box-shadow: 0 0 15px 5px var(--center-color);
 }
 @keyframes redScanVertical {
@@ -192,15 +192,13 @@ html, body {
   10% { transform: translateX(0); opacity: 1; }
   100% { transform: translateX(100vw); opacity: 1; }
 }
-@keyframes scanVertical {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(50vh); opacity: 1; }
-}
-@keyframes scanHorizontal {
-  0% { transform: translateX(0); opacity: 0; }
-  10% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(50vw); opacity: 1; }
+@keyframes digitalGlitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-0.3px, 0.3px); }
+  40% { transform: translate(0.3px, -0.3px); }
+  60% { transform: translate(-0.3px, -0.3px); }
+  80% { transform: translate(0.3px, 0.3px); }
+  100% { transform: translate(0); }
 }
 #hud {
   position: absolute;
@@ -269,12 +267,4 @@ html, body {
   transform: translateY(-50%);
   display: none;
   z-index: 30;
-}
-@keyframes digitalGlitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-0.3px, 0.3px); }
-  40% { transform: translate(0.3px, -0.3px); }
-  60% { transform: translate(-0.3px, -0.3px); }
-  80% { transform: translate(0.3px, 0.3px); }
-  100% { transform: translate(0); }
 }
