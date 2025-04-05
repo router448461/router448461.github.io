@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tactical Map Interface</title>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1_ok.0" />
+  <title>router448461</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Quantico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="map"></div>
   <div id="depth-overlay"></div>
   <div id="overlay">
-    <div class="line horizontal"></div>
+    <div class="line horizontal left"></div>
     <div class="line horizontal right"></div>
-    <div class="line vertical"></div>
+    <div class="line vertical top"></div>
     <div class="line vertical bottom"></div>
-    <div id="laser-scan-horizontal"></div>
-    <div id="laser-scan-vertical"></div>
-    <div id="scanlines"></div>
-    <div id="glitch-overlay"></div>
   </div>
+  <div id="scanlines"></div>
+  <div id="noise"></div>
+  <div id="laser-scan-horizontal"></div>
+  <div id="laser-scan-vertical"></div>
   <div id="hud">
-    <span id="target-coords">TARGET: 0.000, 0.000</span>
+    <div id="target-coords">TARGET: 0.000, 0.000</div>
   </div>
   <div id="reticle"></div>
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
