@@ -1,19 +1,18 @@
 :root {
-  --edge-color: #4B5320;
-  --center-color: #556B2F;
+  --military-red: #8B0000; /* Deep, menacing red */
+  --military-blue: #4682B4; /* Cold, tactical blue */
   --min-thickness: 0.5px;
   --max-thickness: 2px;
   --line-duration: 30s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(85, 107, 47, 0.7);
+  --box-shadow-color: rgba(139, 0, 0, 0.7);
   --sweep-duration: 30s;
-  --sweep-delay: 60s;
 }
 
 * {
   user-select: none;
-  cursor: default;
+  cursor: none; /* Hide default cursor */
 }
 
 html, body {
@@ -43,17 +42,17 @@ html, body {
   width: 100%;
   height: 100%;
   background: repeating-linear-gradient(
-    0deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
+    0deg, transparent, transparent 19px, var(--military-blue) 20px
   ),
   repeating-linear-gradient(
-    90deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
+    90deg, transparent, transparent 19px, var(--military-blue) 20px
   );
   pointer-events: none;
   z-index: 5;
 }
 
 .mapboxgl-canvas {
-  cursor: default !important;
+  cursor: none !important;
 }
 
 .mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
@@ -68,7 +67,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.7) 100%);
+  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
   filter: blur(4px);
 }
 
@@ -84,10 +83,9 @@ html, body {
 
 .line {
   position: absolute;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
+  animation: pulseLine 1.5s infinite alternate;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
-  will-change: transform, height, width;
 }
 
 .line.horizontal {
@@ -108,7 +106,7 @@ html, body {
   left: 50%;
   width: var(--min-thickness);
   height: 50vh;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--military-red) 15%, var(--military-red) 50%, var(--military-red) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
   animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
@@ -122,11 +120,6 @@ html, body {
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
 }
 
 @keyframes expandHorizontal {
@@ -156,29 +149,14 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(to bottom, var(--military-red) 0px, var(--military-red) 1px, transparent 1px, transparent 3px);
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
-  will-change: transform;
 }
 
 @keyframes moveScanlines {
   from { transform: translateY(0); }
   to { transform: translateY(-4px); }
-}
-
-#noise {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.05;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
-  background-repeat: repeat;
-  background-size: cover;
-  z-index: 15;
 }
 
 #laser-scan-horizontal {
@@ -187,11 +165,9 @@ html, body {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: rgba(85, 107, 47, 0.8);
+  background: var(--military-red);
   animation: sweepHorizontal 90s linear infinite, pulseGlow 1s infinite alternate;
-  animation-delay: 0s, 0s;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
-  will-change: left, box-shadow;
+  box-shadow: 0 0 10px 2px var(--military-red);
 }
 
 #laser-scan-vertical {
@@ -200,11 +176,9 @@ html, body {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: rgba(85, 107, 47, 0.8);
+  background: var(--military-red);
   animation: sweepVertical 90s linear infinite, pulseGlow 1s infinite alternate;
-  animation-delay: 0s, 0s;
-  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8);
-  will-change: top, box-shadow;
+  box-shadow: 0 0 10px 2px var(--military-red);
 }
 
 @keyframes sweepHorizontal {
@@ -220,8 +194,8 @@ html, body {
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1); }
+  from { box-shadow: 0 0 10px 2px var(--military-red); }
+  to { box-shadow: 0 0 15px 3px var(--military-red); }
 }
 
 #hud {
@@ -231,7 +205,7 @@ html, body {
   color: #fff;
   font-size: 16px;
   font-family: 'Courier New', monospace;
-  text-shadow: 0 0 5px #556B2F;
+  text-shadow: 0 0 5px var(--military-red);
   z-index: 15;
 }
 
@@ -239,36 +213,34 @@ html, body {
   position: absolute;
   width: 20px;
   height: 20px;
-  border: 2px solid #556B2F;
+  border: 2px solid var(--military-red);
   border-radius: 50%;
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 5px #556B2F;
+  animation: pulseReticle 2s infinite;
 }
 
-#loading {
-  position: fixed;
+@keyframes pulseReticle {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+#glitch-overlay {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #000;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
+  background: transparent;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 0.1s;
 }
 
-@media (max-width: 600px) {
-  #hud {
-    top: 10px;
-    right: 10px;
-    font-size: 14px;
-  }
-  #reticle {
-    width: 15px;
-    height: 15px;
-  }
+.glitch {
+  opacity: 1;
+  background: rgba(255, 0, 0, 0.1);
+  filter: blur(2px) contrast(10);
 }
