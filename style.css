@@ -1,13 +1,13 @@
 :root {
-  --edge-color: #8B0000;
+  --edge-color: #600000;
   --center-color: #FF0000;
-  --scan-color: #556B2F; /* Military green */
+  --scan-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 3px;
   --line-duration: 9s;
-  --shadow-blur: 10px;
-  --shadow-spread: 2px;
-  --box-shadow-color: rgba(255, 0, 0, 0.7);
+  --shadow-blur: 15px;
+  --shadow-spread: 3px;
+  --box-shadow-color: rgba(255, 0, 0, 0.8);
   --sweep-duration: 9s;
 }
 
@@ -32,7 +32,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: grayscale(0.5) contrast(1.5) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
+  filter: grayscale(0.7) contrast(2) brightness(0.8) saturate(1.2) hue-rotate(-15deg);
 }
 
 #map::before {
@@ -42,12 +42,8 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
-  ),
-  repeating-linear-gradient(
-    90deg, transparent, transparent 19px, rgba(85, 107, 47, 0.1) 20px
-  );
+  background: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(85,107,47,0.1) 20px),
+              repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(85,107,47,0.1) 20px);
   pointer-events: none;
   z-index: 5;
 }
@@ -56,7 +52,8 @@ html, body {
   cursor: default !important;
 }
 
-.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
@@ -80,6 +77,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   z-index: 10;
+  animation: digitalGlitch 0.5s infinite linear;
 }
 
 .line {
@@ -155,30 +153,63 @@ html, body {
 }
 
 @keyframes pulseLine {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.2);
+  }
 }
 
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
-#scanlines {
+#scanlines-horizontal {
   pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 2px);
+  background: repeating-linear-gradient(to bottom, transparent, transparent 20px, var(--scan-color) 20px, var(--scan-color) 21px, transparent 21px, transparent 40px);
   z-index: 20;
-  animation: moveScanlines 0.1s infinite linear;
+  animation: moveScanlinesHorizontal 0.1s linear infinite;
 }
 
-@keyframes moveScanlines {
-  from { transform: translateY(0); }
-  to { transform: translateY(-2px); }
+#scanlines-vertical {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(to right, transparent, transparent 20px, var(--scan-color) 20px, var(--scan-color) 21px, transparent 21px, transparent 40px);
+  z-index: 20;
+  animation: moveScanlinesVertical 0.1s linear infinite;
+}
+
+@keyframes moveScanlinesHorizontal {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes moveScanlinesVertical {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-2px);
+  }
 }
 
 #noise {
@@ -218,18 +249,30 @@ html, body {
 }
 
 @keyframes scanHorizontal {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100vw); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
 }
 
 @keyframes scanVertical {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px var(--scan-color); }
-  to { box-shadow: 0 0 20px 5px var(--scan-color); }
+  from {
+    box-shadow: 0 0 10px 2px var(--scan-color);
+  }
+  to {
+    box-shadow: 0 0 20px 5px var(--scan-color);
+  }
 }
 
 #hud {
@@ -251,8 +294,12 @@ html, body {
 }
 
 @keyframes flickerCoords {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 #reticle {
@@ -264,7 +311,7 @@ html, body {
   pointer-events: none;
   z-index: 25;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 5px #FF0000;
+  box-shadow: 0 0 10px 3px #FF0000, 0 0 20px 5px #FF4500;
 }
 
 #reticle::after {
@@ -276,4 +323,25 @@ html, body {
   height: 4px;
   background: #FF0000;
   transform: translate(-50%, -50%);
+}
+
+@keyframes digitalGlitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(2px, -2px);
+  }
+  60% {
+    transform: translate(-2px, -2px);
+  }
+  80% {
+    transform: translate(2px, 2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
