@@ -29,7 +29,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  filter: contrast(2.5) brightness(2) saturate(1.5);
+  filter: contrast(3) brightness(3) saturate(1.5);
 }
 .mapboxgl-canvas {
   cursor: none !important;
@@ -120,17 +120,15 @@ html, body {
   animation: scanOverlayHorizontal 60s linear infinite;
 }
 @keyframes scanOverlayVertical {
-  0% { transform: translateY(-100%); opacity: 0; }
-  1% { transform: translateY(-100%); opacity: 0; }
-  2.67% { transform: translateY(100vh); opacity: 1; }
-  4% { transform: translateY(100vh); opacity: 0; }
+  0% { transform: translateY(-100%); opacity: 1; }
+  8.33% { transform: translateY(100vh); opacity: 1; }
+  8.34% { opacity: 0; }
   100% { transform: translateY(100vh); opacity: 0; }
 }
 @keyframes scanOverlayHorizontal {
-  0% { transform: translateX(-100%); opacity: 0; }
-  1% { transform: translateX(-100%); opacity: 0; }
-  2.67% { transform: translateX(100vw); opacity: 1; }
-  4% { transform: translateX(100vw); opacity: 0; }
+  0% { transform: translateX(-100%); opacity: 1; }
+  8.33% { transform: translateX(100vw); opacity: 1; }
+  8.34% { opacity: 0; }
   100% { transform: translateX(100vw); opacity: 0; }
 }
 #grid {
@@ -141,13 +139,13 @@ html, body {
   width: 100vw;
   height: 100vh;
   background:
-    linear-gradient(to right, rgba(0,51,102,0.30) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,51,102,0.30) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0,51,102,0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,51,102,0.5) 1px, transparent 1px);
   background-size: 50px 50px;
   z-index: 12;
 }
 #hud {
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   color: #fff;
