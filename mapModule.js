@@ -7,6 +7,7 @@ export function initMap() {
     zoom: 1.5,
     attributionControl: false
   });
+  
   map.dragPan.disable();
   map.dragRotate.disable();
   map.scrollZoom.disable();
@@ -14,6 +15,7 @@ export function initMap() {
   map.boxZoom.disable();
   map.keyboard.disable();
   map.touchZoomRotate.disable();
+  
   map.on('load', () => {
     const mapContainer = map.getContainer();
     mapContainer.addEventListener('mousemove', throttle(function(e) {
@@ -21,12 +23,15 @@ export function initMap() {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       const coords = map.unproject([mouseX, mouseY]);
-      const lat = coords.lat.toFixed(3);
-      const lng = coords.lng.toFixed(3);
-      document.getElementById('target-coords').innerHTML = `<span>LAT. ${lat}</span><span>LON. ${lng}</span>`;
+      const lat = parseFloat(coords.lat);
+      const lng = parseFloat(coords.lng);
+      const formattedLat = (lat >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lat))).padStart(3, '0') + '.' + String(Math.floor((Math.abs(lat) - Math.floor(Math.abs(lat))) * 1000)).padStart(3, '0');
+      const formattedLng = (lng >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lng))).padStart(3, '0') + '.' + String(Math.floor((Math.abs(lng) - Math.floor(Math.abs(lng))) * 1000)).padStart(3, '0');
+      document.getElementById('coords').innerText = `LAT: ${formattedLat}  LON: ${formattedLng}`;
     }, 50));
   });
 }
+
 function throttle(func, limit) {
   let lastFunc;
   let lastRan;
@@ -44,5 +49,5 @@ function throttle(func, limit) {
         }
       }, limit - (Date.now() - lastRan));
     }
-  }
+  };
 }
