@@ -11,9 +11,11 @@
   --box-shadow-color: rgba(139, 0, 0, 0.7);
   --sweep-duration: 60s;
 }
+
 * {
   user-select: none;
 }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -23,9 +25,11 @@ html, body {
   background-color: #000;
   font-family: 'Quantico', sans-serif;
 }
+
 body, #map {
   cursor: none;
 }
+
 #map {
   position: absolute;
   top: 0;
@@ -34,6 +38,7 @@ body, #map {
   height: 100vh;
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
 }
+
 #map::before {
   content: '';
   position: absolute;
@@ -41,16 +46,20 @@ body, #map {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px), 
+              repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px);
   pointer-events: none;
   z-index: 5;
 }
+
 .mapboxgl-canvas {
   cursor: none !important;
 }
+
 .mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
+
 #depth-overlay {
   pointer-events: none;
   position: absolute;
@@ -62,6 +71,7 @@ body, #map {
   background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.95) 100%);
   filter: blur(4px);
 }
+
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -71,12 +81,14 @@ body, #map {
   height: 100vh;
   z-index: 10;
 }
+
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
+
 .line.horizontal {
   top: 50%;
   width: 50vw;
@@ -84,11 +96,13 @@ body, #map {
   transform-origin: left center;
   animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
 }
+
 .line.horizontal.right {
   right: 0;
   left: auto;
   transform-origin: right center;
 }
+
 .line.vertical {
   left: 50%;
   width: var(--min-thickness);
@@ -97,35 +111,43 @@ body, #map {
   transform-origin: top center;
   animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
 }
+
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
   transform-origin: bottom center;
 }
+
 @keyframes pulseLine {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
 }
+
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
 }
+
 @keyframes expandHorizontal {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
+
 @keyframes growThickness {
   from { height: var(--min-thickness); }
   to { height: var(--max-thickness); }
 }
+
 @keyframes expandVertical {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
+
 @keyframes growThicknessV {
   from { width: var(--min-thickness); }
   to { width: var(--max-thickness); }
 }
+
 #scanlines {
   pointer-events: none;
   position: absolute;
@@ -137,10 +159,12 @@ body, #map {
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
 }
+
 @keyframes moveScanlines {
   from { transform: translateY(0); }
   to { transform: translateY(-4px); }
 }
+
 #noise {
   pointer-events: none;
   position: absolute;
@@ -154,6 +178,7 @@ body, #map {
   background-size: cover;
   z-index: 15;
 }
+
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
@@ -164,6 +189,7 @@ body, #map {
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
+
 #laser-scan-vertical {
   position: absolute;
   top: -2px;
@@ -174,22 +200,26 @@ body, #map {
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
+
 @keyframes sweepHorizontal {
   0% { left: -2px; opacity: 1; }
   50% { left: 100vw; opacity: 1; }
   50.01% { left: -2px; opacity: 0; }
   100% { left: -2px; opacity: 0; }
 }
+
 @keyframes sweepVertical {
   0% { top: -2px; opacity: 1; }
   50% { top: 100vh; opacity: 1; }
   50.01% { top: -2px; opacity: 0; }
   100% { top: -2px; opacity: 0; }
 }
+
 @keyframes pulseGlow {
   from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5); }
   to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(85, 107, 47, 0.7); }
 }
+
 #hud {
   position: absolute;
   top: 20px;
@@ -200,15 +230,18 @@ body, #map {
   text-shadow: 0 0 5px #556B2F;
   z-index: 15;
 }
-#target-coords {
-  margin-bottom: 5px;
-  display: flex;
-  gap: 10px;
+
+#coords {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  font-size: 14px;
+  z-index: 15;
+  width: 220px;
 }
-#target-coords span {
-  display: inline-block;
-  width: 100px;
-}
+
 #reticle {
   position: absolute;
   width: 30px;
@@ -222,13 +255,66 @@ body, #map {
   will-change: transform;
   animation: pulseReticle 1s infinite alternate;
 }
+
 @keyframes pulseReticle {
   from { transform: translate(-50%, -50%) scale(1); }
   to { transform: translate(-50%, -50%) scale(1.05); }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .line, #laser-scan-horizontal, #laser-scan-vertical {
     animation-duration: 3s;
     transition: none;
   }
+}
+
+/* Boot overlay styling */
+#boot-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+.boot-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Glitch overlay styling */
+#glitch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0;
+}
+
+.glitch-active {
+  animation: glitchAnim 0.3s linear;
+  opacity: 0.5;
+}
+
+@keyframes glitchAnim {
+  0% { transform: translate(0, 0); opacity: 0.5; }
+  20% { transform: translate(-2px, 2px); opacity: 0.7; }
+  40% { transform: translate(2px, -2px); opacity: 0.4; }
+  60% { transform: translate(-2px, 2px); opacity: 0.8; }
+  80% { transform: translate(2px, -2px); opacity: 0.3; }
+  100% { transform: translate(0, 0); opacity: 0; }
 }
