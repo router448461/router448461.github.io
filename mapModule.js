@@ -27,7 +27,6 @@ export function initMap() {
     }, 50));
   });
 }
-
 function throttle(func, limit) {
   let lastFunc;
   let lastRan;
