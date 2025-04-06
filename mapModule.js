@@ -7,6 +7,7 @@ export function initMap() {
     zoom: 1.5,
     attributionControl: false
   });
+  
   map.dragPan.disable();
   map.dragRotate.disable();
   map.scrollZoom.disable();
@@ -14,6 +15,7 @@ export function initMap() {
   map.boxZoom.disable();
   map.keyboard.disable();
   map.touchZoomRotate.disable();
+  
   map.on('load', () => {
     const mapContainer = map.getContainer();
     mapContainer.addEventListener('mousemove', throttle(function(e) {
