@@ -9,8 +9,12 @@ export function bootSequence() {
   bootOverlay.innerHTML = messages.join('<br>');
   setTimeout(() => {
     bootOverlay.classList.add('boot-hidden');
+    // Trigger shutter door animation
+    const shutterContainer = document.getElementById('shutter-container');
+    shutterContainer.classList.add('open');
+    // Remove shutter container after animation completes
     setTimeout(() => {
-      bootOverlay.remove();
-    }, 1000);
+      shutterContainer.remove();
+    }, 1200);
   }, 4000);
 }
