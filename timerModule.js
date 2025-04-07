@@ -1,3 +1,4 @@
+// timerModule.js
 export function startTimer() {
   function updateTimer() {
     const now = new Date();
