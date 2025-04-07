@@ -1,3 +1,4 @@
+// script.js
 import { initMap } from './mapModule.js';
 import { startTimer } from './timerModule.js';
 import { bootSequence } from './bootModule.js';
