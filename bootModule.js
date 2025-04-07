@@ -1,7 +1,8 @@
+// bootModule.js
 export function bootSequence() {
   const bootOverlay = document.getElementById('boot-overlay');
   const messages = [
-    "ESTABLISHING VIDEO UPLINK...",
+    "ESTABLISHING VIDEO UPLINK..."
   ];
   bootOverlay.innerHTML = messages.join('<br>');
   setTimeout(() => {
