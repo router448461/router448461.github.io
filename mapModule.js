@@ -1,5 +1,3 @@
-import { throttle } from './utils.js';
-
 export function initMap() {
   mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
   const map = new mapboxgl.Map({
@@ -20,7 +18,7 @@ export function initMap() {
   
   map.on('load', () => {
     const mapContainer = map.getContainer();
-    mapContainer.addEventListener('mousemove', throttle(function (e) {
+    mapContainer.addEventListener('mousemove', throttle(function(e) {
       const rect = mapContainer.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -32,4 +30,24 @@ export function initMap() {
       document.getElementById('coords').innerText = `LAT: ${formattedLat}  LON: ${formattedLng}`;
     }, 50));
   });
+}
+
+function throttle(func, limit) {
+  let lastFunc;
+  let lastRan;
+  return function(...args) {
+    const context = this;
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
 }
