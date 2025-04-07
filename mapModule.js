@@ -1,3 +1,4 @@
+// mapModule.js
 export function initMap() {
   mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
   const map = new mapboxgl.Map({
