@@ -34,6 +34,7 @@ body, #map {
   cursor: none;
 }
 
+/* Map and its flicker effect */
 #map {
   position: absolute;
   top: 0;
@@ -62,15 +63,16 @@ body, #map {
   z-index: 5;
 }
 
+/* Remove Mapbox controls */
 .mapboxgl-canvas {
   cursor: none !important;
 }
-
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
+/* Depth overlay for extra darkness */
 #depth-overlay {
   pointer-events: none;
   position: absolute;
@@ -83,6 +85,7 @@ body, #map {
   filter: blur(4px);
 }
 
+/* Overlay red lines that sweep in 60s */
 #overlay {
   pointer-events: none;
   position: absolute;
@@ -106,7 +109,6 @@ body, #map {
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
 }
-
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
@@ -119,7 +121,6 @@ body, #map {
   transform-origin: left center;
   animation: expandHorizontal var(--red-sweep-duration) forwards, growThickness var(--red-sweep-duration) forwards;
 }
-
 .line.horizontal.right {
   right: 0;
   left: auto;
@@ -144,7 +145,6 @@ body, #map {
   transform-origin: top center;
   animation: expandVertical var(--red-sweep-duration) forwards, growThicknessV var(--red-sweep-duration) forwards;
 }
-
 .line.vertical.bottom {
   bottom: 0;
   top: auto;
@@ -161,50 +161,7 @@ body, #map {
   to { width: var(--max-thickness); }
 }
 
-#scanlines {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
-  z-index: 20;
-  animation: moveScanlines 30s linear infinite;
-}
-
-@keyframes moveScanlines {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-100%); }
-}
-
-#noise {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.15;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
-  background-repeat: repeat;
-  background-size: cover;
-  z-index: 15;
-}
-
-#static-overlay {
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.1;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=");
-  background-repeat: repeat;
-  z-index: 16;
-}
-
+/* Green scan lines that sweep every 30s */
 #laser-scan-horizontal {
   position: absolute;
   top: 0;
@@ -215,7 +172,6 @@ body, #map {
   animation: sweepHorizontal var(--green-sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
 }
-
 #laser-scan-vertical {
   position: absolute;
   top: -2px;
@@ -233,19 +189,62 @@ body, #map {
   50.01% { left: -2px; opacity: 0; }
   100% { left: -2px; opacity: 0; }
 }
-
 @keyframes sweepVertical {
   0% { top: -2px; opacity: 1; }
   50% { top: 100vh; opacity: 1; }
   50.01% { top: -2px; opacity: 0; }
   100% { top: -2px; opacity: 0; }
 }
-
 @keyframes pulseGlow {
   from { box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5); }
   to { box-shadow: 0 0 15px 3px rgba(85,107,47,1), 0 0 20px 4px rgba(85,107,47,0.7); }
 }
 
+/* Scanlines that repeat every 30s */
+#scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
+  z-index: 20;
+  animation: moveScanlines 30s linear infinite;
+}
+@keyframes moveScanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+/* Noise and extra static overlay */
+#noise {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.15;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-size: cover;
+  z-index: 15;
+}
+#static-overlay {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.1;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=");
+  background-repeat: repeat;
+  z-index: 16;
+}
+
+/* HUD (Timer and Coordinates) styling */
 #hud {
   position: absolute;
   top: 20px;
@@ -258,7 +257,6 @@ body, #map {
   transform: translate3d(0,0,0);
   transition: transform 0.1s ease-out;
 }
-
 #coords {
   position: absolute;
   bottom: 20px;
@@ -274,6 +272,7 @@ body, #map {
   transition: transform 0.1s ease-out;
 }
 
+/* Reticle with extra jitter */
 #reticle {
   position: absolute;
   width: 30px;
@@ -287,18 +286,17 @@ body, #map {
   will-change: transform;
   animation: pulseReticle 0.9s infinite alternate, jitterReticle 2s infinite;
 }
-
 @keyframes pulseReticle {
   from { transform: translate(-50%, -50%) scale(1); }
   to { transform: translate(-50%, -50%) scale(1.07); }
 }
-
 @keyframes jitterReticle {
   0% { transform: translate(-50%, -50%) translate(0, 0); }
   50% { transform: translate(-50%, -50%) translate(1px, -1px); }
   100% { transform: translate(-50%, -50%) translate(0, 0); }
 }
 
+/* Boot overlay: match HUD styling exactly */
 #boot-overlay {
   position: fixed;
   top: 0;
@@ -310,7 +308,7 @@ body, #map {
   align-items: center;
   justify-content: center;
   font-size: var(--hud-font-size);
-  color: #0f0;
+  color: #fff;
   font-family: 'Courier New', monospace;
   text-shadow: 0 0 10px var(--center-color);
   z-index: 101;
@@ -322,7 +320,6 @@ body, #map {
   animation: glitchAnim 0.3s linear;
   opacity: 0.5;
 }
-
 @keyframes glitchAnim {
   0% { transform: translate(0, 0); opacity: 0.5; }
   20% { transform: translate(-2px, 2px); opacity: 0.7; }
