@@ -6,7 +6,7 @@
   --green-center-color: #556B2F;
   --min-thickness: 0.5px;
   --max-thickness: 2px;
-  --line-duration: 30s;
+  --line-duration: 1.2s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(139, 0, 0, 0.7);
@@ -86,7 +86,7 @@ body, #map {
 .line {
   position: absolute;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine 1.5s infinite alternate, flicker 0.1s infinite;
+  animation: pulseLine var(--line-duration) infinite alternate, flicker 0.08s infinite;
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
 
@@ -95,7 +95,7 @@ body, #map {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--line-duration) forwards, growThickness var(--line-duration) forwards;
+  animation: expandHorizontal var(--sweep-duration) forwards, growThickness var(--sweep-duration) forwards;
 }
 
 .line.horizontal.right {
@@ -110,7 +110,7 @@ body, #map {
   height: 50vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
-  animation: expandVertical var(--line-duration) forwards, growThicknessV var(--line-duration) forwards;
+  animation: expandVertical var(--sweep-duration) forwards, growThicknessV var(--sweep-duration) forwards;
 }
 
 .line.vertical.bottom {
@@ -217,8 +217,8 @@ body, #map {
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(85, 107, 47, 0.7); }
+  from { box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5); }
+  to { box-shadow: 0 0 15px 3px rgba(85,107,47,1), 0 0 20px 4px rgba(85,107,47,0.7); }
 }
 
 #hud {
@@ -255,12 +255,12 @@ body, #map {
   z-index: 25;
   transform: translate(-50%, -50%);
   will-change: transform;
-  animation: pulseReticle 1s infinite alternate;
+  animation: pulseReticle 0.9s infinite alternate;
 }
 
 @keyframes pulseReticle {
   from { transform: translate(-50%, -50%) scale(1); }
-  to { transform: translate(-50%, -50%) scale(1.05); }
+  to { transform: translate(-50%, -50%) scale(1.07); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -271,14 +271,19 @@ body, #map {
 }
 
 #boot-overlay {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: transparent;
-  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f0;
   font-family: 'Courier New', monospace;
-  font-size: 14px;
-  z-index: 100;
+  font-size: 24px;
+  z-index: 101;
   opacity: 1;
   transition: opacity 1s ease-out;
 }
