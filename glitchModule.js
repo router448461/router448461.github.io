@@ -1,3 +1,4 @@
+// glitchModule.js
 export function startGlitch() {
   const glitchOverlay = document.getElementById('glitch-overlay');
   function triggerGlitch() {
