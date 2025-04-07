@@ -10,7 +10,8 @@
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(139, 0, 0, 0.7);
-  --sweep-duration: 60s;
+  --red-sweep-duration: 60s;
+  --green-sweep-duration: 30s;
   --hud-font-size: 30px;
   --boot-font-size: 30px;
 }
@@ -116,7 +117,7 @@ body, #map {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--sweep-duration) forwards, growThickness var(--sweep-duration) forwards;
+  animation: expandHorizontal var(--red-sweep-duration) forwards, growThickness var(--red-sweep-duration) forwards;
 }
 
 .line.horizontal.right {
@@ -141,7 +142,7 @@ body, #map {
   height: 50vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
-  animation: expandVertical var(--sweep-duration) forwards, growThicknessV var(--sweep-duration) forwards;
+  animation: expandVertical var(--red-sweep-duration) forwards, growThicknessV var(--red-sweep-duration) forwards;
 }
 
 .line.vertical.bottom {
@@ -211,7 +212,7 @@ body, #map {
   width: 2px;
   height: 100vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  animation: sweepHorizontal var(--green-sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
 }
 
@@ -222,7 +223,7 @@ body, #map {
   width: 100vw;
   height: 2px;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
+  animation: sweepVertical var(--green-sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
 }
 
