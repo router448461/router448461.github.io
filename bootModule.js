@@ -9,6 +9,6 @@ export function bootSequence() {
       setTimeout(() => {
         bootOverlay.remove();
       }, 1000);
-    }, 1000);
+    }, 1500);
   }, 4000);
 }
