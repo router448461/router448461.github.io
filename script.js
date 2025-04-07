@@ -5,6 +5,8 @@ import { startTimer } from './timerModule.js';
 import { startGlitch } from './glitchModule.js';
 
 bootSequence();
+// Start all features as soon as the boot screen is complete.
+// (If needed, adjust the delay so that they start immediately after bootOverlay removal.)
 setTimeout(() => {
   initMap();
   startTimer();
