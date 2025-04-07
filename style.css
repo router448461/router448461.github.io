@@ -1,3 +1,4 @@
+/* style.css */
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
@@ -240,6 +241,7 @@ body, #map {
   font-size: 14px;
   z-index: 15;
   width: 220px;
+  white-space: nowrap;
 }
 
 #reticle {
@@ -268,21 +270,14 @@ body, #map {
   }
 }
 
-/* Boot overlay styling */
 #boot-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-  color: #0f0;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  color: #fff;
   font-family: 'Courier New', monospace;
-  font-size: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  font-size: 14px;
   z-index: 100;
   opacity: 1;
   transition: opacity 1s ease-out;
@@ -293,7 +288,6 @@ body, #map {
   pointer-events: none;
 }
 
-/* Glitch overlay styling */
 #glitch-overlay {
   position: absolute;
   top: 0;
