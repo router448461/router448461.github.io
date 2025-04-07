@@ -1,10 +1,7 @@
 // bootModule.js
 export function bootSequence() {
   const bootOverlay = document.getElementById('boot-overlay');
-  const messages = [
-    "ESTABLISHING VIDEO UPLINK..."
-  ];
-  bootOverlay.innerHTML = messages.join('<br>');
+  bootOverlay.innerHTML = "ESTABLISHING VIDEO UPLINK...";
   setTimeout(() => {
     bootOverlay.classList.add('boot-hidden');
     setTimeout(() => {
