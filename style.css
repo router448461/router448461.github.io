@@ -278,13 +278,6 @@ body, #map {
   100% { transform: translate(-50%, -50%) translate(0, 0); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .line, #laser-scan-horizontal, #laser-scan-vertical {
-    animation-duration: 3s;
-    transition: none;
-  }
-}
-
 @keyframes lensOpen {
   0% { clip-path: circle(0% at 50% 50%); opacity: 1; }
   100% { clip-path: circle(150% at 50% 50%); opacity: 1; }
@@ -300,7 +293,7 @@ body, #map {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--boot-font-size);
+  font-size: var(--hud-font-size);
   color: #0f0;
   font-family: 'Courier New', monospace;
   text-shadow: 0 0 10px var(--center-color);
@@ -310,7 +303,7 @@ body, #map {
 }
 
 .boot-lens {
-  animation: lensOpen 1s forwards;
+  animation: lensOpen 1.8s ease-out forwards;
 }
 
 .boot-hidden {
