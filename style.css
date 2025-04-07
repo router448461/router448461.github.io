@@ -1,6 +1,6 @@
 :root {
-  --edge-color: #4B5320;
-  --center-color: #556B2F;
+  --edge-color: #8B0000;
+  --center-color: #FF0000;
   --green-edge-color: #4B5320;
   --green-center-color: #556B2F;
   --min-thickness: 0.5px;
@@ -8,7 +8,7 @@
   --line-duration: 30s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(75, 83, 32, 0.7);
+  --box-shadow-color: rgba(139, 0, 0, 0.7);
   --sweep-duration: 60s;
 }
 
@@ -37,12 +37,6 @@ body, #map {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
-  clip-path: circle(0% at center);
-  transition: clip-path 2s ease-in-out;
-}
-
-#map.reveal {
-  clip-path: circle(150% at center);
 }
 
 #map::before {
@@ -74,8 +68,8 @@ body, #map {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.9) 100%);
-  filter: blur(3px);
+  background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.95) 100%);
+  filter: blur(4px);
 }
 
 #overlay {
@@ -161,19 +155,14 @@ body, #map {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
   z-index: 20;
-  animation: moveScanlines 0.2s infinite linear, flickerScan 0.5s infinite;
+  animation: moveScanlines 0.2s infinite linear;
 }
 
 @keyframes moveScanlines {
   from { transform: translateY(0); }
   to { transform: translateY(-4px); }
-}
-
-@keyframes flickerScan {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.9; }
 }
 
 #noise {
@@ -197,7 +186,7 @@ body, #map {
   width: 2px;
   height: 100vh;
   background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 0.8s infinite alternate;
+  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
@@ -208,7 +197,7 @@ body, #map {
   width: 100vw;
   height: 2px;
   background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 0.8s infinite alternate;
+  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
@@ -228,7 +217,7 @@ body, #map {
 
 @keyframes pulseGlow {
   from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8), 0 0 15px 3px rgba(85, 107, 47, 0.5); }
-  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 5px rgba(85, 107, 47, 0.7); }
+  to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1), 0 0 20px 4px rgba(85, 107, 47, 0.7); }
 }
 
 #hud {
@@ -264,12 +253,12 @@ body, #map {
   z-index: 25;
   transform: translate(-50%, -50%);
   will-change: transform;
-  animation: pulseReticle 0.8s infinite alternate;
+  animation: pulseReticle 1s infinite alternate;
 }
 
 @keyframes pulseReticle {
-  from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  from { transform: translate(-50%, -50%) scale(1); }
+  to { transform: translate(-50%, -50%) scale(1.05); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -279,6 +268,7 @@ body, #map {
   }
 }
 
+/* Boot overlay styling */
 #boot-overlay {
   position: absolute;
   top: 0;
@@ -303,6 +293,7 @@ body, #map {
   pointer-events: none;
 }
 
+/* Glitch overlay styling */
 #glitch-overlay {
   position: absolute;
   top: 0;
