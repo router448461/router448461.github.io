@@ -14,6 +14,7 @@
   --green-sweep-duration: 30s;
   --hud-font-size: 30px;
   --boot-font-size: 30px;
+  --map-scale: 1.1;
   --parallax-max-offset: 20px;
   --jitter-amount: 2px;
 }
@@ -21,6 +22,7 @@
 * {
   user-select: none;
 }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -30,9 +32,12 @@ html, body {
   background-color: #000;
   font-family: 'Quantico', sans-serif;
 }
+
 body, #map {
   cursor: none;
 }
+
+/* Only the map moves with parallax; it’s scaled to avoid black borders */
 #map {
   position: absolute;
   top: 0;
