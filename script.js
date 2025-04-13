@@ -1,24 +1,41 @@
 // script.js
+import { bootSequence } from './bootModule.js';
 import { initMap } from './mapModule.js';
 import { startTimer } from './timerModule.js';
 import { startGlitch } from './glitchModule.js';
+bootSequence();
 setTimeout(()=>{
   initMap();
   startTimer();
   startGlitch();
   let mouseOffset = { x: 0, y: 0 };
   let ambientOffset = { x: 0, y: 0 };
+  let lastMouseX = 0;
+  let lastMouseY = 0;
+  let lastMouseTime = Date.now();
   document.addEventListener('mousemove', (e)=>{
     const centerX = window.innerWidth/2;
     const centerY = window.innerHeight/2;
     const maxOffset = 20;
-    const rawDeltaX = (e.clientX - centerX)*0.05;
-    const rawDeltaY = (e.clientY - centerY)*0.05;
+    const rawDeltaX = (e.clientX - centerX) * 0.05;
+    const rawDeltaY = (e.clientY - centerY) * 0.05;
     mouseOffset.x = Math.max(-maxOffset, Math.min(maxOffset, rawDeltaX));
     mouseOffset.y = Math.max(-maxOffset, Math.min(maxOffset, rawDeltaY));
     const reticle = document.getElementById('reticle');
     reticle.style.left = `${e.clientX}px`;
     reticle.style.top = `${e.clientY}px`;
+    const currentTime = Date.now();
+    const deltaTime = currentTime - lastMouseTime;
+    const distance = Math.sqrt(Math.pow(e.clientX - lastMouseX, 2) + Math.pow(e.clientY - lastMouseY, 2));
+    if(deltaTime > 0 && distance/deltaTime > 1){
+      document.getElementById('noise').classList.add('fast-move');
+      setTimeout(()=>{
+        document.getElementById('noise').classList.remove('fast-move');
+      },200);
+    }
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+    lastMouseTime = currentTime;
   });
   function updateAmbientDrift(){
     const t = Date.now();
@@ -34,16 +51,4 @@ setTimeout(()=>{
     requestAnimationFrame(updateMapTransform);
   }
   updateMapTransform();
-  document.addEventListener('click', e=>{
-    const mapContainer = document.getElementById('map');
-    const rect = mapContainer.getBoundingClientRect();
-    if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const coords = window.theMap.unproject([x,y]);
-      const copyText = `${coords.lng.toFixed(6)}, ${coords.lat.toFixed(6)}`;
-      navigator.clipboard.writeText(copyText);
-    }
-  });
 },5000);
-
