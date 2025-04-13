@@ -5,7 +5,8 @@ export function bootSequence(){
   setTimeout(()=>{
     bootOverlay.classList.add('boot-hidden');
     setTimeout(()=>{
-      bootOverlay.remove();
+      window.location.href = "ai.html";
     },1000);
   },4000);
 }
+bootSequence();
