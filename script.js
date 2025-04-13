@@ -6,8 +6,8 @@ setTimeout(()=>{
   initMap();
   startTimer();
   startGlitch();
-  let mouseOffset = { x:0, y:0 };
-  let ambientOffset = { x:0, y:0 };
+  let mouseOffset = { x: 0, y: 0 };
+  let ambientOffset = { x: 0, y: 0 };
   document.addEventListener('mousemove', (e)=>{
     const centerX = window.innerWidth/2;
     const centerY = window.innerHeight/2;
@@ -46,3 +46,4 @@ setTimeout(()=>{
     }
   });
 },5000);
+
