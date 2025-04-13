@@ -70,7 +70,7 @@ export function initMap(){
       const formattedLat = (lat >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lat))).padStart(3,'0') + '.' + String(Math.floor((Math.abs(lat) - Math.floor(Math.abs(lat)))*1000)).padStart(3,'0');
       const formattedLng = (lng >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lng))).padStart(3,'0') + '.' + String(Math.floor((Math.abs(lng) - Math.floor(Math.abs(lng)))*1000)).padStart(3,'0');
       document.getElementById('coords').innerText = `LAT: ${formattedLat}  LON: ${formattedLng}`;
-    }, 50));
+    },50));
     window.theMap = map;
   });
 }
