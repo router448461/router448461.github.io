@@ -36,4 +36,11 @@ setTimeout(()=>{
     requestAnimationFrame(updateMapTransform);
   }
   updateMapTransform();
+  document.getElementById('map').addEventListener('click', e=>{
+    if(window.theMap){
+      const coords = window.theMap.unproject([e.clientX, e.clientY]);
+      const copyText = `${coords.lng.toFixed(6)}, ${coords.lat.toFixed(6)}`;
+      navigator.clipboard.writeText(copyText);
+    }
+  });
 },5000);
