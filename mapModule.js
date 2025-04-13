@@ -4,7 +4,7 @@ export function initMap(){
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10',
-    center: [0,0],
+    center: [-31.83,45.71],
     zoom: 1.5,
     attributionControl: false
   });
@@ -17,7 +17,7 @@ export function initMap(){
   map.touchZoomRotate.disable();
   map.on('load', () => {
     map.flyTo({
-      center: [0,0],
+      center: [-31.83,45.71],
       zoom: 1.5,
       speed: 0.8,
       curve: 1.42,
