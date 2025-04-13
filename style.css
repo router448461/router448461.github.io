@@ -9,7 +9,7 @@
   --line-duration: 1.2s;
   --shadow-blur: 5px;
   --shadow-spread: 1px;
-  --box-shadow-color: rgba(139, 0, 0, 0.7);
+  --box-shadow-color: rgba(139,0,0,0.7);
   --red-sweep-duration: 60s;
   --green-sweep-duration: 30s;
   --hud-font-size: 30px;
@@ -37,7 +37,6 @@ body, #map {
   cursor: none;
 }
 
-/* Only the map moves with parallax; it’s scaled to avoid black borders */
 #map {
   position: absolute;
   top: 0;
@@ -210,6 +209,15 @@ body, #map {
   background-repeat: repeat;
   background-size: cover;
   z-index: 15;
+  animation: noiseDrift 20s linear infinite;
+}
+@keyframes noiseDrift {
+  0% { background-position: 0 0; }
+  50% { background-position: 100px 100px; }
+  100% { background-position: 0 0; }
+}
+#noise.fast-move {
+  opacity: 0.3;
 }
 #static-overlay {
   pointer-events: none;
@@ -298,4 +306,22 @@ body, #map {
   60% { transform: translate(-2px, 3px) skew(0.5deg); opacity: 0.8; }
   80% { transform: translate(3px, -2px) skew(-0.5deg); opacity: 0.3; }
   100% { transform: translate(0, 0) skew(0deg); opacity: 0; }
+}
+.camera-shake {
+  animation: shake 0.3s;
+}
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 3px); }
+  50% { transform: translate(3px, -3px); }
+  75% { transform: translate(-3px, 3px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pulseMarker {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.marker-pulse {
+  animation: pulseMarker 2s ease-in-out infinite;
 }
