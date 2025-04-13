@@ -49,7 +49,7 @@ function addTargetMarker(map, coordinates){
   const markerEl = document.createElement('div');
   markerEl.style.width = '12px';
   markerEl.style.height = '12px';
-  markerEl.style.backgroundColor = '#fff';
+  markerEl.style.backgroundColor = '#FF0000';
   markerEl.style.border = '2px solid #FF0000';
   markerEl.style.borderRadius = '50%';
   markerEl.style.boxShadow = '0 0 8px 2px rgba(255,0,0,0.7)';
@@ -69,4 +69,3 @@ function throttle(func, limit){
     }
   }
 }
-
