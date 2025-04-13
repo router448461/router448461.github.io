@@ -9,4 +9,4 @@ export function bootSequence(){
     },1000);
   },4000);
 }
-bootSequence();
+document.addEventListener("DOMContentLoaded", bootSequence);
