@@ -6,8 +6,8 @@ setTimeout(()=>{
   initMap();
   startTimer();
   startGlitch();
-  let mouseOffset = { x: 0, y: 0 };
-  let ambientOffset = { x: 0, y: 0 };
+  let mouseOffset = { x:0, y:0 };
+  let ambientOffset = { x:0, y:0 };
   document.addEventListener('mousemove', (e)=>{
     const centerX = window.innerWidth/2;
     const centerY = window.innerHeight/2;
@@ -37,10 +37,10 @@ setTimeout(()=>{
   document.addEventListener('click', e=>{
     const mapContainer = document.getElementById('map');
     const rect = mapContainer.getBoundingClientRect();
-    if(e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom){
+    if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const coords = window.theMap.unproject([x, y]);
+      const coords = window.theMap.unproject([x,y]);
       const copyText = `${coords.lng.toFixed(6)}, ${coords.lat.toFixed(6)}`;
       navigator.clipboard.writeText(copyText);
     }
