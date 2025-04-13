@@ -1,12 +1,20 @@
 // mapModule.js
 export function initMap(){
   mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
+  // Use center computed to cover all target locations.
+  const centerPoint = [-31.83, 45.71];
+  const targetPoints = [
+    [-77.0365, 38.8977],
+    [2.2945, 48.8584],
+    [-0.1246, 51.5007],
+    [13.3777, 52.5163]
+  ];
   const initialZoom = 0.8;
   const targetZoom = 1.5;
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10',
-    center: [0,0],
+    center: centerPoint,
     zoom: initialZoom,
     attributionControl: false
   });
@@ -19,7 +27,7 @@ export function initMap(){
   map.touchZoomRotate.disable();
   map.on('load', ()=>{
     map.flyTo({
-      center: [0,0],
+      center: centerPoint,
       zoom: targetZoom,
       speed: 0.8,
       curve: 1.42,
@@ -27,10 +35,7 @@ export function initMap(){
       essential: true,
       duration: 3000
     });
-    addTargetMarker(map, [-77.0365,38.8977]);
-    addTargetMarker(map, [2.2945,48.8584]);
-    addTargetMarker(map, [-0.1246,51.5007]);
-    addTargetMarker(map, [13.3777,52.5163]);
+    targetPoints.forEach(pt => addTargetMarker(map, pt));
     const mapContainer = map.getContainer();
     mapContainer.addEventListener('mousemove', throttle(function(e){
       const rect = mapContainer.getBoundingClientRect();
@@ -47,13 +52,13 @@ export function initMap(){
 }
 function addTargetMarker(map, coordinates){
   const markerEl = document.createElement('div');
+  // Ensure the marker is always visible as a solid target.
   markerEl.style.width = '12px';
   markerEl.style.height = '12px';
   markerEl.style.backgroundColor = '#FF0000';
   markerEl.style.border = '2px solid #FF0000';
   markerEl.style.borderRadius = '50%';
   markerEl.style.boxShadow = '0 0 8px 2px rgba(255,0,0,0.7)';
-  markerEl.style.zIndex = '1000';
   markerEl.classList.add('marker-pulse');
   new mapboxgl.Marker({ element: markerEl })
     .setLngLat(coordinates)
