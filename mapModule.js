@@ -21,7 +21,7 @@ export function initMap(){
       zoom: 1.5,
       speed: 0.8,
       curve: 1.42,
-      easing: t => t,
+      easing: t=>t,
       essential: true,
       duration: 3000
     });
@@ -53,8 +53,8 @@ export function initMap(){
           item.markerEl.style.display = 'none';
         } else {
           item.markerEl.style.display = 'block';
-          item.markerEl.style.left = (pos.x - 12) + 'px';
-          item.markerEl.style.top = (pos.y - 12) + 'px';
+          item.markerEl.style.left = (pos.x-12)+'px';
+          item.markerEl.style.top = (pos.y-12)+'px';
         }
       });
     }
@@ -67,8 +67,8 @@ export function initMap(){
       const coords = map.unproject([mouseX, mouseY]);
       const lat = parseFloat(coords.lat);
       const lng = parseFloat(coords.lng);
-      const formattedLat = (lat >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lat))).padStart(3,'0') + '.' + String(Math.floor((Math.abs(lat) - Math.floor(Math.abs(lat)))*1000)).padStart(3,'0');
-      const formattedLng = (lng >= 0 ? '+' : '-') + String(Math.floor(Math.abs(lng))).padStart(3,'0') + '.' + String(Math.floor((Math.abs(lng) - Math.floor(Math.abs(lng)))*1000)).padStart(3,'0');
+      const formattedLat = (lat>=0?'+':'-')+String(Math.floor(Math.abs(lat))).padStart(3,'0')+'.'+String(Math.floor((Math.abs(lat)-Math.floor(Math.abs(lat)))*1000)).padStart(3,'0');
+      const formattedLng = (lng>=0?'+':'-')+String(Math.floor(Math.abs(lng))).padStart(3,'0')+'.'+String(Math.floor((Math.abs(lng)-Math.floor(Math.abs(lng)))*1000)).padStart(3,'0');
       document.getElementById('coords').innerText = `LAT: ${formattedLat}  LON: ${formattedLng}`;
     },50));
     window.theMap = map;
@@ -78,7 +78,7 @@ function throttle(func, limit){
   let lastCall = 0;
   return function(...args){
     const now = Date.now();
-    if(now - lastCall >= limit){
+    if(now-lastCall>=limit){
       lastCall = now;
       func.apply(this, args);
     }
