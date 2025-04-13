@@ -10,20 +10,19 @@
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(139,0,0,0.7);
-  --red-sweep-duration: 30s;
-  --green-sweep-duration: 60s;
+  --red-sweep-duration: 60s;
+  --green-sweep-duration: 30s;
   --hud-font-size: 30px;
   --boot-font-size: 30px;
   --map-scale: 1.1;
   --parallax-max-offset: 20px;
   --jitter-amount: 2px;
 }
+
 * {
   user-select: none;
 }
-::selection {
-  background: transparent;
-}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -33,9 +32,11 @@ html, body {
   background-color: #000;
   font-family: 'Quantico', sans-serif;
 }
+
 body, #map {
   cursor: none;
 }
+
 #map {
   position: absolute;
   top: 0;
@@ -215,6 +216,9 @@ body, #map {
   50% { background-position: 100px 100px; }
   100% { background-position: 0 0; }
 }
+#noise.fast-move {
+  opacity: 0.3;
+}
 #static-overlay {
   pointer-events: none;
   position: absolute;
@@ -237,7 +241,6 @@ body, #map {
   text-shadow: 0 0 10px var(--center-color);
   z-index: 15;
   transform: none;
-  user-select: none;
 }
 #coords {
   position: absolute;
@@ -251,7 +254,6 @@ body, #map {
   width: 220px;
   white-space: nowrap;
   transform: none;
-  user-select: none;
 }
 #reticle {
   position: absolute;
@@ -271,16 +273,55 @@ body, #map {
   to { transform: translate(-50%, -50%) scale(1.07); }
 }
 @keyframes jitterReticle {
-  0% { transform: translate(-50%, -50%) translate(0,0); }
+  0% { transform: translate(-50%, -50%) translate(0, 0); }
   50% { transform: translate(-50%, -50%) translate(1px, -1px); }
-  100% { transform: translate(-50%, -50%) translate(0,0); }
+  100% { transform: translate(-50%, -50%) translate(0, 0); }
 }
-#target-overlay {
-  position: absolute;
+#boot-overlay {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: none;
-  z-index: 30;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--hud-font-size);
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px var(--center-color);
+  z-index: 101;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+.glitch-active {
+  animation: glitchAnim 0.5s steps(5, end);
+  opacity: 0.5;
+}
+@keyframes glitchAnim {
+  0% { transform: translate(0, 0) skew(0deg); opacity: 0.5; }
+  20% { transform: translate(-3px, 2px) skew(1deg); opacity: 0.7; }
+  40% { transform: translate(2px, -3px) skew(-1deg); opacity: 0.4; }
+  60% { transform: translate(-2px, 3px) skew(0.5deg); opacity: 0.8; }
+  80% { transform: translate(3px, -2px) skew(-0.5deg); opacity: 0.3; }
+  100% { transform: translate(0, 0) skew(0deg); opacity: 0; }
+}
+.camera-shake {
+  animation: shake 0.3s;
+}
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 3px); }
+  50% { transform: translate(3px, -3px); }
+  75% { transform: translate(-3px, 3px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pulseMarker {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.marker-pulse {
+  animation: pulseMarker 2s ease-in-out infinite;
 }
