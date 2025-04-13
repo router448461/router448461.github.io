@@ -25,7 +25,7 @@ export function initMap(){
       curve: 1.42,
       easing: t=>t,
       essential: true,
-      duration: 2500
+      duration: 3000
     });
     addTargetMarker(map, [-77.0365,38.8977]);
     addTargetMarker(map, [2.2945,48.8584]);
@@ -53,6 +53,7 @@ function addTargetMarker(map, coordinates){
   markerEl.style.border = '2px solid #FF0000';
   markerEl.style.borderRadius = '50%';
   markerEl.style.boxShadow = '0 0 8px 2px rgba(255,0,0,0.7)';
+  markerEl.style.zIndex = '1000';
   markerEl.classList.add('marker-pulse');
   new mapboxgl.Marker({ element: markerEl })
     .setLngLat(coordinates)
@@ -68,3 +69,4 @@ function throttle(func, limit){
     }
   }
 }
+
