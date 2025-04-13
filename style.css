@@ -243,10 +243,6 @@ body, #map {
   100% { background-position: 0 0; }
 }
 
-#noise.fast-move {
-  opacity: 0.3;
-}
-
 #static-overlay {
   pointer-events: none;
   position: absolute;
