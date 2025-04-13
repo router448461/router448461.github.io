@@ -17,8 +17,8 @@ setTimeout(()=>{
     const centerX = window.innerWidth/2;
     const centerY = window.innerHeight/2;
     const maxOffset = 20;
-    const rawDeltaX = (e.clientX - centerX) * 0.05;
-    const rawDeltaY = (e.clientY - centerY) * 0.05;
+    const rawDeltaX = (e.clientX - centerX)*0.05;
+    const rawDeltaY = (e.clientY - centerY)*0.05;
     mouseOffset.x = Math.max(-maxOffset, Math.min(maxOffset, rawDeltaX));
     mouseOffset.y = Math.max(-maxOffset, Math.min(maxOffset, rawDeltaY));
     const reticle = document.getElementById('reticle');
@@ -26,7 +26,7 @@ setTimeout(()=>{
     reticle.style.top = `${e.clientY}px`;
     const currentTime = Date.now();
     const deltaTime = currentTime - lastMouseTime;
-    const distance = Math.sqrt(Math.pow(e.clientX - lastMouseX, 2) + Math.pow(e.clientY - lastMouseY, 2));
+    const distance = Math.sqrt(Math.pow(e.clientX - lastMouseX,2)+Math.pow(e.clientY - lastMouseY,2));
     if(deltaTime > 0 && distance/deltaTime > 1){
       document.getElementById('noise').classList.add('fast-move');
       setTimeout(()=>{
