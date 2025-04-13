@@ -1,9 +1,7 @@
 // script.js
-import { bootSequence } from './bootModule.js';
 import { initMap } from './mapModule.js';
 import { startTimer } from './timerModule.js';
 import { startGlitch } from './glitchModule.js';
-bootSequence();
 setTimeout(()=>{
   initMap();
   startTimer();
@@ -36,9 +34,13 @@ setTimeout(()=>{
     requestAnimationFrame(updateMapTransform);
   }
   updateMapTransform();
-  document.getElementById('map').addEventListener('click', e=>{
-    if(window.theMap){
-      const coords = window.theMap.unproject([e.clientX, e.clientY]);
+  document.addEventListener('click', e=>{
+    const mapContainer = document.getElementById('map');
+    const rect = mapContainer.getBoundingClientRect();
+    if(e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom){
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const coords = window.theMap.unproject([x, y]);
       const copyText = `${coords.lng.toFixed(6)}, ${coords.lat.toFixed(6)}`;
       navigator.clipboard.writeText(copyText);
     }
