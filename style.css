@@ -12,7 +12,6 @@
   --box-shadow-color: rgba(139, 0, 0, 0.7);
   --sweep-duration: 60s;
   --hud-font-size: 30px;
-  --boot-font-size: 30px;
 }
 
 * {
@@ -40,7 +39,15 @@ body, #map {
   width: 100vw;
   height: 100vh;
   filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
-  animation: flickerMap 3s infinite;
+  animation: cameraZoom 10s forwards;
+}
+
+@keyframes cameraZoom {
+  0%   { transform: scale(0.8) blur(5px) rotate(0deg); }
+  25%  { transform: scale(0.85) blur(4px) rotate(0.5deg); }
+  50%  { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
+  75%  { transform: scale(0.95) blur(2px) rotate(0.3deg); }
+  100% { transform: scale(1) blur(0) rotate(0deg); }
 }
 
 @keyframes flickerMap {
@@ -285,63 +292,74 @@ body, #map {
   }
 }
 
-@keyframes bootAnimation {
-  0% {
-    opacity: 1;
-    clip-path: circle(0% at 50% 50%);
-  }
-  50% {
-    clip-path: circle(150% at 50% 50%);
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-#boot-overlay {
+#lens-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--boot-font-size);
-  color: #0f0;
-  font-family: 'Courier New', monospace;
-  text-shadow: 0 0 10px var(--center-color);
-  z-index: 101;
-  opacity: 1;
+  pointer-events: none;
+  z-index: 102;
 }
 
-#boot-overlay.boot-start {
-  animation: bootAnimation 6s forwards;
-}
-
-#glitch-overlay {
+.lens-segment {
   position: absolute;
+  background: var(--center-color);
+  opacity: 0.8;
+}
+
+.lens-segment.top-left {
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 99;
-  opacity: 0;
+  width: 50vw;
+  height: 50vh;
+  animation: convergeTL 10s forwards;
 }
 
-.glitch-active {
-  animation: glitchAnim 0.3s linear;
-  opacity: 0.5;
+.lens-segment.top-right {
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vh;
+  animation: convergeTR 10s forwards;
 }
 
-@keyframes glitchAnim {
-  0% { transform: translate(0, 0); opacity: 0.5; }
-  20% { transform: translate(-2px, 2px); opacity: 0.7; }
-  40% { transform: translate(2px, -2px); opacity: 0.4; }
-  60% { transform: translate(-2px, 2px); opacity: 0.8; }
-  80% { transform: translate(2px, -2px); opacity: 0.3; }
-  100% { transform: translate(0, 0); opacity: 0; }
+.lens-segment.bottom-left {
+  bottom: 0;
+  left: 0;
+  width: 50vw;
+  height: 50vh;
+  animation: convergeBL 10s forwards;
+}
+
+.lens-segment.bottom-right {
+  bottom: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vh;
+  animation: convergeBR 10s forwards;
+}
+
+@keyframes convergeTL {
+  0%   { transform: translate(0, 0); }
+  90%  { transform: translate(50%, 50%); }
+  100% { opacity: 0; }
+}
+
+@keyframes convergeTR {
+  0%   { transform: translate(0, 0); }
+  90%  { transform: translate(-50%, 50%); }
+  100% { opacity: 0; }
+}
+
+@keyframes convergeBL {
+  0%   { transform: translate(0, 0); }
+  90%  { transform: translate(50%, -50%); }
+  100% { opacity: 0; }
+}
+
+@keyframes convergeBR {
+  0%   { transform: translate(0, 0); }
+  90%  { transform: translate(-50%, -50%); }
+  100% { opacity: 0; }
 }
