@@ -285,9 +285,18 @@ body, #map {
   }
 }
 
-@keyframes lensOpen {
-  0% { clip-path: circle(0% at 50% 50%); opacity: 1; }
-  100% { clip-path: circle(150% at 50% 50%); opacity: 1; }
+@keyframes bootAnimation {
+  0% {
+    opacity: 1;
+    clip-path: circle(0% at 50% 50%);
+  }
+  50% {
+    clip-path: circle(150% at 50% 50%);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 #boot-overlay {
@@ -306,16 +315,10 @@ body, #map {
   text-shadow: 0 0 10px var(--center-color);
   z-index: 101;
   opacity: 1;
-  transition: opacity 1s ease-out;
 }
 
-.boot-lens {
-  animation: lensOpen 1s forwards;
-}
-
-.boot-hidden {
-  opacity: 0;
-  pointer-events: none;
+#boot-overlay.boot-start {
+  animation: bootAnimation 6s forwards;
 }
 
 #glitch-overlay {
