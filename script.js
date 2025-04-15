@@ -7,6 +7,13 @@ initMap();
 startTimer();
 startGlitch();
 
+// Helper function that formats a coordinate with a plus sign for positives
+// and always three decimals (e.g., +012.345 or -012.345).
+function formatCoord(num) {
+  const sign = num >= 0 ? '+' : '';
+  return sign + num.toFixed(3);
+}
+
 document.addEventListener('mousemove', (e) => {
   // Smoothly update the reticle position using GSAP.
   gsap.to("#reticle", {
@@ -16,8 +23,8 @@ document.addEventListener('mousemove', (e) => {
     ease: "power2.out"
   });
 
-  // Apply a parallax effect on the map based on cursor position.
-  const parallaxStrength = 0.02; // Adjust for subtleness.
+  // Apply a parallax effect on the map.
+  const parallaxStrength = 0.02;
   gsap.to("#map", {
     duration: 0.5,
     x: (e.clientX - window.innerWidth / 2) * parallaxStrength,
@@ -25,11 +32,11 @@ document.addEventListener('mousemove', (e) => {
     ease: "power2.out"
   });
 
-  // Update the noise overlay's opacity dynamically.
-  const noiseIntensity = (0.1 + Math.random() * 0.1).toFixed(2); // Value between 0.10 and 0.20.
+  // Dynamically update noise overlay opacity.
+  const noiseIntensity = (0.1 + Math.random() * 0.1).toFixed(2);
   document.documentElement.style.setProperty('--noise-intensity', noiseIntensity);
 
-  // Update coordinates on the map.
+  // Update coordinates display; always shows three decimals with sign.
   const mapContainer = document.getElementById('map');
   const rect = mapContainer.getBoundingClientRect();
   if (
@@ -41,12 +48,11 @@ document.addEventListener('mousemove', (e) => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
     const coords = window.map.unproject([mouseX, mouseY]);
-    // Fixed coordinate formatting:
-    document.getElementById('coords').innerText = `LAT: ${coords.lat.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3})}  LON: ${coords.lng.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3})}`;
+    document.getElementById('coords').innerText = `LAT: ${formatCoord(coords.lat)}  LON: ${formatCoord(coords.lng)}`;
   }
 });
 
-// Implement a recoil "shake" effect on click to simulate weapon recoil.
+// Recoil shake on click to simulate weapon recoil.
 document.addEventListener('click', () => {
   gsap.fromTo(
     "#map",
@@ -66,3 +72,4 @@ setTimeout(() => {
   const lensOverlay = document.getElementById('lens-overlay');
   if (lensOverlay) { lensOverlay.remove(); }
 }, 11000);
+
