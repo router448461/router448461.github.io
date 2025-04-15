@@ -1,5 +1,4 @@
 /* style.css */
-/* style.css */
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
@@ -11,10 +10,11 @@
   --shadow-blur: 5px;
   --shadow-spread: 1px;
   --box-shadow-color: rgba(139, 0, 0, 0.7);
-  /* Updated sweep-duration from 60s to 33s for both red and green line animations */
+  /* Set the sweep duration to 33s so that the red lines meet in the center
+     and the green scan lines cycle every 33 seconds */
   --sweep-duration: 33s;
   --hud-font-size: 30px;
-  --noise-intensity: 0.15; /* default intensity; updated dynamically */
+  --noise-intensity: 0.15; /* default, updated dynamically */
 }
 
 * {
@@ -30,6 +30,15 @@ body {
   overflow: hidden;
   background-color: #000;
   font-family: 'Quantico', sans-serif;
+  cursor: none;
+}
+
+/* Hide any Mapbox control elements */
+.mapboxgl-ctrl,
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-top-right {
+  display: none !important;
 }
 
 body,
@@ -37,7 +46,8 @@ body,
   cursor: none;
 }
 
-/* Updated #map with 3D optimizations and an increased final scale to hide borders */
+/* Updated #map with 3D optimizations and increased final scale to 1.10
+   so that parallax movement doesn’t reveal black borders. */
 #map {
   position: absolute;
   top: 0;
@@ -48,6 +58,7 @@ body,
   animation: cameraZoom 10s forwards;
   transform-style: preserve-3d;
   perspective: 800px;
+  will-change: transform;
 }
 
 @keyframes cameraZoom {
@@ -55,11 +66,10 @@ body,
   25%  { transform: scale(0.85) blur(4px) rotate(0.5deg); }
   50%  { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
   75%  { transform: scale(1) blur(2px) rotate(0.3deg); }
-  /* Updated final state to scale 1.05 so any parallax movement does not reveal black borders */
-  100% { transform: scale(1.05) blur(0) rotate(0deg); }
+  100% { transform: scale(1.10) blur(0) rotate(0deg); }
 }
 
-/* Removed red flashing by omitting the 'flicker' animation from the red lines. */
+/* Removed any flicker keyframe so there’s no red flashing effect */
 .line {
   position: absolute;
   background: linear-gradient(
@@ -78,13 +88,6 @@ body,
   from { filter: brightness(1); }
   to { filter: brightness(1.2); }
 }
-
-/* Flicker keyframe removed from red lines.
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-*/
 
 .line.horizontal {
   top: 50%;
@@ -172,7 +175,6 @@ body,
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Use the dynamic intensity for opacity */
   opacity: var(--noise-intensity, 0.15);
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   background-repeat: repeat;
@@ -194,10 +196,9 @@ body,
     var(--green-edge-color) 85%,
     rgba(0, 0, 0, 0.9) 100%
   );
-  /* The green scan lines now use the 33s --sweep-duration */
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
-    0 0 15px 3px rgba(85, 107, 47, 0.5);
+              0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
 #laser-scan-vertical {
@@ -216,7 +217,7 @@ body,
   );
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
-    0 0 15px 3px rgba(85, 107, 47, 0.5);
+              0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
 @keyframes sweepHorizontal {
@@ -235,9 +236,9 @@ body,
 
 @keyframes pulseGlow {
   from { box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
-             0 0 15px 3px rgba(85, 107, 47, 0.5); }
+                0 0 15px 3px rgba(85, 107, 47, 0.5); }
   to { box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1),
-           0 0 20px 4px rgba(85, 107, 47, 0.7); }
+              0 0 20px 4px rgba(85, 107, 47, 0.7); }
 }
 
 #hud {
@@ -264,7 +265,7 @@ body,
   white-space: nowrap;
 }
 
-/* Updated reticle styling with hardware acceleration hints */
+/* Reticle styling with hardware acceleration; note the cursor remains hidden */
 #reticle {
   position: absolute;
   width: 30px;
@@ -347,9 +348,6 @@ body,
   animation: convergeBR 10s forwards;
 }
 
-/* These keyframes govern the convergence of the red lens segments.
-   (If desired these could be fine-tuned further, but at 10s they clear,
-   while the red lines themselves fully extend in 33s to meet at the center.) */
 @keyframes convergeTL {
   0%   { transform: translate(0, 0); }
   90%  { transform: translate(50%, 50%); }
