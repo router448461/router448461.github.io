@@ -16,6 +16,7 @@
 }
 * {
   user-select: none;
+  cursor: none !important;
 }
 html,
 body {
@@ -26,7 +27,6 @@ body {
   overflow: hidden;
   background-color: #000;
   font-family: 'Quantico', sans-serif;
-  cursor: none;
 }
 .mapboxgl-ctrl,
 .mapboxgl-ctrl-attrib,
@@ -55,7 +55,7 @@ body,
   25%  { transform: scale(0.85) blur(4px) rotate(0.5deg); }
   50%  { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
   75%  { transform: scale(1) blur(2px) rotate(0.3deg); }
-  100% { transform: scale(1.15) blur(0) rotate(0deg); }
+  100% { transform: scale(1.4) blur(0) rotate(0deg); }
 }
 .line {
   position: absolute;
@@ -150,6 +150,11 @@ body,
   background-repeat: repeat;
   background-size: cover;
   z-index: 15;
+  animation: pulsateNoise 3s infinite alternate;
+}
+@keyframes pulsateNoise {
+  from { opacity: 0.15; }
+  to { opacity: 0.25; }
 }
 #laser-scan-horizontal {
   position: absolute;
@@ -296,22 +301,22 @@ body,
   animation: convergeBR 10s forwards;
 }
 @keyframes convergeTL {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(50%, 50%); }
+  0% { transform: translate(0, 0); }
+  90% { transform: translate(50%, 50%); }
   100% { opacity: 0; }
 }
 @keyframes convergeTR {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(-50%, 50%); }
+  0% { transform: translate(0, 0); }
+  90% { transform: translate(-50%, 50%); }
   100% { opacity: 0; }
 }
 @keyframes convergeBL {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(50%, -50%); }
+  0% { transform: translate(0, 0); }
+  90% { transform: translate(50%, -50%); }
   100% { opacity: 0; }
 }
 @keyframes convergeBR {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(-50%, -50%); }
+  0% { transform: translate(0, 0); }
+  90% { transform: translate(-50%, -50%); }
   100% { opacity: 0; }
 }
