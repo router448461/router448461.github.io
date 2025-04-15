@@ -1,5 +1,4 @@
 /* style.css */
-/* style.css */
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
@@ -13,13 +12,15 @@
   --box-shadow-color: rgba(139, 0, 0, 0.7);
   --sweep-duration: 60s;
   --hud-font-size: 30px;
+  --noise-intensity: 0.15; /* default intensity; will update dynamically */
 }
 
 * {
   user-select: none;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -29,7 +30,8 @@ html, body {
   font-family: 'Quantico', sans-serif;
 }
 
-body, #map {
+body,
+#map {
   cursor: none;
 }
 
@@ -47,16 +49,30 @@ body, #map {
 }
 
 @keyframes cameraZoom {
-  0%   { transform: scale(0.8) blur(5px) rotate(0deg); }
-  25%  { transform: scale(0.85) blur(4px) rotate(0.5deg); }
-  50%  { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
-  75%  { transform: scale(0.95) blur(2px) rotate(0.3deg); }
-  100% { transform: scale(1) blur(0) rotate(0deg); }
+  0% {
+    transform: scale(0.8) blur(5px) rotate(0deg);
+  }
+  25% {
+    transform: scale(0.85) blur(4px) rotate(0.5deg);
+  }
+  50% {
+    transform: scale(0.9) blur(3px) rotate(-0.5deg);
+  }
+  75% {
+    transform: scale(0.95) blur(2px) rotate(0.3deg);
+  }
+  100% {
+    transform: scale(1) blur(0) rotate(0deg);
+  }
 }
 
 @keyframes flickerMap {
-  0%, 100% { filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg); }
-  50% { filter: contrast(1.2) brightness(1.0) saturate(1.1) hue-rotate(-10deg); }
+  0%, 100% {
+    filter: contrast(1.2) brightness(0.9) saturate(1.1) hue-rotate(-10deg);
+  }
+  50% {
+    filter: contrast(1.2) brightness(1.0) saturate(1.1) hue-rotate(-10deg);
+  }
 }
 
 #map::before {
@@ -66,8 +82,18 @@ body, #map {
   left: 0;
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px),
-              repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(70,130,180,0.1) 20px);
+  background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 19px,
+      rgba(70, 130, 180, 0.1) 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 19px,
+      rgba(70, 130, 180, 0.1) 20px
+    );
   pointer-events: none;
   z-index: 5;
 }
@@ -76,7 +102,8 @@ body, #map {
   cursor: none !important;
 }
 
-.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-bottom-left {
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
 
@@ -88,7 +115,12 @@ body, #map {
   width: 100vw;
   height: 100vh;
   z-index: 14;
-  background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.95) 100%);
+  background: radial-gradient(
+      circle at center,
+      transparent 40%,
+      rgba(0, 0, 0, 0.8) 80%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
   filter: blur(4px);
 }
 
@@ -104,19 +136,36 @@ body, #map {
 
 .line {
   position: absolute;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: pulseLine var(--line-duration) infinite alternate, flicker 0.08s infinite;
-  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  animation: pulseLine var(--line-duration) infinite alternate,
+    flicker 0.08s infinite;
+  box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread)
+      var(--box-shadow-color);
 }
 
 @keyframes pulseLine {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.2);
+  }
 }
 
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .line.horizontal {
@@ -124,7 +173,8 @@ body, #map {
   width: 50vw;
   height: var(--min-thickness);
   transform-origin: left center;
-  animation: expandHorizontal var(--sweep-duration) forwards, growThickness var(--sweep-duration) forwards;
+  animation: expandHorizontal var(--sweep-duration) forwards,
+    growThickness var(--sweep-duration) forwards;
 }
 
 .line.horizontal.right {
@@ -134,22 +184,38 @@ body, #map {
 }
 
 @keyframes expandHorizontal {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes growThickness {
-  from { height: var(--min-thickness); }
-  to { height: var(--max-thickness); }
+  from {
+    height: var(--min-thickness);
+  }
+  to {
+    height: var(--max-thickness);
+  }
 }
 
 .line.vertical {
   left: 50%;
   width: var(--min-thickness);
   height: 50vh;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--edge-color) 15%,
+    var(--center-color) 50%,
+    var(--edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
   transform-origin: top center;
-  animation: expandVertical var(--sweep-duration) forwards, growThicknessV var(--sweep-duration) forwards;
+  animation: expandVertical var(--sweep-duration) forwards,
+    growThicknessV var(--sweep-duration) forwards;
 }
 
 .line.vertical.bottom {
@@ -159,13 +225,21 @@ body, #map {
 }
 
 @keyframes expandVertical {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 @keyframes growThicknessV {
-  from { width: var(--min-thickness); }
-  to { width: var(--max-thickness); }
+  from {
+    width: var(--min-thickness);
+  }
+  to {
+    width: var(--max-thickness);
+  }
 }
 
 #scanlines {
@@ -175,14 +249,24 @@ body, #map {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 3px
+  );
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
 }
 
 @keyframes moveScanlines {
-  from { transform: translateY(0); }
-  to { transform: translateY(-4px); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-4px);
+  }
 }
 
 #noise {
@@ -192,7 +276,8 @@ body, #map {
   left: 0;
   width: 100vw;
   height: 100vh;
-  opacity: 0.15;
+  /* Use dynamic intensity from our CSS variable; default is provided if not updated */
+  opacity: var(--noise-intensity, 0.15);
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
   background-repeat: repeat;
   background-size: cover;
@@ -205,9 +290,18 @@ body, #map {
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--green-edge-color) 15%,
+    var(--green-center-color) 50%,
+    var(--green-edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  animation: sweepHorizontal var(--sweep-duration) linear infinite,
+    pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
+    0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
 #laser-scan-vertical {
@@ -216,28 +310,67 @@ body, #map {
   left: 0;
   width: 100vw;
   height: 2px;
-  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
-  animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
-  box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    var(--green-edge-color) 15%,
+    var(--green-center-color) 50%,
+    var(--green-edge-color) 85%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  animation: sweepVertical var(--sweep-duration) linear infinite,
+    pulseGlow 1s infinite alternate;
+  box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
+    0 0 15px 3px rgba(85, 107, 47, 0.5);
 }
 
 @keyframes sweepHorizontal {
-  0% { left: -2px; opacity: 1; }
-  50% { left: 100vw; opacity: 1; }
-  50.01% { left: -2px; opacity: 0; }
-  100% { left: -2px; opacity: 0; }
+  0% {
+    left: -2px;
+    opacity: 1;
+  }
+  50% {
+    left: 100vw;
+    opacity: 1;
+  }
+  50.01% {
+    left: -2px;
+    opacity: 0;
+  }
+  100% {
+    left: -2px;
+    opacity: 0;
+  }
 }
 
 @keyframes sweepVertical {
-  0% { top: -2px; opacity: 1; }
-  50% { top: 100vh; opacity: 1; }
-  50.01% { top: -2px; opacity: 0; }
-  100% { top: -2px; opacity: 0; }
+  0% {
+    top: -2px;
+    opacity: 1;
+  }
+  50% {
+    top: 100vh;
+    opacity: 1;
+  }
+  50.01% {
+    top: -2px;
+    opacity: 0;
+  }
+  100% {
+    top: -2px;
+    opacity: 0;
+  }
 }
 
 @keyframes pulseGlow {
-  from { box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5); }
-  to { box-shadow: 0 0 15px 3px rgba(85,107,47,1), 0 0 20px 4px rgba(85,107,47,0.7); }
+  from {
+    box-shadow: 0 0 10px 2px rgba(85, 107, 47, 0.8),
+      0 0 15px 3px rgba(85, 107, 47, 0.5);
+  }
+  to {
+    box-shadow: 0 0 15px 3px rgba(85, 107, 47, 1),
+      0 0 20px 4px rgba(85, 107, 47, 0.7);
+  }
 }
 
 #hud {
@@ -280,18 +413,30 @@ body, #map {
 }
 
 @keyframes pulseReticle {
-  from { transform: translate(-50%, -50%) scale(1); }
-  to { transform: translate(-50%, -50%) scale(1.07); }
+  from {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.07);
+  }
 }
 
 @keyframes jitterReticle {
-  0% { transform: translate(-50%, -50%) translate(0, 0); }
-  50% { transform: translate(-50%, -50%) translate(1px, -1px); }
-  100% { transform: translate(-50%, -50%) translate(0, 0); }
+  0% {
+    transform: translate(-50%, -50%) translate(0, 0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate(1px, -1px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .line, #laser-scan-horizontal, #laser-scan-vertical {
+  .line,
+  #laser-scan-horizontal,
+  #laser-scan-vertical {
     animation-duration: 3s;
     transition: none;
   }
@@ -346,25 +491,49 @@ body, #map {
 }
 
 @keyframes convergeTL {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(50%, 50%); }
-  100% { opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+  }
+  90% {
+    transform: translate(50%, 50%);
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes convergeTR {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(-50%, 50%); }
-  100% { opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+  }
+  90% {
+    transform: translate(-50%, 50%);
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes convergeBL {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(50%, -50%); }
-  100% { opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+  }
+  90% {
+    transform: translate(50%, -50%);
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes convergeBR {
-  0%   { transform: translate(0, 0); }
-  90%  { transform: translate(-50%, -50%); }
-  100% { opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+  }
+  90% {
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+  }
 }
