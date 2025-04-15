@@ -17,7 +17,7 @@ document.addEventListener('mousemove', (e) => {
   });
 
   // Apply a parallax effect on the map based on cursor position.
-  const parallaxStrength = 0.02; // tweak this value for subtleness
+  const parallaxStrength = 0.02; // Adjust for subtleness.
   gsap.to("#map", {
     duration: 0.5,
     x: (e.clientX - window.innerWidth / 2) * parallaxStrength,
@@ -25,8 +25,8 @@ document.addEventListener('mousemove', (e) => {
     ease: "power2.out"
   });
 
-  // Adjust dynamic noise intensity based on mouse movement.
-  const noiseIntensity = (0.1 + Math.random() * 0.1).toFixed(2); // a value between 0.1 and 0.2
+  // Update the noise overlay's opacity dynamically.
+  const noiseIntensity = (0.1 + Math.random() * 0.1).toFixed(2); // Value between 0.10 and 0.20.
   document.documentElement.style.setProperty('--noise-intensity', noiseIntensity);
 
   // Update coordinates on the map.
@@ -41,13 +41,12 @@ document.addEventListener('mousemove', (e) => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
     const coords = window.map.unproject([mouseX, mouseY]);
-    document.getElementById('coords').innerText = `LAT: ${coords.lat.toFixed(
-      3
-    )}  LON: ${coords.lng.toFixed(3)}`;
+    // Fixed coordinate formatting:
+    document.getElementById('coords').innerText = `LAT: ${coords.lat.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3})}  LON: ${coords.lng.toLocaleString('en-US', {minimumFractionDigits: 3, maximumFractionDigits: 3})}`;
   }
 });
 
-// Implement a recoil "shake" effect on clicking to simulate weapon recoil.
+// Implement a recoil "shake" effect on click to simulate weapon recoil.
 document.addEventListener('click', () => {
   gsap.fromTo(
     "#map",
@@ -63,21 +62,7 @@ document.addEventListener('click', () => {
   );
 });
 
-// (Optional) If you want to further control reticle jitter via GSAP rather than CSS keyframes,
-// you can disable the CSS jitter and uncomment the following code:
-/*
-const reticleJitter = gsap.timeline({ repeat: -1, paused: false });
-reticleJitter.to("#reticle", {
-  duration: 0.2,
-  x: "+=" + (Math.random() * 2 - 1),
-  y: "+=" + (Math.random() * 2 - 1),
-  ease: "power1.inOut"
-});
-*/
-  
 setTimeout(() => {
   const lensOverlay = document.getElementById('lens-overlay');
-  if (lensOverlay) {
-    lensOverlay.remove();
-  }
+  if (lensOverlay) { lensOverlay.remove(); }
 }, 11000);
