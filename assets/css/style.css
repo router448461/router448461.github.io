@@ -1,4 +1,10 @@
 /* style.css */
+@font-face {
+  font-family: 'Eurasia';
+  src: url('../fonts/eurasia.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   --edge-color: #8B0000;
   --center-color: #FF0000;
@@ -26,7 +32,7 @@ body {
   height: 100vh;
   overflow: hidden;
   background-color: #000;
-  font-family: 'Quantico', sans-serif;
+  font-family: 'Eurasia', sans-serif;
 }
 .mapboxgl-ctrl,
 .mapboxgl-ctrl-attrib,
@@ -51,22 +57,15 @@ body,
   will-change: transform;
 }
 @keyframes cameraZoom {
-  0%   { transform: scale(0.8) blur(5px) rotate(0deg); }
-  25%  { transform: scale(0.85) blur(4px) rotate(0.5deg); }
-  50%  { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
-  75%  { transform: scale(1) blur(2px) rotate(0.3deg); }
+  0% { transform: scale(0.8) blur(5px) rotate(0deg); }
+  25% { transform: scale(0.85) blur(4px) rotate(0.5deg); }
+  50% { transform: scale(0.9) blur(3px) rotate(-0.5deg); }
+  75% { transform: scale(1) blur(2px) rotate(0.3deg); }
   100% { transform: scale(1.4) blur(0) rotate(0deg); }
 }
 .line {
   position: absolute;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--box-shadow-color);
 }
 .line.horizontal {
@@ -93,14 +92,7 @@ body,
   left: 50%;
   width: var(--min-thickness);
   height: 50vh;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--edge-color) 15%,
-    var(--center-color) 50%,
-    var(--edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--edge-color) 15%, var(--center-color) 50%, var(--edge-color) 85%, rgba(0,0,0,0.9) 100%);
   transform-origin: top center;
   animation: expandVertical var(--sweep-duration) forwards, growThicknessV var(--sweep-duration) forwards;
 }
@@ -124,13 +116,7 @@ body,
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.1) 0px,
-    rgba(0, 0, 0, 0.1) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
   z-index: 20;
   animation: moveScanlines 0.2s infinite linear;
 }
@@ -162,14 +148,7 @@ body,
   left: -2px;
   width: 2px;
   height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--green-edge-color) 15%,
-    var(--green-center-color) 50%,
-    var(--green-edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: sweepHorizontal var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
 }
@@ -179,14 +158,7 @@ body,
   left: 0;
   width: 100vw;
   height: 2px;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.9) 0%,
-    var(--green-edge-color) 15%,
-    var(--green-center-color) 50%,
-    var(--green-edge-color) 85%,
-    rgba(0, 0, 0, 0.9) 100%
-  );
+  background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, var(--green-edge-color) 15%, var(--green-center-color) 50%, var(--green-edge-color) 85%, rgba(0,0,0,0.9) 100%);
   animation: sweepVertical var(--sweep-duration) linear infinite, pulseGlow 1s infinite alternate;
   box-shadow: 0 0 10px 2px rgba(85,107,47,0.8), 0 0 15px 3px rgba(85,107,47,0.5);
 }
