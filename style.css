@@ -13,6 +13,8 @@
   --sweep-duration: 60s;
   --hud-font-size: 30px;
   --boot-font-size: 30px;
+  --parallax-x: 0;
+  --parallax-y: 0;
 }
 
 * {
@@ -264,18 +266,6 @@ body, #map {
   z-index: 25;
   transform: translate(-50%, -50%);
   will-change: transform;
-  animation: pulseReticle 0.9s infinite alternate, jitterReticle 2s infinite;
-}
-
-@keyframes pulseReticle {
-  from { transform: translate(-50%, -50%) scale(1); }
-  to { transform: translate(-50%, -50%) scale(1.07); }
-}
-
-@keyframes jitterReticle {
-  0% { transform: translate(-50%, -50%) translate(0, 0); }
-  50% { transform: translate(-50%, -50%) translate(1px, -1px); }
-  100% { transform: translate(-50%, -50%) translate(0, 0); }
 }
 
 #reticle.reticle-lock {
@@ -288,11 +278,11 @@ body, #map {
 }
 
 @keyframes cameraShake {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(1px, -1px); }
-  50% { transform: translate(0, 1px); }
-  75% { transform: translate(-1px, 0); }
-  100% { transform: translate(0, 0); }
+  0% { transform: translate(var(--parallax-x,0), var(--parallax-y,0)) translate(0, 0); }
+  25% { transform: translate(var(--parallax-x,0), var(--parallax-y,0)) translate(1px, -1px); }
+  50% { transform: translate(var(--parallax-x,0), var(--parallax-y,0)) translate(0, 1px); }
+  75% { transform: translate(var(--parallax-x,0), var(--parallax-y,0)) translate(-1px, 0); }
+  100% { transform: translate(var(--parallax-x,0), var(--parallax-y,0)) translate(0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
