@@ -4,9 +4,10 @@ import { startTimer } from './timerModule.js';
 
 try {
   // Use the global mapboxgl (loaded via the <script> tag in index.html)
-  mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
+  mapboxgl.accessToken =
+    'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
-  // Initialize the Mapbox map centered at [0, 0] for a global, top‐down view.
+  // Initialize the Mapbox map centered at [0, 0] for a global, top‑down view.
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10',
@@ -14,7 +15,7 @@ try {
     zoom: 1.5,
   });
 
-  // Disable interactive behaviors so that the map behaves like a static mechanical display.
+  // Disable interactive behaviors for a fixed, mechanical display.
   map.dragPan.disable();
   map.dragRotate.disable();
   map.scrollZoom.disable();
@@ -23,12 +24,11 @@ try {
   map.keyboard.disable();
   map.touchZoomRotate.disable();
 
-  // Enhanced Error Handling: Listen for map errors.
   map.on('error', (err) => {
     console.error('Mapbox encountered an error:', err);
   });
 
-  // Update the map dimensions on window resize to avoid unwanted borders.
+  // Update the map dimensions on window resize.
   window.addEventListener('resize', () => {
     try {
       map.resize();
@@ -37,7 +37,7 @@ try {
     }
   });
 
-  // Restore latitude/longitude display.
+  // Restore latitude/longitude display by updating the "coords" element on mouse move over the map container.
   const mapContainer = map.getContainer();
   mapContainer.addEventListener('mousemove', (e) => {
     try {
@@ -56,21 +56,23 @@ try {
     }
   });
 
-  // Use one unified mousemove handler to update:
-  // 1. The reticle position (red dot follows the cursor exactly)
-  // 2. The map pull effect (updating CSS variables for parallax)
+  // Unified mousemove: update reticle (red dot) position instantly and update map pull effect.
   document.addEventListener('mousemove', (e) => {
-    // Update reticle (red dot) position instantly.
+    // Debug log to confirm mousemove event firing
+    console.log('Mouse position:', e.clientX, e.clientY);
+    
+    // Update reticle position instantly so you know where you are pointing.
     const reticle = document.getElementById('reticle');
     if (reticle) {
       reticle.style.transform = `translate(-50%, -50%) translate(${e.clientX}px, ${e.clientY}px)`;
+    } else {
+      console.error('Reticle element not found.');
     }
 
-    // Update the map pull effect using CSS variables.
-    // Calculate the offset relative to the viewport center.
+    // Update map pull effect using CSS variables.
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    const offsetX = (e.clientX - centerX) * 0.02; // Adjust multiplier to taste
+    const offsetX = (e.clientX - centerX) * 0.02; // Adjust multiplier as desired.
     const offsetY = (e.clientY - centerY) * 0.02;
     const mapElement = document.getElementById('map');
     if (mapElement) {
@@ -79,7 +81,7 @@ try {
     }
   });
 
-  // Start the glitch effect and timer.
+  // Start glitch effect and timer.
   startGlitch();
   startTimer();
 
