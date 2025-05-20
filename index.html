@@ -15,9 +15,11 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Boot overlay removed -->
+    <!-- Glitch overlay -->
     <div id="glitch-overlay"></div>
+    <!-- Map container -->
     <div id="map"></div>
+    <!-- Extra overlays for depth, lines, scanlines, noise, laser scans -->
     <div id="depth-overlay"></div>
     <div id="overlay">
       <div class="line horizontal left"></div>
@@ -29,14 +31,17 @@
     <div id="noise"></div>
     <div id="laser-scan-horizontal"></div>
     <div id="laser-scan-vertical"></div>
+    <!-- HUD for clock and coordinates -->
     <div id="hud" role="status" aria-live="polite">
       <div id="timer">00:00:00:00</div>
     </div>
     <div id="coords"></div>
+    <!-- Reticle (red dot) -->
     <div id="reticle"></div>
     
+    <!-- Load Mapbox GL from CDN (exposes global 'mapboxgl') -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <!-- Our main script as an ES module -->
     <script type="module" src="script.js"></script>
   </body>
 </html>
-
