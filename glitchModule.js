@@ -6,7 +6,7 @@ export function startGlitch() {
     return;
   }
 
-  // Function to play a subtle beep sound using the Web Audio API
+  // Subtle Audio Feedback: Play a low-volume beep using the Web Audio API.
   function playGlitchSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -29,11 +29,11 @@ export function startGlitch() {
   const triggerGlitch = () => {
     try {
       glitchOverlay.classList.add('glitch-active');
-      playGlitchSound(); // Play sound feedback on each glitch event
+      playGlitchSound(); // Audio feedback on each glitch event.
       setTimeout(() => {
         glitchOverlay.classList.remove('glitch-active');
       }, 300);
-      // Schedule the next glitch between 2000ms and 7000ms.
+      // Schedule the next glitch event between 2000ms and 7000ms.
       const nextGlitch = Math.random() * 5000 + 2000;
       setTimeout(triggerGlitch, nextGlitch);
     } catch (error) {
