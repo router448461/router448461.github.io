@@ -2,13 +2,9 @@
 import { startGlitch } from './glitchModule.js';
 import { startTimer } from './timerModule.js';
 
-// Import Mapbox GL from the CDN module
-import mapboxgl from 'https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js';
-
 try {
-  // Set your Mapbox access token here (inserted from your provided token)
-  mapboxgl.accessToken =
-    "pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A";
+  // Use the global mapboxgl (from the CDN script in index.html)
+  mapboxgl.accessToken = 'pk.eyJ1Ijoicm91dGVyNDQ4NDYxIiwiYSI6ImNtOHpoZ2ZzZTBjMDIya29tcXB4d3dmZXoifQ.F1i6qsnyKqm_8-HUyu070A';
 
   // Initialize the Mapbox map (centered on Melbourne for illustration)
   const map = new mapboxgl.Map({
@@ -18,12 +14,12 @@ try {
     zoom: 10,
   });
 
-  // Enhanced Error Handling: Listen to map load errors
+  // Enhanced Error Handling: Listen for map errors
   map.on('error', (err) => {
     console.error('Mapbox encountered an error:', err);
   });
 
-  // Call map.resize() on window resize to help mask any black borders during panning.
+  // Update the map dimensions on window resize to avoid black borders.
   window.addEventListener('resize', () => {
     try {
       map.resize();
@@ -32,11 +28,11 @@ try {
     }
   });
 
-  // Start the glitch effect and the timer
+  // Start the glitch effect and the timer.
   startGlitch();
   startTimer();
 
-  // Enhance the reticle behavior to simulate sensor dynamics with subtle jitter.
+  // Enhance the reticle behavior with a subtle jitter effect.
   const reticle = document.getElementById('reticle');
   if (reticle) {
     const updateReticle = () => {
