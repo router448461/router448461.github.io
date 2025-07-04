@@ -1,47 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>router448461</title>
-    <link
-      href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Quantico&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- Glitch overlay -->
-    <div id="glitch-overlay"></div>
-    <!-- Map container -->
-    <div id="map"></div>
-    <!-- Extra overlays for depth, lines, scanlines, noise, laser scans -->
-    <div id="depth-overlay"></div>
-    <div id="overlay">
-      <div class="line horizontal left"></div>
-      <div class="line horizontal right"></div>
-      <div class="line vertical top"></div>
-      <div class="line vertical bottom"></div>
-    </div>
-    <div id="scanlines"></div>
-    <div id="noise"></div>
-    <div id="laser-scan-horizontal"></div>
-    <div id="laser-scan-vertical"></div>
-    <!-- HUD for clock and coordinates -->
-    <div id="hud" role="status" aria-live="polite">
-      <div id="timer">00:00:00:00</div>
-    </div>
-    <div id="coords"></div>
-    <!-- Reticle (red dot) -->
-    <div id="reticle"></div>
-    
-    <!-- Load Mapbox GL from CDN (exposes global 'mapboxgl') -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
-    <!-- Our main script as an ES module -->
-    <script type="module" src="script.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Clickjacking protection -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+
+  <!-- MIME sniffing protection -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+  <!-- Don’t send Referer header -->
+  <meta name="referrer" content="no-referrer">
+
+  <!-- Disable browser features you don’t need -->
+  <meta http-equiv="Permissions-Policy"
+        content="geolocation=(); camera=(); microphone=(); interest-cohort=()">
+
+  <!-- Strict Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'none';">
+
+  <title>Strobe World Map</title>
+
+  <!-- Preload map for faster first paint -->
+  <link rel="preload" href="world-map.png" as="image">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <img id="map-black" src="world-map.png" alt="">
+  <img id="map-white" src="world-map.png" alt="">
+  <div id="strobe-text">FLASHING TEXT</div>
+</body>
 </html>
