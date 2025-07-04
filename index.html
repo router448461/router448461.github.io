@@ -18,9 +18,9 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'none';">
 
-  <title>Strobe World Map</title>
+  <title>Black & White Strobe</title>
 
-  <!-- Preload map for fastest paint -->
+  <!-- Preload the map for fastest paint -->
   <link rel="preload" href="world-map.png" as="image">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -29,10 +29,15 @@
   <img id="map-black" src="world-map.png" alt="World map">
   <!-- Inverted (white) map layer -->
   <img id="map-white" src="world-map.png" alt="">
-  <!-- Centered strobing text -->
-  <div id="strobe-text">FLASHING TEXT</div>
 
-  <!-- Service Worker registration -->
+  <!-- Text broken into three spans: left, center, right -->
+  <div id="strobe-text">
+    <span class="word word-black">BLACK</span>
+    <span class="word word-amp">&</span>
+    <span class="word word-white">WHITE</span>
+  </div>
+
+  <!-- Service Worker registration (filename = script.js) -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
