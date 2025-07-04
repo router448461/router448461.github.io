@@ -1,32 +1,18 @@
-const CACHE_NAME = 'strobe-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/world-map.png'
-];
+// 1.5s full cycle → 0.75s per half
+const halfCycle = 1500 / 2;
+const body = document.body;
+const overlay = document.getElementById('region-overlay');
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-          .then(cache => cache.addAll(ASSETS))
-          .then(() => self.skipWaiting())
-  );
-});
+// All four quadrant classes
+const regions = ['region1','region2','region3','region4'];
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null)
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request)
-          .then(cached => cached || fetch(e.request))
-  );
-});
+// Toggle body between .black/.white and pick a random region on white
+setInterval(() => {
+  if (body.classList.contains('black')) {
+    body.classList.replace('black','white');
+    const choice = regions[Math.floor(Math.random() * regions.length)];
+    overlay.className = choice;
+  } else {
+    body.classList.replace('white','black');
+  }
+}, halfCycle);
