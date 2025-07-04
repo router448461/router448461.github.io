@@ -1,11 +1,9 @@
-/* reset */
+/* reset + full-screen */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
-/* full‐screen & hardware acceleration */
 html, body {
   width: 100%;
   height: 100%;
@@ -14,43 +12,44 @@ html, body {
   transform-style: preserve-3d;
 }
 
-/* page strobe using step‐end to eliminate intermediate fades */
+/* page strobe: black ↔ white */
 @keyframes pageStrobe {
-  0%,49%   { background: #000; color: #fff; }
-  50%,100% { background: #fff; color: #000; }
+  0%, 49%   { background: #000; color: #fff; }
+  50%,100%  { background: #fff; color: #000; }
 }
 body {
   animation: pageStrobe 1s step-end infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: sans-serif;
   position: relative;
+  font-family: sans-serif;
   will-change: background-color, color;
 }
 
-/* map layers */
+/* map layers stacked and cross-faded */
 #map-black,
 #map-white {
   position: absolute;
   top: 0; left: 0;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   animation: mapStrobe 1s step-end infinite;
   will-change: opacity;
 }
 #map-white {
-  animation-delay: .5s;
+  animation-delay: 0.5s;
   filter: invert(1);
 }
 
 /* map opacity toggle */
 @keyframes mapStrobe {
-  0%,49%   { opacity: 1; }
-  50%,100% { opacity: 0; }
+  0%, 49%   { opacity: 1; }
+  50%,100%  { opacity: 0; }
 }
 
-/* front text */
+/* flashing text styling */
 #strobe-text {
   position: relative;
   font-size: 4vw;
