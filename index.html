@@ -9,9 +9,9 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <!-- MIME sniffing protection -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <!-- Don’t send Referer header -->
+  <!-- Don’t send the Referer header -->
   <meta name="referrer" content="no-referrer">
-  <!-- Disable unused browser features -->
+  <!-- Disable unused features -->
   <meta http-equiv="Permissions-Policy"
         content="geolocation=(); camera=(); microphone=(); interest-cohort=()">
   <!-- Strict CSP: only self‐hosted images & styles, no scripts -->
@@ -35,8 +35,9 @@
   <!-- Service Worker registration -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .catch(err => console.error('SW registration failed:', err));
+      navigator.serviceWorker
+               .register('/script.js', { scope: '/' })
+               .catch(err => console.error('SW registration failed:', err));
     }
   </script>
 </body>
