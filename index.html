@@ -2,40 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; img-src 'self' https://upload.wikimedia.org; style-src 'self'; script-src 'self' https:;">
+  <title>World on Fire</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Enhanced 3D Pulse Strobe</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="black">
+<body>
 
-  <!-- Three.js canvas -->
-  <canvas id="globeCanvas"></canvas>
+  <!-- Ambient audio -->
+  <audio id="ambient" loop autoplay>
+    <source src="ambient-rumble.mp3" type="audio/mpeg">
+  </audio>
+  <button id="mute-btn">🔇</button>
 
-  <!-- fallback/overlay images -->
-  <div id="map-container">
-    <img id="map-black"
-         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-         alt="Black world map">
-    <img id="map-white"
-         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-         alt="White world map">
-    <img id="region-overlay"
-         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-         alt="Region overlay">
+  <!-- Scrolling text -->
+  <div id="ticker">
+    <span class="message">
+      The sun rises, sets in a day, but my love for you always remains. 
+      You've had enough chances now; it's time. Now, at least, go and say goodbye.
+    </span>
   </div>
 
-  <!-- central pulsing text -->
-  <div id="pulse-text">
-    <span id="pulse-word"></span>
-  </div>
+  <!-- Fire background -->
+  <video id="fire-bg" autoplay loop muted playsinline>
+    <source src="fire-loop.mp4" type="video/mp4">
+  </video>
 
-  <!-- three.js from CDN + our script -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.min.js"></script>
+  <!-- Ember canvas -->
+  <canvas id="embers"></canvas>
+
   <script src="script.js"></script>
 </body>
 </html>
