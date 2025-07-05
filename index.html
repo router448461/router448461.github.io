@@ -2,33 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>World on Fire</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>World on Fire</title>
+  <!-- preload optimized WebM fire loop -->
+  <link rel="preload" href="fire.webm" as="video" type="video/webm">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Dark, detailed vector map -->
-  <div id="mapBG"></div>
+  <!-- 1) Vector world map (crisp at any resolution) -->
+  <img
+    id="mapSVG"
+    src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
+    alt="World map"
+  >
 
-  <!-- Fire overlay -->
-  <div id="fireBG"></div>
+  <!-- 2) Fire overlay (WebM loop) -->
+  <video
+    id="fireBG"
+    autoplay muted loop playsinline preload="auto"
+    src="fire.webm"
+    type="video/webm"
+  ></video>
 
-  <!-- Embers -->
+  <!-- 3) Ember canvas -->
   <canvas id="embers"></canvas>
 
-  <!-- Scanlines & glitch -->
+  <!-- 4) Glitch & scanlines overlay -->
   <div id="scanlines"></div>
 
-  <!-- Scrolling quote -->
-  <div id="ticker">
+  <!-- 5) Scrolling mantra (always on top) -->
+  <div id="ticker" aria-label="Chilling mantra">
     <span class="message">
-      The sun rises, sets in a day, but my love for you always remains. 
+      The sun rises, sets in a day, but my love for you always remains.
       You've had enough chances now; it's time. Now, at least, go and say goodbye.
     </span>
   </div>
 
-  <!-- Burn ripple on click -->
+  <!-- 6) Click “burn ripple” -->
   <div id="ripple"></div>
 
   <script src="script.js"></script>
