@@ -8,60 +8,27 @@
   />
   <title>Joshua’s Military Map</title>
 
-  <!-- Content Security Policy (adjust according to your domain) -->
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self';
-      style-src 'self' https://cdn.jsdelivr.net;
-      script-src 'self' https://cdn.jsdelivr.net;
-      font-src 'self' https://cdnjs.cloudflare.com;
-      img-src 'self' data:;
-      connect-src 'self';
-    "
-  />
-
-  <!-- Leaflet CSS (jsDelivr CDN with integrity) -->
+  <!-- Leaflet CSS (no integrity/crossorigin) -->
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-S+ROXq7EjipDaR4hC5Qbd0Pk1c8RIyN5nI9yZga0h5g="
-    crossorigin=""
   />
 
-  <!-- Custom Styles -->
+  <!-- Your Custom Styles -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Map Container -->
-  <div 
-    id="map" 
-    role="region" 
-    aria-label="Military-style tactical map of ancient Canaan"
-  ></div>
+  <div id="map" role="region" aria-label="Tactical map"></div>
 
-  <!-- CSS-Only Overlays -->
-  <div class="overlay grid"></div>
-  <div class="overlay reticle"></div>
-  <div class="overlay radar"></div>
-  <div class="overlay binary" aria-hidden="true"></div>
-  <div class="overlay coords" aria-hidden="true">
-    Joshua 6:1<br />
-    31.8667 N, 35.4500 E
-  </div>
-  <div class="overlay mission" aria-hidden="true">
-    MISSION: SECURE THE PROMISED LAND
-  </div>
+  <!-- Overlays… -->
+  <!-- (grid, reticle, radar, binary, coords, mission) -->
 
-  <!-- Leaflet JS (jsDelivr CDN with integrity) -->
+  <!-- Leaflet JS (no integrity/crossorigin) -->
   <script
     src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1jZPIvtnNCg3xxegtTgHr/I3uE2MoS9NbbJ4YwMo="
-    crossorigin=""
-    defer
   ></script>
 
-  <!-- Custom Script -->
-  <script src="js/script.js" defer></script>
+  <!-- Your Custom Script -->
+  <script src="js/script.js"></script>
 </body>
 </html>
