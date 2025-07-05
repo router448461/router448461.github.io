@@ -2,38 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <title>3D Pulse Strobe</title>
-
-  <!-- Basic hardening -->
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; img-src 'self' https://upload.wikimedia.org; style-src 'self'; script-src 'self';">
-
+        content="default-src 'self'; img-src 'self' https://upload.wikimedia.org; style-src 'self'; script-src 'self' https:;">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Enhanced 3D Pulse Strobe</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="black">
 
+  <!-- Three.js canvas -->
+  <canvas id="globeCanvas"></canvas>
+
+  <!-- fallback/overlay images -->
   <div id="map-container">
     <img id="map-black"
          src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-         alt="World map black">
+         alt="Black world map">
     <img id="map-white"
          src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-         alt="World map white">
+         alt="White world map">
     <img id="region-overlay"
          src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
          alt="Region overlay">
   </div>
 
+  <!-- central pulsing text -->
   <div id="pulse-text">
     <span id="pulse-word"></span>
   </div>
 
+  <!-- three.js from CDN + our script -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
