@@ -23,21 +23,16 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* 
-    Apply an “inferno”-style color tweak:
-    tweak hue, boost contrast, deepen shadows 
-  */
+  z-index: 1;
   filter: hue-rotate(15deg) saturate(1.4) contrast(1.2) brightness(0.9);
 }
 
-/* Pure-CSS fiery glow overlay */
+/* Flames overlay */
 .fire-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
+  z-index: 2;
   background:
     radial-gradient(ellipse at bottom, rgba(255,80,0,0.4) 0%, transparent 60%),
     radial-gradient(circle at center, rgba(255,140,0,0.3) 0%, transparent 70%);
@@ -50,11 +45,12 @@ html, body {
   50%      { opacity: 0.5; }
 }
 
-/* Scrolling text overlay */
+/* Scrolling text */
 .overlay-text {
   position: absolute;
   top: 50%;
   left: -100%;
+  transform: translateY(-50%);
   white-space: nowrap;
   font-size: 4vw;
   text-transform: uppercase;
@@ -63,6 +59,7 @@ html, body {
   pointer-events: none;
   mix-blend-mode: difference;
   opacity: 0.85;
+  z-index: 3;
 }
 
 .overlay-text span {
@@ -71,11 +68,11 @@ html, body {
 }
 
 @keyframes scrollText {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(200%); }
+  0%   { transform: translate(-100%, -50%); }
+  100% { transform: translate(200%, -50%); }
 }
 
-/* Smaller screens */
+/* Mobile tweak */
 @media (max-width: 600px) {
   .overlay-text {
     font-size: 6vw;
