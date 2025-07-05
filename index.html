@@ -2,42 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0"
+  />
   <title>Joshua’s Military Map</title>
 
-  <!-- Leaflet CSS -->
+  <!-- Content Security Policy (adjust according to your domain) -->
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      style-src 'self' https://cdn.jsdelivr.net;
+      script-src 'self' https://cdn.jsdelivr.net;
+      font-src 'self' https://cdnjs.cloudflare.com;
+      img-src 'self' data:;
+      connect-src 'self';
+    "
+  />
+
+  <!-- Leaflet CSS (jsDelivr CDN with integrity) -->
   <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+e2BfMZjWrZv3NlmUZpGDjCQausn6I0sWv+X5oZVo="
+    href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-S+ROXq7EjipDaR4hC5Qbd0Pk1c8RIyN5nI9yZga0h5g="
     crossorigin=""
   />
 
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="map"></div>
+  <!-- Map Container -->
+  <div 
+    id="map" 
+    role="region" 
+    aria-label="Military-style tactical map of ancient Canaan"
+  ></div>
 
-  <!-- CSS Overlays -->
-  <div class="grid-overlay"></div>
-  <div class="hud-reticle"></div>
-  <div class="radar-sweep"></div>
-  <div class="binary-code" id="binary"></div>
-  <div class="coords-edge">
-    Joshua 6:1<br/>
+  <!-- CSS-Only Overlays -->
+  <div class="overlay grid"></div>
+  <div class="overlay reticle"></div>
+  <div class="overlay radar"></div>
+  <div class="overlay binary" aria-hidden="true"></div>
+  <div class="overlay coords" aria-hidden="true">
+    Joshua 6:1<br />
     31.8667 N, 35.4500 E
   </div>
-  <div class="mission-text">
+  <div class="overlay mission" aria-hidden="true">
     MISSION: SECURE THE PROMISED LAND
   </div>
 
-  <!-- Leaflet JS -->
+  <!-- Leaflet JS (jsDelivr CDN with integrity) -->
   <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-o9N1jZPIvtnNCg3xxegtTgHr/I3uE2MoS9NbbJ4YwMo="
     crossorigin=""
+    defer
   ></script>
 
-  <script src="js/script.js"></script>
+  <!-- Custom Script -->
+  <script src="js/script.js" defer></script>
 </body>
 </html>
