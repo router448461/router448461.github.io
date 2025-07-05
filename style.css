@@ -1,79 +1,83 @@
-:root {
-  --scroll-duration: 60s;
-  --scroll-size: 6vw;
-  --ember-count: 1000;
-  --ember-speed-min: 2;
-  --ember-speed-max: 6;
+/* Reset & Base */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* RESET */
-* { margin:0; padding:0; box-sizing:border-box }
 html, body {
-  width:100%; height:100%; overflow:hidden;
-  background:#000; position:relative;
-  font-family:'Courier New', monospace;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Roboto Mono', monospace;
+  color: #fff;
 }
 
-/* SCENE LAYER: Fire over Map */
-#scene {
-  position:fixed; inset:0;
-  /* order: top image first */
-  background-image:
-    url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'),
-    url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg');
-  background-size:cover, cover;
-  background-position:center, center;
-  background-repeat:no-repeat, no-repeat;
-  background-blend-mode: screen, normal;
-  filter: blur(2px) contrast(1.4) brightness(1.1);
-  z-index:1;
-  pointer-events:none;
+/* Map container */
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 
+    Apply an “inferno”-style color tweak:
+    tweak hue, boost contrast, deepen shadows 
+  */
+  filter: hue-rotate(15deg) saturate(1.4) contrast(1.2) brightness(0.9);
 }
 
-/* EMBER CANVAS */
-#embers {
-  position:fixed; inset:0;
-  z-index:2;
-  pointer-events:none;
+/* Pure-CSS fiery glow overlay */
+.fire-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at bottom, rgba(255,80,0,0.4) 0%, transparent 60%),
+    radial-gradient(circle at center, rgba(255,140,0,0.3) 0%, transparent 70%);
+  mix-blend-mode: overlay;
+  animation: flicker 3s infinite;
 }
 
-/* TICKER (always on top) */
-#ticker {
-  position:fixed; top:0; left:0;
-  width:100%; height:3em;
-  background:rgba(0,0,0,0.9);
-  overflow:hidden; z-index:3;
-  pointer-events:none;
-}
-#ticker .message {
-  display:inline-block; white-space:nowrap;
-  padding-left:100%;
-  animation: scroll var(--scroll-duration) linear infinite;
-  font-size: var(--scroll-size);
-  letter-spacing:0.1em;
-  background: linear-gradient(90deg, #ff4500, #fff, #ff4500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-@keyframes scroll {
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+@keyframes flicker {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.5; }
 }
 
-/* CLICK RIPPLE */
-#ripple {
-  position:fixed; width:0; height:0;
-  border:2px solid rgba(255,69,0,0.9);
-  border-radius:50%;
-  transform: translate(-50%,-50%);
-  z-index:4;
-  opacity:0;
-  pointer-events:none;
+/* Scrolling text overlay */
+.overlay-text {
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  white-space: nowrap;
+  font-size: 4vw;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  animation: scrollText 20s linear infinite;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  opacity: 0.85;
 }
-#ripple.active {
-  animation: ripple 0.6s ease-out forwards;
+
+.overlay-text span {
+  display: inline-block;
+  padding-right: 2rem;
 }
-@keyframes ripple {
-  0%   { width:0;   height:0;   opacity:1; }
-  100% { width:300px; height:300px; opacity:0; }
+
+@keyframes scrollText {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(200%); }
+}
+
+/* Smaller screens */
+@media (max-width: 600px) {
+  .overlay-text {
+    font-size: 6vw;
+  }
 }
