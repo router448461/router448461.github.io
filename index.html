@@ -14,21 +14,37 @@
     href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
   />
 
-  <!-- Your Custom Styles -->
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="map" role="region" aria-label="Tactical map"></div>
+  <!-- Map Container -->
+  <div 
+    id="map" 
+    role="region" 
+    aria-label="Tactical map of ancient Canaan"
+  ></div>
 
-  <!-- Overlays… -->
-  <!-- (grid, reticle, radar, binary, coords, mission) -->
+  <!-- CSS-Only Overlays -->
+  <div class="overlay grid"></div>
+  <div class="overlay reticle"></div>
+  <div class="overlay radar"></div>
+  <div class="overlay binary" aria-hidden="true"></div>
+  <div class="overlay coords" aria-hidden="true">
+    Joshua 6:1<br />
+    31.8667 N, 35.4500 E
+  </div>
+  <div class="overlay mission" aria-hidden="true">
+    MISSION: SECURE THE PROMISED LAND
+  </div>
 
-  <!-- Leaflet JS (no integrity/crossorigin) -->
+  <!-- Leaflet JS -->
   <script
     src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+    defer
   ></script>
 
-  <!-- Your Custom Script -->
-  <script src="js/script.js"></script>
+  <!-- Custom Script -->
+  <script src="js/script.js" defer></script>
 </body>
 </html>
