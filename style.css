@@ -1,3 +1,5 @@
+/* style.css */
+
 /* reset & full-screen */
 * {
   margin: 0;
@@ -13,55 +15,61 @@ html, body {
   font-family: sans-serif;
 }
 
-/* body colors */
-body.black { background: #000; color: #fff; }
-body.white { background: #fff; color: #000; }
+/* container for 3D perspective */
+#map-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  perspective: 800px;
+  pointer-events: none;
+}
 
-/* map layers */
+/* map layers with slight 3D tilt */
 #map-black, #map-white, #region-overlay {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
   object-fit: cover;
+  transform: rotateY(10deg) rotateX(5deg) translateZ(0);
+  backface-visibility: hidden;
 }
+
+/* body colors */
+body.black { background: #000; color: #fff; }
+body.white { background: #fff; color: #000; }
+
+/* show/hide base maps */
 body.black  #map-black   { display: block; }
 body.black  #map-white   { display: none;  }
 body.white  #map-black   { display: none;  }
 body.white  #map-white   { display: block; }
 
-/* overlay only on white */
+/* overlay only on white flashes */
 body.black  #region-overlay { display: none; }
 body.white  #region-overlay { display: block; opacity: 0.5; }
 
-/* four quadrant clip‐paths */
+/* quadrant clip-paths */
 #region-overlay.region1 { clip-path: polygon(0 0,50% 0,50% 50%,0 50%); }
 #region-overlay.region2 { clip-path: polygon(50% 0,100% 0,100% 50%,50% 50%); }
 #region-overlay.region3 { clip-path: polygon(0 50%,50% 50%,50% 100%,0 100%); }
 #region-overlay.region4 { clip-path: polygon(50% 50%,100% 50%,100% 100%,50% 100%); }
 
-/* strobing text layout */
-#strobe-text {
-  display: flex;
-  width: 100%;
-  position: relative;
+/* center-screen pulse text */
+#pulse-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  perspective: 800px;
   pointer-events: none;
 }
-.word {
-  flex: 1;
-  font-size: 4vw;
+#pulse-word {
+  display: block;
+  font-size: 8vw;
   text-transform: uppercase;
   opacity: 0;
   transition: opacity 0.1s ease-in-out;
+  transform: translateZ(50px);
 }
-.word-black { text-align: left;  }
-.word-amp   { text-align: center;}
-.word-white { text-align: right; }
-
-/* which word shows on which color */
-body.black  .word-black { opacity: 1; }
-body.black  .word-amp   { opacity: 0; }
-body.black  .word-white { opacity: 0; }
-
-body.white  .word-black { opacity: 0; }
-body.white  .word-amp   { opacity: 0; }
-body.white  .word-white { opacity: 1; }
+body.white #pulse-word {
+  opacity: 1;
+}
