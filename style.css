@@ -1,98 +1,95 @@
-/* reset & full-screen */
-* {
-  margin: 0; padding: 0; box-sizing: border-box;
-}
+/* reset & base */
+* { margin:0; padding:0; box-sizing:border-box; }
 html, body {
-  width: 100%; height: 100%; overflow: hidden;
-  background: #000; font-family: 'Courier New', monospace;
-  position: relative;
+  width:100%; height:100%; overflow:hidden;
+  background:#000; font-family:'Courier New', monospace;
+  position:relative;
 }
 
-/* 1) Dark map layer */
+/* 1) World map */
 #mapBG {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png')
-              center/cover no-repeat;
-  filter: brightness(0.2) contrast(1.8);
-  z-index: 1;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:
+    url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png')
+    center/cover no-repeat;
+  filter: brightness(0.2) contrast(2);
+  z-index:1;
 }
 
-/* 2) Detailed fire overlay */
+/* 2) Fire overlay */
 #fireBG {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: url('https://media.giphy.com/media/oe33xf3B50fsc/giphy.gif')
-              center/cover no-repeat;
-  opacity: 0.8;
-  mix-blend-mode: screen;
-  z-index: 2;
-  pointer-events: none;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:
+    url('https://media.giphy.com/media/oe33xf3B50fsc/giphy.gif')
+    center/cover no-repeat;
+  opacity:0.8;
+  mix-blend-mode:screen;
+  filter: blur(2px) contrast(1.2);
+  z-index:2;
+  pointer-events:none;
 }
 
 /* 3) Embers */
 #embers {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 3;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none; z-index:3;
 }
 
-/* 4) Scanlines & glitch */
+/* 4) Scanlines/glitch */
 #scanlines {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
   background:
-    linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px) repeat-y,
-    linear-gradient(90deg, rgba(255,0,0,0.02) 1px, transparent 1px) repeat-x;
-  background-size: 100% 3px, 3px 100%;
-  pointer-events: none;
-  z-index: 4;
-  animation: screen-glitch 5s infinite;
+    linear-gradient(rgba(0,0,0,0.07) 1px,transparent 1px) repeat-y,
+    linear-gradient(90deg,rgba(255,0,0,0.02) 1px,transparent 1px) repeat-x;
+  background-size:100% 3px, 3px 100%;
+  pointer-events:none; z-index:4;
+  animation:screen-glitch 5s infinite;
 }
 @keyframes screen-glitch {
-  0%,100%   { opacity:0.15; transform: none; }
-  10%,50%   { opacity:0.3; transform: translate(-2px,2px) skew(0.5deg); }
-  30%,80%   { opacity:0.25; transform: translate(2px,-1px) skew(-0.3deg); }
+  0%,100%   { opacity:0.15; transform:none; }
+  10%,50%   { opacity:0.3; transform:translate(-2px,2px) skew(0.5deg); }
+  30%,80%   { opacity:0.25; transform:translate(2px,-1px) skew(-0.3deg); }
 }
 
-/* 5) Scrolling ticker */
+/* 5) Scrolling quote */
 #ticker {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 3em;
-  background: rgba(0,0,0,0.7);
-  overflow: hidden;
-  z-index: 5;
+  position:fixed; top:0; left:0;
+  width:100%; height:3em;
+  background:rgba(0,0,0,0.8);
+  overflow:hidden;
+  z-index:10;           /* ensure it's on top */
 }
 #ticker .message {
-  display: inline-block; white-space: nowrap;
-  padding-left: 100%;
-  animation: scroll 15s linear infinite;
-  font-size: 6vw; letter-spacing: 0.1em;
-  background: linear-gradient(90deg, #ff4500, #fff, #ff4500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  display:inline-block; white-space:nowrap;
+  padding-left:100%;
+  animation:scroll 30s linear infinite;  /* slower, more readable */
+  font-size:6vw; letter-spacing:0.1em;
+  background:linear-gradient(90deg,#ff4500,#fff,#ff4500);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 @keyframes scroll {
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0%   { transform:translateX(100%); }
+  100% { transform:translateX(-100%); }
 }
 
 /* 6) Click ripple */
 #ripple {
-  position: fixed;
-  width: 0; height: 0;
-  border: 2px solid rgba(255,69,0,0.9);
-  border-radius: 50%;
-  transform: translate(-50%,-50%);
-  pointer-events: none;
-  z-index: 6;
-  opacity: 0;
+  position:fixed; width:0; height:0;
+  border:2px solid rgba(255,69,0,0.9);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none; z-index:11;
+  opacity:0;
 }
 #ripple.active {
-  animation: ripple 0.6s ease-out forwards;
+  animation:ripple 0.6s ease-out forwards;
 }
 @keyframes ripple {
-  0% { width: 0; height: 0; opacity: 1; }
- 100% { width: 300px; height: 300px; opacity: 0; }
+  0% { width:0; height:0; opacity:1; }
+ 100% { width:300px; height:300px; opacity:0; }
 }
