@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>Random‐Region Black & White Strobe</title>
+  <title>3D Pulse Strobe</title>
 
   <!-- Basic hardening -->
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -17,24 +17,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="black">
-  <!-- Black‐and‐white map layers from Wikimedia -->
-  <img id="map-black"
-       src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-       alt="World map">
-  <img id="map-white"
-       src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-       alt="">
 
-  <!-- Random quadrant overlay -->
-  <img id="region-overlay"
-       src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
-       alt="">
+  <div id="map-container">
+    <img id="map-black"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
+         alt="World map black">
+    <img id="map-white"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
+         alt="World map white">
+    <img id="region-overlay"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
+         alt="Region overlay">
+  </div>
 
-  <!-- Three‐column strobing text -->
-  <div id="strobe-text">
-    <span class="word word-black">BLACK</span>
-    <span class="word word-amp">&amp;</span>
-    <span class="word word-white">WHITE</span>
+  <div id="pulse-text">
+    <span id="pulse-word"></span>
   </div>
 
   <script src="script.js"></script>
