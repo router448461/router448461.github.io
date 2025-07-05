@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta 
-    name="viewport" 
-    content="width=device-width, initial-scale=1.0"
-  />
-  <title>Joshua’s Military Map</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Joshua’s Military Map – Scary Mode</title>
 
   <!-- Leaflet CSS -->
   <link
@@ -15,21 +12,22 @@
   />
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
-  <div 
-    id="map" 
-    role="region" 
-    aria-label="Tactical map of ancient Canaan"
-  ></div>
+  <!-- Map -->
+  <div id="map" role="region" aria-label="Tactical map – scary mode"></div>
 
+  <!-- Overlays -->
   <div class="overlay grid"></div>
+  <div class="overlay static"></div>
+  <div class="overlay smoke"></div>
+  <div class="overlay glitch"></div>
   <div class="overlay reticle"></div>
   <div class="overlay radar"></div>
   <div class="overlay binary" aria-hidden="true"></div>
   <div class="overlay coords" aria-hidden="true">
-    Joshua 6:1<br />
+    Joshua 6:1<br/>
     31.8667 N, 35.4500 E
   </div>
   <div class="overlay mission" aria-hidden="true">
