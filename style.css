@@ -9,76 +9,73 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #000;
-  font-family: sans-serif;
+  color: #fff;
+  font-family: 'Courier New', monospace;
 }
 
-/* three.js canvas behind everything */
-#globeCanvas {
+/* fire background video */
+#fire-bg {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  pointer-events: none;
+  object-fit: cover;
   z-index: 1;
+  mix-blend-mode: darken;
 }
 
-/* fallback/overlay images (in front of canvas) */
-#map-container {
+/* ember particles */
+#embers {
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 2;
-  perspective: 600px;
-}
-
-#map-black, #map-white, #region-overlay {
-  position: absolute;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  transition: filter 0.3s ease;
-}
-
-/* apply blur & brightness on white flash */
-body.white #map-white,
-body.white #region-overlay {
-  filter: blur(1px) brightness(1.2) saturate(1.2);
-}
-
-/* background states */
-body.black { background: #000; }
-body.white { background: #fff; }
-
-/* show/hide base map */
-body.black  #map-black { display: block; }
-body.black  #map-white { display: none;  }
-body.white  #map-black { display: none;  }
-body.white  #map-white { display: block; }
-
-/* overlay only on white flashes */
-body.black  #region-overlay { display: none; }
-body.white  #region-overlay { display: block; opacity: 0.5; }
-
-/* quadrant clip-paths */
-#region-overlay.region1 { clip-path: polygon(0 0,50% 0,50% 50%,0 50%); }
-#region-overlay.region2 { clip-path: polygon(50% 0,100% 0,100% 50%,50% 50%); }
-#region-overlay.region3 { clip-path: polygon(0 50%,50% 50%,50% 100%,0 100%); }
-#region-overlay.region4 { clip-path: polygon(50% 50%,100% 50%,100% 100%,50% 100%); }
-
-/* centered pulse text */
-#pulse-text {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
   pointer-events: none;
 }
-#pulse-word {
-  font-size: 8vw;
-  text-transform: uppercase;
-  opacity: 0;
-  transition: opacity 0.1s ease-in-out;
-  background: linear-gradient(90deg, #000 50%, #fff 50%);
+
+/* scrolling text ticker */
+#ticker {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 3em;
+  background: rgba(0,0,0,0.5);
+  overflow: hidden;
+  z-index: 3;
+}
+#ticker .message {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: scroll 20s linear infinite;
+  font-size: 1.2em;
+  background: linear-gradient(90deg, #ff4500 0%, #ffffff 50%, #ff4500 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* text scroll keyframes */
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* screen shake */
+@keyframes shake {
+  0%,100% { transform: translate(0,0); }
+  10%,30%,50%,70% { transform: translate(-2px,2px); }
+  20%,40%,60%,80% { transform: translate(2px,-2px); }
+}
+body.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* mute button */
+#mute-btn {
+  position: fixed;
+  bottom: 1em; right: 1em;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  color: #fff;
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 4;
 }
