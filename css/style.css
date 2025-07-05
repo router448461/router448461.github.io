@@ -1,4 +1,20 @@
-/* RESET & BASE */
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+:root {
+  --color-bg: #000;
+  --color-green: #39ff14;
+  --color-red: #ff0000;
+  --font-mono: monospace;
+  --grid-size: 50px;
+  --z-map: 1;
+  --z-overlay: 2;
+  --z-ui: 3;
+}
+
+/* ==========================================================================
+   Global Reset & Base
+   ========================================================================== */
 *,
 *::before,
 *::after {
@@ -7,49 +23,68 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #000;
-  font-family: monospace;
-  color: #39ff14;
+  background-color: var(--color-bg);
+  font-family: var(--font-mono);
+  color: var(--color-green);
 }
 
-/* MAP */
+/* ==========================================================================
+   Map Container
+   ========================================================================== */
 #map {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  filter: brightness(0.5) contrast(1.3) hue-rotate(-10deg);
+  z-index: var(--z-map);
+  filter: brightness(0.5)
+          contrast(1.3)
+          hue-rotate(-10deg);
 }
 
-/* GRID OVERLAY */
-.grid-overlay {
+/* ==========================================================================
+   Overlay Utilities
+   ========================================================================== */
+.overlay {
   position: absolute;
   inset: 0;
-  z-index: 2;
   pointer-events: none;
-  background-image:
-    linear-gradient(to right, rgba(255,0,0,0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,0,0,0.15) 1px, transparent 1px);
-  background-size: 50px 50px;
+  z-index: var(--z-overlay);
 }
 
-/* HUD RETICLE */
-.hud-reticle {
+/* Grid Overlay */
+.overlay.grid {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(255, 0, 0, 0.15) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 0, 0, 0.15) 1px,
+      transparent 1px
+    );
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+/* Reticle (center pulsing circle) */
+.overlay.reticle {
+  z-index: var(--z-ui);
+}
+.overlay.reticle::before {
+  content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 150px;
-  height: 150px;
+  top: 50%; left: 50%;
+  width: 150px; height: 150px;
   margin: -75px 0 0 -75px;
-  border: 2px solid #ff0000;
+  border: 2px solid var(--color-red);
   border-radius: 50%;
-  box-shadow: 0 0 20px #ff0000;
+  box-shadow: 0 0 20px var(--color-red);
   animation: pulse 2s ease-out infinite;
-  z-index: 3;
-  pointer-events: none;
 }
 
 @keyframes pulse {
@@ -57,96 +92,66 @@ html, body {
   50%      { transform: scale(1.2); opacity: 0.6; }
 }
 
-/* RADAR SWEEP */
-.radar-sweep {
-  position: absolute;
-  top: 10%;
-  right: 10%;
-  width: 120px;
-  height: 120px;
+/* Radar Sweep (corner) */
+.overlay.radar {
+  width: 120px; height: 120px;
+  top: 10%; right: 10%;
+  background: conic-gradient(
+    rgba(255, 0, 0, 0.1) 0deg,
+    rgba(255, 0, 0, 0.3) 45deg,
+    transparent 60deg
+  );
   border-radius: 50%;
-  background: 
-    conic-gradient(rgba(255,0,0,0.1) 0deg, rgba(255,0,0,0.3) 45deg, transparent 60deg);
   animation: sweep 3s linear infinite;
-  z-index: 3;
-  pointer-events: none;
 }
 
 @keyframes sweep {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* SCROLLING BINARY */
-.binary-code {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
+/* Binary Code (bottom-left) */
+.overlay.binary {
+  bottom: 10px; left: 10px;
   font-size: 0.8vw;
   white-space: nowrap;
   opacity: 0.7;
-  z-index: 4;
-  pointer-events: none;
 }
 
-/* COORDINATES & SCRIPTURE */
-.coords-edge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.6);
+/* Coordinates (top-right) */
+.overlay.coords {
+  top: 10px; right: 10px;
+  background: rgba(0, 0, 0, 0.6);
   padding: 6px 10px;
-  border: 1px solid #39ff14;
+  border: 1px solid var(--color-green);
   border-radius: 4px;
   text-align: right;
   font-size: 0.9vw;
   line-height: 1.2;
-  z-index: 4;
 }
 
-/* MISSION TEXT */
-.mission-text {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+/* Mission Text (bottom) */
+.overlay.mission {
+  bottom: 0; left: 0;
   width: 100%;
   text-align: center;
-  background: rgba(0,0,0,0.5);
-  color: #ff0000;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--color-red);
   font-size: 2vw;
   letter-spacing: 0.1em;
   padding: 8px 0;
   text-transform: uppercase;
-  text-shadow: 0 0 5px #ff0000;
+  text-shadow: 0 0 5px var(--color-red);
   animation: blink 1s step-start infinite;
-  z-index: 4;
-  pointer-events: none;
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
+  0%, 50%   { opacity: 1; }
   51%, 100% { opacity: 0.2; }
 }
 
-/* SITE MARKERS */
-.site-marker .blip {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #ff0000;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #ff0000;
-  animation: blipPulse 2s infinite;
-}
-
-@keyframes blipPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.5); opacity: 0.5; }
-}
-
-/* ARROW ICON */
-.arrow-icon {
-  font-size: 18px;
-  color: #39ff14;
-  text-shadow: 0 0 6px #39ff14;
-  transform: rotate(45deg);
+/* Responsive Tweak */
+@media (max-width: 600px) {
+  .overlay.binary { font-size: 1.2vw; }
+  .overlay.coords { font-size: 1.1vw; }
+  .overlay.mission { font-size: 3vw; }
 }
