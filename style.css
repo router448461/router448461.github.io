@@ -1,50 +1,57 @@
-/* reset & full-screen */
+:root {
+  --bg-color: #000;
+  --map-brightness: 0.15;
+  --map-contrast: 2;
+  --flame-opacity: 0.85;
+  --flame-blur: 2px;
+  --flame-contrast: 1.4;
+  --scroll-duration: 60s;
+  --scroll-font-size: 6vw;
+  --ember-base-count: 700;
+}
+
 * {
   margin: 0; padding: 0; box-sizing: border-box;
 }
 html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
+  width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg-color);
   font-family: 'Courier New', monospace;
   position: relative;
 }
 
-/* 1) Vector map background (no pixelation) */
-#mapBG {
+/* 1) SVG map */
+#mapSVG {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  background:
-    url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')
-    center/cover no-repeat;
-  filter: brightness(0.2) contrast(2);
+  object-fit: cover;
+  filter: brightness(var(--map-brightness)) contrast(var(--map-contrast));
   z-index: 1;
+  image-rendering: auto;
 }
 
-/* 2) Fire overlay (smooth glow) */
+/* 2) Fire overlay */
 #fireBG {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  background:
-    url('https://media.giphy.com/media/oe33xf3B50fsc/giphy.gif')
-    center/cover no-repeat;
-  opacity: 0.8;
+  object-fit: cover;
+  opacity: var(--flame-opacity);
   mix-blend-mode: screen;
-  filter: blur(2px) contrast(1.3);
+  filter: blur(var(--flame-blur)) contrast(var(--flame-contrast));
   z-index: 2;
   pointer-events: none;
 }
 
-/* 3) Embers */
+/* 3) Ember canvas */
 #embers {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 3;
   pointer-events: none;
+  will-change: transform;
 }
 
-/* 4) Scanlines & glitch */
+/* 4) Glitch & scanlines */
 #scanlines {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
@@ -52,8 +59,8 @@ html, body {
     linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px) repeat-y,
     linear-gradient(90deg, rgba(255,0,0,0.02) 1px, transparent 1px) repeat-x;
   background-size: 100% 3px, 3px 100%;
-  pointer-events: none;
   z-index: 4;
+  pointer-events: none;
   animation: screen-glitch 5s infinite;
 }
 @keyframes screen-glitch {
@@ -62,19 +69,22 @@ html, body {
   30%,80%   { opacity:0.25; transform:translate(2px,-1px) skew(-0.3deg); }
 }
 
-/* 5) Scrolling quote on top */
+/* 5) Scrolling mantra */
 #ticker {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 3em;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.9);
   overflow: hidden;
-  z-index: 999;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: opacity, transform;
 }
 #ticker .message {
   display: inline-block; white-space: nowrap;
   padding-left: 100%;
-  animation: scroll 60s linear infinite;
-  font-size: 6vw; letter-spacing: 0.1em;
+  animation: scroll var(--scroll-duration) linear infinite;
+  font-size: var(--scroll-font-size);
+  letter-spacing: 0.1em;
   background: linear-gradient(90deg, #ff4500, #fff, #ff4500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -85,20 +95,28 @@ html, body {
   100% { transform: translateX(-100%); }
 }
 
-/* 6) Click ripple effect */
+/* 6) Burn ripple */
 #ripple {
   position: fixed; width: 0; height: 0;
   border: 2px solid rgba(255,69,0,0.9);
   border-radius: 50%;
   transform: translate(-50%,-50%);
-  pointer-events: none;
-  z-index: 1000;
+  z-index: 10000;
   opacity: 0;
+  pointer-events: none;
+  will-change: width, height, opacity;
 }
 #ripple.active {
   animation: ripple 0.6s ease-out forwards;
 }
 @keyframes ripple {
-  0% { width: 0; height: 0; opacity: 1; }
- 100% { width: 300px; height: 300px; opacity: 0; }
+  0%   { width: 0;   height: 0;   opacity: 1; }
+  100% { width: 300px; height: 300px; opacity: 0; }
+}
+
+/* Honor reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  #ticker .message { animation: none; transform: translateX(0); }
+  #scanlines    { animation: none; }
+  #embers       { will-change: auto; }
 }
