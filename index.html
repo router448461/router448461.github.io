@@ -1,46 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Joshua’s Military Map – Scary Mode</title>
-
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
-  />
-
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/style.css"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>World on Fire</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Map -->
-  <div id="map" role="region" aria-label="Tactical map – scary mode"></div>
-
-  <!-- Overlays -->
-  <div class="overlay grid"></div>
-  <div class="overlay static"></div>
-  <div class="overlay smoke"></div>
-  <div class="overlay glitch"></div>
-  <div class="overlay reticle"></div>
-  <div class="overlay radar"></div>
-  <div class="overlay binary" aria-hidden="true"></div>
-  <div class="overlay coords" aria-hidden="true">
-    Joshua 6:1<br/>
-    31.8667 N, 35.4500 E
-  </div>
-  <div class="overlay mission" aria-hidden="true">
-    MISSION: SECURE THE PROMISED LAND
-  </div>
-
-  <!-- Leaflet JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-    defer
-  ></script>
-
-  <!-- Custom Script -->
-  <script src="js/script.js" defer></script>
+  <div id="map"></div>
+  <div id="fire"></div>
+  <script src="script.js"></script>
 </body>
 </html>
