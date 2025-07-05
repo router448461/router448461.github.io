@@ -1,6 +1,3 @@
-/* ==========================================================================
-   Variables
-   ========================================================================== */
 :root {
   --color-bg: #000;
   --color-green: #39ff14;
@@ -12,9 +9,6 @@
   --z-ui: 3;
 }
 
-/* ==========================================================================
-   Global Reset & Base
-   ========================================================================== */
 *,
 *::before,
 *::after {
@@ -33,9 +27,6 @@ body {
   color: var(--color-green);
 }
 
-/* ==========================================================================
-   Map Container
-   ========================================================================== */
 #map {
   position: absolute;
   inset: 0;
@@ -45,9 +36,6 @@ body {
           hue-rotate(-10deg);
 }
 
-/* ==========================================================================
-   Overlay Utilities
-   ========================================================================== */
 .overlay {
   position: absolute;
   inset: 0;
@@ -55,23 +43,13 @@ body {
   z-index: var(--z-overlay);
 }
 
-/* Grid Overlay */
 .overlay.grid {
   background-image:
-    linear-gradient(
-      to right,
-      rgba(255, 0, 0, 0.15) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(255, 0, 0, 0.15) 1px,
-      transparent 1px
-    );
+    linear-gradient(to right, rgba(255,0,0,0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,0,0,0.15) 1px, transparent 1px);
   background-size: var(--grid-size) var(--grid-size);
 }
 
-/* Reticle (center pulsing circle) */
 .overlay.reticle {
   z-index: var(--z-ui);
 }
@@ -92,13 +70,12 @@ body {
   50%      { transform: scale(1.2); opacity: 0.6; }
 }
 
-/* Radar Sweep (corner) */
 .overlay.radar {
   width: 120px; height: 120px;
   top: 10%; right: 10%;
   background: conic-gradient(
-    rgba(255, 0, 0, 0.1) 0deg,
-    rgba(255, 0, 0, 0.3) 45deg,
+    rgba(255,0,0,0.1) 0deg,
+    rgba(255,0,0,0.3) 45deg,
     transparent 60deg
   );
   border-radius: 50%;
@@ -109,32 +86,31 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Binary Code (bottom-left) */
 .overlay.binary {
   bottom: 10px; left: 10px;
   font-size: 0.8vw;
   white-space: nowrap;
   opacity: 0.7;
+  z-index: var(--z-ui);
 }
 
-/* Coordinates (top-right) */
 .overlay.coords {
   top: 10px; right: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.6);
   padding: 6px 10px;
   border: 1px solid var(--color-green);
   border-radius: 4px;
   text-align: right;
   font-size: 0.9vw;
   line-height: 1.2;
+  z-index: var(--z-ui);
 }
 
-/* Mission Text (bottom) */
 .overlay.mission {
   bottom: 0; left: 0;
   width: 100%;
   text-align: center;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   color: var(--color-red);
   font-size: 2vw;
   letter-spacing: 0.1em;
@@ -142,14 +118,14 @@ body {
   text-transform: uppercase;
   text-shadow: 0 0 5px var(--color-red);
   animation: blink 1s step-start infinite;
+  z-index: var(--z-ui);
 }
 
 @keyframes blink {
   0%, 50%   { opacity: 1; }
-  51%, 100% { opacity: 0.2; }
+  51%,100%  { opacity: 0.2; }
 }
 
-/* Responsive Tweak */
 @media (max-width: 600px) {
   .overlay.binary { font-size: 1.2vw; }
   .overlay.coords { font-size: 1.1vw; }
