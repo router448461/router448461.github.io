@@ -2,32 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>World on Fire – Apocalypse UI</title>
+  <title>World on Fire</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="black">
+<body>
 
-  <!-- 1) Background fire (GIF or Video) -->
-  <img id="fireBG"
-       src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Fire_example_gif.gif"
-       alt="Burning fire loop">
-
-  <!-- 2) Static world map -->
+  <!-- 1) Static world map (under) -->
   <img id="mapImage"
        src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
        alt="World map">
 
-  <!-- 3) Matrix-style data rain -->
-  <canvas id="dataRain"></canvas>
+  <!-- 2) Fire loop (over map) -->
+  <img id="fireBG"
+       src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
+       alt="Burning fire loop">
 
-  <!-- 4) Ember particles -->
+  <!-- 3) Embers drifting -->
   <canvas id="embers"></canvas>
 
-  <!-- 5) Scanlines & glitch overlay -->
+  <!-- 4) Subtle scanline/glitch overlay -->
   <div id="scanlines"></div>
 
-  <!-- 6) Scrolling mantra ticker -->
+  <!-- 5) Scrolling quote ticker -->
   <div id="ticker">
     <span class="message">
       The sun rises, sets in a day, but my love for you always remains. 
@@ -35,7 +32,7 @@
     </span>
   </div>
 
-  <!-- 7) Click “burn” ripple effect -->
+  <!-- 6) Click “burn ripple” -->
   <div id="ripple"></div>
 
   <script src="script.js"></script>
