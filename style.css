@@ -1,4 +1,12 @@
-/* reset & full-screen */
+:root {
+  --scroll-duration: 60s;
+  --scroll-size: 6vw;
+  --ember-count: 1000;
+  --ember-speed-min: 2;
+  --ember-speed-max: 6;
+}
+
+/* RESET */
 * { margin:0; padding:0; box-sizing:border-box }
 html, body {
   width:100%; height:100%; overflow:hidden;
@@ -6,83 +14,59 @@ html, body {
   font-family:'Courier New', monospace;
 }
 
-/* 1) Vector map background */
-#mapBG {
+/* SCENE LAYER: Fire over Map */
+#scene {
   position:fixed; inset:0;
-  background:
-    url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')
-    center/cover no-repeat;
-  filter: brightness(0.15) contrast(2);
+  /* order: top image first */
+  background-image:
+    url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'),
+    url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg');
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
+  background-blend-mode: screen, normal;
+  filter: blur(2px) contrast(1.4) brightness(1.1);
   z-index:1;
+  pointer-events:none;
 }
 
-/* 2) Fire overlay */
-#fireBG {
+/* EMBER CANVAS */
+#embers {
   position:fixed; inset:0;
-  background:
-    url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif')
-    center/cover no-repeat;
-  opacity:0.85;
-  mix-blend-mode:screen;
-  filter: blur(2px) contrast(1.3);
   z-index:2;
   pointer-events:none;
 }
 
-/* 3) Ember canvas */
-#embers {
-  position:fixed; inset:0;
-  z-index:3;
-  pointer-events:none;
-}
-
-/* 4) Scanlines */
-#scanlines {
-  position:fixed; inset:0;
-  background:
-    linear-gradient(rgba(0,0,0,0.07) 1px,transparent 1px) repeat-y,
-    linear-gradient(90deg,rgba(255,0,0,0.02) 1px,transparent 1px) repeat-x;
-  background-size:100% 3px, 3px 100%;
-  z-index:4;
-  pointer-events:none;
-  animation: screen-glitch 5s infinite;
-}
-@keyframes screen-glitch {
-  0%,100%   { opacity:0.15; transform:none; }
-  10%,50%   { opacity:0.3; transform:translate(-2px,2px) skew(0.5deg); }
-  30%,80%   { opacity:0.25; transform:translate(2px,-1px) skew(-0.3deg); }
-}
-
-/* 5) Scrolling quote (always top) */
+/* TICKER (always on top) */
 #ticker {
   position:fixed; top:0; left:0;
   width:100%; height:3em;
   background:rgba(0,0,0,0.9);
-  overflow:hidden;
-  z-index:999;
+  overflow:hidden; z-index:3;
   pointer-events:none;
 }
 #ticker .message {
   display:inline-block; white-space:nowrap;
   padding-left:100%;
-  animation: scroll 30s linear infinite;
-  font-size:6vw; letter-spacing:0.1em;
-  background:linear-gradient(90deg,#ff4500,#fff,#ff4500);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  animation: scroll var(--scroll-duration) linear infinite;
+  font-size: var(--scroll-size);
+  letter-spacing:0.1em;
+  background: linear-gradient(90deg, #ff4500, #fff, #ff4500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 @keyframes scroll {
-  0%   { transform:translateX(100%); }
-  100% { transform:translateX(-100%); }
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
-/* 6) Click ripple */
+/* CLICK RIPPLE */
 #ripple {
   position:fixed; width:0; height:0;
   border:2px solid rgba(255,69,0,0.9);
   border-radius:50%;
-  transform:translate(-50%,-50%);
-  z-index:1000;
+  transform: translate(-50%,-50%);
+  z-index:4;
   opacity:0;
   pointer-events:none;
 }
@@ -90,6 +74,6 @@ html, body {
   animation: ripple 0.6s ease-out forwards;
 }
 @keyframes ripple {
-  0% { width:0; height:0; opacity:1; }
- 100% { width:300px; height:300px; opacity:0; }
+  0%   { width:0;   height:0;   opacity:1; }
+  100% { width:300px; height:300px; opacity:0; }
 }
