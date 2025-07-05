@@ -1,27 +1,33 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>World on Fire – Apocalypse UI</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="black">
 
-  <!-- 3D globe -->
-  <canvas id="globeCanvas"></canvas>
+  <!-- 1) Background fire (GIF or Video) -->
+  <img id="fireBG"
+       src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Fire_example_gif.gif"
+       alt="Burning fire loop">
 
-  <!-- AI “Matrix” data rain -->
+  <!-- 2) Static world map -->
+  <img id="mapImage"
+       src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/2000px-World_map_-_low_resolution.svg.png"
+       alt="World map">
+
+  <!-- 3) Matrix-style data rain -->
   <canvas id="dataRain"></canvas>
 
-  <!-- ember particles -->
+  <!-- 4) Ember particles -->
   <canvas id="embers"></canvas>
 
-  <!-- glitch / scanlines overlay -->
+  <!-- 5) Scanlines & glitch overlay -->
   <div id="scanlines"></div>
 
-  <!-- scrolling mantra -->
+  <!-- 6) Scrolling mantra ticker -->
   <div id="ticker">
     <span class="message">
       The sun rises, sets in a day, but my love for you always remains. 
@@ -29,11 +35,9 @@
     </span>
   </div>
 
-  <!-- ripple effect on click -->
+  <!-- 7) Click “burn” ripple effect -->
   <div id="ripple"></div>
 
-  <!-- three.js from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
