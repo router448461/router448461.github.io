@@ -1,30 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>World on Fire</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World on Fire – LIFE IS BEAUTIFUL</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- MapKit JS -->
+  <script src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"></script>
 </head>
 <body>
+  <div id="map"></div>
+  <div class="fire-overlay"></div>
 
-  <!-- Full-screen scene: fire + map -->
-  <div id="scene"></div>
-
-  <!-- Ember particle canvas -->
-  <canvas id="embers"></canvas>
-
-  <!-- Scrolling quote on top -->
-  <div id="ticker">
-    <span class="message">
-      The sun rises, sets in a day, but my love for you always remains.
-      You've had enough chances now; it's time. Now, at least, go and say goodbye.
-    </span>
+  <div class="overlay-text" aria-hidden="true">
+    <span>LIFE IS BEAUTIFUL&nbsp;</span>
+    <span>LIFE IS BEAUTIFUL&nbsp;</span>
+    <span>LIFE IS BEAUTIFUL&nbsp;</span>
   </div>
 
-  <!-- Click “burn ripple” -->
-  <div id="ripple"></div>
-
-  <script src="script.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
