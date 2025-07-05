@@ -1,21 +1,19 @@
-// Replace with your own MapKit JS credentials
-const MAPKIT_TOKEN = "YOUR_JWT_TOKEN_HERE";
-const MAPKIT_KEY_ID = "YOUR_KEY_ID_HERE";
+// Initialize Leaflet map
+const map = L.map('map', {
+  center: [20, 0],
+  zoom: 1.3,
+  zoomControl: false,
+  attributionControl: false,
+});
 
-mapkit.init({
-  authorizationCallback: done => {
-    // fetch or inline your JWT; here we use a placeholder:
-    done(MAPKIT_TOKEN);
+// Use a light, Apple-like tile set (CartoDB Positron)
+L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  {
+    maxZoom: 5,
+    tileSize: 512,
+    zoomOffset: -1,
   }
-});
+).addTo(map);
 
-// Create the map in “flat” or “mutedStandard” style
-const map = new mapkit.Map("map", {
-  showsPointsOfInterest: false,
-  showsBuildings: false,
-  mapType: mapkit.Map.MapTypes.MutedStandard,
-  center: new mapkit.Coordinate(20, 0),
-  zoomLevel: 1.2
-});
-
-console.log("🔥 World-on-Fire map initialized.");
+console.log('🔥 World-on-Fire map initialized via Leaflet.');
