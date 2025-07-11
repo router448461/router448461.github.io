@@ -1,119 +1,128 @@
 // script.js
-const fireCanvas = document.getElementById('fire-canvas');
-const iceCanvas  = document.getElementById('ice-canvas');
-const fCtx = fireCanvas.getContext('2d');
-const iCtx = iceCanvas.getContext('2d');
+const fireC  = document.getElementById('fire-canvas')
+const iceC   = document.getElementById('ice-canvas')
+const blendC = document.getElementById('blend-canvas')
+const fCtx   = fireC .getContext('2d')
+const iCtx   = iceC  .getContext('2d')
+const bCtx   = blendC.getContext('2d')
 
-let midY, domeRadius;
+let W, H, midY, domeR
 
-// Resize canvases to full viewport
 function resize() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  [fireCanvas, iceCanvas].forEach(canvas => {
-    canvas.width  = w;
-    canvas.height = h;
-  });
-  midY = h / 2;
-  domeRadius = Math.min(w * 0.45, h * 0.4);
+  W = innerWidth; H = innerHeight
+  [fireC, iceC, blendC].forEach(c => {
+    c.width  = W
+    c.height = H
+  })
+  midY  = H / 2
+  domeR = Math.min(W * 0.45, H * 0.4)
 }
-window.addEventListener('resize', resize);
-resize();
+
+window.addEventListener('resize', resize)
+resize()
 
 class Particle {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    this.x = x
+    this.y = y
   }
 }
 
 class FireParticle extends Particle {
   constructor() {
-    super(
-      Math.random() * fireCanvas.width,
-      fireCanvas.height + Math.random() * 100
-    );
-    this.vx   = (Math.random() - 0.5) * 1;
-    this.vy   = - (2 + Math.random() * 2);
-    this.life = 60 + Math.random() * 40;
+    super(Math.random() * W, H + 30 * Math.random())
+    this.vx   = (Math.random() - 0.5) * 1.2
+    this.vy   = - (2 + Math.random() * 2)
+    this.life = 50 + Math.random() * 50
+    this.r    = 10 + Math.random() * 15
   }
-
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life--;
-    if (this.y < midY || this.life <= 0) {
-      Object.assign(this, new FireParticle());
+    this.x += this.vx
+    this.y += this.vy
+    this.life--
+    if (this.y < midY || this.life < 0) {
+      Object.assign(this, new FireParticle())
     }
   }
-
   draw(ctx) {
+    ctx.save()
+    ctx.globalCompositeOperation = 'lighter'
+    ctx.shadowColor = 'rgba(255,160,0,0.8)'
+    ctx.shadowBlur  = this.r * .8
     const grd = ctx.createRadialGradient(
       this.x, this.y, 0,
-      this.x, this.y, 20
-    );
-    grd.addColorStop(0, 'rgba(255,200,0,0.8)');
-    grd.addColorStop(1, 'rgba(255,50,0,0)');
-    ctx.fillStyle = grd;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
-    ctx.fill();
+      this.x, this.y, this.r
+    )
+    grd.addColorStop(0, 'rgba(255,255,200,0.9)')
+    grd.addColorStop(1, 'rgba(255,0,0,0)')
+    ctx.fillStyle = grd
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
   }
 }
 
 class SnowParticle extends Particle {
   constructor() {
-    super(
-      Math.random() * iceCanvas.width,
-      -10 - Math.random() * iceCanvas.height * 0.1
-    );
-    this.vx = (Math.random() - 0.5) * 0.3;
-    this.vy = 1 + Math.random() * 1.5;
+    super(Math.random() * W, -10 - H * 0.1 * Math.random())
+    this.vx = (Math.random() - 0.5) * 0.4
+    this.vy = 1 + Math.random() * 2
+    this.r  = 2 + Math.random() * 3
   }
-
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    const dx = this.x - iceCanvas.width / 2;
-    const dy = this.y - midY;
-    if (dx * dx + dy * dy > domeRadius * domeRadius) {
-      Object.assign(this, new SnowParticle());
+    this.x += this.vx
+    this.y += this.vy
+    const dx = this.x - W/2
+    const dy = this.y - midY
+    if (dx*dx + dy*dy > domeR*domeR) {
+      Object.assign(this, new SnowParticle())
     }
   }
-
   draw(ctx) {
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillStyle = 'rgba(230,255,255,0.9)'
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+    ctx.fill()
   }
 }
 
-const fireParticles = Array.from({ length: 120 }, () => new FireParticle());
-const snowParticles = Array.from({ length: 200 }, () => new SnowParticle());
+const fires = Array.from({ length: 150 }, () => new FireParticle())
+const snows = Array.from({ length: 250 }, () => new SnowParticle())
 
 function animate() {
-  // Clear & draw fire
-  fCtx.clearRect(0, 0, fireCanvas.width, fireCanvas.height);
-  fireParticles.forEach(p => { p.update(); p.draw(fCtx); });
+  fCtx.clearRect(0, 0, W, H)
+  iCtx.clearRect(0, 0, W, H)
+  bCtx.clearRect(0, 0, W, H)
 
-  // Clear & draw snow within dome
-  iCtx.clearRect(0, 0, iceCanvas.width, iceCanvas.height);
-  iCtx.save();
-  iCtx.beginPath();
-  iCtx.arc(iceCanvas.width / 2, midY, domeRadius, Math.PI, 0);
-  iCtx.clip();
-  snowParticles.forEach(p => { p.update(); p.draw(iCtx); });
-  iCtx.restore();
+  fires.forEach(p => { p.update(); p.draw(fCtx) })
 
-  // Outline the ice dome
-  iCtx.beginPath();
-  iCtx.arc(iceCanvas.width / 2, midY, domeRadius, Math.PI, 0);
-  iCtx.strokeStyle = 'white';
-  iCtx.lineWidth = 4;
-  iCtx.stroke();
+  iCtx.save()
+  iCtx.beginPath()
+  iCtx.arc(W/2, midY, domeR, 0, Math.PI, true)
+  iCtx.clip()
+  snows.forEach(p => { p.update(); p.draw(iCtx) })
+  iCtx.restore()
 
-  requestAnimationFrame(animate);
+  iCtx.beginPath()
+  iCtx.arc(W/2, midY, domeR, 0, Math.PI, true)
+  iCtx.lineWidth = 3
+  iCtx.strokeStyle = 'white'
+  iCtx.stroke()
+
+  const band = 40
+  bCtx.save()
+  bCtx.filter = 'blur(16px)'
+  bCtx.globalAlpha = 0.6
+  bCtx.beginPath()
+  bCtx.rect(0, midY - band/2, W, band)
+  bCtx.clip()
+  bCtx.drawImage(fireC, 0, 0)
+  bCtx.drawImage(iceC , 0, 0)
+  bCtx.restore()
+
+  requestAnimationFrame(animate)
 }
 
-animate();
+animate()
+```
