@@ -1,18 +1,19 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weaponized Fire & Ice World</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Fire & Ice World</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="container">
-    <canvas id="fire-canvas"></canvas>
-    <canvas id="ice-canvas"></canvas>
-    <canvas id="blend-canvas"></canvas>
+    <canvas id="fireCanvas"></canvas>
+    <canvas id="iceCanvas"></canvas>
+    <canvas id="blendCanvas"></canvas>
   </div>
-  <script src="script.js"></script>
+
+  <!-- defer ensures script runs after DOM is ready -->
+  <script src="script.js" defer></script>
 </body>
 </html>
