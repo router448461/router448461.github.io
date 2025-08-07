@@ -22,13 +22,16 @@ export class Particle {
     const dirX = dx / dist;
     const dirY = dy / dist;
 
-    const force = CONFIG.magneticStrength * (1 - Math.min(dist / CONFIG.magneticFalloff, 1));
+    // Nonlinear magnetic pull with easing
+    const force = CONFIG.magneticStrength * Math.pow(1 - Math.min(dist / CONFIG.magneticFalloff, 1), 2);
     this.vx += dirX * force;
     this.vy += dirY * force;
 
+    // Damping
     this.vx *= CONFIG.damping;
     this.vy *= CONFIG.damping;
 
+    // Clamp velocity
     const velocity = Math.hypot(this.vx, this.vy);
     if (velocity > CONFIG.maxVelocity) {
       this.vx *= CONFIG.maxVelocity / velocity;
@@ -38,15 +41,12 @@ export class Particle {
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
-    // Bounce off edges
-    if (this.x < 0 || this.x > width) {
-      this.vx *= -CONFIG.bounceLoss;
-      this.x = Math.max(0, Math.min(width, this.x));
-    }
-    if (this.y < 0 || this.y > height) {
-      this.vy *= -CONFIG.bounceLoss;
-      this.y = Math.max(0, Math.min(height, this.y));
-    }
+    // Edge wrapping
+    const margin = CONFIG.edgeWrapMargin;
+    if (this.x < -margin) this.x = width + margin;
+    if (this.x > width + margin) this.x = -margin;
+    if (this.y < -margin) this.y = height + margin;
+    if (this.y > height + margin) this.y = -margin;
   }
 
   drawLine() {
