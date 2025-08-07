@@ -1,6 +1,8 @@
 export const CONFIG = {
-  particleCount: 120,
+  lineCount: 80,
   dotColor: 'rgba(0, 255, 0, 0.8)',
+  centerX: null, // set in canvas.js
+  centerY: null,
   sinkRadius: 120,
   gradientRadius: 200,
   magneticStrength: 0.05,
@@ -8,6 +10,5 @@ export const CONFIG = {
   damping: 0.98,
   bounceLoss: 0.7,
   maxVelocity: 100,
-  initialSpeed: 30,
-  tetherDistance: 300
+  initialSpeed: 30
 };
