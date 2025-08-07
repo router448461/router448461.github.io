@@ -1,135 +1,89 @@
-(() => {
-  // DOM references
-  const fireCanvas  = document.getElementById('fireCanvas');
-  const iceCanvas   = document.getElementById('iceCanvas');
-  const blendCanvas = document.getElementById('blendCanvas');
-  const fCtx        = fireCanvas .getContext('2d');
-  const iCtx        = iceCanvas  .getContext('2d');
-  const bCtx        = blendCanvas.getContext('2d');
+// Configuration
+const CONFIG = {
+  particleCount: 100,
+  maxVelocity: 0.5,
+  connectionDistance: 120,
+  dotColor: 'rgba(255,255,255,0.7)',
+  lineColor: 'rgba(255,255,255,0.15)'
+};
 
-  let W, H, midY, domeR;
+// Setup canvas
+const canvas = document.getElementById('bgCanvas');
+const ctx    = canvas.getContext('2d');
+let width, height, particles;
 
-  // resize all canvases
-  const resizeCanvases = () => {
-    W = window.innerWidth;
-    H = window.innerHeight;
-    [fireCanvas, iceCanvas, blendCanvas].forEach(c => {
-      c.width  = W;
-      c.height = H;
-    });
-    midY  = H / 2;
-    domeR = Math.min(W * 0.45, H * 0.4);
-  };
+// Resize handler
+function resize() {
+  width  = canvas.width  = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-  window.addEventListener('resize', resizeCanvases);
-  resizeCanvases();
+// Particle class
+class Particle {
+  constructor() {
+    this.x  = Math.random() * width;
+    this.y  = Math.random() * height;
+    this.vx = (Math.random() - 0.5) * CONFIG.maxVelocity;
+    this.vy = (Math.random() - 0.5) * CONFIG.maxVelocity;
+  }
+  
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
 
-  // base class
-  class Particle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-    }
+    // bounce off edges
+    if (this.x < 0 || this.x > width)  this.vx *= -1;
+    if (this.y < 0 || this.y > height) this.vy *= -1;
+  }
+  
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = CONFIG.dotColor;
+    ctx.fill();
+  }
+}
+
+// Initialize particles
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < CONFIG.particleCount; i++) {
+    particles.push(new Particle());
+  }
+}
+initParticles();
+
+// Main animation loop
+function animate() {
+  ctx.clearRect(0, 0, width, height);
+
+  // Update and draw dots
+  for (const p of particles) {
+    p.update();
+    p.draw();
   }
 
-  class FireParticle extends Particle {
-    constructor() {
-      super(Math.random() * W, H + Math.random() * 30);
-      this.vx   = (Math.random() - 0.5) * 1.2;
-      this.vy   = - (2 + Math.random() * 2);
-      this.life = 50 + Math.random() * 50;
-      this.r    = 10 + Math.random() * 15;
-    }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.life--;
-      if (this.y < midY || this.life <= 0) {
-        Object.assign(this, new FireParticle());
+  // Draw lines between close particles
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < CONFIG.connectionDistance) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = CONFIG.lineColor;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
     }
-    draw(ctx) {
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.shadowColor = 'rgba(255,160,0,0.8)';
-      ctx.shadowBlur  = this.r * 0.8;
-
-      const grd = ctx.createRadialGradient(
-        this.x, this.y, 0,
-        this.x, this.y, this.r
-      );
-      grd.addColorStop(0, 'rgba(255,255,200,0.9)');
-      grd.addColorStop(1, 'rgba(255,0,0,0)');
-
-      ctx.fillStyle = grd;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
   }
 
-  class SnowParticle extends Particle {
-    constructor() {
-      super(Math.random() * W, -10 - Math.random() * H * 0.1);
-      this.vx = (Math.random() - 0.5) * 0.4;
-      this.vy = 1 + Math.random() * 2;
-      this.r  = 2 + Math.random() * 3;
-    }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      const dx = this.x - W / 2;
-      const dy = this.y - midY;
-      if (dx * dx + dy * dy > domeR * domeR) {
-        Object.assign(this, new SnowParticle());
-      }
-    }
-    draw(ctx) {
-      ctx.fillStyle = 'rgba(230,255,255,0.9)';
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
+  requestAnimationFrame(animate);
+}
 
-  const fires = Array.from({ length: 150 }, () => new FireParticle());
-  const snows = Array.from({ length: 250 }, () => new SnowParticle());
-
-  // main loop
-  const animate = () => {
-    fCtx.clearRect(0, 0, W, H);
-    iCtx.clearRect(0, 0, W, H);
-    bCtx.clearRect(0, 0, W, H);
-
-    fires.forEach(p => { p.update(); p.draw(fCtx); });
-
-    iCtx.save();
-    iCtx.beginPath();
-    iCtx.arc(W / 2, midY, domeR, 0, Math.PI, true);
-    iCtx.clip();
-    snows.forEach(p => { p.update(); p.draw(iCtx); });
-    iCtx.restore();
-
-    iCtx.beginPath();
-    iCtx.arc(W / 2, midY, domeR, 0, Math.PI, true);
-    iCtx.lineWidth   = 3;
-    iCtx.strokeStyle = 'white';
-    iCtx.stroke();
-
-    const band = 40;
-    bCtx.save();
-    bCtx.filter      = 'blur(16px)';
-    bCtx.globalAlpha = 0.6;
-    bCtx.beginPath();
-    bCtx.rect(0, midY - band / 2, W, band);
-    bCtx.clip();
-    bCtx.drawImage(fireCanvas,  0, 0);
-    bCtx.drawImage(iceCanvas,   0, 0);
-    bCtx.restore();
-
-    requestAnimationFrame(animate);
-  };
-
-  animate();
-})();
+animate();
