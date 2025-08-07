@@ -11,4 +11,7 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-export { canvas, ctx, canvas as default, canvas.width as width, canvas.height as height };
+const width = canvas.width;
+const height = canvas.height;
+
+export { canvas, ctx, width, height };
