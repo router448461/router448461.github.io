@@ -1,14 +1,15 @@
 export const CONFIG = {
-  lineCount: 80,
-  dotColor: 'rgba(0, 255, 0, 0.8)',
-  centerX: null, // set dynamically
+  particleCount: 100,
+  dotColor: 'rgba(0, 255, 0, 0.9)',
+  lineColor: 'rgba(0, 255, 0, OPACITY)', // OPACITY will be replaced dynamically
+  centerX: null,
   centerY: null,
-  sinkRadius: 120,
-  gradientRadius: 200,
-  magneticStrength: 0.05,
-  magneticFalloff: 300,
-  damping: 0.98,
-  bounceLoss: 0.7,
-  maxVelocity: 100,
-  initialSpeed: 30
+  sinkRadius: 100,
+  gradientRadius: 250,
+  magneticStrength: 0.08,
+  magneticFalloff: 400,
+  damping: 0.96,
+  bounceLoss: 0.6,
+  maxVelocity: 120,
+  initialSpeed: 40
 };
