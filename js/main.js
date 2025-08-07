@@ -5,6 +5,7 @@ import { Particle } from './particle.js';
 const particles = [];
 const mouse = { x: null, y: null };
 let lastTime = performance.now();
+let lastPulse = performance.now();
 const centerX = width / 2;
 const centerY = height / 2;
 
@@ -20,6 +21,23 @@ canvas.addEventListener('mouseleave', () => {
 function initParticles() {
   for (let i = 0; i < CONFIG.particleCount; i++) {
     particles.push(new Particle());
+  }
+}
+
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < width; x += CONFIG.gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, height);
+    ctx.stroke();
+  }
+  for (let y = 0; y < height; y += CONFIG.gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(width, y);
+    ctx.stroke();
   }
 }
 
@@ -79,9 +97,24 @@ function drawSinkRing() {
   ctx.arc(centerX, centerY, CONFIG.sinkRadius, 0, Math.PI * 2);
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
-  ctx.setLineDash([2, 4]); // subtle dashed perimeter
+  ctx.setLineDash([2, 4]);
   ctx.stroke();
-  ctx.setLineDash([]); // reset dash
+  ctx.setLineDash([]);
+}
+
+function drawSensorPulse(now) {
+  const elapsed = now - lastPulse;
+  if (elapsed > CONFIG.pulseInterval) {
+    lastPulse = now;
+  }
+  const progress = elapsed / CONFIG.pulseInterval;
+  const radius = progress * width;
+
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(255,255,255,${1 - progress})`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
 }
 
 function animate(now) {
@@ -89,8 +122,10 @@ function animate(now) {
   lastTime = now;
 
   ctx.clearRect(0, 0, width, height);
+  drawGrid();
   drawCenterGradient();
   drawSinkRing();
+  drawSensorPulse(now);
 
   for (const p of particles) {
     p.update(delta);
