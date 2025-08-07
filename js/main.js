@@ -1,47 +1,51 @@
 // js/main.js
 
 import config from './config.js';
-import { noise } from './noise.js';
 import { Particle } from './particle.js';
 import { Renderer } from './Renderer.js';
-import { InputManager } from './inputManager.js';
 
-const canvas   = document.getElementById('background');
-const renderer = new Renderer(canvas, config);
-const input    = new InputManager(canvas);
+// setup canvas & renderer
+const canvas = document.getElementById('background');
+const renderer = new Renderer(canvas, config, []);
 
-// Resize handler must be declared before use
+// resize logic
 function resize() {
   const w = Math.floor(window.innerWidth  * config.pixelRatio);
   const h = Math.floor(window.innerHeight * config.pixelRatio);
   renderer.resize(w, h);
 }
-
 window.addEventListener('resize', resize);
 resize();
 
-// spawn particles
-const particles = Array.from(
-  { length: config.particleCount },
-  () => new Particle(config)
-);
+// grid-spawn particles
+const particles = [];
+const cell = config.grid.cellSize;
+for (let x = cell / 2; x < canvas.width; x += cell) {
+  for (let y = cell / 2; y < canvas.height; y += cell) {
+    const jitterX = (Math.random() - 0.5) * cell * 0.3;
+    const jitterY = (Math.random() - 0.5) * cell * 0.3;
+    particles.push(new Particle(x + jitterX, y + jitterY, config));
+  }
+}
+renderer.particles = particles;
 
-function animate() {
-  input.update();
-  renderer.clear();
+// animation loop
+let last = 0;
+function animate(timestamp) {
+  const t = timestamp / 1000; // seconds
+  const dt = t - last;
+  last = t;
 
+  // update physics
   for (const p of particles) {
-    // apply noise-driven force
-    const force = noise(p.position, input.pointer);
-    p.applyForce(force);
-
-    p.update();
-    // insert into spatial grid for future neighbor queries
-    renderer.grid.insert(p);
+    // optional noise force here, or skip for static grid
+    p.update(dt);
   }
 
-  renderer.drawParticles(particles);
+  renderer.clear();
+  renderer.draw(t);
+
   requestAnimationFrame(animate);
 }
 
-animate();
+requestAnimationFrame(animate);
