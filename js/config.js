@@ -1,7 +1,7 @@
 export const CONFIG = {
   lineCount: 80,
   dotColor: 'rgba(0, 255, 0, 0.8)',
-  centerX: null, // set in canvas.js
+  centerX: null, // set dynamically
   centerY: null,
   sinkRadius: 120,
   gradientRadius: 200,
