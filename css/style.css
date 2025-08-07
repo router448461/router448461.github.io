@@ -5,37 +5,32 @@
   --font-display: 'Orbitron', sans-serif;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
 
 html, body {
-  width: 100%;
-  height: 100%;
+  width:100%; height:100%;
   background: var(--bg-dark);
   color: var(--text-light);
   font-family: var(--font-display);
-  overflow: hidden;
-  position: relative;
+  overflow:hidden;
+  position:relative;
 }
 
 canvas#background {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
   z-index: 0;
 }
 
 .overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
   z-index: 1;
-  background-image:
-    /* fine scanlines */
+  background:
+    /* scanlines */
     repeating-linear-gradient(
       to bottom,
       transparent 0px,
@@ -44,24 +39,22 @@ canvas#background {
     );
 }
 
-/* scan bar animation */
 .overlay::after {
-  content: '';
-  position: absolute;
-  top: var(--scan-y, -20%);
-  left: 0;
-  width: 100%;
-  height: 20%;
+  content:'';
+  position:absolute;
+  top: var(--scan-y, -30%);
+  left:0;
+  width:100%; height:30%;
   background: linear-gradient(
     to bottom,
     transparent,
     rgba(0,255,0,0.15),
     transparent
   );
-  animation: scan 5s linear infinite;
+  animation: scan 4s linear infinite;
 }
 
 @keyframes scan {
-  from { --scan-y: -20%; }
-  to   { --scan-y: 120%; }
+  from { --scan-y: -30%; }
+  to   { --scan-y: 130%; }
 }
