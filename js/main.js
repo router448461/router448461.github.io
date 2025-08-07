@@ -31,15 +31,18 @@ function drawConnections() {
       const dist = Math.hypot(dx, dy);
 
       if (dist < CONFIG.connectionDistance) {
-        // Fade lines near center
-        const centerDist = (Math.hypot(particles[i].x - centerX, particles[i].y - centerY) +
-                            Math.hypot(particles[j].x - centerX, particles[j].y - centerY)) / 2;
-        const fadeFactor = 1 - Math.min(centerDist / (width / 2), 1);
+        const dist1 = Math.hypot(particles[i].x - centerX, particles[i].y - centerY);
+        const dist2 = Math.hypot(particles[j].x - centerX, particles[j].y - centerY);
+        const bothInSink = dist1 < CONFIG.sinkRadius && dist2 < CONFIG.sinkRadius;
+
+        const alpha = bothInSink
+          ? 1 - Math.max(dist1, dist2) / CONFIG.sinkRadius
+          : 1;
 
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(255,255,255,${fadeFactor * CONFIG.lineBaseAlpha})`;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha * CONFIG.lineBaseAlpha})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -71,12 +74,23 @@ function drawCenterGradient() {
   ctx.fillRect(0, 0, width, height);
 }
 
+function drawSinkRing() {
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, CONFIG.sinkRadius, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 4]); // subtle dashed perimeter
+  ctx.stroke();
+  ctx.setLineDash([]); // reset dash
+}
+
 function animate(now) {
   const delta = (now - lastTime) / 16.67;
   lastTime = now;
 
   ctx.clearRect(0, 0, width, height);
   drawCenterGradient();
+  drawSinkRing();
 
   for (const p of particles) {
     p.update(delta);
