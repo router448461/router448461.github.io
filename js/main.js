@@ -1,5 +1,4 @@
 // js/main.js
-
 import config from './config.js';
 import { Particle } from './particle.js';
 import { Renderer } from './Renderer.js';
@@ -7,7 +6,7 @@ import { Renderer } from './Renderer.js';
 const canvas   = document.getElementById('background');
 const renderer = new Renderer(canvas, config, []);
 
-// 1) Resize handler
+// resize handler (must run before spawn)
 function resize() {
   const w = Math.floor(window.innerWidth  * config.pixelRatio);
   const h = Math.floor(window.innerHeight * config.pixelRatio);
@@ -16,7 +15,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// 2) Grid‐spawn with jitter
+// spawn particles on a jittered grid
 const particles = [];
 const cell      = config.grid.cellSize;
 for (let x = cell / 2; x < canvas.width; x += cell) {
@@ -28,11 +27,11 @@ for (let x = cell / 2; x < canvas.width; x += cell) {
 }
 renderer.particles = particles;
 
-// 3) Animation loop calling draw(time)
-function animate(timestamp) {
-  const t = timestamp / 1000; // convert to seconds
+// main animation loop
+function animate(ts) {
+  const t = ts / 1000;  // seconds
 
-  // update motion (if you have forces, apply them before update)
+  // update physics (no extra forces in this version)
   for (const p of particles) {
     p.update();
   }
