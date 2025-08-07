@@ -1,56 +1,49 @@
-import config from './config.js';
-import { noise } from './noise.js';
+// js/particle.js
 
 export class Particle {
-  constructor(width, height, layer) {
-    this.layer = layer;
-    this.reset(width, height);
+  constructor(config) {
+    // random starting position within the viewport
+    const w = window.innerWidth * config.pixelRatio;
+    const h = window.innerHeight * config.pixelRatio;
+
+    this.position = {
+      x: Math.random() * w,
+      y: Math.random() * h
+    };
+    this.velocity = { x: 0, y: 0 };
+    this.acceleration = { x: 0, y: 0 };
+    this.config = config;
   }
 
-  reset(width, height) {
-    this.x = Math.random() * width;
-    this.y = Math.random() * height;
-    // initial velocity
-    this.vx = (Math.random() - 0.5) * 2 * this.layer.speedMult;
-    this.vy = (Math.random() - 0.5) * 2 * this.layer.speedMult;
-    this.mass = 1 + Math.random();     // vary mass [1,2]
-    this.drag = 0.005;                  // velocity² drag
+  applyForce(force) {
+    this.acceleration.x += force.x;
+    this.acceleration.y += force.y;
   }
 
-  update(width, height) {
-    // central pull
-    const cx = width / 2;
-    const cy = height / 2;
-    this.vx += (cx - this.x) * config.centralPull;
-    this.vy += (cy - this.y) * config.centralPull;
+  update() {
+    // integrate acceleration → velocity → position
+    this.velocity.x += this.acceleration.x;
+    this.velocity.y += this.acceleration.y;
 
-    // turbulence
-    const t = performance.now() * 0.0001;
-    const angle = noise.perlin2(this.x * 0.005, this.y * 0.005 + t) * Math.PI * 2;
-    this.vx += Math.cos(angle) * config.turbulenceStrength;
-    this.vy += Math.sin(angle) * config.turbulenceStrength;
+    // apply drag
+    this.velocity.x *= this.config.particle.drag;
+    this.velocity.y *= this.config.particle.drag;
 
-    // Brownian jitter
-    this.vx += (Math.random() - 0.5) * config.jitterStrength;
-    this.vy += (Math.random() - 0.5) * config.jitterStrength;
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
 
-    // drag (proportional to speed²)
-    const speed = Math.hypot(this.vx, this.vy);
-    const dragForce = this.drag * speed * speed;
-    this.vx -= (this.vx / speed) * dragForce;
-    this.vy -= (this.vy / speed) * dragForce;
-
-    // update position & boundary bounce
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < 0 || this.x > width) this.vx *= -1;
-    if (this.y < 0 || this.y > height) this.vy *= -1;
+    this.wrap();
+    this.acceleration.x = 0;
+    this.acceleration.y = 0;
   }
 
-  draw(ctx) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.layer.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.layer.color;
-    ctx.fill();
+  wrap() {
+    const w = window.innerWidth * this.config.pixelRatio;
+    const h = window.innerHeight * this.config.pixelRatio;
+
+    if (this.position.x < 0) this.position.x += w;
+    if (this.position.x > w) this.position.x -= w;
+    if (this.position.y < 0) this.position.y += h;
+    if (this.position.y > h) this.position.y -= h;
   }
 }
