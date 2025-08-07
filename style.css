@@ -1,39 +1,14 @@
-:root {
-  --dot-color: rgba(255, 255, 255, 0.7);
-  --line-color: rgba(255, 255, 255, 0.15);
-  --bg-color: #000;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
+/* Reset margins & padding, full-screen black bg */
+html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  background: #000;
 }
 
-html, body {
+/* Make canvas fill the screen */
+canvas {
+  display: block;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background-color: var(--bg-color);
-  font-family: system-ui, sans-serif;
-}
-
-canvas#bgCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: -1;
-  mix-blend-mode: screen;
-  filter: blur(0.5px);
-}
-
-/* subtle hue animation */
-@keyframes hueShift {
-  from { filter: blur(0.5px) hue-rotate(0deg); }
-  to   { filter: blur(0.5px) hue-rotate(360deg); }
-}
-
-canvas#bgCanvas {
-  animation: hueShift 60s linear infinite;
 }
