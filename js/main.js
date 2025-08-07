@@ -17,7 +17,7 @@ canvas.addEventListener('mouseleave', () => {
 
 function initParticles() {
   for (let i = 0; i < CONFIG.particleCount; i++) {
-    particles.push(new Particle(i));
+    particles.push(new Particle());
   }
 }
 
@@ -30,16 +30,11 @@ function drawConnections() {
 
       if (dist < CONFIG.connectionDistance) {
         const alpha = 1 - dist / CONFIG.connectionDistance;
-        const hue = Math.floor(alpha * 120);
-        const pulse = Math.random() < CONFIG.pulseChance;
-
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = pulse
-          ? `rgba(255,255,255,0.8)`
-          : `hsla(${hue}, 100%, 50%, ${alpha * CONFIG.lineBaseAlpha})`;
-        ctx.lineWidth = pulse ? 2 : 1;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha * CONFIG.lineBaseAlpha})`;
+        ctx.lineWidth = 1;
         ctx.stroke();
       }
     }
@@ -63,7 +58,7 @@ function drawConnections() {
 }
 
 function animate(now) {
-  const delta = (now - lastTime) / 16.67; // Normalize to ~60fps
+  const delta = (now - lastTime) / 16.67;
   lastTime = now;
 
   ctx.clearRect(0, 0, width, height);
