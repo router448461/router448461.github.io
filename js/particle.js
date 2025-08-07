@@ -2,27 +2,27 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.vx = (Math.random() - 0.5) * 1.5;
-    this.vy = (Math.random() - 0.5) * 1.5;
+    this.vx = (Math.random() - 0.5) * 2;
+    this.vy = (Math.random() - 0.5) * 2;
     this.radius = 2;
-    this.damping = 0.02;
-    this.attraction = 0.0008;
+    this.damping = 0.01;
+    this.attraction = 0.0002;
     this.maxSpeed = 2.5;
   }
 
   update(center, mouse) {
-    // Central attraction
+    // Gentle central attraction
     const dx = center.x - this.x;
     const dy = center.y - this.y;
     this.vx += dx * this.attraction;
     this.vy += dy * this.attraction;
 
-    // Optional mouse influence (gentle push away)
+    // Soft mouse repulsion
     const mx = this.x - mouse.x;
     const my = this.y - mouse.y;
     const dist = Math.sqrt(mx * mx + my * my);
-    if (dist < 100) {
-      const force = (100 - dist) / 1000;
+    if (dist < 150) {
+      const force = (150 - dist) / 3000;
       this.vx += mx * force;
       this.vy += my * force;
     }
