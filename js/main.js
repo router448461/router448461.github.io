@@ -10,7 +10,8 @@ window.addEventListener('resize', resize);
 resize();
 
 const particles = [];
-const mouse = { x: width / 2, y: height / 2 };
+const center = { x: width / 2, y: height / 2 };
+const mouse = { x: center.x, y: center.y };
 
 for (let i = 0; i < 100; i++) {
   const x = Math.random() * width;
@@ -28,7 +29,7 @@ function animate() {
 
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
-    p.update(mouse);
+    p.update(center, mouse);
     p.draw(ctx);
 
     for (let j = i + 1; j < particles.length; j++) {
