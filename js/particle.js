@@ -1,13 +1,10 @@
 // js/particle.js
-
 export class Particle {
   constructor(x, y, config) {
     this.position = { x, y };
     this.velocity = { x: 0, y: 0 };
     this.acceleration = { x: 0, y: 0 };
     this.config = config;
-
-    // each dot gets a random phase for pulsing
     this.pulseOffset = Math.random() * Math.PI * 2;
   }
 
