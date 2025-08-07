@@ -1,10 +1,10 @@
 // Configuration
 const CONFIG = {
-  particleCount: 100,
+  particleCount: window.innerWidth < 600 ? 50 : 100,
   maxVelocity: 0.5,
   connectionDistance: 120,
-  dotColor: 'rgba(255,255,255,0.7)',
-  lineColor: 'rgba(255,255,255,0.15)'
+  dotColor: getComputedStyle(document.documentElement).getPropertyValue('--dot-color').trim(),
+  lineColor: getComputedStyle(document.documentElement).getPropertyValue('--line-color').trim()
 };
 
 // Setup canvas
@@ -12,12 +12,26 @@ const canvas = document.getElementById('bgCanvas');
 const ctx    = canvas.getContext('2d');
 let width, height, particles;
 
-// Resize handler
+// Handle resizing and high-DPI scaling
 function resize() {
-  width  = canvas.width  = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+  const dpr = window.devicePixelRatio || 1;
+
+  // reset any existing transforms before scaling
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  width                = window.innerWidth;
+  height               = window.innerHeight;
+  canvas.width         = width * dpr;
+  canvas.height        = height * dpr;
+  canvas.style.width   = width + 'px';
+  canvas.style.height  = height + 'px';
+  ctx.scale(dpr, dpr);
 }
-window.addEventListener('resize', resize);
+
+window.addEventListener('resize', () => {
+  resize();
+  initParticles();
+});
 resize();
 
 // Particle class
@@ -33,7 +47,6 @@ class Particle {
     this.x += this.vx;
     this.y += this.vy;
 
-    // bounce off edges
     if (this.x < 0 || this.x > width)  this.vx *= -1;
     if (this.y < 0 || this.y > height) this.vy *= -1;
   }
@@ -59,13 +72,13 @@ initParticles();
 function animate() {
   ctx.clearRect(0, 0, width, height);
 
-  // Update and draw dots
+  // draw particles
   for (const p of particles) {
     p.update();
     p.draw();
   }
 
-  // Draw lines between close particles
+  // draw connections
   for (let i = 0; i < particles.length; i++) {
     for (let j = i + 1; j < particles.length; j++) {
       const dx = particles[i].x - particles[j].x;
@@ -82,8 +95,3 @@ function animate() {
       }
     }
   }
-
-  requestAnimationFrame(animate);
-}
-
-animate();
