@@ -1,5 +1,5 @@
 class Line {
-  static draw(ctx, p1, p2, maxDist = 150) {
+  static draw(ctx, p1, p2, maxDist = 120) {
     const dx = p1.x - p2.x;
     const dy = p1.y - p2.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
