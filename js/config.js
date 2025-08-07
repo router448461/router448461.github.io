@@ -1,21 +1,20 @@
 // js/config.js
 
 export default {
-  // device pixel ratio for high-DPI support
   pixelRatio: window.devicePixelRatio || 1,
 
-  // how many particles to spawn
-  particleCount: 1000,
-
-  // grid configuration
+  // grid & connection settings
   grid: {
-    cellSize: 50  // each cell is 50×50 pixels
+    cellSize: 50,
+    connectThreshold: 55
   },
 
   // particle appearance & physics
   particle: {
     radius: 1.5,
-    color: '#00FF00',
-    drag: 0.98       // velocity retention each frame
+    color: '#00ff00',
+    drag: 0.98,
+    pulseAmplitude: 0.6,  // extra radius
+    pulseSpeed: 2         // cycles per second
   }
 };
