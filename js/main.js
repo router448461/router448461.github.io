@@ -1,45 +1,40 @@
-import { ctx, width, height } from './canvas.js';
-import { CONFIG } from './config.js';
-import { Particle } from './particle.js';
+import { Tendril } from './tendril.js';
 
-CONFIG.centerX = width / 2;
-CONFIG.centerY = height / 2;
+const canvas = document.getElementById('background');
+const ctx = canvas.getContext('2d');
+let width, height;
 
-const particles = Array.from({ length: CONFIG.particleCount }, () => new Particle());
-let lastTime = performance.now();
+function resize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-function animate(time) {
-  const delta = (time - lastTime) / 1000;
-  lastTime = time;
+const tendrils = [];
+const origin = { x: width / 2, y: height / 2 };
+const mouse = { x: origin.x, y: origin.y };
 
-  // Fade canvas for trail effect
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-  ctx.fillRect(0, 0, width, height);
-
-  // Sink ring
-  ctx.beginPath();
-  ctx.arc(CONFIG.centerX, CONFIG.centerY, CONFIG.sinkRadius, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  // Center glow
-  const gradient = ctx.createRadialGradient(CONFIG.centerX, CONFIG.centerY, 0, CONFIG.centerX, CONFIG.centerY, CONFIG.gradientRadius);
-  gradient.addColorStop(0, 'rgba(0, 255, 0, 0.25)');
-  gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(CONFIG.centerX, CONFIG.centerY, CONFIG.gradientRadius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Update and draw particles
-  for (const p of particles) {
-    p.update(delta);
-    p.drawLine();
-    p.drawDot();
-  }
-
-  requestAnimationFrame(animate);
+for (let i = 0; i < 30; i++) {
+  tendrils.push(new Tendril(origin, {
+    length: 25,
+    spacing: 8 + Math.random() * 4,
+    damping: 0.1 + Math.random() * 0.05,
+    attraction: 0.15 + Math.random() * 0.05
+  }));
 }
 
-animate(lastTime);
+canvas.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function animate() {
+  ctx.clearRect(0, 0, width, height);
+  for (const tendril of tendrils) {
+    tendril.update(mouse);
+    tendril.draw(ctx);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
