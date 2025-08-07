@@ -69,7 +69,15 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-requestIdleCallback(() => {
-  initParticles();
-  animate();
-});
+// ✅ SAFARI-FRIENDLY INIT
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => {
+    initParticles();
+    animate();
+  });
+} else {
+  requestAnimationFrame(() => {
+    initParticles();
+    animate();
+  });
+}
