@@ -38,20 +38,14 @@ export class LineEntity {
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
-    if (this.x < 0) {
-      this.x = 0;
+    // Bounce off edges
+    if (this.x < 0 || this.x > width) {
       this.vx *= -CONFIG.bounceLoss;
-    } else if (this.x > width) {
-      this.x = width;
-      this.vx *= -CONFIG.bounceLoss;
+      this.x = Math.max(0, Math.min(width, this.x));
     }
-
-    if (this.y < 0) {
-      this.y = 0;
+    if (this.y < 0 || this.y > height) {
       this.vy *= -CONFIG.bounceLoss;
-    } else if (this.y > height) {
-      this.y = height;
-      this.vy *= -CONFIG.bounceLoss;
+      this.y = Math.max(0, Math.min(height, this.y));
     }
   }
 
