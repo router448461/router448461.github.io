@@ -1,24 +1,21 @@
-const config = {
-  particleCount: 80,
-  trailAlpha: 0.1,          // lower = longer trails
-  lineMaxDist: 120,         // connect threshold
-  gridCellSize: 100,        // for spatial partitioning
+// js/config.js
 
-  // noise-based turbulence
-  turbulenceStrength: 0.0005,
+export default {
+  // device pixel ratio for high-DPI support
+  pixelRatio: window.devicePixelRatio || 1,
 
-  // gentle central pull (no collapse)
-  centralPull: 0.0001,
+  // how many particles to spawn
+  particleCount: 1000,
 
-  // Brownian jitter
-  jitterStrength: 0.05,
+  // grid configuration
+  grid: {
+    cellSize: 50  // each cell is 50×50 pixels
+  },
 
-  // layered parallax settings
-  layers: [
-    { speedMult: 0.5, size: 1, color: 'rgba(0,255,128,0.4)' },
-    { speedMult: 1.0, size: 1.5, color: 'rgba(0,255,128,0.6)' },
-    { speedMult: 1.5, size: 2, color: 'rgba(0,255,128,0.8)' }
-  ]
+  // particle appearance & physics
+  particle: {
+    radius: 1.5,
+    color: '#00FF00',
+    drag: 0.98       // velocity retention each frame
+  }
 };
-
-export default config;
