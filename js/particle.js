@@ -1,9 +1,6 @@
 import { ctx, width, height } from './canvas.js';
 import { CONFIG } from './config.js';
 
-const centerX = width / 2;
-const centerY = height / 2;
-
 export class Particle {
   constructor() {
     this.x = Math.random() * width;
@@ -14,62 +11,60 @@ export class Particle {
     this.vx = Math.cos(angle) * speed;
     this.vy = Math.sin(angle) * speed;
 
-    this.baseRadius = 1 + Math.random() * 2;
-    this.radius = this.baseRadius;
+    this.radius = 2 + Math.random() * 2;
   }
 
   update(delta) {
-    const dx = centerX - this.x;
-    const dy = centerY - this.y;
+    const dx = CONFIG.centerX - this.x;
+    const dy = CONFIG.centerY - this.y;
     const dist = Math.hypot(dx, dy);
 
-    // Normalize direction
     const dirX = dx / dist;
     const dirY = dy / dist;
 
-    // Magnetic pull toward center
     const force = CONFIG.magneticStrength * (1 - Math.min(dist / CONFIG.magneticFalloff, 1));
     this.vx += dirX * force;
     this.vy += dirY * force;
 
-    // Damping
     this.vx *= CONFIG.damping;
     this.vy *= CONFIG.damping;
 
-    // Clamp velocity
     const velocity = Math.hypot(this.vx, this.vy);
     if (velocity > CONFIG.maxVelocity) {
       this.vx *= CONFIG.maxVelocity / velocity;
       this.vy *= CONFIG.maxVelocity / velocity;
     }
 
-    // Update position
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
-    // Soft bounce
-    if (this.x < 0) {
-      this.x = 0;
+    // Bounce off edges
+    if (this.x < 0 || this.x > width) {
       this.vx *= -CONFIG.bounceLoss;
-    } else if (this.x > width) {
-      this.x = width;
-      this.vx *= -CONFIG.bounceLoss;
+      this.x = Math.max(0, Math.min(width, this.x));
     }
-
-    if (this.y < 0) {
-      this.y = 0;
+    if (this.y < 0 || this.y > height) {
       this.vy *= -CONFIG.bounceLoss;
-    } else if (this.y > height) {
-      this.y = height;
-      this.vy *= -CONFIG.bounceLoss;
+      this.y = Math.max(0, Math.min(height, this.y));
     }
-
-    // Shrink near center
-    const scale = 1 - Math.min(dist / CONFIG.sinkRadius, 1);
-    this.radius = this.baseRadius * scale;
   }
 
-  draw() {
+  drawLine() {
+    const dx = this.x - CONFIG.centerX;
+    const dy = this.y - CONFIG.centerY;
+    const dist = Math.hypot(dx, dy);
+    const opacity = 1 - dist / CONFIG.magneticFalloff;
+    const color = CONFIG.lineColor.replace('OPACITY', opacity.toFixed(2));
+
+    ctx.beginPath();
+    ctx.moveTo(CONFIG.centerX, CONFIG.centerY);
+    ctx.lineTo(this.x, this.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+  }
+
+  drawDot() {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fillStyle = CONFIG.dotColor;
