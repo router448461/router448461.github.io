@@ -1,21 +1,37 @@
 import { ctx, width, height } from './canvas.js';
 import { CONFIG } from './config.js';
 
+const centerX = width / 2;
+const centerY = height / 2;
+
 export class Particle {
   constructor() {
     this.x = Math.random() * width;
     this.y = Math.random() * height;
     this.vx = (Math.random() - 0.5) * CONFIG.maxVelocity;
     this.vy = (Math.random() - 0.5) * CONFIG.maxVelocity;
-    this.radius = 1 + Math.random() * 2;
+    this.baseRadius = 1 + Math.random() * 2;
+    this.radius = this.baseRadius;
   }
 
   update(delta) {
+    const dx = centerX - this.x;
+    const dy = centerY - this.y;
+    const dist = Math.hypot(dx, dy);
+
+    // Apply central pull
+    this.vx += dx * CONFIG.pullStrength;
+    this.vy += dy * CONFIG.pullStrength;
+
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
     if (this.x < 0 || this.x > width)  this.vx *= -1;
     if (this.y < 0 || this.y > height) this.vy *= -1;
+
+    // Scale radius based on proximity to center
+    const scale = 1 - Math.min(dist / (width / 2), 1);
+    this.radius = this.baseRadius * scale;
   }
 
   draw() {
