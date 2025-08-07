@@ -30,12 +30,14 @@ function animate(time) {
   ctx.arc(width / 2, height / 2, CONFIG.gradientRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Update and draw particles
+  // Update particles
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].update(delta);
+  }
+
+  // Draw lines between close particles
   for (let i = 0; i < particles.length; i++) {
     const p1 = particles[i];
-    p1.update(delta);
-    p1.draw();
-
     for (let j = i + 1; j < particles.length; j++) {
       const p2 = particles[j];
       const dx = p1.x - p2.x;
@@ -52,6 +54,11 @@ function animate(time) {
         ctx.stroke();
       }
     }
+  }
+
+  // Draw particles last (on top of lines)
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].draw();
   }
 
   requestAnimationFrame(animate);
