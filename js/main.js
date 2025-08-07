@@ -42,7 +42,12 @@ function animate(time) {
       const dy = p1.y - p2.y;
       const dist = Math.hypot(dx, dy);
 
-      if (dist < CONFIG.linkDistance && dist < CONFIG.sinkRadius) {
+      // Only draw lines within linkDistance and sinkRadius
+      const centerDist1 = Math.hypot(p1.x - width / 2, p1.y - height / 2);
+      const centerDist2 = Math.hypot(p2.x - width / 2, p2.y - height / 2);
+      const withinSink = centerDist1 < CONFIG.sinkRadius && centerDist2 < CONFIG.sinkRadius;
+
+      if (dist < CONFIG.linkDistance && withinSink) {
         const opacity = 1 - dist / CONFIG.linkDistance;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
