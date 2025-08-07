@@ -1,29 +1,31 @@
 // js/particle.js
 export class Particle {
-  constructor(x, y, config) {
-    this.position = { x, y };
-    this.velocity = { x: 0, y: 0 };
-    this.acceleration = { x: 0, y: 0 };
-    this.config = config;
-    this.pulseOffset = Math.random() * Math.PI * 2;
-  }
+  constructor(x, y, w, h, cfg) {
+    this.x   = x;
+    this.y   = y;
+    this.w   = w;
+    this.h   = h;
+    this.cfg = cfg;
 
-  applyForce(force) {
-    this.acceleration.x += force.x;
-    this.acceleration.y += force.y;
+    // random unit direction
+    const theta = Math.random() * Math.PI * 2;
+    this.vx     = Math.cos(theta) * cfg.baseSpeed;
+    this.vy     = Math.sin(theta) * cfg.baseSpeed;
   }
 
   update() {
-    this.velocity.x += this.acceleration.x;
-    this.velocity.y += this.acceleration.y;
+    this.x += this.vx;
+    this.y += this.vy;
 
-    this.velocity.x *= this.config.particle.drag;
-    this.velocity.y *= this.config.particle.drag;
+    // bounce at edges
+    if (this.x <= 0 || this.x >= this.w) this.vx *= -1;
+    if (this.y <= 0 || this.y >= this.h) this.vy *= -1;
+  }
 
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-
-    this.acceleration.x = 0;
-    this.acceleration.y = 0;
+  draw(ctx) {
+    ctx.fillStyle = this.cfg.particleColor;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
