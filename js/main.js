@@ -12,6 +12,7 @@ function animate(time) {
   const delta = (time - lastTime) / 1000;
   lastTime = time;
 
+  // Fade canvas slightly for trail effect
   ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
   ctx.fillRect(0, 0, width, height);
 
@@ -22,7 +23,7 @@ function animate(time) {
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  // Center gradient
+  // Center glow gradient
   const gradient = ctx.createRadialGradient(CONFIG.centerX, CONFIG.centerY, 0, CONFIG.centerX, CONFIG.centerY, CONFIG.gradientRadius);
   gradient.addColorStop(0, 'rgba(0, 255, 0, 0.2)');
   gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
@@ -31,7 +32,7 @@ function animate(time) {
   ctx.arc(CONFIG.centerX, CONFIG.centerY, CONFIG.gradientRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Update and draw lines
+  // Update and draw each line entity
   for (const line of lines) {
     line.update(delta);
     line.drawLine();
