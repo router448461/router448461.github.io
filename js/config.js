@@ -9,5 +9,6 @@ export const CONFIG = {
   damping: 0.98,
   bounceLoss: 0.7,
   maxVelocity: 100,
-  initialSpeed: 30
+  initialSpeed: 30,
+  tetherDistance: 300 // NEW: max distance for radial lines
 };
