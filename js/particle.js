@@ -19,19 +19,23 @@ export class Particle {
     const dy = centerY - this.y;
     const dist = Math.hypot(dx, dy);
 
-    // Apply central pull
-    this.vx += dx * CONFIG.pullStrength;
-    this.vy += dy * CONFIG.pullStrength;
+    if (dist < CONFIG.sinkRadius) {
+      // Apply central pull
+      this.vx += dx * CONFIG.pullStrength;
+      this.vy += dy * CONFIG.pullStrength;
+
+      // Scale radius based on proximity to center
+      const scale = 1 - Math.min(dist / CONFIG.sinkRadius, 1);
+      this.radius = this.baseRadius * scale;
+    } else {
+      this.radius = this.baseRadius;
+    }
 
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
     if (this.x < 0 || this.x > width)  this.vx *= -1;
     if (this.y < 0 || this.y > height) this.vy *= -1;
-
-    // Scale radius based on proximity to center
-    const scale = 1 - Math.min(dist / (width / 2), 1);
-    this.radius = this.baseRadius * scale;
   }
 
   draw() {
