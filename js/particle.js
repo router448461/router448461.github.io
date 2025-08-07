@@ -27,12 +27,12 @@ export class Particle {
     const dirX = dx / dist;
     const dirY = dy / dist;
 
-    // Apply central attraction
-    const force = CONFIG.gravityStrength * (1 - Math.min(dist / CONFIG.gravityFalloff, 1));
+    // Magnetic pull toward center
+    const force = CONFIG.magneticStrength * (1 - Math.min(dist / CONFIG.magneticFalloff, 1));
     this.vx += dirX * force;
     this.vy += dirY * force;
 
-    // Apply damping (friction)
+    // Damping
     this.vx *= CONFIG.damping;
     this.vy *= CONFIG.damping;
 
@@ -47,7 +47,7 @@ export class Particle {
     this.x += this.vx * delta;
     this.y += this.vy * delta;
 
-    // Soft bounce off edges
+    // Soft bounce
     if (this.x < 0) {
       this.x = 0;
       this.vx *= -CONFIG.bounceLoss;
