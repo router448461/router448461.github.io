@@ -12,18 +12,18 @@ function animate(time) {
   const delta = (time - lastTime) / 1000;
   lastTime = time;
 
-  // Semi-transparent clear for motion trails
+  // Semi-transparent clear
   ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
   ctx.fillRect(0, 0, width, height);
 
-  // Draw sink ring
+  // Sink ring
   ctx.beginPath();
   ctx.arc(centerX, centerY, CONFIG.sinkRadius, 0, Math.PI * 2);
   ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  // Draw center gradient
+  // Center gradient
   const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, CONFIG.gradientRadius);
   gradient.addColorStop(0, 'rgba(0, 255, 0, 0.2)');
   gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
@@ -37,7 +37,7 @@ function animate(time) {
     particles[i].update(delta);
   }
 
-  // Draw radial lines from center to particles
+  // Draw magnetic lines from center to particles
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
     const dx = p.x - centerX;
@@ -55,7 +55,7 @@ function animate(time) {
     }
   }
 
-  // Draw particles last (dots at ends of lines)
+  // Draw particles last
   for (let i = 0; i < particles.length; i++) {
     particles[i].draw();
   }
