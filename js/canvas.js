@@ -1,22 +1,14 @@
-export const canvas = document.getElementById('bgCanvas');
-export const ctx = canvas.getContext('2d');
-export let width, height;
-const dpr = window.devicePixelRatio || 1;
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
 
-export function resizeCanvas() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
-  canvas.style.width = width + 'px';
-  canvas.style.height = height + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+// Set initial size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-let resizeTimeout;
+// Handle resize
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(resizeCanvas, 100);
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 });
 
-resizeCanvas();
+export { canvas, ctx, canvas as default, canvas.width as width, canvas.height as height };
