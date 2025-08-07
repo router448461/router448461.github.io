@@ -4,6 +4,7 @@ import { Particle } from './particle.js';
 
 const particles = [];
 const mouse = { x: null, y: null };
+let lastTime = performance.now();
 
 canvas.addEventListener('mousemove', e => {
   mouse.x = e.clientX;
@@ -16,7 +17,7 @@ canvas.addEventListener('mouseleave', () => {
 
 function initParticles() {
   for (let i = 0; i < CONFIG.particleCount; i++) {
-    particles.push(new Particle());
+    particles.push(new Particle(i));
   }
 }
 
@@ -30,11 +31,15 @@ function drawConnections() {
       if (dist < CONFIG.connectionDistance) {
         const alpha = 1 - dist / CONFIG.connectionDistance;
         const hue = Math.floor(alpha * 120);
+        const pulse = Math.random() < CONFIG.pulseChance;
+
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${alpha * CONFIG.lineBaseAlpha})`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = pulse
+          ? `rgba(255,255,255,0.8)`
+          : `hsla(${hue}, 100%, 50%, ${alpha * CONFIG.lineBaseAlpha})`;
+        ctx.lineWidth = pulse ? 2 : 1;
         ctx.stroke();
       }
     }
@@ -57,11 +62,14 @@ function drawConnections() {
   }
 }
 
-function animate() {
+function animate(now) {
+  const delta = (now - lastTime) / 16.67; // Normalize to ~60fps
+  lastTime = now;
+
   ctx.clearRect(0, 0, width, height);
 
   for (const p of particles) {
-    p.update();
+    p.update(delta);
     p.draw();
   }
 
@@ -69,15 +77,14 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-// ✅ SAFARI-FRIENDLY INIT
 if ('requestIdleCallback' in window) {
   requestIdleCallback(() => {
     initParticles();
-    animate();
+    animate(performance.now());
   });
 } else {
   requestAnimationFrame(() => {
     initParticles();
-    animate();
+    animate(performance.now());
   });
 }
