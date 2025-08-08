@@ -7,13 +7,13 @@ export const config = {
   particleRadius:  2,
   lineThickness:   1,
 
-  // military-inspired colors
-  particleColor:   'rgba(107, 142, 35, 0.8)',  // olive drab
-  lineColor:       'rgba(85, 107, 47, 0.3)',   // darker olive
+  // “Blood & Ash” colors
+  particleColor:   'rgba(139, 0, 0, 0.8)',
+  lineColor:       'rgba(85, 0, 0, 0.3)',
 
   // glow & pulsation
-  glowBlur:         8,                         // px
-  glowColor:       'rgba(107, 142, 35, 0.5)',  // soft olive glow
-  pulseSpeed:      0.005,                      // radians per frame
-  lineFlickerFreq: 0.02                        // chance per frame to brighten a link
+  glowBlur:         8,        // px
+  glowColor:       'rgba(139, 0, 0, 0.5)',
+  pulseSpeed:      0.005,    // radians per frame
+  lineFlickerFreq: 0.02      // chance per frame to brighten a link
 };
