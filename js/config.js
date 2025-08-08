@@ -1,4 +1,3 @@
-// js/config.js
 export const config = {
   pixelRatio:      window.devicePixelRatio || 1,
   particleCount:   60,
@@ -7,17 +6,14 @@ export const config = {
   speedVariance:   0.5,
   particleRadius:  2,
   lineThickness:   1,
-  particleColor:   'rgba(0,160,255,0.7)',
-  lineColor:       'rgba(0,160,255,0.15)',
 
-  // —— New Military/HUD Settings ——
-  gridSize:        120,                   // px between grid lines
-  gridColor:       'rgba(0,255,0,0.08)',
-  crosshairColor:  'rgba(0,255,0,0.2)',
-  scanLineColor:   'rgba(0,255,0,0.1)',
-  scanSpeed:       0.02,                  // radians per frame
-  noiseDensity:    0.02,                  // % of pixels per frame
+  // military-inspired colors
+  particleColor:   'rgba(107, 142, 35, 0.8)',  // olive drab
+  lineColor:       'rgba(85, 107, 47, 0.3)',   // darker olive
 
-  // —— Spatial-hash cell size for link culling ——
-  cellSize:        100
+  // glow & pulsation
+  glowBlur:         8,                         // px
+  glowColor:       'rgba(107, 142, 35, 0.5)',  // soft olive glow
+  pulseSpeed:      0.005,                      // radians per frame
+  lineFlickerFreq: 0.02                        // chance per frame to brighten a link
 };
