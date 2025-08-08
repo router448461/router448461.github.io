@@ -1,5 +1,5 @@
 import { config as cfg } from './config.js';
-import { Particle } from './particle.js';
+import { Particle }    from './particle.js';
 
 export class Network {
   constructor(canvas) {
@@ -49,8 +49,10 @@ export class Network {
 
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
+        const a = particles[i];
+        const b = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
 
         if (dx * dx + dy * dy < maxD2) {
           ctx.beginPath();
@@ -63,12 +65,13 @@ export class Network {
   }
 
   _createParticles() {
-    return Array.from({ length: this.cfg.particleCount }, () =>
-      new Particle(this.W, this.H, this.cfg)
+    return Array.from(
+      { length: this.cfg.particleCount },
+      () => new Particle(this.W, this.H, this.cfg)
     );
   }
 
   _buildGrid() {
-    // optional spatial partitioning stub
+    // stub for spatial partitioning if needed
   }
 }
