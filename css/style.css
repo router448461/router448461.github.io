@@ -1,11 +1,24 @@
 /* css/style.css */
 /* reset & full-viewport */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; height: 100%; overflow: hidden; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* dark bluish radial background */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* charcoal radial background */
 body {
-  background: radial-gradient(circle at center, #0a1d2f 0%, #000813 80%);
+  background: radial-gradient(
+    circle at center,
+    #1C1C1C 0%,
+    #000000 80%
+  );
 }
 
 /* canvas fills screen */
@@ -13,5 +26,4 @@ canvas#network {
   display: block;
   width: 100%;
   height: 100%;
-  will-change: transform;
 }
