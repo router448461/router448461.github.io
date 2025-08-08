@@ -7,10 +7,11 @@ export class Particle {
     this.h   = h;
     this.cfg = cfg;
 
-    // random unit direction
-    const theta = Math.random() * Math.PI * 2;
-    this.vx     = Math.cos(theta) * cfg.baseSpeed;
-    this.vy     = Math.sin(theta) * cfg.baseSpeed;
+    // random unit direction + slight speed variance
+    const θ       = Math.random() * Math.PI * 2;
+    const variance= 1 + (Math.random() - 0.5) * cfg.speedVariance;
+    this.vx       = Math.cos(θ) * cfg.baseSpeed * variance;
+    this.vy       = Math.sin(θ) * cfg.baseSpeed * variance;
   }
 
   update() {
@@ -25,7 +26,7 @@ export class Particle {
   draw(ctx) {
     ctx.fillStyle = this.cfg.particleColor;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.cfg.particleRadius, 0, Math.PI * 2);
     ctx.fill();
   }
 }
