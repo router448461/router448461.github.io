@@ -1,36 +1,35 @@
-// js/particle.js
 export class Particle {
-  constructor(x, y, w, h, cfg) {
-    this.x   = x;
-    this.y   = y;
-    this.w   = w;
-    this.h   = h;
+  constructor(width, height, cfg) {
+    this.W   = width;
+    this.H   = height;
     this.cfg = cfg;
 
-    const θ         = Math.random() * Math.PI * 2;
-    const variance  = 1 + (Math.random()-0.5) * cfg.speedVariance;
-    this.vx         = Math.cos(θ) * cfg.baseSpeed * variance;
-    this.vy         = Math.sin(θ) * cfg.baseSpeed * variance;
+    // start at random position
+    this.x = Math.random() * this.W;
+    this.y = Math.random() * this.H;
+
+    // velocity vector
+    const angle = Math.random() * Math.PI * 2;
+    const speed = cfg.baseSpeed + (Math.random() - 0.5) * cfg.speedVariance;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+
+    this.radius = cfg.particleRadius;
   }
 
   update() {
-    // slight pull toward center for disciplined formation
-    const cx = this.w/2, cy = this.h/2;
-    this.vx += (cx - this.x) * 0.0005;
-    this.vy += (cy - this.y) * 0.0005;
-
     this.x += this.vx;
     this.y += this.vy;
 
-    // bounce
-    if (this.x <= 0 || this.x >= this.w) this.vx *= -1;
-    if (this.y <= 0 || this.y >= this.h) this.vy *= -1;
+    // bounce off edges
+    if (this.x < 0 || this.x > this.W) this.vx *= -1;
+    if (this.y < 0 || this.y > this.H) this.vy *= -1;
   }
 
   draw(ctx) {
     ctx.fillStyle = this.cfg.particleColor;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.cfg.particleRadius, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
   }
 }
