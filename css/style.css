@@ -1,36 +1,29 @@
+/* css/style.css */
+/* reset & full-viewport */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* charcoal radial background */
 body {
--  background: radial-gradient(
--    circle at center,
--    #1C1C1C 0%,
--    #000000 80%
--  );
-+  background: #000;  
-+  overflow: hidden;
- }
+  background: radial-gradient(
+    circle at center,
+    #1C1C1C 0%,
+    #000000 80%
+  );
+}
 
- /* night-vision filter on the canvas */
- canvas {
-+  filter: contrast(200%) brightness(0.6) hue-rotate(90deg);
- }
-
- /* horizontal scan lines */
- body::before {
-   content: '';
-   position: fixed;
-   top: 0; left: 0;
-   width: 100%; height: 100%;
-   pointer-events: none;
-   background: repeating-linear-gradient(
-     to bottom,
-     transparent 0px,
-     transparent 2px,
-     rgba(0,255,0,0.05) 3px
-   );
-   animation: scan 5s linear infinite;
-   z-index: 10;
- }
-
- @keyframes scan {
-   from { transform: translateY(-100%); }
-   to   { transform: translateY(100%); }
- }
+/* canvas fills screen */
+canvas#network {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
