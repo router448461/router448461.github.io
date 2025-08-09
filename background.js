@@ -1,239 +1,131 @@
-// Canvas visualizer with DPR scaling, spatial partitioning, and “tempo-neutral” pulse layers.
-// Accent color auto-syncs to CSS variable --accent (Apple system orange variants).
+const ACCENT = [255, 43, 43];
 
-(() => {
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d', { alpha: true });
+const THEME = {
+  particleRGBA: (a = 0.9) => `rgba(${ACCENT[0]},${ACCENT[1]},${ACCENT[2]},${a})`,
+  lineRGB: ACCENT,
+  lineMaxAlpha: 0.82,
+  lineWidth: 0.8
+};
 
-  // Pull accent from CSS
-  function cssVar(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  }
-  function hexToRgb(hex) {
-    const m = hex.replace('#', '').match(/^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
-    if (!m) return [255, 159, 10]; // fallback to orange
-    return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
-  }
+const canvas = document.getElementById('background');
+const ctx = canvas.getContext('2d');
 
-  const ACCENT = hexToRgb(cssVar('--accent') || '#ff9f0a');
+let vw = window.innerWidth;
+let vh = window.innerHeight;
+let dpr = Math.min(window.devicePixelRatio || 1, 2);
+let particles = [];
+let lastTime = 0;
 
-  const THEME = {
-    particleRGBA: (alpha = 0.9) => `rgba(${ACCENT[0]},${ACCENT[1]},${ACCENT[2]},${alpha})`,
-    lineRGB: ACCENT,
-    lineMaxAlpha: 0.82,
-    lineWidth: 0.9
-  };
+function linkDistance() {
+  const base = Math.min(vw, vh);
+  const v = 0.12 * base + 60;
+  return Math.max(90, Math.min(160, v));
+}
 
-  const CONFIG = {
-    areaPerParticle: 9000,    // lower = denser
-    minCount: 90,
-    maxCount: 700,
-    maxSpeed: 0.35,           // base px/frame at 60fps units, scaled by dt
-    linkDistance: 120,        // px
-    enableLines: true,
-    enablePulse: true,
+function targetCount() {
+  const area = vw * vh;
+  const density = area / 40000;
+  return Math.max(36, Math.min(120, Math.round(density)));
+}
 
-    // Tempo-neutral motion: two gentle layers near 1 Hz and 0.67 Hz
-    pulse1Hz: 1.0,
-    pulse2Hz: 0.667,
-    pulse2Mix: 0.35,          // how much of layer 2 to mix in
-    pulseAmplitude: 0.35,     // px added to base radius at peak
-
-    // Slow line shimmer to avoid static feel
-    lineLfoHz: 0.2,
-    // Hover boost (UI hover ramps perceived energy without breaking neutrality)
-    boostMultiplier: 1.6
-  };
-
-  // State
-  let W = 0, H = 0, dpr = 1;
-  let particles = [];
-  let lastT = 0;
-  let speedBoost = 0; // 0..1 eased
-
-  // HUD hover influences tempo (optional)
-  const hud = document.querySelector('.hud');
-  if (hud) {
-    let hover = false;
-    const setHover = (v) => { hover = v; };
-    hud.addEventListener('mouseenter', () => setHover(true), { passive: true });
-    hud.addEventListener('mouseleave', () => setHover(false), { passive: true });
-
-    // Ease speedBoost for smoothness
-    function animateBoost() {
-      const target = hover ? 1 : 0;
-      speedBoost += (target - speedBoost) * 0.08; // critically damped-ish
-      requestAnimationFrame(animateBoost);
+function resizeCanvas(preserve = true) {
+  const oldW = vw;
+  const oldH = vh;
+  vw = window.innerWidth;
+  vh = window.innerHeight;
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.style.width = vw + 'px';
+  canvas.style.height = vh + 'px';
+  canvas.width = Math.floor(vw * dpr);
+  canvas.height = Math.floor(vh * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (preserve && particles.length) {
+    const sx = oldW ? vw / oldW : 1;
+    const sy = oldH ? vh / oldH : 1;
+    for (let p of particles) {
+      p.x *= sx;
+      p.y *= sy;
     }
-    animateBoost();
   }
+  adjustDensity();
+}
 
-  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
-
-  function setCanvasSize() {
-    dpr = window.devicePixelRatio || 1;
-    W = Math.max(1, Math.floor(window.innerWidth));
-    H = Math.max(1, Math.floor(window.innerHeight));
-
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
-    canvas.width = Math.floor(W * dpr);
-    canvas.height = Math.floor(H * dpr);
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function initParticles() {
-    const area = W * H;
-    const target = clamp(Math.round(area / CONFIG.areaPerParticle), CONFIG.minCount, CONFIG.maxCount);
-
-    particles = Array.from({ length: target }, () => {
-      const speed = CONFIG.maxSpeed * (0.5 + Math.random()); // 0.5–1.5x base
-      const angle = Math.random() * Math.PI * 2;
-      return {
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        rBase: 1.6 + Math.random() * 1.4,
-        rMod: CONFIG.pulseAmplitude * (0.6 + Math.random() * 0.4), // vary per particle
-        phase1: Math.random() * Math.PI * 2,
-        phase2: Math.random() * Math.PI * 2
-      };
+function addParticles(n) {
+  for (let i = 0; i < n; i++) {
+    particles.push({
+      x: Math.random() * vw,
+      y: Math.random() * vh,
+      vx: (Math.random() - 0.5) * 80,
+      vy: (Math.random() - 0.5) * 80,
+      r: 1.3 + Math.random() * 0.6
     });
   }
+}
 
-  // Spatial grid for neighbor search
-  function buildGrid(cellSize) {
-    const grid = new Map();
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      const ix = (p.x / cellSize) | 0;
-      const iy = (p.y / cellSize) | 0;
-      const key = ix + ',' + iy;
-      let bucket = grid.get(key);
-      if (!bucket) {
-        bucket = [];
-        grid.set(key, bucket);
-      }
-      bucket.push(i);
-    }
-    return grid;
+function adjustDensity() {
+  const target = targetCount();
+  if (particles.length < target) addParticles(target - particles.length);
+  else if (particles.length > target) particles.length = target;
+}
+
+function update(dt) {
+  for (let p of particles) {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    if (p.x < 0) { p.x = 0; p.vx *= -1; }
+    if (p.x > vw) { p.x = vw; p.vx *= -1; }
+    if (p.y < 0) { p.y = 0; p.vy *= -1; }
+    if (p.y > vh) { p.y = vh; p.vy *= -1; }
   }
+}
 
-  function update(dt) {
-    // Velocity scaling: base + a touch of boost on hover
-    const vScale = 1 + speedBoost * (CONFIG.boostMultiplier - 1);
-    for (const p of particles) {
-      p.x += p.vx * dt * vScale;
-      p.y += p.vy * dt * vScale;
-
-      if (p.x < 0) { p.x = 0; p.vx *= -1; }
-      else if (p.x > W) { p.x = W; p.vx *= -1; }
-
-      if (p.y < 0) { p.y = 0; p.vy *= -1; }
-      else if (p.y > H) { p.y = H; p.vy *= -1; }
-    }
+function draw() {
+  ctx.clearRect(0, 0, vw, vh);
+  for (let p of particles) {
+    ctx.fillStyle = THEME.particleRGBA();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
   }
-
-  function draw(tNow) {
-    const t = tNow || performance.now();
-    const dt = lastT ? (t - lastT) / 16.6667 : 1; // normalize to ~60fps
-    lastT = t;
-
-    ctx.clearRect(0, 0, W, H);
-
-    // Pulses: blend two nearby frequencies for tempo neutrality
-    const time = t / 1000;
-    const boost = 1 + speedBoost * (CONFIG.boostMultiplier - 1);
-    const w1 = CONFIG.pulse1Hz * Math.PI * 2 * boost;
-    const w2 = CONFIG.pulse2Hz * Math.PI * 2 * boost;
-    const lineLfo = 0.6 + 0.4 * Math.sin(time * CONFIG.lineLfoHz * Math.PI * 2);
-
-    // Build neighbor grid once
-    const linkDist = CONFIG.linkDistance;
-    const cellSize = linkDist;
-    let grid = null;
-    if (CONFIG.enableLines) {
-      grid = buildGrid(cellSize);
-      ctx.lineWidth = THEME.lineWidth;
-    }
-
-    // Draw particles
-    ctx.fillStyle = THEME.particleRGBA(0.9);
-    for (const p of particles) {
-      const pulse =
-        Math.sin(w1 * time + p.phase1) * (1 - CONFIG.pulse2Mix) +
-        Math.sin(w2 * time + p.phase2) * CONFIG.pulse2Mix;
-
-      const r = CONFIG.enablePulse ? p.rBase + p.rMod * pulse : p.rBase;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Draw lines
-    if (CONFIG.enableLines && grid) {
-      const [rC, gC, bC] = THEME.lineRGB;
-      const maxA = THEME.lineMaxAlpha * lineLfo;
-      const maxD2 = linkDist * linkDist;
-
-      for (let i = 0; i < particles.length; i++) {
-        const a = particles[i];
-        const ix = (a.x / cellSize) | 0;
-        const iy = (a.y / cellSize) | 0;
-
-        for (let gx = -1; gx <= 1; gx++) {
-          for (let gy = -1; gy <= 1; gy++) {
-            const key = (ix + gx) + ',' + (iy + gy);
-            const bucket = grid.get(key);
-            if (!bucket) continue;
-
-            for (let k = 0; k < bucket.length; k++) {
-              const j = bucket[k];
-              if (j <= i) continue;
-
-              const b = particles[j];
-              const dx = a.x - b.x;
-              const dy = a.y - b.y;
-              const d2 = dx * dx + dy * dy;
-              if (d2 > maxD2) continue;
-
-              const dist = Math.sqrt(d2);
-              const alpha = maxA * (1 - dist / linkDist);
-              ctx.strokeStyle = `rgba(${rC},${gC},${bC},${alpha})`;
-              ctx.beginPath();
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(b.x, b.y);
-              ctx.stroke();
-            }
-          }
-        }
+  const maxDist = linkDistance();
+  for (let i = 0; i < particles.length; i++) {
+    const a = particles[i];
+    for (let j = i + 1; j < particles.length; j++) {
+      const b = particles[j];
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < maxDist) {
+        const alpha = THEME.lineMaxAlpha * (1 - dist / maxDist);
+        ctx.strokeStyle = `rgba(${THEME.lineRGB[0]},${THEME.lineRGB[1]},${THEME.lineRGB[2]},${alpha})`;
+        ctx.lineWidth = THEME.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
       }
     }
-
-    update(dt);
-    requestAnimationFrame(draw);
   }
+}
 
-  // Init + resize
-  function boot() {
-    setCanvasSize();
-    initParticles();
-    lastT = 0;
-    requestAnimationFrame(draw);
-  }
+function loop(ts) {
+  if (!lastTime) lastTime = ts;
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
 
-  let resizeTimer = null;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      setCanvasSize();
-      initParticles();
-      lastT = 0;
-    }, 120);
-  }, { passive: true });
+window.addEventListener('resize', () => resizeCanvas(true));
+document.addEventListener('visibilitychange', () => { lastTime = performance.now(); });
 
-  boot();
-})();
+function init() {
+  resizeCanvas(false);
+  particles = [];
+  addParticles(targetCount());
+  lastTime = 0;
+  requestAnimationFrame(loop);
+}
+
+init();
