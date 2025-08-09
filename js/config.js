@@ -1,25 +1,29 @@
 export const config = {
-  // Rendering
-  pixelRatio:      Math.min(window.devicePixelRatio || 1, 2),
-
-  // Particles
-  particleCount:   70,
-  baseSpeed:       0.32,
-  speedVariance:   0.36,
-  particleRadius:  2.2,
-
-  // Links
-  maxLinkDistance: 140,
-  lineThickness:   1.2,
-
-  // Palette (restrained, non-cinematic)
-  particleColor:   'rgba(139, 0, 0, 0.85)',  // disciplined red
-  lineColor:       'rgba(90, 0, 0, 0.32)',
-
-  // Subtle signal glow
-  glowBlur:        5,
-  glowColor:       'rgba(139, 0, 0, 0.35)',
-
-  // Low-probability micro-flicker to indicate link instability
-  lineFlickerFreq: 0.012
+  clusters: {
+    prod: {
+      label: 'prod.zone',
+      color: 'rgba(120, 0, 0, 0.85)',
+      linkColor: 'rgba(120, 0, 0, 0.3)',
+      particleCount: 25
+    },
+    legacy: {
+      label: 'legacy.zone',
+      color: 'rgba(100, 0, 0, 0.7)',
+      linkColor: 'rgba(100, 0, 0, 0.25)',
+      particleCount: 20
+    },
+    media: {
+      label: 'media.zone',
+      color: 'rgba(160, 20, 20, 0.8)',
+      linkColor: 'rgba(160, 20, 20, 0.28)',
+      particleCount: 25
+    }
+  },
+  lineThickness: 1.1,
+  maxLinkDistance: 120,
+  allowMatrix: {
+    prod: ['media'],
+    media: ['prod'],
+    legacy: [] // isolated
+  }
 };
