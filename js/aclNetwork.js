@@ -12,53 +12,30 @@ export class ACLNetwork {
 
     this.clusters = {};
     this.allowMatrix = JSON.parse(JSON.stringify(config.allowMatrix));
-
-    this.nextAclShiftAt = 0;
   }
 
   resize(width, height) {
-    this.W = Math.max(1, Math.floor(width));
-    this.H = Math.max(1, Math.floor(height));
+    this.W = Math.floor(width);
+    this.H = Math.floor(height);
 
-    // DPR-correct backbuffer
     this.canvas.width = Math.floor(this.W * this.dpr);
     this.canvas.height = Math.floor(this.H * this.dpr);
     this.canvas.style.width = `${this.W}px`;
     this.canvas.style.height = `${this.H}px`;
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
-    // Rebuild clusters
     this.clusters = {};
     for (const [name, cfg] of Object.entries(config.clusters)) {
       this.clusters[name] = new ACLCluster(name, this.W, this.H, cfg);
     }
-
-    // Schedule ACL shift (optional)
-    if (config.autonomy.dynamicACL) {
-      this.nextAclShiftAt = performance.now() + config.autonomy.aclShiftMs;
-    }
-  }
-
-  maybeRotateACL() {
-    if (!config.autonomy.dynamicACL) return;
-    const now = performance.now();
-    if (now < this.nextAclShiftAt) return;
-
-    // Simple rotation: toggle weapon3 <-> weapon2 link occasionally
-    const enable = Math.random() < 0.5;
-    this.allowMatrix.weapon3 = enable ? ['weapon2'] : [];
-    this.nextAclShiftAt = now + config.autonomy.aclShiftMs;
   }
 
   updateAndDraw() {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.W, this.H);
 
-    // Update clusters
     for (const c of Object.values(this.clusters)) c.update();
 
-    // Draw links based on current allow matrix
-    const maxDist = config.maxLinkDistance;
     ctx.lineWidth = config.lineThickness;
 
     for (const [fromName, toList] of Object.entries(this.allowMatrix)) {
@@ -72,7 +49,6 @@ export class ACLNetwork {
         const aArr = from.particles;
         const bArr = to.particles;
 
-        // Pairwise scan (kept lean by distance threshold)
         for (let i = 0; i < aArr.length; i++) {
           const a = aArr[i];
           for (let j = 0; j < bArr.length; j++) {
@@ -80,15 +56,9 @@ export class ACLNetwork {
             const dx = a.x - b.x;
             const dy = a.y - b.y;
             const d = Math.hypot(dx, dy);
-            if (d >= maxDist) continue;
+            if (d >= config.maxLinkDistance) continue;
 
-            // Elevated endpoints brighten the link
-            const active = (a.state === 'elevated' || b.state === 'elevated');
-            ctx.strokeStyle = active ? from.cfg.linkColorActive : from.cfg.linkColor;
-
-            // Quarantined endpoints do not link
-            if (a.state === 'quarantine' || b.state === 'quarantine') continue;
-
+            ctx.strokeStyle = from.cfg.linkColor;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -98,13 +68,9 @@ export class ACLNetwork {
       }
     }
 
-    // Draw particles and labels last (on top of links)
     for (const c of Object.values(this.clusters)) {
       c.draw(ctx);
       c.drawLabel(ctx);
     }
-
-    // Optional autonomous ACL rotation
-    this.maybeRotateACL();
   }
 }
