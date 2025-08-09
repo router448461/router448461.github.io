@@ -2,30 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Blood & Ash Network</title>
+  <title>B&A ACL Mapper</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <canvas id="network-canvas" aria-label="Network visualization"></canvas>
+  <canvas id="network-canvas" aria-label="ACL visual"></canvas>
 
   <script type="module">
-    import { Network } from './js/network.js';
+    import { ACLNetwork } from './js/aclNetwork.js';
 
     const canvas = document.getElementById('network-canvas');
-    const net = new Network(canvas);
+    const net = new ACLNetwork(canvas);
+    net.resize(window.innerWidth, window.innerHeight);
 
-    function resize() {
-      net.resize(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
-    }
-
-    function animate() {
+    function loop() {
       net.updateAndDraw();
-      requestAnimationFrame(animate);
+      requestAnimationFrame(loop);
     }
 
-    resize();
-    animate();
-    window.addEventListener('resize', resize);
+    loop();
+    window.addEventListener('resize', () =>
+      net.resize(window.innerWidth, window.innerHeight)
+    );
   </script>
 </body>
 </html>
