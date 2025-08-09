@@ -1,60 +1,46 @@
-import { config as cfg } from './config.js';
-import { Particle }    from './particle.js';
+import { config } from './config.js';
+import { Particle } from './particle.js';
 
 export class Network {
   constructor(canvas) {
-    this.canvas    = canvas;
-    this.ctx       = canvas.getContext('2d');
-    this.cfg       = cfg;
-    this.W         = canvas.width;
-    this.H         = canvas.height;
-    this.particles = this._createParticles();
-    this._time     = 0;
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.W = canvas.width;
+    this.H = canvas.height;
+
+    this.particles = Array.from({ length: config.particleCount }, () => new Particle(this.W, this.H, config));
+  }
+
+  updateDimensions(width, height) {
+    this.W = width;
+    this.H = height;
+    this.particles.forEach(p => {
+      p.W = width;
+      p.H = height;
+    });
   }
 
   updateAndDraw() {
-    const { ctx, cfg, W, H } = this;
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.W, this.H);
 
-    // clear canvas
-    ctx.clearRect(0, 0, W, H);
-
-    // compute pulsing alpha
-    const pulse = 0.5 + Math.sin(this._time * cfg.pulseSpeed) * 0.5;
-    this._time++;
-
-    // DRAW PARTICLES WITH GLOW
-    ctx.save();
-    ctx.shadowBlur   = cfg.glowBlur;
-    ctx.shadowColor  = cfg.glowColor;
-    ctx.globalAlpha  = pulse;
-
-    this.particles.forEach(p => {
+    for (const p of this.particles) {
       p.update();
       p.draw(ctx);
-    });
+    }
 
-    ctx.restore();
-
-    // LINKS WITH OCCASIONAL FLICKER
-    this._buildGrid();
-    this._drawLinks();
-  }
-
-  _drawLinks() {
-    const { ctx, particles, cfg } = this;
-    const maxD2 = cfg.maxLinkDistance * cfg.maxLinkDistance;
-
-    ctx.strokeStyle = cfg.lineColor;
-    ctx.lineWidth   = cfg.lineThickness;
-
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i];
-        const b = particles[j];
+    for (let i = 0; i < this.particles.length; i++) {
+      const a = this.particles[i];
+      for (let j = i + 1; j < this.particles.length; j++) {
+        const b = this.particles[j];
         const dx = a.x - b.x;
         const dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dx * dx + dy * dy < maxD2) {
+        if (dist < config.maxLinkDistance) {
+          const flicker = Math.random() < config.lineFlickerFreq;
+          ctx.strokeStyle = flicker ? config.glowColor : config.lineColor;
+          ctx.lineWidth = config.lineThickness;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -62,16 +48,5 @@ export class Network {
         }
       }
     }
-  }
-
-  _createParticles() {
-    return Array.from(
-      { length: this.cfg.particleCount },
-      () => new Particle(this.W, this.H, this.cfg)
-    );
-  }
-
-  _buildGrid() {
-    // stub for spatial partitioning if needed
   }
 }
