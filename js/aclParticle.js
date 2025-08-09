@@ -116,4 +116,26 @@ export class ACLParticle {
 
   draw(ctx) {
     let r = this.radius;
-    let fill =
+    let fill = this.baseColor;
+
+    if (this.state === 'idle') {
+      fill = 'rgba(70, 70, 70, 0.55)';
+    } else if (this.state === 'elevated') {
+      r *= 1.55;
+      if (this.trustHalo) {
+        ctx.shadowBlur = 9;
+        ctx.shadowColor = 'rgba(200, 20, 20, 0.45)';
+      }
+    } else if (this.state === 'quarantine') {
+      fill = 'rgba(120, 0, 0, 0.35)';
+    }
+
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // reset
+    ctx.shadowBlur = 0;
+  }
+}
