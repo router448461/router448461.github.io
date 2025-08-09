@@ -1,4 +1,3 @@
-// ...existing imports
 import { config } from './config.js';
 import { ACLCluster } from './aclCluster.js';
 
@@ -6,80 +5,106 @@ export class ACLNetwork {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.W = canvas.width;
-    this.H = canvas.height;
+
+    this.W = 0;
+    this.H = 0;
+    this.dpr = config.pixelRatio;
+
     this.clusters = {};
+    this.allowMatrix = JSON.parse(JSON.stringify(config.allowMatrix));
+
+    this.nextAclShiftAt = 0;
   }
 
   resize(width, height) {
-    this.W = this.canvas.width = width;
-    this.H = this.canvas.height = height;
+    this.W = Math.max(1, Math.floor(width));
+    this.H = Math.max(1, Math.floor(height));
 
-    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // DPR-correct backbuffer
+    this.canvas.width = Math.floor(this.W * this.dpr);
+    this.canvas.height = Math.floor(this.H * this.dpr);
+    this.canvas.style.width = `${this.W}px`;
+    this.canvas.style.height = `${this.H}px`;
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+
+    // Rebuild clusters
     this.clusters = {};
-
     for (const [name, cfg] of Object.entries(config.clusters)) {
       this.clusters[name] = new ACLCluster(name, this.W, this.H, cfg);
     }
 
-    // Simulate posture: elevate random particles at load
-    Object.values(this.clusters).forEach(cluster => {
-      for (let i = 0; i < 2; i++) {
-        cluster.particles[i]?.pingActivity?.();
-      }
-    });
+    // Schedule ACL shift (optional)
+    if (config.autonomy.dynamicACL) {
+      this.nextAclShiftAt = performance.now() + config.autonomy.aclShiftMs;
+    }
+  }
+
+  maybeRotateACL() {
+    if (!config.autonomy.dynamicACL) return;
+    const now = performance.now();
+    if (now < this.nextAclShiftAt) return;
+
+    // Simple rotation: toggle weapon3 <-> weapon2 link occasionally
+    const enable = Math.random() < 0.5;
+    this.allowMatrix.weapon3 = enable ? ['weapon2'] : [];
+    this.nextAclShiftAt = now + config.autonomy.aclShiftMs;
   }
 
   updateAndDraw() {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.W, this.H);
 
-    // Draw ACL topology preview
-    for (const [name, cluster] of Object.entries(this.clusters)) {
-      const ruleAllowed = config.allowMatrix[name];
-      ctx.strokeStyle = ruleAllowed.length ? 'rgba(255,255,255,0.1)' : 'rgba(255,0,0,0.2)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(this.W * 0.05, this.H * 0.05 + Object.keys(this.clusters).indexOf(name) * 60, this.W * 0.9, 50);
-    }
+    // Update clusters
+    for (const c of Object.values(this.clusters)) c.update();
 
-    // Update/draw particles
-    Object.values(this.clusters).forEach(cluster => {
-      cluster.update();
-      cluster.draw(ctx);
-    });
+    // Draw links based on current allow matrix
+    const maxDist = config.maxLinkDistance;
+    ctx.lineWidth = config.lineThickness;
 
-    // Link logic
-    const distance = config.maxLinkDistance;
-    const lineWidth = config.lineThickness;
+    for (const [fromName, toList] of Object.entries(this.allowMatrix)) {
+      const from = this.clusters[fromName];
+      if (!from) continue;
 
-    for (const [fromName, allowed] of Object.entries(config.allowMatrix)) {
-      const fromCluster = this.clusters[fromName];
-      if (!fromCluster) continue;
+      for (const toName of toList) {
+        const to = this.clusters[toName];
+        if (!to) continue;
 
-      for (const toName of allowed) {
-        const toCluster = this.clusters[toName];
-        if (!toCluster) continue;
+        const aArr = from.particles;
+        const bArr = to.particles;
 
-        for (const a of fromCluster.particles) {
-          for (const b of toCluster.particles) {
+        // Pairwise scan (kept lean by distance threshold)
+        for (let i = 0; i < aArr.length; i++) {
+          const a = aArr[i];
+          for (let j = 0; j < bArr.length; j++) {
+            const b = bArr[j];
             const dx = a.x - b.x;
             const dy = a.y - b.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const d = Math.hypot(dx, dy);
+            if (d >= maxDist) continue;
 
-            if (dist < distance && a.state !== 'quarantine' && b.state !== 'quarantine') {
-              ctx.strokeStyle = fromCluster.linkColor;
-              ctx.lineWidth = lineWidth;
-              ctx.beginPath();
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(b.x, b.y);
-              ctx.stroke();
-            }
+            // Elevated endpoints brighten the link
+            const active = (a.state === 'elevated' || b.state === 'elevated');
+            ctx.strokeStyle = active ? from.cfg.linkColorActive : from.cfg.linkColor;
+
+            // Quarantined endpoints do not link
+            if (a.state === 'quarantine' || b.state === 'quarantine') continue;
+
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
           }
         }
       }
     }
 
-    // Draw labels
-    Object.values(this.clusters).forEach(c => c.drawLabel(ctx));
+    // Draw particles and labels last (on top of links)
+    for (const c of Object.values(this.clusters)) {
+      c.draw(ctx);
+      c.drawLabel(ctx);
+    }
+
+    // Optional autonomous ACL rotation
+    this.maybeRotateACL();
   }
 }
