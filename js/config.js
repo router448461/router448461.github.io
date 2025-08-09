@@ -1,17 +1,25 @@
 export const config = {
-  pixelRatio:        window.devicePixelRatio || 1,
-  particleCount:     70,
-  maxLinkDistance:   140,
-  baseSpeed:         0.3,
-  speedVariance:     0.4,
-  particleRadius:    2.2,
-  lineThickness:     1.2,
+  // Rendering
+  pixelRatio:      Math.min(window.devicePixelRatio || 1, 2),
 
-  particleColor:     'rgba(153, 0, 0, 0.85)',
-  lineColor:         'rgba(110, 0, 0, 0.3)',
+  // Particles
+  particleCount:   70,
+  baseSpeed:       0.32,
+  speedVariance:   0.36,
+  particleRadius:  2.2,
 
-  glowBlur:          6,
-  glowColor:         'rgba(153, 0, 0, 0.4)',
-  pulseSpeed:        0.004,
-  lineFlickerFreq:   0.015
+  // Links
+  maxLinkDistance: 140,
+  lineThickness:   1.2,
+
+  // Palette (restrained, non-cinematic)
+  particleColor:   'rgba(139, 0, 0, 0.85)',  // disciplined red
+  lineColor:       'rgba(90, 0, 0, 0.32)',
+
+  // Subtle signal glow
+  glowBlur:        5,
+  glowColor:       'rgba(139, 0, 0, 0.35)',
+
+  // Low-probability micro-flicker to indicate link instability
+  lineFlickerFreq: 0.012
 };
