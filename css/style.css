@@ -1,27 +1,19 @@
+/* Tactical HUD Overlay */
 body {
-  background: radial-gradient(
-    circle at center,
-    #1C1C1C 0%,
-    #000000 80%
-  );
   margin: 0;
   overflow: hidden;
+  background: radial-gradient(circle at center, #0f0f0f 0%, #000000 90%);
+  font-family: 'Courier New', monospace;
 }
 
-/* cinematic vignette overlay */
+/* Dim perimeter haze */
 body::after {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 50%,
-    rgba(0, 0, 0, 0.7) 100%
-  );
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.65) 100%);
   z-index: 2;
 }
 
