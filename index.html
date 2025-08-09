@@ -1,34 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>B&A Network Perimeter</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <title>Blood & Ash Network</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <canvas id="network-canvas" role="graphics"></canvas>
+  <canvas id="network-canvas" aria-label="Network visualization"></canvas>
 
   <script type="module">
     import { Network } from './js/network.js';
 
     const canvas = document.getElementById('network-canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
     const net = new Network(canvas);
 
-    function frameLoop() {
-      net.updateAndDraw();
-      requestAnimationFrame(frameLoop);
+    function resize() {
+      net.resize(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
     }
 
-    frameLoop();
+    function animate() {
+      net.updateAndDraw();
+      requestAnimationFrame(animate);
+    }
 
-    window.addEventListener('resize', () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-      net.updateDimensions(canvas.width, canvas.height);
-    });
+    resize();
+    animate();
+    window.addEventListener('resize', resize);
   </script>
 </body>
 </html>
