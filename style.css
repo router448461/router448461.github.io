@@ -1,60 +1,50 @@
 :root {
-  /* Background + accent: auto-switch across light/dark */
-  --bg: #0a0a0a;
-  --accent: #ff9f0a; /* dark mode orange */
-  --text: #cfcfcf;
-  --glass: rgba(255, 255, 255, 0.03);
-  --border: rgba(255, 159, 10, 0.25);
+  --accent: #ff2b2b;
+  --text: #e0e0e0;
+  --bg: #000000;
+  --hud-gap: clamp(4px, 0.6vw, 10px);
+  --hud-pad-top: clamp(16px, 2.2vw, 28px);
+  --hud-pad-left: clamp(16px, 2.2vw, 28px);
+  --title-size: clamp(12px, 1.2vw, 14px);
+  --link-size: clamp(12px, 1.1vw, 13px);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #0f0f10; /* keep the canvas dark even in light mode for consistency */
-    --accent: #ff9500; /* light mode orange */
-    --text: #e8e8e8;
-    --glass: rgba(255, 255, 255, 0.06);
-    --border: rgba(255, 149, 0, 0.28);
-  }
+* {
+  box-sizing: border-box;
 }
 
 html, body {
+  height: 100%;
+}
+
+body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   background: var(--bg);
-  height: 100%;
-  width: 100%;
-  color-scheme: dark light;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
 }
 
-canvas#bgCanvas {
-  position: absolute;
-  inset: 0;
-  display: block;
-  pointer-events: none; /* don’t block UI overlays */
-}
-
-/* Left-side HUD: blends in, minimal footprint */
 .hud {
   position: fixed;
-  top: 50%;
-  left: 24px;
-  transform: translateY(-50%);
+  top: var(--hud-pad-top);
+  left: var(--hud-pad-left);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--hud-gap);
   z-index: 10;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  pointer-events: auto;
+  touch-action: manipulation;
   user-select: none;
 }
 
 .hud-title {
-  color: var(--text);
-  opacity: 0.8;
-  font-size: 12px;
-  letter-spacing: 0.16em;
+  color: var(--accent);
+  font-size: var(--title-size);
+  letter-spacing: 0.12em;
+  font-weight: 500;
   text-transform: uppercase;
-  padding-left: 6px;
 }
 
 .hud-links {
@@ -62,52 +52,51 @@ canvas#bgCanvas {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: calc(var(--hud-gap) - 2px);
 }
 
 .hud a {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
   color: var(--text);
   text-decoration: none;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
-}
-
-.hud a::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px rgba(255, 159, 10, 0.55);
+  font-size: var(--link-size);
+  letter-spacing: 0.04em;
+  transition: color 160ms ease, opacity 220ms ease;
   opacity: 0.9;
+  animation: idlePulse 4.8s ease-in-out infinite;
+  will-change: color, opacity;
 }
 
 .hud a:hover,
 .hud a:focus-visible {
-  transform: translateX(2px);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 159, 10, 0.45);
+  color: var(--accent);
+  opacity: 1;
   outline: none;
-  color: #fff;
 }
 
-/* Noscript fallback text */
-.no-js {
-  position: absolute;
+.hud-links li:nth-child(1) a { animation-delay: 0s; }
+.hud-links li:nth-child(2) a { animation-delay: 0.6s; }
+.hud-links li:nth-child(3) a { animation-delay: 1.2s; }
+.hud-links li:nth-child(4) a { animation-delay: 1.8s; }
+.hud-links li:nth-child(5) a { animation-delay: 2.4s; }
+
+@keyframes idlePulse {
+  0% { opacity: 0.82; }
+  50% { opacity: 1; }
+  100% { opacity: 0.82; }
+}
+
+canvas#background {
+  position: fixed;
   inset: 0;
-  display: grid;
-  place-items: center;
-  color: #bbb;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  letter-spacing: 0.02em;
-  padding: 20px;
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  touch-action: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud a {
+    animation: none;
+    transition: none;
+  }
 }
