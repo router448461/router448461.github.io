@@ -9,21 +9,13 @@
   --link-size: clamp(12px, 1.1vw, 13px);
 }
 
-* {
-  box-sizing: border-box;
-}
-
 html, body {
-  height: 100%;
-}
-
-body {
   margin: 0;
   padding: 0;
+  height: 100%;
   background: var(--bg);
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: var(--text);
 }
 
 .hud {
@@ -63,7 +55,6 @@ body {
   transition: color 160ms ease, opacity 220ms ease;
   opacity: 0.9;
   animation: idlePulse 4.8s ease-in-out infinite;
-  will-change: color, opacity;
 }
 
 .hud a:hover,
@@ -72,12 +63,6 @@ body {
   opacity: 1;
   outline: none;
 }
-
-.hud-links li:nth-child(1) a { animation-delay: 0s; }
-.hud-links li:nth-child(2) a { animation-delay: 0.6s; }
-.hud-links li:nth-child(3) a { animation-delay: 1.2s; }
-.hud-links li:nth-child(4) a { animation-delay: 1.8s; }
-.hud-links li:nth-child(5) a { animation-delay: 2.4s; }
 
 @keyframes idlePulse {
   0% { opacity: 0.82; }
@@ -92,11 +77,4 @@ canvas#background {
   height: 100vh;
   z-index: -1;
   touch-action: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hud a {
-    animation: none;
-    transition: none;
-  }
 }
