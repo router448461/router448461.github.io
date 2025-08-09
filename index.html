@@ -2,12 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>Particle Background</title>
   <link rel="stylesheet" href="style.css" />
+  <meta name="color-scheme" content="dark" />
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
-  <script src="background.js"></script>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <noscript>
+    <div class="no-js">
+      This site uses a canvas-driven background. Enable JavaScript for the full experience.
+    </div>
+  </noscript>
+
+  <script src="background.js" defer></script>
 </body>
 </html>
