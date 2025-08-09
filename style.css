@@ -1,0 +1,15 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+  height: 100%;
+  width: 100%;
+}
+
+canvas#bgCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
