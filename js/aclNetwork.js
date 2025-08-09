@@ -1,3 +1,4 @@
+// ...existing imports
 import { config } from './config.js';
 import { ACLCluster } from './aclCluster.js';
 
@@ -20,11 +21,26 @@ export class ACLNetwork {
     for (const [name, cfg] of Object.entries(config.clusters)) {
       this.clusters[name] = new ACLCluster(name, this.W, this.H, cfg);
     }
+
+    // Simulate posture: elevate random particles at load
+    Object.values(this.clusters).forEach(cluster => {
+      for (let i = 0; i < 2; i++) {
+        cluster.particles[i]?.pingActivity?.();
+      }
+    });
   }
 
   updateAndDraw() {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.W, this.H);
+
+    // Draw ACL topology preview
+    for (const [name, cluster] of Object.entries(this.clusters)) {
+      const ruleAllowed = config.allowMatrix[name];
+      ctx.strokeStyle = ruleAllowed.length ? 'rgba(255,255,255,0.1)' : 'rgba(255,0,0,0.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(this.W * 0.05, this.H * 0.05 + Object.keys(this.clusters).indexOf(name) * 60, this.W * 0.9, 50);
+    }
 
     // Update/draw particles
     Object.values(this.clusters).forEach(cluster => {
@@ -32,7 +48,7 @@ export class ACLNetwork {
       cluster.draw(ctx);
     });
 
-    // Links across clusters based on ACL allowMatrix
+    // Link logic
     const distance = config.maxLinkDistance;
     const lineWidth = config.lineThickness;
 
@@ -50,7 +66,7 @@ export class ACLNetwork {
             const dy = a.y - b.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < distance) {
+            if (dist < distance && a.state !== 'quarantine' && b.state !== 'quarantine') {
               ctx.strokeStyle = fromCluster.linkColor;
               ctx.lineWidth = lineWidth;
               ctx.beginPath();
