@@ -2,28 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>B&A ACL Mapper</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle Background</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <canvas id="network-canvas" aria-label="ACL visual"></canvas>
-
-  <script type="module">
-    import { ACLNetwork } from './js/aclNetwork.js';
-
-    const canvas = document.getElementById('network-canvas');
-    const net = new ACLNetwork(canvas);
-    net.resize(window.innerWidth, window.innerHeight);
-
-    function loop() {
-      net.updateAndDraw();
-      requestAnimationFrame(loop);
-    }
-
-    loop();
-    window.addEventListener('resize', () =>
-      net.resize(window.innerWidth, window.innerHeight)
-    );
-  </script>
+  <canvas id="bgCanvas"></canvas>
+  <script src="background.js"></script>
 </body>
 </html>
