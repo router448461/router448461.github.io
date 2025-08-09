@@ -1,7 +1,6 @@
 :root {
-  /* Background + accent: auto-switch across light/dark */
   --bg: #0a0a0a;
-  --accent: #ff9f0a; /* dark mode orange */
+  --accent: #ff9f0a;
   --text: #cfcfcf;
   --glass: rgba(255, 255, 255, 0.03);
   --border: rgba(255, 159, 10, 0.25);
@@ -9,8 +8,8 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #0f0f10; /* keep the canvas dark even in light mode for consistency */
-    --accent: #ff9500; /* light mode orange */
+    --bg: #0f0f10;
+    --accent: #ff9500;
     --text: #e8e8e8;
     --glass: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 149, 0, 0.28);
@@ -31,10 +30,23 @@ canvas#bgCanvas {
   position: absolute;
   inset: 0;
   display: block;
-  pointer-events: none; /* don’t block UI overlays */
+  pointer-events: none;
 }
 
-/* Left-side HUD: blends in, minimal footprint */
+.hud-title {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 12;
+  color: var(--text);
+  opacity: 0.8;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  user-select: none;
+}
+
 .hud {
   position: fixed;
   top: 50%;
@@ -46,15 +58,6 @@ canvas#bgCanvas {
   z-index: 10;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   user-select: none;
-}
-
-.hud-title {
-  color: var(--text);
-  opacity: 0.8;
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding-left: 6px;
 }
 
 .hud-links {
@@ -99,7 +102,6 @@ canvas#bgCanvas {
   color: #fff;
 }
 
-/* Noscript fallback text */
 .no-js {
   position: absolute;
   inset: 0;
