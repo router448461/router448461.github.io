@@ -1,22 +1,21 @@
-/* Minimal, tactical, non-flashy */
 body {
   margin: 0;
   overflow: hidden;
-  background: radial-gradient(circle at center, #1b1b1b 0%, #000 85%);
+  background: radial-gradient(circle at center, #0f0f0f 0%, #000000 90%);
+  font-family: monospace;
 }
 
-/* Subtle vignette for focus */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.65) 100%);
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
   z-index: 2;
 }
 
 canvas {
   display: block;
-  width: 100vw;   /* CSS pixels */
-  height: 100vh;  /* CSS pixels */
+  width: 100vw;
+  height: 100vh;
 }
