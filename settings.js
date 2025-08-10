@@ -9,14 +9,16 @@ export function hexToRgb(hex) {
   return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
 }
 
-const ACCENT = hexToRgb(cssVar('--accent') || '#ff9f0a');
-
-export const THEME = {
-  particleRGBA: (alpha = 0.9) => `rgba(${ACCENT[0]},${ACCENT[1]},${ACCENT[2]},${alpha})`,
-  lineRGB: ACCENT,
-  lineMaxAlpha: 0.82,
-  lineWidth: 0.9
-};
+// Resolve theme at runtime so CSS is definitely applied
+export function resolveTheme() {
+  const accent = hexToRgb(cssVar('--accent') || '#ff9f0a');
+  return {
+    particleRGBA: (alpha = 0.9) => `rgba(${accent[0]},${accent[1]},${accent[2]},${alpha})`,
+    lineRGB: accent,
+    lineMaxAlpha: 0.82,
+    lineWidth: 0.9
+  };
+}
 
 export const CONFIG = {
   areaPerParticle: 9000,
@@ -47,8 +49,5 @@ export function rBaseScale(dpr, W, H) {
 export function computeBias(W, H, maxSpeed) {
   const angle = (W >= H) ? Math.PI / 8 : (Math.PI / 2 + Math.PI / 12);
   const mag = maxSpeed * 0.18;
-  return {
-    vx: Math.cos(angle) * mag,
-    vy: Math.sin(angle) * mag
-  };
+  return { vx: Math.cos(angle) * mag, vy: Math.sin(angle) * mag };
 }
