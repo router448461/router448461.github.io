@@ -1,15 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Red Breach Grid</title>
-  <link rel="stylesheet" href="grid.css">
-</head>
-<body>
-  <canvas id="grid"></canvas>
-  <script src="config.js"></script>
-  <script src="particles.js"></script>
-  <script src="renderer.js"></script>
-  <script src="main.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Tactical Line Background</title>
+    <link rel="preconnect" href="/" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- Background canvas only, no UI elements -->
+    <canvas id="bg" aria-hidden="true"></canvas>
+
+    <!-- Config first, then background logic -->
+    <script src="./config.js" defer></script>
+    <script src="./background.js" defer></script>
+  </body>
 </html>
