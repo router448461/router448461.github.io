@@ -2,22 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>RE._MASTER — Particle Background</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Particle Background</title>
   <link rel="stylesheet" href="style.css" />
   <meta name="color-scheme" content="dark light" />
-
-  <!-- Optional: Preload modules to avoid 404s and speed up parse -->
-  <link rel="modulepreload" href="main.js" />
-  <link rel="modulepreload" href="engine.js" />
-  <link rel="modulepreload" href="settings.js" />
-  <link rel="modulepreload" href="particles.js" />
-  <link rel="modulepreload" href="links.js" />
 </head>
 <body>
   <canvas id="bgCanvas" aria-hidden="true"></canvas>
-
-  <div class="hud-title">RE._MASTER</div>
 
   <noscript>
     <div class="no-js">
@@ -25,6 +19,11 @@
     </div>
   </noscript>
 
-  <script type="module" src="main.js"></script>
+  <!-- Split JS: plain scripts with defer, execute in order -->
+  <script src="settings.js" defer></script>
+  <script src="particles.js" defer></script>
+  <script src="links.js" defer></script>
+  <script src="engine.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
