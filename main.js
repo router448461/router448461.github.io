@@ -5,6 +5,10 @@
   const cfg = window.Config;
   const pr = cfg.particles;
 
+  // Seed the RNG so the start is identical every load
+  const seeded = window.Particles.makeRNG(cfg.random?.seed || 'OPS-RED-DEFAULT');
+  window.Particles.setRNG(seeded);
+
   const state = {
     w: 0,
     h: 0,
@@ -24,10 +28,12 @@
     canvas.style.width = innerWidth + 'px';
     canvas.style.height = innerHeight + 'px';
 
+    // Margin computed from config (0 means true edge bounce)
     const minDimCSS = Math.min(innerWidth, innerHeight);
-    const marginCSS = Math.max(24, Math.floor(minDimCSS * pr.interiorMarginPct));
+    const marginCSS = Math.max(0, Math.floor(minDimCSS * pr.interiorMarginPct));
     state.margin = marginCSS * state.dpr;
 
+    // Particle count based on CSS-area (stable across DPR)
     const areaCSS = innerWidth * innerHeight;
     const targetCount = window.Particles.computeCounts(areaCSS, pr.densityPer100k);
 
@@ -37,12 +43,13 @@
       const needed = targetCount - state.particles.length;
       if (needed > 0) {
         const newPts = window.Particles.spawnParticles(
-          needed, state.w, state.h, state.margin, pr, state.dpr
+          needed, state.w, state.h, state.margin, pr, state.dpr, cfg.spawn
         );
         state.particles.push(...newPts);
       }
     }
 
+    // Clamp all particles to the current perimeter
     for (const p of state.particles) {
       p.x = Math.max(state.margin, Math.min(p.x, state.w - state.margin));
       p.y = Math.max(state.margin, Math.min(p.y, state.h - state.margin));
@@ -53,7 +60,6 @@
     for (const p of state.particles) {
       p.step(state.w, state.h, state.margin, pr);
     }
-
     window.Renderer.drawFrame(ctx, state);
     requestAnimationFrame(step);
   }
