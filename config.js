@@ -1,6 +1,6 @@
 window.Config = {
   theme: {
-    background: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#0b0b0c',
+    background: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#050505',
     accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b21717',
     accentSoft: getComputedStyle(document.documentElement).getPropertyValue('--accent-soft').trim() || '#7f1313'
   },
