@@ -1,32 +1,34 @@
 window.Config = {
   theme: {
-    background: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#050505',
-    accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b21717',
-    accentSoft: getComputedStyle(document.documentElement).getPropertyValue('--accent-soft').trim() || '#7f1313'
+    background: '#050505',
+    accent: '#b21717',
+    accentSoft: '#7f1313'
   },
-  // Deterministic start
   random: {
-    seed: 'OPS-RED-SEED' // change to any string; same string => same start every load
+    seed: 'RED-BREACH-SEED'
   },
-  // Spawn behavior
   spawn: {
-    mode: 'burst',              // 'burst' (from center) or 'random' (full field)
+    mode: 'burst',
     origin: { xPct: 0.5, yPct: 0.5 },
-    radiusPct: 0.02             // spawn radius relative to min(viewport)
+    radiusPct: 0.02
   },
   particles: {
-    densityPer100k: 14,         // increased density (tune 10–18)
+    densityPer100k: 14,
     sizeRange: [0.8, 1.6],
     speedRange: [0.10, 0.32],
+    velocityRamp: 0.0004,
+    exitThreshold: 1.2,
+    exitFade: true,
+    enableTrails: true,
+    trailLength: 6,
+    trailAlpha: 0.08,
     linkDistance: 140,
     linkWidth: 1,
-    interiorMarginPct: 0.00,    // bounce at the actual edge
-    jitter: 0.002,              // subtle frame-to-frame noise
-    // Bounce chaos (adds realism on impact)
-    bounceAngleJitter: 0.18,    // radians (±)
-    bounceSpeedJitter: 0.07,    // multiplier variance
-    enableFlicker: false,
-    flickerDepth: 0.15
+    interiorMarginPct: 0.00,
+    jitter: 0.002,
+    bounceAngleJitter: 0.18,
+    bounceSpeedJitter: 0.07,
+    enableFlicker: false
   },
   render: {
     dotAlpha: 0.85,
