@@ -1,12 +1,16 @@
-body {
+/* Zero noise. Max clarity. */
+* { box-sizing: border-box; }
+html, body {
   margin: 0;
-  background: black;
-  overflow: hidden;
+  padding: 0;
+  height: 100%;
+  background: #000; /* hard black */
 }
-canvas {
+canvas#grid {
   display: block;
-  position: absolute;
-  top: 0; left: 0;
+  position: fixed;
+  inset: 0;
   width: 100vw;
   height: 100vh;
+  /* No filters, no blending: purity. */
 }
