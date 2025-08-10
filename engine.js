@@ -1,5 +1,5 @@
 // engine.js
-import { CONFIG, THEME, clamp, rBaseScale, computeBias } from './settings.js';
+import { CONFIG, clamp, rBaseScale, computeBias, resolveTheme } from './settings.js';
 import { initParticles, updateParticles } from './particles.js';
 
 let canvas, ctx;
@@ -7,9 +7,9 @@ let W = 0, H = 0, dpr = 1;
 let particles = [];
 let lastT = 0;
 let biasVx = 0, biasVy = 0;
-
-// Links module loaded on demand
-let linksMod = null;
+let THEME = resolveTheme();     // resolve from CSS at runtime
+let linksMod = null;            // will be set after preload
+let linksReady = false;
 
 function setCanvasSize() {
   dpr = window.devicePixelRatio || 1;
@@ -51,16 +51,11 @@ function frame(tNow) {
     ctx.fill();
   }
 
-  // Lines (load module on first use)
-  if (CONFIG.enableLines) {
-    (linksMod
-      ? Promise.resolve(linksMod)
-      : import('./links.js').then(m => (linksMod = m))
-    ).then(m => {
-      const cellSize = CONFIG.linkDistance;
-      const grid = m.buildGrid(particles, cellSize);
-      m.drawLinks(ctx, particles, grid, THEME, CONFIG.linkDistance, lineLfo);
-    });
+  // Draw links (if module preloaded)
+  if (CONFIG.enableLines && linksReady && linksMod) {
+    const cellSize = CONFIG.linkDistance;
+    const grid = linksMod.buildGrid(particles, cellSize);
+    linksMod.drawLinks(ctx, particles, grid, THEME, CONFIG.linkDistance, lineLfo);
   }
 
   // Update physics
@@ -78,9 +73,24 @@ function handleResize() {
   lastT = 0;
 }
 
-export function start() {
+export async function start() {
   canvas = document.getElementById('bgCanvas');
+  if (!canvas) {
+    console.error('Canvas #bgCanvas not found');
+    return;
+  }
   ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) {
+    console.error('2D context not available');
+    return;
+  }
+
+  // Resolve theme now and on color-scheme changes
+  THEME = resolveTheme();
+  const mql = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mql && 'addEventListener' in mql) {
+    mql.addEventListener('change', () => { THEME = resolveTheme(); });
+  }
 
   handleResize();
   window.addEventListener('resize', (() => {
@@ -90,6 +100,17 @@ export function start() {
       timer = setTimeout(handleResize, 120);
     };
   })(), { passive: true });
+
+  // Preload links module once (no per-frame import)
+  if (CONFIG.enableLines) {
+    try {
+      linksMod = await import('./links.js');
+      linksReady = true;
+    } catch (e) {
+      linksReady = false;
+      console.warn('Links module failed to load. Lines disabled.', e);
+    }
+  }
 
   requestAnimationFrame(frame);
 }
