@@ -2,19 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Tactical Grid</title>
-    <link rel="preload" href="./styles.css" as="style" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <!-- Background canvas: no UI, no overlays -->
     <canvas id="bg" aria-hidden="true"></canvas>
-
-    <!-- Defer guarantees DOM parsed; cfasync prevents Rocket Loader reordering -->
-    <script src="./background.js" defer data-cfasync="false"></script>
+    <script src="./background.js"></script>
   </body>
 </html>
