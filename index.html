@@ -4,7 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Operational Grid</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --bg: #050505;
+      --accent: #b21717;
+      --accent-soft: #7f1313;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: #c8c8c8;
+    }
+    body {
+      display: block;
+      overflow: hidden;
+    }
+    #grid {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+  </style>
 </head>
 <body>
   <canvas id="grid" aria-label="Operational grid visualization" role="img"></canvas>
