@@ -7,6 +7,7 @@
   let particles = [];
   let lastT = 0;
   let biasVx = 0, biasVy = 0;
+  let fps = 60;
 
   function setCanvasSize() {
     dpr = window.devicePixelRatio || 1;
@@ -26,8 +27,10 @@
 
   function frame(tNow) {
     const t = tNow || performance.now();
-    const dt = lastT ? (t - lastT) / 16.6667 : 1;
+    const dtMs = lastT ? (t - lastT) : 16.6667;
+    const dt = dtMs / 16.6667;
     lastT = t;
+    fps = 1000 / Math.max(1e-3, dtMs);
 
     ctx.clearRect(0, 0, W, H);
 
@@ -35,6 +38,17 @@
     const w1 = BG.CONFIG.pulse1Hz * Math.PI * 2;
     const w2 = BG.CONFIG.pulse2Hz * Math.PI * 2;
     const lineLfo = 0.6 + 0.4 * Math.sin(time * BG.CONFIG.lineLfoHz * Math.PI * 2);
+
+    // HUD update (before draws)
+    if (BG.hud && BG.CONFIG.enableHUD) {
+      BG.hud.update(dt, time, BG.theme, BG.CONFIG);
+    }
+
+    // HUD: grid (underlay)
+    if (BG.hud && BG.CONFIG.enableHUD && BG.CONFIG.hud.grid) {
+      // Draw in BG.hud.draw to control ordering; we’ll call once later
+      // but grid should be beneath—so we draw all via one call below.
+    }
 
     // Particles
     ctx.fillStyle = BG.theme.particleRGBA(0.9);
@@ -55,6 +69,11 @@
       BG.drawLinks(ctx, particles, grid, BG.theme, BG.CONFIG.linkDistance, lineLfo);
     }
 
+    // Core/pulses/ambient/debug + grid all drawn in one controlled pass
+    if (BG.hud && BG.CONFIG.enableHUD) {
+      BG.hud.draw(ctx, BG.theme, BG.CONFIG, W, H, time, fps, particles.length);
+    }
+
     // Physics
     BG.updateParticles(particles, dt, { W, H }, { biasVx, biasVy }, BG.CONFIG);
 
@@ -67,6 +86,7 @@
     biasVx = bias.vx;
     biasVy = bias.vy;
     bootParticles();
+    if (BG.hud && BG.hud.init) BG.hud.init(W, H);
     lastT = 0;
   }
 
@@ -91,6 +111,13 @@
       })(),
       { passive: true }
     );
+
+    // Mouse tracking for HUD (window-level, canvas is pointer-events: none)
+    window.addEventListener('pointermove', (e) => {
+      const x = BG.clamp(e.clientX / Math.max(1, window.innerWidth), 0, 1);
+      const y = BG.clamp(e.clientY / Math.max(1, window.innerHeight), 0, 1);
+      if (BG.hud && BG.hud.mouseMove) BG.hud.mouseMove(x, y);
+    }, { passive: true });
 
     // Update theme if system theme changes
     const mql = window.matchMedia('(prefers-color-scheme: dark)');
