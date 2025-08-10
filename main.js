@@ -1,9 +1,8 @@
 // main.js
-window.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const { start } = await import('./engine.js');
-    start();
-  } catch (e) {
-    console.error('Failed to start engine:', e);
-  }
-});
+(function () {
+  window.addEventListener('DOMContentLoaded', function () {
+    if (window.BG && typeof window.BG.start === 'function') {
+      window.BG.start();
+    }
+  });
+})();
