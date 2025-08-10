@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,11 +6,107 @@
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   />
-  <title>Tactical Grid</title>
+  <title>FIRMAMENT // CONTROL</title>
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="FIRMAMENT // CONTROL — Demonstration UI. No real systems are controlled." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <canvas id="grid"></canvas>
-  <script src="grid.js" defer></script>
+  <noscript>
+    <div class="no-js">JavaScript is required for the control interface.</div>
+  </noscript>
+
+  <div id="frame">
+    <header id="topbar" role="banner" aria-label="System header">
+      <div class="brand">FIRMAMENT // CONTROL</div>
+      <div class="status-bus" role="status" aria-live="polite">
+        <span class="lamp" data-lamp="comms" title="COMMS"></span>
+        <span class="lamp" data-lamp="telemetry" title="TELEM"></span>
+        <span class="lamp" data-lamp="auth" title="AUTH"></span>
+        <span class="stamp" id="clock" aria-label="UTC time">--:--:--Z</span>
+      </div>
+    </header>
+
+    <div id="layout">
+      <aside id="stack" aria-label="Command stack">
+        <section class="panel" id="auth" aria-labelledby="auth-h">
+          <h2 id="auth-h">Authorization</h2>
+          <div class="kv">
+            <div>Clearance</div><div><span id="clearance">UNCLASS</span></div>
+            <div>Badge</div><div>FIRMAMENT-Δ</div>
+            <div>Session</div><div id="session-id">--</div>
+          </div>
+          <div class="row">
+            <button id="btn-auth" class="btn btn-armed" aria-pressed="false">ELEVATE</button>
+            <button id="btn-lock" class="btn" aria-pressed="false">LOCK</button>
+          </div>
+          <p class="disclaimer">Demonstration UI. Fictional. No real systems are controlled.</p>
+        </section>
+
+        <section class="panel" id="ordnance" aria-labelledby="ord-h">
+          <h2 id="ord-h">Ordnance manifest</h2>
+          <ul class="list" id="ord-list" role="listbox" aria-label="Payloads">
+            <!-- populated by app.js -->
+          </ul>
+          <div class="row">
+            <button id="btn-arm" class="btn" aria-pressed="false">ARM</button>
+            <button id="btn-safe" class="btn" aria-pressed="true">SAFE</button>
+          </div>
+        </section>
+
+        <section class="panel" id="protocols" aria-labelledby="prot-h">
+          <h2 id="prot-h">Engagement protocols</h2>
+          <div class="kv">
+            <div>ROE</div>
+            <div>
+              <select id="roe" aria-label="Rules of engagement">
+                <option value="HOLD">HOLD</option>
+                <option value="TRACK">TRACK</option>
+                <option value="INTERDICT">INTERDICT</option>
+              </select>
+            </div>
+            <div>Targeting</div>
+            <div>
+              <select id="tmode" aria-label="Targeting mode">
+                <option value="MANUAL">MANUAL</option>
+                <option value="SECTOR">SECTOR</option>
+                <option value="PRIORITY">PRIORITY</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <button id="btn-exec" class="btn btn-primary">EXECUTE</button>
+          </div>
+        </section>
+
+        <section class="panel" id="log" aria-labelledby="log-h">
+          <h2 id="log-h">Event log</h2>
+          <div id="log-scroll" class="log-scroll" role="log" aria-live="polite" aria-relevant="additions">
+            <!-- entries appended by app.js -->
+          </div>
+        </section>
+      </aside>
+
+      <main id="viz" aria-label="Threat matrix">
+        <div class="hud">
+          <div class="hud-row">
+            <span>GRID: 48PX</span>
+            <span>SECTORS: 12</span>
+            <span>CONTACTS: <span id="contact-count">0</span></span>
+            <span>CONDITION: <span id="condition">WHITE</span></span>
+          </div>
+        </div>
+        <canvas id="matrix" width="1200" height="800" aria-label="Operational canvas"></canvas>
+      </main>
+    </div>
+
+    <footer id="foot" role="contentinfo">
+      <span>FIRMAMENT // SIM-UI</span>
+      <span>BUILD: LOCAL</span>
+      <span>DPI: <span id="dpi">1.00</span></span>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
