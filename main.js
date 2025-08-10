@@ -1,6 +1,9 @@
 // main.js
 window.addEventListener('DOMContentLoaded', async () => {
-  // Lazy-load engine to keep initial parse small
-  const { start } = await import('./engine.js');
-  start();
+  try {
+    const { start } = await import('./engine.js');
+    start();
+  } catch (e) {
+    console.error('Failed to start engine:', e);
+  }
 });
