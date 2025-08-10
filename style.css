@@ -33,6 +33,7 @@ canvas#bgCanvas {
   pointer-events: none;
 }
 
+/* Title retained */
 .hud-title {
   position: fixed;
   top: 24px;
@@ -47,60 +48,7 @@ canvas#bgCanvas {
   user-select: none;
 }
 
-.hud {
-  position: fixed;
-  top: 50%;
-  left: 24px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 10;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  user-select: none;
-}
-
-.hud-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.hud a {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  color: var(--text);
-  text-decoration: none;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
-}
-
-.hud a::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px rgba(255, 159, 10, 0.55);
-  opacity: 0.9;
-}
-
-.hud a:hover,
-.hud a:focus-visible {
-  transform: translateX(2px);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 159, 10, 0.45);
-  outline: none;
-  color: #fff;
-}
+/* Removed HUD box and link styles to reduce CSS weight */
 
 .no-js {
   position: absolute;
