@@ -36,6 +36,7 @@ export function drawLinks(ctx, particles, grid, THEME, linkDist, lineLfo) {
         for (let k = 0; k < bucket.length; k++) {
           const j = bucket[k];
           if (j <= i) continue;
+
           const b = particles[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
