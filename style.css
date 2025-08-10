@@ -48,7 +48,7 @@ canvas#bgCanvas {
   user-select: none;
 }
 
-/* Removed HUD box and link styles to reduce CSS weight */
+/* HUD and link styles removed */
 
 .no-js {
   position: absolute;
