@@ -1,7 +1,7 @@
 :root {
-  --bg: #050505;           /* military black */
-  --accent: #b21717;       /* tactical red */
-  --accent-soft: #7f1313;  /* ambient red (reserved) */
+  --bg: #050505;           /* Military matte black */
+  --accent: #b21717;       /* Operational red */
+  --accent-soft: #7f1313;  /* Reserved for ambient fade */
 }
 
 * { box-sizing: border-box; }
