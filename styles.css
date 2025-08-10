@@ -1,29 +1,27 @@
-/* Zero-margin canvas, locked to viewport */
-:root {
+:root{
   --bg: #0a0a0a;          /* deep neutral */
-  --grid-primary: #ff2a2a; /* threat red */
-  --grid-secondary: #a81818; /* darker red for contrast */
+  --grid-primary: #ff2a2a; /* primary threat red */
+  --grid-secondary: #a81818; /* subdued red */
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-html, body {
-  height: 100%;
-  background: var(--bg);
+html,body{
+  height:100%;
+  background:var(--bg);
 }
 
-body {
-  margin: 0;
-  overflow: hidden; /* ensure no scrollbars from subpixel rounding */
+body{
+  margin:0;
+  overflow:hidden;
 }
 
-/* Full-viewport canvas */
-#bg {
-  position: fixed;
-  inset: 0;
-  display: block;
-  width: 100vw;
-  height: 100vh;
-  /* If used as a true background, block interactions */
-  pointer-events: none;
+/* Full-viewport background canvas, no UI interference */
+#bg{
+  position:fixed;
+  inset:0;
+  display:block;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
 }
