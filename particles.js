@@ -22,13 +22,12 @@ export function initParticles(W, H, rScale, CONFIG) {
 }
 
 export function updateParticles(particles, dt, bounds, bias, CONFIG) {
-  const vScale = 1; // no hover boost (HUD removed)
   const { W, H } = bounds;
   const { biasVx, biasVy } = bias;
 
   for (const p of particles) {
-    p.x += (p.vx + biasVx) * dt * vScale;
-    p.y += (p.vy + biasVy) * dt * vScale;
+    p.x += (p.vx + biasVx) * dt;
+    p.y += (p.vy + biasVy) * dt;
 
     if (p.x < 0) { p.x = 0; p.vx *= -1; }
     else if (p.x > W) { p.x = W; p.vx *= -1; }
