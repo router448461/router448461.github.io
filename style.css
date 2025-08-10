@@ -1,9 +1,7 @@
 :root {
-  /* Threat palette */
-  --bg: #0b0b0c;           /* matte near-black */
-  --fg: #2b2b2d;           /* low-contrast UI gray (unused now, reserved) */
-  --accent: #b21717;       /* deep alarm red */
-  --accent-soft: #7f1313;  /* subdued red for low-alpha elements */
+  --bg: #0b0b0c;           /* dark matte base */
+  --accent: #b21717;       /* deep military red */
+  --accent-soft: #7f1313;  /* shadowed red for faint tones */
 }
 
 * { box-sizing: border-box; }
@@ -20,8 +18,7 @@ body {
 }
 
 #grid {
-  display: block;
   width: 100vw;
   height: 100vh;
-  /* No shadows/glow; crisp, disciplined */
+  display: block;
 }
