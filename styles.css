@@ -1,0 +1,35 @@
+/* Tactical, disciplined baseline */
+:root {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0c; /* deep neutral */
+}
+
+body {
+  overflow: hidden; /* background-only scene */
+}
+
+/* Full-viewport canvas, under everything */
+#bg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: -1;
+  /* No filters, no blur, no softness */
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
