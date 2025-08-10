@@ -1,39 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Operational Grid</title>
-  <style>
-    :root {
-      --bg: #050505;
-      --accent: #b21717;
-      --accent-soft: #7f1313;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
-      color: #c8c8c8;
-    }
-    body {
-      display: block;
-      overflow: hidden;
-    }
-    #grid {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Red Breach Grid</title>
+  <link rel="stylesheet" href="grid.css">
 </head>
 <body>
-  <canvas id="grid" aria-label="Operational grid visualization" role="img"></canvas>
-
-  <script src="config.js" defer></script>
-  <script src="particles.js" defer></script>
-  <script src="render.js" defer></script>
-  <script src="main.js" defer></script>
+  <canvas id="grid"></canvas>
+  <script src="config.js"></script>
+  <script src="particles.js"></script>
+  <script src="renderer.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
