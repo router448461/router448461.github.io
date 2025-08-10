@@ -13,7 +13,6 @@
     step(w, h, margin, cfg) {
       this.x += this.vx;
       this.y += this.vy;
-
       this.vx += (Math.random() - 0.5) * cfg.jitter;
       this.vy += (Math.random() - 0.5) * cfg.jitter;
 
