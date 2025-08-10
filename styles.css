@@ -1,35 +1,29 @@
-/* Tactical, disciplined baseline */
+/* Zero-margin canvas, locked to viewport */
 :root {
-  color-scheme: dark;
+  --bg: #0a0a0a;          /* deep neutral */
+  --grid-primary: #ff2a2a; /* threat red */
+  --grid-secondary: #a81818; /* darker red for contrast */
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
 }
 
-html,
 body {
   margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #0a0a0c; /* deep neutral */
+  overflow: hidden; /* ensure no scrollbars from subpixel rounding */
 }
 
-body {
-  overflow: hidden; /* background-only scene */
-}
-
-/* Full-viewport canvas, under everything */
+/* Full-viewport canvas */
 #bg {
   position: fixed;
   inset: 0;
+  display: block;
   width: 100vw;
   height: 100vh;
-  display: block;
-  z-index: -1;
-  /* No filters, no blur, no softness */
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
+  /* If used as a true background, block interactions */
+  pointer-events: none;
 }
