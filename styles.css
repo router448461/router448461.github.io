@@ -1,27 +1,17 @@
-:root{
-  --bg: #0a0a0a;          /* deep neutral */
-  --grid-primary: #ff2a2a; /* primary threat red */
-  --grid-secondary: #a81818; /* subdued red */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
 }
 
-*{box-sizing:border-box}
-
-html,body{
-  height:100%;
-  background:var(--bg);
-}
-
-body{
-  margin:0;
-  overflow:hidden;
-}
-
-/* Full-viewport background canvas, no UI interference */
-#bg{
-  position:fixed;
-  inset:0;
-  display:block;
-  width:100vw;
-  height:100vh;
-  pointer-events:none;
+#bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  pointer-events: none;
 }
