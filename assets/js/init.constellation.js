@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fpsCap: 60
   });
 
-  // Respect prefers-reduced-motion
   const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   function updateMotion(e) {
     if (e.matches) engine.stop();
