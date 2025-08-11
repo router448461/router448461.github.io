@@ -1,205 +1,84 @@
-(function () {
-  class Constellation {
-    constructor(canvas, opts = {}) {
-      this.canvas = canvas;
-      this.ctx = canvas.getContext('2d');
-
-      this.opts = Object.assign({
-        dotColor: '#ffffff',
-        lineColor: '#ffffff',
-        dotRadius: [1.2, 2.4],
-        lineWidth: 1.1,
-        lineMaxDistance: 160,
-        hoverLinkDistance: 200,
-        density: 16000,       // pixels per particle (lower = more particles)
-        minParticles: 80,
-        maxParticles: 260,
-        speed: 0.4,
-        drift: 0.12,
-        repelRadius: 110,
-        repelForce: 0.013,
-        wrap: true,
-        fpsCap: 60
-      }, opts);
-
-      this.particles = [];
-      this.mouse = { x: null, y: null };
-      this.running = false;
-      this.lastFrame = 0;
-
-      // Bindings
-      this._onResize = this.resize.bind(this);
-      this._onMouseMove = this._mouseMove.bind(this);
-      this._onMouseLeave = this._mouseLeave.bind(this);
-      this._frame = this.frame.bind(this);
-
-      // Setup
-      this.resize();
-      window.addEventListener('resize', this._onResize, { passive: true });
-      canvas.addEventListener('mousemove', this._onMouseMove, { passive: true });
-      canvas.addEventListener('mouseleave', this._onMouseLeave, { passive: true });
-
-      this.initParticles();
-    }
-
-    // Handle devicePixelRatio for crisp rendering
-    resize() {
-      const rectW = window.innerWidth;
-      const rectH = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      this.canvas.style.width = rectW + 'px';
-      this.canvas.style.height = rectH + 'px';
-      this.canvas.width = Math.max(1, Math.floor(rectW * dpr));
-      this.canvas.height = Math.max(1, Math.floor(rectH * dpr));
-
-      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const cssPixels = rectW * rectH;
-      const target = Math.floor(cssPixels / this.opts.density);
-      this.particleCount = Math.min(this.opts.maxParticles, Math.max(this.opts.minParticles, target));
-
-      // Re-initialize on resize for consistent density
-      this.initParticles();
-    }
-
-    _mouseMove(e) {
-      // Coordinates in CSS pixels (since we scale context)
-      this.mouse.x = e.clientX;
-      this.mouse.y = e.clientY;
-    }
-
-    _mouseLeave() {
-      this.mouse.x = null;
-      this.mouse.y = null;
-    }
-
-    initParticles() {
-      this.particles = [];
-      for (let i = 0; i < this.particleCount; i++) {
-        this.particles.push(this.makeParticle());
-      }
-    }
-
-    makeParticle() {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = this.opts.speed * (0.6 + Math.random() * 0.8);
-      return {
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        r: Math.random() * (this.opts.dotRadius[1] - this.opts.dotRadius[0]) + this.opts.dotRadius[0]
-      };
-    }
-
-    start() {
-      if (this.running) return;
-      this.running = true;
-      this.lastFrame = performance.now();
-      requestAnimationFrame(this._frame);
-    }
-
-    stop() {
-      this.running = false;
-    }
-
-    frame(now) {
-      if (!this.running) return;
-
-      const delta = now - this.lastFrame;
-      const minDelta = 1000 / this.opts.fpsCap;
-      if (delta < minDelta) {
-        requestAnimationFrame(this._frame);
-        return;
-      }
-      this.lastFrame = now;
-
-      this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      this.update(delta);
-      this.draw();
-      requestAnimationFrame(this._frame);
-    }
-
-    update() {
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-
-      for (const p of this.particles) {
-        p.x += p.vx + (Math.random() - 0.5) * this.opts.drift;
-        p.y += p.vy + (Math.random() - 0.5) * this.opts.drift;
-
-        if (this.opts.wrap) {
-          if (p.x < 0) p.x += W; else if (p.x > W) p.x -= W;
-          if (p.y < 0) p.y += H; else if (p.y > H) p.y -= H;
-        } else {
-          if (p.x < 0 || p.x > W) p.vx *= -1;
-          if (p.y < 0 || p.y > H) p.vy *= -1;
-        }
-
-        // Mouse repel
-        if (this.mouse.x !== null) {
-          const dx = p.x - this.mouse.x;
-          const dy = p.y - this.mouse.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < this.opts.repelRadius && dist > 0.0001) {
-            const force = (this.opts.repelRadius - dist) / this.opts.repelRadius * this.opts.repelForce;
-            p.vx += (dx / dist) * force;
-            p.vy += (dy / dist) * force;
-          }
-        }
-      }
+this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     draw() {
-      const { ctx, particles, opts } = this;
+      const { ctx, particles, opts, mouse } = this;
 
-      // Draw dots
-      ctx.fillStyle = opts.dotColor;
+      // Draw particles
       for (const p of particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = opts.dotColor;
         ctx.fill();
       }
 
-      // Draw inter-particle lines
-      ctx.strokeStyle = opts.lineColor;
-      ctx.lineWidth = opts.lineWidth;
-
+      // Draw lines
       for (let i = 0; i < particles.length; i++) {
-        const p1 = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < opts.lineMaxDistance) {
-            ctx.globalAlpha = 1 - (dist / opts.lineMaxDistance);
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Mouse link
-        if (this.mouse.x !== null) {
-          const dx = p1.x - this.mouse.x;
-          const dy = p1.y - this.mouse.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < opts.hoverLinkDistance) {
-            ctx.globalAlpha = 1 - (dist / opts.hoverLinkDistance);
+          if (dist < opts.lineMaxDistance) {
+            ctx.strokeStyle = opts.lineColor;
+            ctx.lineWidth = opts.lineWidth;
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(this.mouse.x, this.mouse.y);
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
             ctx.stroke();
           }
         }
       }
-      ctx.globalAlpha = 1.0; // reset
+
+      // Draw hover link
+      if (mouse.x !== null && opts.hoverLinkDistance) {
+        for (const p of particles) {
+          const dx = p.x - mouse.x, dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < opts.hoverLinkDistance) {
+            ctx.strokeStyle = opts.lineColor;
+            ctx.lineWidth = opts.lineWidth;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Click flash
+      if (this.clickFlash && performance.now() - this.clickFlash.t < 340) {
+        const alpha = 1 - (performance.now() - this.clickFlash.t) / 340;
+        ctx.beginPath();
+        ctx.arc(this.clickFlash.x, this.clickFlash.y, 48 * alpha, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${0.12 * alpha})`;
+        ctx.fill();
+      }
+
+      // Edge ping
+      if (this.edgePing && performance.now() - this.edgePing.t < 800) {
+        const alpha = 1 - (performance.now() - this.edgePing.t) / 800;
+        const s = this.edgePing.side;
+        ctx.fillStyle = `rgba(255,255,255,${0.08 * alpha})`;
+        if (s === 'L') ctx.fillRect(0, 0, 8, this.canvas.height);
+        else if (s === 'R') ctx.fillRect(this.canvas.width - 8, 0, 8, this.canvas.height);
+        else if (s === 'T') ctx.fillRect(0, 0, this.canvas.width, 8);
+        else if (s === 'B') ctx.fillRect(0, this.canvas.height - 8, this.canvas.width, 8);
+      }
+
+      // Trail pulses (optional: could be expanded into streak vectors)
+      const now = performance.now();
+      this.trails = this.trails.filter(t => now - t.t < 600);
+      for (const t of this.trails) {
+        const age = now - t.t;
+        const alpha = 1 - age / 600;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 4 + alpha * 6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${0.05 * alpha})`;
+        ctx.fill();
+      }
     }
   }
 
-  // Expose globally
   window.Constellation = Constellation;
 })();
