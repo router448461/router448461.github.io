@@ -4,7 +4,6 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     draw() {
       const { ctx, particles, opts, mouse } = this;
 
-      // Draw particles
       for (const p of particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -12,13 +11,11 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.fill();
       }
 
-      // Draw lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i], b = particles[j];
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-
           if (dist < opts.lineMaxDistance) {
             ctx.strokeStyle = opts.lineColor;
             ctx.lineWidth = opts.lineWidth;
@@ -30,7 +27,6 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
       }
 
-      // Draw hover link
       if (mouse.x !== null && opts.hoverLinkDistance) {
         for (const p of particles) {
           const dx = p.x - mouse.x, dy = p.y - mouse.y;
@@ -46,7 +42,6 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
       }
 
-      // Click flash
       if (this.clickFlash && performance.now() - this.clickFlash.t < 340) {
         const alpha = 1 - (performance.now() - this.clickFlash.t) / 340;
         ctx.beginPath();
@@ -55,7 +50,6 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.fill();
       }
 
-      // Edge ping
       if (this.edgePing && performance.now() - this.edgePing.t < 800) {
         const alpha = 1 - (performance.now() - this.edgePing.t) / 800;
         const s = this.edgePing.side;
@@ -66,7 +60,6 @@ this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         else if (s === 'B') ctx.fillRect(0, this.canvas.height - 8, this.canvas.width, 8);
       }
 
-      // Trail pulses (optional: could be expanded into streak vectors)
       const now = performance.now();
       this.trails = this.trails.filter(t => now - t.t < 600);
       for (const t of this.trails) {
