@@ -1,19 +1,14 @@
 :root {
-  --bg: #0b0f1a; /* Dark navy */
+  --bg: #000;
 }
 
-/* Reset + base */
-* { box-sizing: border-box; }
 html, body {
   height: 100%;
   margin: 0;
   background: var(--bg);
-  color: #e6ecff;
-  font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
-  overflow: hidden; /* Prevent scrollbars with fixed canvas */
+  overflow: hidden;
 }
 
-/* Full-viewport canvas */
 #constellation {
   position: fixed;
   inset: 0;
@@ -21,6 +16,5 @@ html, body {
   height: 100%;
   display: block;
   z-index: 0;
-  background: radial-gradient(1200px 800px at 70% 20%, rgba(255,255,255,0.05), transparent 60%) var(--bg);
   cursor: default;
 }
