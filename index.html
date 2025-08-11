@@ -8,7 +8,9 @@
 </head>
 <body>
   <canvas id="constellation"></canvas>
-  <script src="assets/js/engine.constellation.js"></script>
-  <script src="assets/js/init.constellation.js"></script>
+
+  <!-- Load engine first, then init. Defer preserves order after parsing. -->
+  <script src="assets/js/engine.constellation.js" defer></script>
+  <script src="assets/js/init.constellation.js" defer></script>
 </body>
 </html>
