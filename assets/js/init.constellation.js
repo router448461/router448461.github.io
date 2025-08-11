@@ -27,4 +27,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   mq.addEventListener?.('change', updateMotion);
   if (mq.matches) engine.stop();
+  else engine.start();
 });
