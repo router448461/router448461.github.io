@@ -16,5 +16,5 @@ html, body {
   height: 100%;
   display: block;
   z-index: 0;
-  cursor: default;
+  cursor: default; /* Adjust to crosshair/pointer if desired */
 }
