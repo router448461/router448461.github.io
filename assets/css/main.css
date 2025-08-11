@@ -2,9 +2,7 @@
   --bg: #0b0f1a;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   height: 100%;
