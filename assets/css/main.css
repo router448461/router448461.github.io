@@ -1,21 +1,16 @@
-:root {
-  --bg: #000;
-  --bg2: #05070d; /* subtle gradient option */
+/* Post-boot visuals and polish */
+
+#constellationCanvas {
+  filter: drop-shadow(0 0 1px rgba(95,179,255,0.2));
+  /* Slight vignette */
+  box-shadow: inset 0 0 200px rgba(0,0,0,0.5);
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  background: radial-gradient(1200px 800px at 50% 50%, var(--bg2), var(--bg));
-  overflow: hidden;
-}
+/* Optional mode tokens */
+:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.1); }
+:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.08) saturate(0.95); }
+:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.15) brightness(0.9); }
 
-#constellation {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 0;
-  cursor: default; /* crosshair/pointer if desired */
-}
+/* Fade the loader fully out of flow after transition */
+#loader.fade-out { transition: opacity 240ms ease; }
+#loader.removed { display: none; }
