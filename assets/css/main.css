@@ -1,11 +1,12 @@
 :root {
   --bg: #000;
+  --bg2: #05070d; /* subtle gradient option */
 }
 
 html, body {
   height: 100%;
   margin: 0;
-  background: var(--bg);
+  background: radial-gradient(1200px 800px at 50% 50%, var(--bg2), var(--bg));
   overflow: hidden;
 }
 
@@ -16,5 +17,5 @@ html, body {
   height: 100%;
   display: block;
   z-index: 0;
-  cursor: default; /* Adjust to crosshair/pointer if desired */
+  cursor: default; /* crosshair/pointer if desired */
 }
