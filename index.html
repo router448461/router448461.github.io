@@ -1,16 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Constellation Field</title>
-  <link rel="stylesheet" href="assets/css/main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Constellation</title>
+
+  <!-- Minimal, instant boot visuals -->
+  <link rel="stylesheet" href="assets/css/loader.css" />
+
+  <!-- Option A (faster boot): main.css is preloaded and applied by engine.init.js -->
+  <!-- Option B (simpler): uncomment the next line to load main.css immediately -->
+  <!-- <link rel="stylesheet" href="assets/css/main.css" /> -->
+
+  <!-- Orchestrator: sets namespace, loads modules, starts app -->
+  <script src="assets/js/engine.init.js" defer></script>
 </head>
 <body>
-  <canvas id="constellation"></canvas>
+  <div id="loader" aria-live="polite">
+    <div class="loader-wrap">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="blink">Booting...</div>
+    </div>
+  </div>
 
-  <!-- Load engine first, then init. Defer preserves order after parsing. -->
-  <script src="assets/js/engine.constellation.js" defer></script>
-  <script src="assets/js/init.constellation.js" defer></script>
+  <canvas id="constellationCanvas"></canvas>
 </body>
 </html>
