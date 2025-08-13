@@ -24,6 +24,7 @@ html, body {
 }
 
 #loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.removed { display: none; }
 
 .loader-wrap {
   display: grid;
@@ -36,7 +37,7 @@ html, body {
   width: 36px; height: 36px;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: #5fb3ff;
+  border-top-color: #84c5ff; /* DEMON SEED blue */
   animation: spin 800ms linear infinite;
 }
 
@@ -59,4 +60,15 @@ html, body {
   height: 100vh;
   display: block;
   background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
+  filter: drop-shadow(0 0 1px rgba(95,179,255,0.18));
+  /* Slight vignette */
+  box-shadow: inset 0 0 200px rgba(0,0,0,0.5);
 }
+
+/* Optional mode tokens (kept from original) */
+:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.08); }
+:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.06) saturate(0.98); }
+:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.12) brightness(0.92); }
+
+/* Fade the loader fully out of flow after transition */
+#loader.fade-out { transition: opacity 240ms ease; }
