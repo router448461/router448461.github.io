@@ -12,18 +12,22 @@ html, body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+/* Loader */
 #loader {
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
+  background:
+    radial-gradient(1200px 800px at 50% 50%, rgba(25, 10, 10, 0.35), rgba(11, 15, 22, 0.98) 70%),
+    linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
   z-index: 9999;
   opacity: 1;
   transition: opacity 300ms ease;
 }
 
 #loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.removed { display: none; }
 
 .loader-wrap {
   display: grid;
@@ -35,8 +39,8 @@ html, body {
 .spinner {
   width: 36px; height: 36px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: #5fb3ff;
+  border: 3px solid rgba(255,255,255,0.12);
+  border-top-color: #ff6b6b; /* DEMON SEED ember red */
   animation: spin 800ms linear infinite;
 }
 
@@ -44,12 +48,13 @@ html, body {
 
 .blink {
   font-size: 12px;
-  letter-spacing: 0.2em;
-  opacity: 0.8;
+  letter-spacing: 0.22em;
+  opacity: 0.85;
+  text-transform: uppercase;
   animation: blink 1.2s steps(2, start) infinite;
 }
 
-@keyframes blink { 50% { opacity: 0.2; } }
+@keyframes blink { 50% { opacity: 0.28; } }
 
 /* Canvas base (hidden behind loader until start) */
 #constellationCanvas {
@@ -60,3 +65,31 @@ html, body {
   display: block;
   background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
 }
+
+/* Post-boot visuals are applied via main.css once loaded */
+#constellationCanvas {
+  filter: drop-shadow(0 0 1px rgba(255,107,107,0.15));
+}
+
+/* Subtle vignette overlay for depth */
+.overlay-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side, rgba(0,0,0,0) 55%, rgba(0,0,0,0.25) 85%, rgba(0,0,0,0.6) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+}
+
+/* Accessibility helper */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap; border: 0;
+}
+
+/* Fade the loader fully out of flow after transition */
+#loader.fade-out { transition: opacity 240ms ease; }
