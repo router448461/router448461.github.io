@@ -1,29 +1,25 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.1.0",
+    version: "1.0.0",
     t0: performance.now(),
     config: {
-      // DEMON SEED defaults (no user interaction or time-based mode switching)
-      baseParticleDensity: 0.00009,   // particles per px^2
-      maxParticles: 260,
-      linkDistance: 120,
+      // Tune to taste
+      baseParticleDensity: 0.00008,  // particles per px^2
+      maxParticles: 220,
+      linkDistance: 110,
       linkOpacity: 0.12,
-      particleSize: [0.8, 2.4],
-      speed: [0.08, 0.5],             // base drift; flow field adds on top
-      backgroundFade: 0.065,          // trail strength (lower = longer trails)
-      color: "#ff6b6b",               // primary
-      colorSecondary: "#ffb36b",      // secondary ember
-      depth: { min: 0.65, max: 1.55, linkZTolerance: 0.28 },
-      glow: { blur: 6, strength: 1.0 },
-      noise: { scale: 0.0018, speed: 0.00020, strength: 0.32 },
-      enableInteraction: false        // hard-off by request
+      particleSize: [1.0, 2.2],
+      speed: [0.15, 0.6],
+      repelRadius: 120,
+      backgroundFade: 0.08, // motion trail strength
+      color: "#84c5ff",
     },
     state: {
       started: false,
-      paused: false,
       canvas: null,
       ctx: null,
+      mouse: { x: null, y: null, down: false },
       fps: 0,
     },
     modules: {},
@@ -33,8 +29,8 @@
       this._ready.add(name);
       this._flushWaiters();
     },
-    when(mods, cb) {
-      this._waiters.push({ mods: new Set(mods), cb });
+    when(modules, cb) {
+      this._waiters.push({ mods: new Set(modules), cb });
       this._flushWaiters();
     },
     _flushWaiters() {
@@ -71,16 +67,6 @@
     }, { once: true });
   }
 
-  // Visibility pause/resume
-  function handleVisibility() {
-    engine.state.paused = document.hidden === true;
-    if (!engine.state.paused && engine.modules.base?.clear) {
-      // Hard clear on resume to prevent ghost trails
-      engine.modules.base.clear(true);
-    }
-  }
-  document.addEventListener("visibilitychange", handleVisibility, { passive: true });
-
   // Boot orchestrator
   window.addEventListener("DOMContentLoaded", () => {
     loadMainCss();
@@ -109,24 +95,11 @@
 
       // Main loop
       let last = performance.now();
-      let hiddenAccumulator = 0;
       function frame(now) {
-        const dt = Math.min(48, now - last); // cap delta for stability
+        const dt = Math.min(32, now - last); // cap delta
         last = now;
-
-        if (!engine.state.paused) {
-          engine.modules.base.tick(dt);
-          engine.modules.visuals.tick(dt);
-          hiddenAccumulator = 0;
-        } else {
-          // When hidden, do very light maintenance at low cadence
-          hiddenAccumulator += dt;
-          if (hiddenAccumulator > 250) {
-            engine.modules.base.tick(250);
-            hiddenAccumulator = 0;
-          }
-        }
-
+        engine.modules.base.tick(dt);
+        engine.modules.visuals.tick(dt);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
