@@ -1,15 +1,2 @@
-:root {
-  /* Post-boot polish tokens (subtle; safe defaults) */
-  --contrast: 1.04;
-  --saturate: 1.03;
-  --brightness: 1.0;
-}
-
-#constellationCanvas {
-  filter:
-    contrast(var(--contrast))
-    saturate(var(--saturate))
-    brightness(var(--brightness))
-    drop-shadow(0 0 1px rgba(95,179,255,0.2));
-  box-shadow: inset 0 0 220px rgba(0,0,0,0.55);
-}
+:root { --contrast: 1.04; --saturate: 1.03; --brightness: 1.0; }
+#constellationCanvas { filter: contrast(var(--contrast)) saturate(var(--saturate)) brightness(var(--brightness)) drop-shadow(0 0 1px rgba(95,179,255,0.2)); box-shadow: inset 0 0 220px rgba(0,0,0,0.55); }
