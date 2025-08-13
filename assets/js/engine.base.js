@@ -19,11 +19,15 @@
 
     bindEvents() {
       window.addEventListener("resize", () => this.resize(), { passive: true });
-      // No pointer interactions — explicitly disabled
-      document.addEventListener("visibilitychange", () => {
-        // Pause/resume handled in init.js; ensure DPR stays sane on resume
-        this.resize();
+      window.addEventListener("pointermove", (e) => {
+        engine.state.mouse.x = e.clientX;
+        engine.state.mouse.y = e.clientY;
       }, { passive: true });
+      window.addEventListener("pointerdown", () => { engine.state.mouse.down = true; }, { passive: true });
+      window.addEventListener("pointerup", () => { engine.state.mouse.down = false; }, { passive: true });
+      document.addEventListener("visibilitychange", () => {
+        // Optionally handle pause/resume
+      });
     },
 
     resize() {
