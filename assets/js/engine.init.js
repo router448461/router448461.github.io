@@ -1,10 +1,10 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.0.0",
+    version: "1.0.1",
     t0: performance.now(),
     config: {
-      // Tune to taste
+      // Core (original values preserved)
       baseParticleDensity: 0.00008,  // particles per px^2
       maxParticles: 220,
       linkDistance: 110,
@@ -12,8 +12,19 @@
       particleSize: [1.0, 2.2],
       speed: [0.15, 0.6],
       repelRadius: 120,
-      backgroundFade: 0.08, // motion trail strength
+      backgroundFade: 0.075, // slightly longer trails for smoother motion
+
+      // Color theme (blue)
       color: "#84c5ff",
+      secondaryColor: "#5fb3ff",
+
+      // Realism controls
+      glowStrength: 0.6,     // particle glow blur strength
+      flickerSpeed: 1.4,     // twinkle speed
+      depth: { min: 0.9, max: 1.25, linkTolerance: 0.22 }, // pseudo-depth band
+      noise: { scale: 0.0014, speed: 0.00018, strength: 0.16 }, // environmental flow
+      micro: { spawnRate: 0.0008, life: [600, 1400], size: [0.6, 1.2], alpha: 0.25 }, // tiny dust
+      pulse: { minInterval: 7000, maxInterval: 14000, duration: 650, intensity: 0.18 } // background fade pulse
     },
     state: {
       started: false,
