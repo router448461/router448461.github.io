@@ -1,16 +1,15 @@
-/* Post-boot visuals and polish */
-
-#constellationCanvas {
-  filter: drop-shadow(0 0 1px rgba(95,179,255,0.2));
-  /* Slight vignette */
-  box-shadow: inset 0 0 200px rgba(0,0,0,0.5);
+:root {
+  /* Post-boot polish tokens (subtle; safe defaults) */
+  --contrast: 1.04;
+  --saturate: 1.03;
+  --brightness: 1.0;
 }
 
-/* Optional mode tokens */
-:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.1); }
-:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.08) saturate(0.95); }
-:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.15) brightness(0.9); }
-
-/* Fade the loader fully out of flow after transition */
-#loader.fade-out { transition: opacity 240ms ease; }
-#loader.removed { display: none; }
+#constellationCanvas {
+  filter:
+    contrast(var(--contrast))
+    saturate(var(--saturate))
+    brightness(var(--brightness))
+    drop-shadow(0 0 1px rgba(95,179,255,0.2));
+  box-shadow: inset 0 0 220px rgba(0,0,0,0.55);
+}
