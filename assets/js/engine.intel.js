@@ -19,11 +19,6 @@
       }
       requestAnimationFrame(pulse);
 
-      // Basic interaction trace
-      document.addEventListener("click", (e) => {
-        engine.log(`click @ ${e.clientX},${e.clientY} fps=${engine.state.fps}`);
-      });
-
       // Startup timing
       const t1 = performance.now();
       engine.log(`boot window: ${Math.round(t1 - engine.t0)}ms`);
