@@ -1,7 +1,7 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.1.0",
+    version: "1.2.0",
     t0: performance.now(),
     config: {
       baseParticleDensity: 0.00008,  // particles per px^2
@@ -11,7 +11,7 @@
       particleSize: [1.0, 2.2],
       speed: [0.15, 0.6],
       repelRadius: 120,
-      backgroundFade: 0.08, // motion trail strength
+      backgroundFade: 0.08,
       color: "#84c5ff",
     },
     state: {
@@ -56,6 +56,28 @@
     document.head.appendChild(link);
   }
 
+  // Loader sequence
+  function startLoaderSequence() {
+    const loader = document.getElementById("loader");
+    const radar = document.getElementById("radarSpinner");
+    const connecting = document.getElementById("connectingText");
+    const earthBtn = document.getElementById("earthEnterButton");
+    const enterHint = document.getElementById("enterHint");
+
+    // Step 1: Show spinner and "connecting..." for 2s
+    setTimeout(() => {
+      if (radar) radar.style.display = "none";
+      if (connecting) connecting.style.display = "none";
+      if (earthBtn) {
+        earthBtn.style.display = "grid";
+        setTimeout(() => earthBtn.classList.add("shown"), 50); // fade in nicely
+      }
+      if (enterHint) enterHint.style.display = "block";
+      loader.style.cursor = "pointer";
+      earthBtn.focus();
+    }, 2000);
+  }
+
   // Remove loader with graceful fade
   function removeLoader() {
     const loader = document.getElementById("loader");
@@ -65,24 +87,19 @@
     setTimeout(() => loader.classList.add("removed"), 350);
   }
 
-  // Enable loader and wait for click to enter
-  function setupEnterButton() {
-    const loader = document.getElementById("loader");
-    const enterBtn = document.getElementById("enterButton");
-    if (!loader || !enterBtn) return;
-
-    loader.style.cursor = "pointer";
-    enterBtn.focus();
+  // Enable earth logo entry button
+  function setupEarthEntryButton() {
+    const earthBtn = document.getElementById("earthEnterButton");
+    if (!earthBtn) return;
 
     function enterSite(e) {
       if (e.type === "click" || (e.type === "keydown" && (e.key === "Enter" || e.key === " "))) {
-        loader.setAttribute("aria-hidden", "true");
         removeLoader();
         startEngine();
       }
     }
-    enterBtn.addEventListener("click", enterSite);
-    enterBtn.addEventListener("keydown", enterSite);
+    earthBtn.addEventListener("click", enterSite);
+    earthBtn.addEventListener("keydown", enterSite);
   }
 
   // Start engine after loader dismissed
@@ -112,7 +129,6 @@
 
   // Boot orchestrator
   window.addEventListener("DOMContentLoaded", () => {
-    // Dynamically load modules (async)
     ["engine.base.js", "engine.visuals.js"].forEach(file => {
       const s = document.createElement("script");
       s.src = `assets/js/${file}`;
@@ -120,18 +136,16 @@
       document.body.appendChild(s);
     });
 
-    // Optional telemetry module
     const intel = document.createElement("script");
     intel.src = "assets/js/engine.intel.js";
     intel.defer = true;
     document.body.appendChild(intel);
 
-    // Wait for modules, then setup enter button
     engine.when(["base", "visuals"], () => {
-      setupEnterButton();
+      setupEarthEntryButton();
+      startLoaderSequence();
     });
 
-    // Safety fallback: if visuals slow to load, still fade loader after 10s
-    setTimeout(() => { removeLoader(); }, 10000);
+    setTimeout(() => { removeLoader(); }, 10000); // fallback
   });
 })();
