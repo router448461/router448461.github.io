@@ -1,140 +1,21 @@
 :root {
   color-scheme: dark;
-  --loader-bg: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
-  --loader-fg: #c9d1d9;
-  --spinner-color: #5fb3ff;
-  --enter-bg: rgba(34,51,85,0.18);
-  --enter-hover: #5fb3ff;
-  --earth-size: 110px;
+  --center-symbol-size: 130px;
+  --center-symbol-color: #5fb3ff;
+  --center-symbol-bg: rgba(50,80,140,0.09);
+  --center-symbol-glow: 0 0 64px 16px #5fb3ff66;
 }
-
-* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
   height: 100%;
   background: #0b0f16;
-  color: var(--loader-fg);
+  color: #c9d1d9;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 main { min-height: 100vh; display: block; }
 
-#loader {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--loader-bg);
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity 300ms ease;
-  cursor: wait;
-}
-
-#loader.fade-out { opacity: 0; pointer-events: none; }
-#loader.removed { display: none; }
-
-.loader-wrap {
-  display: grid;
-  gap: 24px;
-  align-items: center;
-  justify-items: center;
-  position: relative;
-}
-
-/* Radar Spinner */
-.radar-spinner {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(95,179,255,0.05);
-  position: relative;
-  box-shadow: 0 0 24px 8px #5fb3ff33;
-  overflow: hidden;
-}
-.radar-spinner:before {
-  content: '';
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 100%; height: 100%;
-  background: conic-gradient(from 0deg, #5fb3ff 0deg 60deg, transparent 60deg 360deg);
-  border-radius: 50%;
-  transform: translate(-50%,-50%) rotate(0deg);
-  animation: radar-spin 1.2s linear infinite;
-}
-@keyframes radar-spin {
-  100% { transform: translate(-50%,-50%) rotate(360deg); }
-}
-
-/* Connecting text and dots */
-.connecting-text {
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  opacity: 0.85;
-  user-select: none;
-  text-align: center;
-}
-.dots:after {
-  content: '';
-  display: inline-block;
-  width: 1.8em;
-  animation: dots-anim 1.2s steps(4, end) infinite;
-}
-@keyframes dots-anim {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
-  100% { content: ''; }
-}
-
-/* Earth logo button */
-.earth-btn {
-  background: var(--enter-bg);
-  border: none;
-  border-radius: 50%;
-  padding: 0;
-  width: var(--earth-size);
-  height: var(--earth-size);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 4px 20px rgba(95,179,255,0.18);
-  transition: box-shadow 180ms, background 180ms, opacity 0.3s;
-  opacity: 0;
-  outline: none;
-  z-index: 2;
-}
-.earth-btn.shown {
-  opacity: 1;
-}
-.earth-btn:focus, .earth-btn:hover {
-  background: var(--enter-hover, #5fb3ff);
-  color: #fff;
-  box-shadow: 0 8px 28px rgba(95,179,255,0.23);
-}
-
-.earth-logo {
-  pointer-events: none;
-  display: block;
-  width: var(--earth-size);
-  height: var(--earth-size);
-}
-
-/* Entry hint text */
-.enter-hint {
-  font-size: 1rem;
-  color: #5fb3ff;
-  opacity: 0.85;
-  letter-spacing: 0.07em;
-  margin-top: 8px;
-  user-select: none;
-  text-align: center;
-  transition: opacity 0.3s;
-}
-
-/* Canvas styles */
 #constellationCanvas {
   position: fixed;
   inset: 0;
@@ -142,4 +23,45 @@ main { min-height: 100vh; display: block; }
   height: 100vh;
   display: block;
   background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
+  z-index: 2;
+}
+
+.center-enter {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1; /* Behind the canvas visually, but above background */
+  transform: translate(-50%, -50%);
+  width: var(--center-symbol-size);
+  height: var(--center-symbol-size);
+  background: var(--center-symbol-bg);
+  border: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--center-symbol-glow);
+  opacity: 0.45;
+  transition: opacity 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+  outline: none;
+  pointer-events: auto;
+}
+.center-enter:focus, .center-enter:hover {
+  opacity: 0.95;
+  box-shadow: 0 0 96px 32px #5fb3ff99;
+  background: rgba(95,179,255,0.16);
+}
+.center-symbol {
+  font-size: 5.5rem;
+  color: var(--center-symbol-color);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 0 32px #5fb3ff55, 0 0 2px #fff;
+}
+
+/* Hide loader, no longer needed */
+#loader, .loader-wrap,
+.radar-spinner, .connecting-text, .earth-btn, .enter-hint {
+  display: none !important;
 }
