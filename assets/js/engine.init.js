@@ -1,10 +1,9 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.0.0",
+    version: "1.1.0",
     t0: performance.now(),
     config: {
-      // Tune to taste
       baseParticleDensity: 0.00008,  // particles per px^2
       maxParticles: 220,
       linkDistance: 110,
@@ -62,15 +61,57 @@
     const loader = document.getElementById("loader");
     if (!loader) return;
     loader.classList.add("fade-out");
-    loader.addEventListener("transitionend", () => {
-      loader.classList.add("removed");
-    }, { once: true });
+    loader.setAttribute("aria-hidden", "true");
+    setTimeout(() => loader.classList.add("removed"), 350);
+  }
+
+  // Enable loader and wait for click to enter
+  function setupEnterButton() {
+    const loader = document.getElementById("loader");
+    const enterBtn = document.getElementById("enterButton");
+    if (!loader || !enterBtn) return;
+
+    loader.style.cursor = "pointer";
+    enterBtn.focus();
+
+    function enterSite(e) {
+      if (e.type === "click" || (e.type === "keydown" && (e.key === "Enter" || e.key === " "))) {
+        loader.setAttribute("aria-hidden", "true");
+        removeLoader();
+        startEngine();
+      }
+    }
+    enterBtn.addEventListener("click", enterSite);
+    enterBtn.addEventListener("keydown", enterSite);
+  }
+
+  // Start engine after loader dismissed
+  function startEngine() {
+    if (engine.state.started) return;
+    engine.state.started = true;
+
+    engine.modules.base.init();
+    engine.modules.visuals.init();
+
+    // Main loop
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min(32, now - last);
+      last = now;
+      engine.modules.base.tick(dt);
+      engine.modules.visuals.tick(dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    loadMainCss();
+    const t1 = performance.now();
+    engine.log(`Started in ${Math.round(t1 - engine.t0)}ms`);
+    if (engine.modules.intel?.start) engine.modules.intel.start();
   }
 
   // Boot orchestrator
   window.addEventListener("DOMContentLoaded", () => {
-    loadMainCss();
-
     // Dynamically load modules (async)
     ["engine.base.js", "engine.visuals.js"].forEach(file => {
       const s = document.createElement("script");
@@ -85,33 +126,12 @@
     intel.defer = true;
     document.body.appendChild(intel);
 
-    // Start when base + visuals are ready
+    // Wait for modules, then setup enter button
     engine.when(["base", "visuals"], () => {
-      if (engine.state.started) return;
-      engine.state.started = true;
-
-      engine.modules.base.init();
-      engine.modules.visuals.init();
-
-      // Main loop
-      let last = performance.now();
-      function frame(now) {
-        const dt = Math.min(32, now - last); // cap delta
-        last = now;
-        engine.modules.base.tick(dt);
-        engine.modules.visuals.tick(dt);
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-
-      removeLoader();
-
-      const t1 = performance.now();
-      engine.log(`Started in ${Math.round(t1 - engine.t0)}ms`);
-      if (engine.modules.intel?.start) engine.modules.intel.start();
+      setupEnterButton();
     });
 
-    // Safety fallback: if visuals slow to load, still fade loader
-    setTimeout(() => { removeLoader(); }, 3500);
+    // Safety fallback: if visuals slow to load, still fade loader after 10s
+    setTimeout(() => { removeLoader(); }, 10000);
   });
 })();
