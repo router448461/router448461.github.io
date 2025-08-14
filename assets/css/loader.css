@@ -1,5 +1,11 @@
 :root {
   color-scheme: dark;
+  --loader-bg: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
+  --loader-fg: #c9d1d9;
+  --spinner-color: #5fb3ff;
+  --enter-bg: rgba(34,51,85,0.15);
+  --enter-hover: #5fb3ff;
+  --enter-size: 56px;
 }
 
 * { box-sizing: border-box; }
@@ -8,26 +14,30 @@ html, body {
   margin: 0;
   height: 100%;
   background: #0b0f16;
-  color: #c9d1d9;
+  color: var(--loader-fg);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
+
+main { min-height: 100vh; display: block; }
 
 #loader {
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
+  background: var(--loader-bg);
   z-index: 9999;
   opacity: 1;
   transition: opacity 300ms ease;
+  cursor: wait;
 }
 
 #loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.removed { display: none; }
 
 .loader-wrap {
   display: grid;
-  gap: 12px;
+  gap: 18px;
   align-items: center;
   justify-items: center;
 }
@@ -36,22 +46,54 @@ html, body {
   width: 36px; height: 36px;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: #5fb3ff;
+  border-top-color: var(--spinner-color);
   animation: spin 800ms linear infinite;
+  margin-bottom: 8px;
+  display: none; /* Hide spinner, only show ⏚ */
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .blink {
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.2em;
   opacity: 0.8;
   animation: blink 1.2s steps(2, start) infinite;
+  text-align: center;
+  user-select: none;
 }
 
 @keyframes blink { 50% { opacity: 0.2; } }
 
-/* Canvas base (hidden behind loader until start) */
+.enter-btn {
+  background: var(--enter-bg);
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  width: var(--enter-size);
+  height: var(--enter-size);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 20px rgba(95,179,255,0.15);
+  transition: box-shadow 180ms, background 180ms;
+  font-size: 2.3rem;
+  outline: none;
+}
+
+.enter-btn:focus, .enter-btn:hover {
+  background: var(--enter-hover, #5fb3ff);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(95,179,255,0.23);
+}
+
+.enter-icon {
+  pointer-events: none;
+  font-size: 2.3em;
+  color: inherit;
+  line-height: 1;
+}
+
 #constellationCanvas {
   position: fixed;
   inset: 0;
