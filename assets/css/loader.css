@@ -1,19 +1,62 @@
-:root { color-scheme: dark; }
+:root {
+  color-scheme: dark;
+}
+
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: #0b0f16; color: #c9d1d9; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
 
-#loader { position: fixed; inset: 0; display: grid; place-items: center; background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%); z-index: 9999; opacity: 1; transition: opacity 300ms ease; }
-#loader.fade-out { opacity: 0; pointer-events: none; transition: opacity 240ms ease; }
-#loader.removed { display: none; }
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #0b0f16;
+  color: #c9d1d9;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
 
-.loader-wrap { display: grid; gap: 12px; align-items: center; justify-items: center; }
-.spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.15); border-top-color: #84c5ff; animation: spin 800ms linear infinite; }
+#loader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+
+#loader.fade-out { opacity: 0; pointer-events: none; }
+
+.loader-wrap {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+  justify-items: center;
+}
+
+.spinner {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.15);
+  border-top-color: #5fb3ff;
+  animation: spin 800ms linear infinite;
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.blink { font-size: 12px; letter-spacing: 0.2em; opacity: 0.8; animation: blink 1.2s steps(2, start) infinite; }
+.blink {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+  animation: blink 1.2s steps(2, start) infinite;
+}
+
 @keyframes blink { 50% { opacity: 0.2; } }
 
-#constellationCanvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%); filter: drop-shadow(0 0 1px rgba(95,179,255,0.18)); box-shadow: inset 0 0 200px rgba(0,0,0,0.5); }
-:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.08); }
-:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.06) saturate(0.98); }
-:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.12) brightness(0.92); }
+/* Canvas base (hidden behind loader until start) */
+#constellationCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
+}
