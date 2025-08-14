@@ -25,7 +25,9 @@
       }, { passive: true });
       window.addEventListener("pointerdown", () => { engine.state.mouse.down = true; }, { passive: true });
       window.addEventListener("pointerup", () => { engine.state.mouse.down = false; }, { passive: true });
-      document.addEventListener("visibilitychange", () => {});
+      document.addEventListener("visibilitychange", () => {
+        // Optionally handle pause/resume
+      });
     },
 
     resize() {
@@ -37,6 +39,7 @@
       this.canvas.style.width = this.width + "px";
       this.canvas.style.height = this.height + "px";
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Notify visuals if present
       if (engine.modules.visuals?.onResize) engine.modules.visuals.onResize(this.width, this.height, dpr);
       this.clear(true);
     },
@@ -54,6 +57,7 @@
     },
 
     tick() {
+      // Background trail pass
       this.clear(false);
     }
   });
