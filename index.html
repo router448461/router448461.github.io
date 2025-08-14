@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Constellation Start Page</title>
-  <meta name="description" content="An immersive constellation start page by router448461. Click ⏚ to enter." />
+  <meta name="description" content="An interactive constellation start page by router448461. Modern visuals, immersive animation." />
   <meta property="og:title" content="Constellation Start Page" />
-  <meta property="og:description" content="An immersive constellation start page by router448461. Click ⏚ to enter." />
+  <meta property="og:description" content="An interactive constellation start page by router448461. Modern visuals, immersive animation." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://router448461.com/" />
   <meta property="og:image" content="favicon.ico" />
@@ -17,16 +17,14 @@
 </head>
 <body>
   <main>
-    <!-- ⏚ Entry symbol, visually behind the constellation canvas, but clickable and accessible -->
-    <button id="centerEnter" class="center-enter" aria-label="Enter site" tabindex="0">
-      <span class="center-symbol" aria-hidden="true">⏚</span>
-    </button>
+    <!-- Loader overlay: just a black fade, no text or symbols -->
+    <div id="loader" aria-live="polite" role="dialog" aria-modal="true" tabindex="-1"></div>
     <canvas id="constellationCanvas" aria-label="constellation interactive animation" tabindex="0"></canvas>
   </main>
   <noscript>
     <style>
+      #loader { display: none !important; }
       #constellationCanvas { display: block !important; }
-      .center-enter { display: none !important; }
     </style>
     <div style="color: #c9d1d9; background: #0b0f16; text-align: center; padding: 2em;">
       JavaScript is required for the interactive start page.
