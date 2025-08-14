@@ -5,6 +5,8 @@
 
   const mod = (engine.modules.intel = {
     start() {
+      engine.log("Intel online");
+      // FPS sampler
       function pulse(now) {
         const dt = now - last;
         last = now;
@@ -16,8 +18,18 @@
         requestAnimationFrame(pulse);
       }
       requestAnimationFrame(pulse);
+
+      // Basic interaction trace
+      document.addEventListener("click", (e) => {
+        engine.log(`click @ ${e.clientX},${e.clientY} fps=${engine.state.fps}`);
+      });
+
+      // Startup timing
       const t1 = performance.now();
       engine.log(`boot window: ${Math.round(t1 - engine.t0)}ms`);
     }
   });
+
+  // Optional: mark ready if you want to gate on intel too
+  // engine.markReady("intel");
 })();
