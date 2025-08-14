@@ -11,9 +11,10 @@
       this.vx = rand(cfg.speed[0], cfg.speed[1]) * (Math.random() < 0.5 ? -1 : 1);
       this.vy = rand(cfg.speed[0], cfg.speed[1]) * (Math.random() < 0.5 ? -1 : 1);
       this.size = rand(cfg.particleSize[0], cfg.particleSize[1]);
+      this.baseColor = cfg.color;
     }
     step(dt, bounds, mouse, cfg) {
-      const t = dt / 16.6667; // normalize to ~60fps units
+      const t = dt / 16.6667;
 
       // mild wander
       this.vx += rand(-0.02, 0.02);
@@ -50,7 +51,10 @@
       ctx.beginPath();
       ctx.fillStyle = color;
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
       ctx.fill();
+      ctx.shadowBlur = 0;
     }
   }
 
@@ -66,10 +70,8 @@
     onResize(w, h) {
       this.bounds.w = w;
       this.bounds.h = h;
-      // Adjust population target based on area
       const area = w * h;
       const target = Math.min(engine.config.maxParticles, Math.ceil(area * engine.config.baseParticleDensity));
-      // Reconcile particle counts (lazy; we can respawn on next spawn())
       this.targetCount = target;
     },
 
@@ -84,7 +86,6 @@
     },
 
     tick(dt) {
-      // Ensure population
       if ((this.particles.length | 0) !== (this.targetCount | 0)) this.spawn();
 
       const ctx = engine.state.ctx;
@@ -103,7 +104,7 @@
         this.particles[i].draw(ctx, color);
       }
 
-      // Draw: links (naive O(n^2) for simplicity; n is capped)
+      // Draw: links (O(n^2); capped for performance)
       ctx.lineWidth = 1;
       for (let i = 0; i < this.particles.length; i++) {
         const a = this.particles[i];
