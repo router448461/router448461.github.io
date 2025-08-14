@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Constellation Start Page</title>
-  <meta name="description" content="An interactive constellation start page by router448461. Click ⏚ to enter." />
+  <meta name="description" content="An interactive constellation start page by router448461. Click Earth to enter." />
   <meta property="og:title" content="Constellation Start Page" />
-  <meta property="og:description" content="An interactive constellation start page by router448461. Click ⏚ to enter." />
+  <meta property="og:description" content="An interactive constellation start page by router448461. Click Earth to enter." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://router448461.com/" />
   <meta property="og:image" content="favicon.ico" />
@@ -19,10 +19,23 @@
   <main>
     <div id="loader" aria-live="polite" role="dialog" aria-modal="true" tabindex="-1">
       <div class="loader-wrap">
-        <button id="enterButton" class="enter-btn" aria-label="Enter Constellation" tabindex="0">
-          <span class="enter-icon" aria-hidden="true">⏚</span>
+        <!-- Radar Spinner Loader -->
+        <div id="radarSpinner" class="radar-spinner" aria-hidden="true"></div>
+        <div id="connectingText" class="connecting-text">Connecting<span class="dots"></span></div>
+        <!-- Earth logo entry button (hidden initially, fades in after loading) -->
+        <button id="earthEnterButton" class="earth-btn" aria-label="Enter Start Page" tabindex="0" style="display:none;">
+          <span class="earth-logo" aria-hidden="true">
+            <!-- SVG Earth Logo Placeholder -->
+            <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="55" cy="55" r="50" fill="#184b6b" stroke="#5fb3ff" stroke-width="4"/>
+              <ellipse cx="55" cy="55" rx="48" ry="48" fill="#2471a3" opacity="0.7"/>
+              <!-- Simple continents for placeholder effect -->
+              <path d="M60,60 Q65,65 70,60 Q75,55 70,50 Q65,45 60,50 Q55,55 60,60Z" fill="#e0e7ef" opacity="0.6"/>
+              <path d="M40,70 Q43,67 45,70 Q47,73 43,75 Q39,77 40,70Z" fill="#e0e7ef" opacity="0.6"/>
+            </svg>
+          </span>
         </button>
-        <div class="blink">Click ⏚ to enter</div>
+        <div id="enterHint" class="enter-hint" style="display:none;">Click Earth to enter</div>
       </div>
     </div>
     <canvas id="constellationCanvas" aria-label="constellation interactive animation" tabindex="0"></canvas>
