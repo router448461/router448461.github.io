@@ -35,10 +35,3 @@ main { min-height: 100vh; display: block; }
   background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
   z-index: 2;
 }
-
-/* Remove all entry/connecting/radar/earth symbol styles from previous iterations */
-.center-enter, .center-symbol,
-.loader-wrap,
-.radar-spinner, .connecting-text, .earth-btn, .enter-hint {
-  display: none !important;
-}
