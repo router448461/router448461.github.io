@@ -1,5 +1,6 @@
 (() => {
   const engine = window.engine;
+  let resizeTimeout = null;
   const mod = (engine.modules.base = {
     canvas: null,
     ctx: null,
@@ -18,15 +19,30 @@
     },
 
     bindEvents() {
-      window.addEventListener("resize", () => this.resize(), { passive: true });
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => this.resize(), 120);
+      }, { passive: true });
+
       window.addEventListener("pointermove", (e) => {
         engine.state.mouse.x = e.clientX;
         engine.state.mouse.y = e.clientY;
       }, { passive: true });
+
       window.addEventListener("pointerdown", () => { engine.state.mouse.down = true; }, { passive: true });
       window.addEventListener("pointerup", () => { engine.state.mouse.down = false; }, { passive: true });
+
       document.addEventListener("visibilitychange", () => {
-        // Optionally handle pause/resume
+        if (document.hidden) {
+          engine.log("Tab hidden: animation paused");
+        } else {
+          engine.log("Tab visible: animation resumed");
+        }
+      });
+
+      this.canvas.addEventListener("mouseleave", () => {
+        engine.state.mouse.x = null;
+        engine.state.mouse.y = null;
       });
     },
 
@@ -39,7 +55,6 @@
       this.canvas.style.width = this.width + "px";
       this.canvas.style.height = this.height + "px";
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Notify visuals if present
       if (engine.modules.visuals?.onResize) engine.modules.visuals.onResize(this.width, this.height, dpr);
       this.clear(true);
     },
@@ -57,7 +72,6 @@
     },
 
     tick() {
-      // Background trail pass
       this.clear(false);
     }
   });
