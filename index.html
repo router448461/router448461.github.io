@@ -3,26 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Constellation</title>
-
-  <!-- Minimal, instant boot visuals -->
+  <title>Constellation Start Page</title>
+  <meta name="description" content="An interactive constellation start page by router448461. Click ⏚ to enter." />
+  <meta property="og:title" content="Constellation Start Page" />
+  <meta property="og:description" content="An interactive constellation start page by router448461. Click ⏚ to enter." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://router448461.com/" />
+  <meta property="og:image" content="favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="stylesheet" href="assets/css/loader.css" />
-
-  <!-- Option A (faster boot): main.css is preloaded and applied by engine.init.js -->
-  <!-- Option B (simpler): uncomment the next line to load main.css immediately -->
-  <!-- <link rel="stylesheet" href="assets/css/main.css" /> -->
-
-  <!-- Orchestrator: sets namespace, loads modules, starts app -->
+  <!-- main.css is preloaded and applied by engine.init.js -->
   <script src="assets/js/engine.init.js" defer></script>
 </head>
 <body>
-  <div id="loader" aria-live="polite">
-    <div class="loader-wrap">
-      <div class="spinner" aria-hidden="true"></div>
-      <div class="blink">connecting...</div>
+  <main>
+    <div id="loader" aria-live="polite" role="dialog" aria-modal="true" tabindex="-1">
+      <div class="loader-wrap">
+        <button id="enterButton" class="enter-btn" aria-label="Enter Constellation" tabindex="0">
+          <span class="enter-icon" aria-hidden="true">⏚</span>
+        </button>
+        <div class="blink">Click ⏚ to enter</div>
+      </div>
     </div>
-  </div>
-
-  <canvas id="constellationCanvas"></canvas>
+    <canvas id="constellationCanvas" aria-label="constellation interactive animation" tabindex="0"></canvas>
+  </main>
+  <noscript>
+    <style>
+      #loader { display: none !important; }
+      #constellationCanvas { display: block !important; }
+    </style>
+    <div style="color: #c9d1d9; background: #0b0f16; text-align: center; padding: 2em;">
+      JavaScript is required for the interactive start page.
+    </div>
+  </noscript>
 </body>
 </html>
