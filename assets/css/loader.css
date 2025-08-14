@@ -1,9 +1,5 @@
 :root {
   color-scheme: dark;
-  --center-symbol-size: 130px;
-  --center-symbol-color: #5fb3ff;
-  --center-symbol-bg: rgba(50,80,140,0.09);
-  --center-symbol-glow: 0 0 64px 16px #5fb3ff66;
 }
 
 html, body {
@@ -16,6 +12,20 @@ html, body {
 
 main { min-height: 100vh; display: block; }
 
+#loader {
+  position: fixed;
+  inset: 0;
+  display: block;
+  background: #0b0f16;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 350ms ease;
+  cursor: wait;
+}
+
+#loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.removed { display: none; }
+
 #constellationCanvas {
   position: fixed;
   inset: 0;
@@ -26,42 +36,9 @@ main { min-height: 100vh; display: block; }
   z-index: 2;
 }
 
-.center-enter {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  z-index: 1; /* Behind the canvas visually, but above background */
-  transform: translate(-50%, -50%);
-  width: var(--center-symbol-size);
-  height: var(--center-symbol-size);
-  background: var(--center-symbol-bg);
-  border: none;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  box-shadow: var(--center-symbol-glow);
-  opacity: 0.45;
-  transition: opacity 0.25s, box-shadow 0.25s;
-  cursor: pointer;
-  outline: none;
-  pointer-events: auto;
-}
-.center-enter:focus, .center-enter:hover {
-  opacity: 0.95;
-  box-shadow: 0 0 96px 32px #5fb3ff99;
-  background: rgba(95,179,255,0.16);
-}
-.center-symbol {
-  font-size: 5.5rem;
-  color: var(--center-symbol-color);
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  text-shadow: 0 0 32px #5fb3ff55, 0 0 2px #fff;
-}
-
-/* Hide loader, no longer needed */
-#loader, .loader-wrap,
+/* Remove all entry/connecting/radar/earth symbol styles from previous iterations */
+.center-enter, .center-symbol,
+.loader-wrap,
 .radar-spinner, .connecting-text, .earth-btn, .enter-hint {
   display: none !important;
 }
