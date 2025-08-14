@@ -6,9 +6,8 @@
   const mod = (engine.modules.intel = {
     start() {
       engine.log("Intel online");
-
-      // FPS sampler (moving average over 60 frames)
-      const pulse = (now) => {
+      // FPS sampler
+      function pulse(now) {
         const dt = now - last;
         last = now;
         samples.push(dt);
@@ -17,7 +16,7 @@
         const fps = Math.round(1000 / (avg || 16.7));
         engine.state.fps = fps;
         requestAnimationFrame(pulse);
-      };
+      }
       requestAnimationFrame(pulse);
 
       // Basic interaction trace
@@ -28,13 +27,9 @@
       // Startup timing
       const t1 = performance.now();
       engine.log(`boot window: ${Math.round(t1 - engine.t0)}ms`);
-    },
-
-    logEarthClick() {
-      engine.log(`earth_click fps=${engine.state.fps}`);
     }
   });
 
-  mod.start();
-  engine.markReady("intel");
+  // Optional: mark ready if you want to gate on intel too
+  // engine.markReady("intel");
 })();
