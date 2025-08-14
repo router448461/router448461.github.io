@@ -21,6 +21,17 @@ export function startConstellation2D() {
     ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
   });
 
+  // Mouse interaction
+  let mouse = { x: w / 2, y: h / 2, active: false };
+  canvas.addEventListener("mousemove", e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.active = true;
+  });
+  canvas.addEventListener("mouseleave", () => {
+    mouse.active = false;
+  });
+
   // Parameters for advanced look
   const PARTICLE_COUNT = 96;
   const PARTICLE_SIZE = 2.1;
@@ -33,6 +44,8 @@ export function startConstellation2D() {
   const TRACER_SIZE = 1.15;
   const TRACER_OPACITY = 0.28;
   const TRACER_COUNT = 22;
+  const MOUSE_RADIUS = 85; // how far mouse repels particles
+  const MOUSE_FORCE = 0.23; // strength of mouse repulsion
 
   // Particle physics
   const particles = [];
@@ -50,10 +63,12 @@ export function startConstellation2D() {
   function makeTracer() {
     // Pick two random particles close enough
     let a, b;
+    let tries = 0;
     do {
       a = Math.floor(Math.random() * PARTICLE_COUNT);
       b = Math.floor(Math.random() * PARTICLE_COUNT);
-    } while (a === b || distance(particles[a], particles[b]) > LINK_DISTANCE);
+      tries++;
+    } while ((a === b || distance(particles[a], particles[b]) > LINK_DISTANCE) && tries < 100);
     return {
       a, b,
       t: Math.random(),
@@ -88,6 +103,19 @@ export function startConstellation2D() {
     // Move particles
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       let p = particles[i];
+
+      // Mouse repulsion
+      if (mouse.active) {
+        let dx = p.x - mouse.x;
+        let dy = p.y - mouse.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_RADIUS && dist > 1) {
+          let force = MOUSE_FORCE * (1 - dist / MOUSE_RADIUS);
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+        }
+      }
+
       p.x += p.vx;
       p.y += p.vy;
 
@@ -112,6 +140,15 @@ export function startConstellation2D() {
         let a = particles[i], b = particles[j];
         let d = distance(a, b);
         if (d < LINK_DISTANCE) {
+          // If mouse is near the link, brighten it
+          let mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+          if (mouse.active && Math.abs(mouse.x - mx) < MOUSE_RADIUS / 2 && Math.abs(mouse.y - my) < MOUSE_RADIUS / 2) {
+            ctx.strokeStyle = "#fff";
+            ctx.globalAlpha = 0.29;
+          } else {
+            ctx.strokeStyle = LINK_COLOR;
+            ctx.globalAlpha = LINK_OPACITY;
+          }
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -127,8 +164,12 @@ export function startConstellation2D() {
       ctx.beginPath();
       ctx.arc(p.x, p.y, PARTICLE_SIZE, 0, Math.PI * 2);
       ctx.fillStyle = PARTICLE_COLOR;
-      ctx.shadowColor = "#fff";
-      ctx.shadowBlur = 6;
+      ctx.shadowColor = mouse.active &&
+        Math.sqrt((p.x - mouse.x) ** 2 + (p.y - mouse.y) ** 2) < MOUSE_RADIUS
+        ? "#fff" : "#8bc2ff";
+      ctx.shadowBlur = mouse.active &&
+        Math.sqrt((p.x - mouse.x) ** 2 + (p.y - mouse.y) ** 2) < MOUSE_RADIUS
+        ? 18 : 6;
       ctx.globalAlpha = 1;
       ctx.fill();
       ctx.shadowBlur = 0;
@@ -146,12 +187,14 @@ export function startConstellation2D() {
       let x = a.x + (b.x - a.x) * tr.t;
       let y = a.y + (b.y - a.y) * tr.t;
 
+      // Brighten tracer if mouse is near
+      let distMouse = Math.sqrt((x - mouse.x) ** 2 + (y - mouse.y) ** 2);
       ctx.beginPath();
       ctx.arc(x, y, TRACER_SIZE, 0, Math.PI * 2);
-      ctx.fillStyle = TRACER_COLOR;
-      ctx.globalAlpha = TRACER_OPACITY;
+      ctx.fillStyle = distMouse < MOUSE_RADIUS / 1.5 ? "#fff" : TRACER_COLOR;
+      ctx.globalAlpha = distMouse < MOUSE_RADIUS / 1.5 ? 0.55 : TRACER_OPACITY;
       ctx.shadowColor = "#fff";
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = distMouse < MOUSE_RADIUS / 1.5 ? 15 : 8;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
