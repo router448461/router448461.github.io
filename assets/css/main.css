@@ -17,7 +17,3 @@
 :root[data-mode="ambient"] #constellationCanvas { filter: var(--ambient-filter); }
 :root[data-mode="ops"] #constellationCanvas { filter: var(--ops-filter); }
 :root[data-mode="stealth"] #constellationCanvas { filter: var(--stealth-filter); }
-
-/* Fade the loader fully out of flow after transition */
-#loader.fade-out { transition: opacity 240ms ease; }
-#loader.removed { display: none; }
