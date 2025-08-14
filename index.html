@@ -4,22 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Constellation Start Page</title>
-  <meta name="description" content="An interactive constellation start page by router448461. Modern visuals, immersive animation." />
+  <meta name="description" content="A true 3D constellation start page by router448461." />
   <meta property="og:title" content="Constellation Start Page" />
-  <meta property="og:description" content="An interactive constellation start page by router448461. Modern visuals, immersive animation." />
+  <meta property="og:description" content="A true 3D constellation start page by router448461." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://router448461.com/" />
   <meta property="og:image" content="favicon.ico" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="stylesheet" href="assets/css/loader.css" />
-  <!-- main.css is preloaded and applied by engine.init.js -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <!-- Three.js CDN -->
+  <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
   <script src="assets/js/engine.init.js" defer></script>
 </head>
 <body>
   <main>
-    <!-- Loader overlay: just a black fade, no text or symbols -->
     <div id="loader" aria-live="polite" role="dialog" aria-modal="true" tabindex="-1"></div>
-    <canvas id="constellationCanvas" aria-label="constellation interactive animation" tabindex="0"></canvas>
+    <!-- Three.js renders into this canvas -->
+    <canvas id="constellationCanvas" aria-label="3d constellation interactive animation" tabindex="0"></canvas>
   </main>
   <noscript>
     <style>
