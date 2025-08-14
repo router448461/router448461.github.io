@@ -32,6 +32,6 @@ main { min-height: 100vh; display: block; }
   width: 100vw;
   height: 100vh;
   display: block;
-  background: radial-gradient(ellipse at 50% 54%, #181d29 0%, #10141c 100%);
+  background: transparent;
   z-index: 2;
 }
