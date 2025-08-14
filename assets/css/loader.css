@@ -3,9 +3,9 @@
   --loader-bg: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
   --loader-fg: #c9d1d9;
   --spinner-color: #5fb3ff;
-  --enter-bg: rgba(34,51,85,0.15);
+  --enter-bg: rgba(34,51,85,0.18);
   --enter-hover: #5fb3ff;
-  --enter-size: 56px;
+  --earth-size: 110px;
 }
 
 * { box-sizing: border-box; }
@@ -37,63 +37,104 @@ main { min-height: 100vh; display: block; }
 
 .loader-wrap {
   display: grid;
-  gap: 18px;
+  gap: 24px;
   align-items: center;
   justify-items: center;
+  position: relative;
 }
 
-.spinner {
-  width: 36px; height: 36px;
+/* Radar Spinner */
+.radar-spinner {
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.15);
-  border-top-color: var(--spinner-color);
-  animation: spin 800ms linear infinite;
-  margin-bottom: 8px;
-  display: none; /* Hide spinner, only show ⏚ */
+  background: rgba(95,179,255,0.05);
+  position: relative;
+  box-shadow: 0 0 24px 8px #5fb3ff33;
+  overflow: hidden;
+}
+.radar-spinner:before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 100%; height: 100%;
+  background: conic-gradient(from 0deg, #5fb3ff 0deg 60deg, transparent 60deg 360deg);
+  border-radius: 50%;
+  transform: translate(-50%,-50%) rotate(0deg);
+  animation: radar-spin 1.2s linear infinite;
+}
+@keyframes radar-spin {
+  100% { transform: translate(-50%,-50%) rotate(360deg); }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.blink {
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  opacity: 0.8;
-  animation: blink 1.2s steps(2, start) infinite;
-  text-align: center;
+/* Connecting text and dots */
+.connecting-text {
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
   user-select: none;
+  text-align: center;
+}
+.dots:after {
+  content: '';
+  display: inline-block;
+  width: 1.8em;
+  animation: dots-anim 1.2s steps(4, end) infinite;
+}
+@keyframes dots-anim {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
 }
 
-@keyframes blink { 50% { opacity: 0.2; } }
-
-.enter-btn {
+/* Earth logo button */
+.earth-btn {
   background: var(--enter-bg);
   border: none;
   border-radius: 50%;
   padding: 0;
-  width: var(--enter-size);
-  height: var(--enter-size);
+  width: var(--earth-size);
+  height: var(--earth-size);
   cursor: pointer;
   display: grid;
   place-items: center;
-  box-shadow: 0 4px 20px rgba(95,179,255,0.15);
-  transition: box-shadow 180ms, background 180ms;
-  font-size: 2.3rem;
+  box-shadow: 0 4px 20px rgba(95,179,255,0.18);
+  transition: box-shadow 180ms, background 180ms, opacity 0.3s;
+  opacity: 0;
   outline: none;
+  z-index: 2;
 }
-
-.enter-btn:focus, .enter-btn:hover {
+.earth-btn.shown {
+  opacity: 1;
+}
+.earth-btn:focus, .earth-btn:hover {
   background: var(--enter-hover, #5fb3ff);
   color: #fff;
   box-shadow: 0 8px 28px rgba(95,179,255,0.23);
 }
 
-.enter-icon {
+.earth-logo {
   pointer-events: none;
-  font-size: 2.3em;
-  color: inherit;
-  line-height: 1;
+  display: block;
+  width: var(--earth-size);
+  height: var(--earth-size);
 }
 
+/* Entry hint text */
+.enter-hint {
+  font-size: 1rem;
+  color: #5fb3ff;
+  opacity: 0.85;
+  letter-spacing: 0.07em;
+  margin-top: 8px;
+  user-select: none;
+  text-align: center;
+  transition: opacity 0.3s;
+}
+
+/* Canvas styles */
 #constellationCanvas {
   position: fixed;
   inset: 0;
