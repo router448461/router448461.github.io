@@ -4,6 +4,8 @@
   filter: drop-shadow(0 0 1px rgba(95,179,255,0.2));
   /* Slight vignette */
   box-shadow: inset 0 0 200px rgba(0,0,0,0.5);
+  /* Subtle 3D parallax effect: animated by visuals JS via color mode */
+  transition: filter 0.5s cubic-bezier(.77,.2,.31,1);
 }
 
 /* Optional mode tokens */
@@ -14,3 +16,8 @@
 /* Fade the loader fully out of flow after transition */
 #loader.fade-out { transition: opacity 240ms ease; }
 #loader.removed { display: none; }
+
+/* Optional: bloom effect on signals (can be enhanced by visuals JS) */
+#constellationCanvas {
+  background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
+}
