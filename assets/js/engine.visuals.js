@@ -1,132 +1,175 @@
 (() => {
-  const engine = window.engine;
+  // 3D CONSTELLATION with Three.js
 
-  function rand(min, max) { return Math.random() * (max - min) + min; }
-  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  const PARTICLE_COUNT = 110;
+  const LINK_DISTANCE = 57;
+  const PARTICLE_SIZE = 2.4;
+  const COLOR_PARTICLE = 0x5fb3ff;
+  const COLOR_LINK = 0x84c5ff;
+  const COLOR_TRACER = 0xffffff;
+  const SCENE_DEPTH = 170;
+  const LINK_OPACITY = 0.17;
+  const TRACER_OPACITY = 0.38;
 
-  class Particle {
-    constructor(w, h, cfg) {
-      this.x = Math.random() * w;
-      this.y = Math.random() * h;
-      this.vx = rand(cfg.speed[0], cfg.speed[1]) * (Math.random() < 0.5 ? -1 : 1);
-      this.vy = rand(cfg.speed[0], cfg.speed[1]) * (Math.random() < 0.5 ? -1 : 1);
-      this.size = rand(cfg.particleSize[0], cfg.particleSize[1]);
-      this.baseColor = cfg.color;
+  window.engine = window.engine || {};
+  window.engine.start = function () {
+    const canvas = document.getElementById("constellationCanvas");
+    // Scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0f16);
+
+    // Camera
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = w / h;
+    const camera = new THREE.PerspectiveCamera(62, aspect, 0.1, 900);
+    camera.position.z = SCENE_DEPTH;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(w, h, false);
+    renderer.setClearColor(0x0b0f16, 1);
+
+    // Resize handler
+    window.addEventListener("resize", () => {
+      const nw = window.innerWidth, nh = window.innerHeight;
+      camera.aspect = nw / nh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(nw, nh, false);
+    });
+
+    // Particles
+    const particles = [];
+    const particleGeometry = new THREE.SphereGeometry(PARTICLE_SIZE, 10, 10);
+    const particleMaterial = new THREE.MeshBasicMaterial({ color: COLOR_PARTICLE });
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const mesh = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+      mesh.position.set(
+        THREE.MathUtils.randFloatSpread(w * 0.7),
+        THREE.MathUtils.randFloatSpread(h * 0.7),
+        THREE.MathUtils.randFloatSpread(SCENE_DEPTH * 0.7)
+      );
+      mesh.userData = {
+        velocity: new THREE.Vector3(
+          THREE.MathUtils.randFloatSpread(0.8),
+          THREE.MathUtils.randFloatSpread(0.8),
+          THREE.MathUtils.randFloatSpread(0.7)
+        )
+      };
+      particles.push(mesh);
+      scene.add(mesh);
     }
-    step(dt, bounds, mouse, cfg) {
-      const t = dt / 16.6667;
 
-      // mild wander
-      this.vx += rand(-0.02, 0.02);
-      this.vy += rand(-0.02, 0.02);
-
-      // mouse repel
-      if (mouse.x != null && mouse.y != null) {
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const d2 = dx*dx + dy*dy;
-        const r = cfg.repelRadius;
-        if (d2 < r*r) {
-          const d = Math.sqrt(d2) || 0.0001;
-          const f = clamp(1 - d / r, 0, 1);
-          this.vx += (dx / d) * (0.35 + 0.65 * f);
-          this.vy += (dy / d) * (0.35 + 0.65 * f);
-        }
-      }
-
-      this.x += this.vx * t;
-      this.y += this.vy * t;
-
-      // Soft bounds bounce
-      if (this.x < 0) { this.x = 0; this.vx *= -0.9; }
-      if (this.x > bounds.w) { this.x = bounds.w; this.vx *= -0.9; }
-      if (this.y < 0) { this.y = 0; this.vy *= -0.9; }
-      if (this.y > bounds.h) { this.y = bounds.h; this.vy *= -0.9; }
-
-      // Damp
-      this.vx *= 0.995;
-      this.vy *= 0.995;
-    }
-    draw(ctx, color) {
-      ctx.beginPath();
-      ctx.fillStyle = color;
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 6;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-  }
-
-  const mod = (engine.modules.visuals = {
-    particles: [],
-    bounds: { w: 0, h: 0 },
-
-    init() {
-      this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
-      this.spawn();
-    },
-
-    onResize(w, h) {
-      this.bounds.w = w;
-      this.bounds.h = h;
-      const area = w * h;
-      const target = Math.min(engine.config.maxParticles, Math.ceil(area * engine.config.baseParticleDensity));
-      this.targetCount = target;
-    },
-
-    spawn() {
-      const cfg = engine.config;
-      const need = (this.targetCount ?? 120);
-      const current = this.particles.length;
-      for (let i = current; i < need; i++) {
-        this.particles.push(new Particle(this.bounds.w, this.bounds.h, cfg));
-      }
-      if (this.particles.length > need) this.particles.length = need;
-    },
-
-    tick(dt) {
-      if ((this.particles.length | 0) !== (this.targetCount | 0)) this.spawn();
-
-      const ctx = engine.state.ctx;
-      const color = engine.config.color;
-      const linkDist = engine.config.linkDistance;
-      const linkDist2 = linkDist * linkDist;
-
-      // Update + draw points
-      for (let i = 0; i < this.particles.length; i++) {
-        const p = this.particles[i];
-        p.step(dt, this.bounds, engine.state.mouse, engine.config);
-      }
-
-      // Draw: points
-      for (let i = 0; i < this.particles.length; i++) {
-        this.particles[i].draw(ctx, color);
-      }
-
-      // Draw: links (O(n^2); capped for performance)
-      ctx.lineWidth = 1;
-      for (let i = 0; i < this.particles.length; i++) {
-        const a = this.particles[i];
-        for (let j = i + 1; j < this.particles.length; j++) {
-          const b = this.particles[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d2 = dx*dx + dy*dy;
-          if (d2 <= linkDist2) {
-            const d = Math.sqrt(d2);
-            const alpha = Math.max(0, engine.config.linkOpacity * (1 - d / linkDist));
-            if (alpha > 0.01) {
-              engine.state.ctx.strokeStyle = `rgba(132,197,255,${alpha})`;
-              engine.state.ctx.beginPath();
-              engine.state.ctx.moveTo(a.x, a.y);
-              engine.state.ctx.lineTo(b.x, b.y);
-              engine.state.ctx.stroke();
-            }
+    // Links
+    function getLinks() {
+      const links = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+          const a = particles[i].position;
+          const b = particles[j].position;
+          const d = a.distanceTo(b);
+          if (d < LINK_DISTANCE) {
+            links.push([i, j, d]);
           }
         }
       }
+      return links;
     }
-  });
 
-  engine.markReady("visuals");
+    // Tracer "data packets"
+    class Tracer {
+      constructor(aIdx, bIdx) {
+        this.aIdx = aIdx;
+        this.bIdx = bIdx;
+        this.t = Math.random();
+        this.speed = 0.003 + Math.random() * 0.003;
+        this.forward = Math.random() < 0.5;
+      }
+      step() {
+        this.t += this.speed * (this.forward ? 1 : -1);
+        if (this.t > 1) this.t = 0;
+        if (this.t < 0) this.t = 1;
+      }
+      pos() {
+        const a = particles[this.aIdx].position;
+        const b = particles[this.bIdx].position;
+        return new THREE.Vector3().lerpVectors(a, b, this.t);
+      }
+    }
+
+    // Pick links for tracers
+    let links = getLinks();
+    const tracerLinks = [];
+    for (let i = 0; i < Math.min(30, links.length); i += Math.floor(links.length / 30) || 1) {
+      tracerLinks.push(links[i]);
+    }
+    const tracers = tracerLinks.map(l => new Tracer(l[0], l[1]));
+
+    // Animation loop
+    function animate() {
+      // Move particles
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const mesh = particles[i];
+        mesh.position.add(mesh.userData.velocity);
+
+        // Bounce softly in box
+        ['x','y','z'].forEach(axis => {
+          const limit = axis === 'z' ? SCENE_DEPTH*0.4 : (axis === 'x' ? w*0.35 : h*0.35);
+          if (mesh.position[axis] < -limit || mesh.position[axis] > limit) {
+            mesh.userData.velocity[axis] *= -1;
+            mesh.position[axis] = clamp(mesh.position[axis], -limit, limit);
+          }
+          // random wander
+          mesh.userData.velocity[axis] += THREE.MathUtils.randFloatSpread(0.012);
+          mesh.userData.velocity[axis] = clamp(mesh.userData.velocity[axis], -0.85, 0.85);
+        });
+      }
+
+      // Camera subtle movement (military realism)
+      const t = performance.now() * 0.00013;
+      camera.position.x = Math.sin(t) * 2.5;
+      camera.position.y = Math.cos(t) * 1.9;
+      camera.lookAt(0, 0, 0);
+
+      // Draw links
+      links = getLinks();
+      for (let i = scene.children.length - 1; i >= 0; i--) {
+        if (scene.children[i].isLine) scene.remove(scene.children[i]);
+      }
+      links.forEach(([aIdx, bIdx, d]) => {
+        const a = particles[aIdx].position;
+        const b = particles[bIdx].position;
+        const mat = new THREE.LineBasicMaterial({ color: COLOR_LINK, transparent: true, opacity: LINK_OPACITY });
+        const geom = new THREE.BufferGeometry().setFromPoints([a, b]);
+        const line = new THREE.Line(geom, mat);
+        scene.add(line);
+      });
+
+      // Tracer animation
+      tracers.forEach(tracer => tracer.step());
+      for (let i = 0; i < tracers.length; i++) {
+        const pos = tracers[i].pos();
+        const geom = new THREE.SphereGeometry(PARTICLE_SIZE * 0.55, 8, 8);
+        const mat = new THREE.MeshBasicMaterial({ color: COLOR_TRACER, transparent: true, opacity: TRACER_OPACITY });
+        const sphere = new THREE.Mesh(geom, mat);
+        sphere.position.copy(pos);
+        scene.add(sphere);
+      }
+
+      renderer.render(scene, camera);
+
+      // Remove tracer spheres after render
+      for (let i = scene.children.length - 1; i >= 0; i--) {
+        if (scene.children[i].isMesh && !particles.includes(scene.children[i])) {
+          scene.remove(scene.children[i]);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+    animate();
+  };
 })();
