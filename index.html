@@ -13,14 +13,10 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="stylesheet" href="assets/css/loader.css" />
   <link rel="stylesheet" href="assets/css/main.css" />
-  <!-- Three.js CDN (Use r149 for global THREE variable support) -->
-  <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
-  <script src="assets/js/engine.init.js" defer></script>
 </head>
 <body>
   <main>
     <div id="loader" aria-live="polite" role="dialog" aria-modal="true" tabindex="-1"></div>
-    <!-- Three.js renders into this canvas -->
     <canvas id="constellationCanvas" aria-label="3d constellation interactive animation" tabindex="0"></canvas>
   </main>
   <noscript>
@@ -32,5 +28,7 @@
       JavaScript is required for the interactive start page.
     </div>
   </noscript>
+  <!-- Main entry point as a module -->
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
