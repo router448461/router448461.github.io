@@ -1,19 +1,12 @@
-/* Post-boot visuals and polish */
 :root {
-  --canvas-shadow: 0 0 1px rgba(95,179,255,0.2);
+  --canvas-shadow: 0 0 1px rgba(95,179,255,0.3);
   --canvas-vignette: inset 0 0 200px rgba(0,0,0,0.5);
-  --ambient-filter: brightness(1.02) saturate(1.1);
-  --ops-filter: contrast(1.08) saturate(0.95);
-  --stealth-filter: grayscale(0.15) brightness(0.9);
+  --ambient-filter: brightness(1.07) saturate(1.16);
 }
 
 #constellationCanvas {
   filter: drop-shadow(var(--canvas-shadow));
   box-shadow: var(--canvas-vignette);
   outline: none;
+  background: transparent;
 }
-
-/* Optional mode tokens */
-:root[data-mode="ambient"] #constellationCanvas { filter: var(--ambient-filter); }
-:root[data-mode="ops"] #constellationCanvas { filter: var(--ops-filter); }
-:root[data-mode="stealth"] #constellationCanvas { filter: var(--stealth-filter); }
