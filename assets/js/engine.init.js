@@ -1,7 +1,7 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.3.0",
+    version: "1.3.1",
     t0: performance.now(),
     config: {
       baseParticleDensity: 0.00008,
@@ -55,27 +55,41 @@
     document.head.appendChild(link);
   }
 
-  // Entry symbol logic
-  function setupCenterEnter() {
-    const centerBtn = document.getElementById("centerEnter");
-    if (!centerBtn) return;
-    centerBtn.addEventListener("click", enterSite);
-    centerBtn.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") enterSite(e);
-    });
-    // For accessibility, focus the symbol on load
-    centerBtn.focus();
-    // You can replace enterSite below with navigation logic later
-    function enterSite(e) {
-      // For now, just log and visually feedback
-      engine.log("⏚ symbol clicked/entered");
-      centerBtn.style.opacity = "0.15";
-      setTimeout(() => centerBtn.style.opacity = "0.45", 800);
-      // In future: navigate to another page or show overlay
-    }
+  // Remove loader with graceful fade
+  function removeLoader() {
+    const loader = document.getElementById("loader");
+    if (!loader) return;
+    loader.classList.add("fade-out");
+    loader.setAttribute("aria-hidden", "true");
+    setTimeout(() => loader.classList.add("removed"), 400);
   }
 
-  // Start engine after DOM ready
+  // Start engine after loader dismissed
+  function startEngine() {
+    if (engine.state.started) return;
+    engine.state.started = true;
+
+    engine.modules.base.init();
+    engine.modules.visuals.init();
+
+    // Main loop
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min(32, now - last);
+      last = now;
+      engine.modules.base.tick(dt);
+      engine.modules.visuals.tick(dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    loadMainCss();
+    const t1 = performance.now();
+    engine.log(`Started in ${Math.round(t1 - engine.t0)}ms`);
+    if (engine.modules.intel?.start) engine.modules.intel.start();
+  }
+
+  // Boot orchestrator
   window.addEventListener("DOMContentLoaded", () => {
     ["engine.base.js", "engine.visuals.js", "engine.intel.js"].forEach(file => {
       const s = document.createElement("script");
@@ -85,8 +99,8 @@
     });
 
     engine.when(["base", "visuals"], () => {
-      setupCenterEnter();
-      loadMainCss();
+      setTimeout(removeLoader, 1200); // fade loader after short delay
+      setTimeout(startEngine, 1200);  // start engine as loader fades
     });
   });
 })();
