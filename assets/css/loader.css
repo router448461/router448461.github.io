@@ -9,7 +9,9 @@ html, body {
   height: 100%;
   background: #0b0f16;
   color: #c9d1d9;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #loader {
@@ -17,13 +19,14 @@ html, body {
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
+  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.36), rgba(11,15,22,0.98) 70%);
   z-index: 9999;
   opacity: 1;
-  transition: opacity 300ms ease;
+  transition: opacity 300ms ease, visibility 300ms ease;
 }
 
 #loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.removed { display: none; }
 
 .loader-wrap {
   display: grid;
@@ -35,21 +38,22 @@ html, body {
 .spinner {
   width: 36px; height: 36px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.15);
+  border: 3px solid rgba(255,255,255,0.12);
   border-top-color: #5fb3ff;
   animation: spin 800ms linear infinite;
+  box-shadow: 0 0 10px rgba(95,179,255,0.08);
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .blink {
   font-size: 12px;
-  letter-spacing: 0.2em;
-  opacity: 0.8;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
   animation: blink 1.2s steps(2, start) infinite;
 }
 
-@keyframes blink { 50% { opacity: 0.2; } }
+@keyframes blink { 50% { opacity: 0.22; } }
 
 /* Canvas base (hidden behind loader until start) */
 #constellationCanvas {
