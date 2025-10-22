@@ -1,27 +1,33 @@
-/* Post-boot visuals and polish */
+/* Post-boot visuals and polish - tuned for ominous, slower atmosphere */
 
 :root {
   --star-color: #84c5ff;
-  --bg-top: #0b0f16;
-  --bg-bottom: #06070a;
+  --bg-top: #04060a;
+  --bg-bottom: #02030a;
 }
 
 /* Slight canvas glow and vignette */
 #constellationCanvas {
-  filter: drop-shadow(0 0 6px rgba(132,197,255,0.04));
-  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-  /* Slight additional soft vignette */
-  box-shadow: inset 0 0 220px rgba(0,0,0,0.55);
+  filter: drop-shadow(0 0 8px rgba(80,160,255,0.03));
+  background: radial-gradient(1200px 700px at 20% 10%, rgba(6,10,18,0.55), rgba(2,4,8,0.98) 70%), linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  box-shadow: inset 0 0 260px rgba(0,0,0,0.72);
   will-change: transform;
+  /* subtle film grain via tiny repeating radial gradient */
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.01) 0.5px, transparent 0.6px),
+    radial-gradient(circle at 70% 80%, rgba(0,0,0,0.02) 0.6px, transparent 0.7px),
+    radial-gradient(1200px 700px at 20% 10%, rgba(6,10,18,0.55), rgba(2,4,8,0.98) 70%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background-size: 6px 6px, 8px 8px, cover, cover;
 }
 
-/* Optional mode tokens */
-:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.08); }
-:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.08) saturate(0.98); }
-:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.15) brightness(0.9); }
+/* Mode tokens for quick visual presets */
+:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.02); }
+:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.06) saturate(0.98); }
+:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.2) brightness(0.88); }
 
 /* Fade the loader fully out of flow after transition */
-#loader.fade-out { transition: opacity 240ms ease; }
+#loader.fade-out { transition: opacity 300ms ease; }
 #loader.removed { display: none; }
 
 /* Small accessibility / UI niceties */
