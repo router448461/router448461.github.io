@@ -1,16 +1,28 @@
 /* Post-boot visuals and polish */
 
+:root {
+  --star-color: #84c5ff;
+  --bg-top: #0b0f16;
+  --bg-bottom: #06070a;
+}
+
+/* Slight canvas glow and vignette */
 #constellationCanvas {
-  filter: drop-shadow(0 0 1px rgba(95,179,255,0.2));
-  /* Slight vignette */
-  box-shadow: inset 0 0 200px rgba(0,0,0,0.5);
+  filter: drop-shadow(0 0 6px rgba(132,197,255,0.04));
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  /* Slight additional soft vignette */
+  box-shadow: inset 0 0 220px rgba(0,0,0,0.55);
+  will-change: transform;
 }
 
 /* Optional mode tokens */
-:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.1); }
-:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.08) saturate(0.95); }
+:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.08); }
+:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.08) saturate(0.98); }
 :root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.15) brightness(0.9); }
 
 /* Fade the loader fully out of flow after transition */
 #loader.fade-out { transition: opacity 240ms ease; }
 #loader.removed { display: none; }
+
+/* Small accessibility / UI niceties */
+html, body { touch-action: none; } /* prevent accidental gestures interfering with pointer moves */
