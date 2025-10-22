@@ -3,51 +3,46 @@
 
   function rand(min, max) { return Math.random() * (max - min) + min; }
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function lerp(a,b,t){return a + (b-a)*t;}
 
   class Particle {
     constructor(w, h, cfg) {
-      // Position
       this.x = Math.random() * w;
       this.y = Math.random() * h;
-
-      // Depth (z) controls size, speed, link visibility
-      this.z = rand(0.6, 1.6); // 0.6 (far) .. 1.6 (near)
+      this.z = rand(0.6, 1.6);
       const speedBase = rand(cfg.speed[0], cfg.speed[1]);
-      this.vx = speedBase * (Math.random() < 0.5 ? -1 : 1) * (0.6 + (this.z - 0.6)); // faster when near
-      this.vy = speedBase * (Math.random() < 0.5 ? -1 : 1) * (0.6 + (this.z - 0.6));
+      // additional slow-down multiplier for a pronounced slow feel
+      const slowFactor = 0.48;
+      this.vx = speedBase * slowFactor * (Math.random() < 0.5 ? -1 : 1) * (0.6 + (this.z - 0.6));
+      this.vy = speedBase * slowFactor * (Math.random() < 0.5 ? -1 : 1) * (0.6 + (this.z - 0.6));
       this.size = rand(cfg.particleSize[0], cfg.particleSize[1]) * this.z;
 
-      // Twinkle phase & color shift
       this.twinklePhase = Math.random() * Math.PI * 2;
-      this.colorShift = rand(-10, 10); // small blue/white variation
+      this.twinkleSpeed = rand(0.6, 1.2); // slower twinkle (lower multiplier)
       this.seed = Math.random() * 1000;
+      this.tempBias = (Math.random() * 2 - 1) * 0.4; // color temperature bias
     }
 
     step(dt, bounds, mouse, cfg, now) {
-      const t = dt / 16.6667; // normalize to ~60fps units
-
-      // gentle wander, scaled by depth (farther stars wander less)
-      const wander = 0.012 * (1 / this.z);
+      const t = dt / 16.6667;
+      const wander = 0.008 * (1 / this.z); // gentler wander
       this.vx += rand(-wander, wander);
       this.vy += rand(-wander, wander);
 
-      // subtle per-particle oscillator (gives "breathing" movement)
-      const sway = Math.sin((now * 0.001) + this.seed) * 0.02;
+      const sway = Math.sin((now * 0.0006) + this.seed) * 0.01; // slower sway
       this.vx += sway * (1 / this.z);
       this.vy += sway * (1 / this.z);
 
-      // mouse repel/attract: repel by default, attract when mouse.down
       if (mouse.x != null && mouse.y != null) {
         const dx = this.x - mouse.x;
         const dy = this.y - mouse.y;
         const d2 = dx*dx + dy*dy;
-        const r = cfg.repelRadius * (1 + (1.2 - this.z)); // nearer scaled radius
+        const r = cfg.repelRadius * (1 + (1.2 - this.z));
         if (d2 < r*r) {
           const d = Math.sqrt(d2) || 0.0001;
           const f = clamp(1 - d / r, 0, 1);
-          // if pointer is down, slightly attract (pull) otherwise repel
           const mode = mouse.down ? -1 : 1;
-          const strength = (0.25 + 0.75 * f) * (mode) * (0.6 + (1.6 - this.z) * 0.2);
+          const strength = (0.18 + 0.62 * f) * (mode) * (0.6 + (1.6 - this.z) * 0.18);
           this.vx += (dx / d) * strength;
           this.vy += (dy / d) * strength;
         }
@@ -56,45 +51,36 @@
       this.x += this.vx * t;
       this.y += this.vy * t;
 
-      // Soft bounds bounce
-      if (this.x < 0) { this.x = 0; this.vx *= -0.8; }
-      if (this.x > bounds.w) { this.x = bounds.w; this.vx *= -0.8; }
-      if (this.y < 0) { this.y = 0; this.vy *= -0.8; }
-      if (this.y > bounds.h) { this.y = bounds.h; this.vy *= -0.8; }
+      if (this.x < -20) { this.x = -20; this.vx *= -0.78; }
+      if (this.x > bounds.w + 20) { this.x = bounds.w + 20; this.vx *= -0.78; }
+      if (this.y < -20) { this.y = -20; this.vy *= -0.78; }
+      if (this.y > bounds.h + 20) { this.y = bounds.h + 20; this.vy *= -0.78; }
 
-      // Damp velocities a bit more for farther stars
-      const damp = 0.992 + (0.002 * (1.6 - this.z));
+      const damp = 0.994 + (0.0015 * (1.6 - this.z)); // smoother damping
       this.vx *= damp;
       this.vy *= damp;
     }
 
-    // draw with glow + core
-    draw(ctx, baseColor, now) {
-      // twinkle factor: slow sinusoidal brightness change
-      const tw = 1 + 0.28 * Math.sin((now * 0.001) + this.twinklePhase);
-
-      // color with small shift, baseColor expected as hex like "#84c5ff"
-      // Convert baseColor to rgba components quickly (assume it's the default blue-ish)
-      // We'll simply use rgba with alpha modulation
-      const alpha = 0.65 * (this.z / 1.2) * tw;
-
-      // Glow pass (soft, additive)
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = `rgba(132,197,255,${0.18 * (this.z) * tw})`;
-      ctx.shadowColor = `rgba(132,197,255,${0.22 * (this.z) * tw})`;
-      ctx.shadowBlur = Math.max(6, this.size * 6 * this.z);
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size * 1.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Core pass
+    drawCore(ctx, now) {
+      const tw = 1 + 0.16 * Math.sin((now * 0.00065 * this.twinkleSpeed) + this.twinklePhase);
+      const alpha = 0.6 * (this.z / 1.2) * tw;
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.beginPath();
-      ctx.fillStyle = `rgba(212,238,255,${alpha})`; // near-white core
-      ctx.arc(this.x, this.y, this.size * (0.8 + 0.2 * this.z) * tw, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,235,255,${alpha})`;
+      ctx.arc(this.x, this.y, this.size * (0.75 + 0.18 * this.z) * tw, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    drawGlowTo(ctx, now, glowColor) {
+      const tw = 1 + 0.16 * Math.sin((now * 0.00065 * this.twinkleSpeed) + this.twinklePhase);
+      const galpha = 0.18 * (this.z) * tw;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(${glowColor[0]},${glowColor[1]},${glowColor[2]},${galpha})`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, Math.max(4, this.size * 2.4), 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -103,26 +89,50 @@
   const mod = (engine.modules.visuals = {
     particles: [],
     bounds: { w: 0, h: 0 },
-    // spatial hash
     grid: null,
     cellSize: 120,
     targetCount: 120,
+    bloom: null,
+    anomalyTimer: 0,
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
       this.spawn();
+
+      // prepare bloom offscreen if enabled
+      if (engine.config.bloomEnabled) {
+        this.bloom = {
+          canvas: document.createElement('canvas'),
+          ctx: null,
+          down: engine.config.bloomDownscale || 0.5,
+          blurPx: engine.config.bloomBlurPx || 8,
+          frameSkip: engine.config.bloomFrameSkip || 3,
+          frameCounter: 0
+        };
+        this.bloom.ctx = this.bloom.canvas.getContext('2d');
+      }
     },
 
     onResize(w, h, dpr) {
       this.bounds.w = w;
       this.bounds.h = h;
-      // choose population based on area
       const area = w * h;
       const target = Math.min(engine.config.maxParticles, Math.ceil(area * engine.config.baseParticleDensity));
       this.targetCount = target || 60;
-      // adapt cell size to link distance (grid for neighbor lookups)
       this.cellSize = Math.max(64, Math.floor(engine.config.linkDistance * 0.9));
-      this.grid = null; // will be rebuilt in tick
+      this.grid = null;
+
+      // resize bloom canvas if present
+      if (this.bloom) {
+        const bw = Math.max(1, Math.floor(w * this.bloom.down));
+        const bh = Math.max(1, Math.floor(h * this.bloom.down));
+        const pdpr = Math.max(1, Math.floor(dpr));
+        this.bloom.canvas.width = Math.floor(bw * pdpr);
+        this.bloom.canvas.height = Math.floor(bh * pdpr);
+        this.bloom.canvas.style.width = bw + 'px';
+        this.bloom.canvas.style.height = bh + 'px';
+        this.bloom.ctx.setTransform(pdpr,0,0,pdpr,0,0);
+      }
     },
 
     spawn() {
@@ -135,7 +145,6 @@
       if (this.particles.length > need) this.particles.length = need;
     },
 
-    // build a simple spatial hash grid each frame (cheap for moderate n)
     buildGrid() {
       const grid = new Map();
       const cs = this.cellSize;
@@ -167,75 +176,163 @@
     },
 
     tick(dt) {
-      // Ensure population
       if ((this.particles.length | 0) !== (this.targetCount | 0)) this.spawn();
 
       const ctx = engine.state.ctx;
       const cfg = engine.config;
-      const color = cfg.color;
-      const linkDist = cfg.linkDistance;
-      const linkDist2 = linkDist * linkDist;
       const now = performance.now();
-
-      // Adaptive skipping of heavy passes when FPS low
       const fps = engine.state.fps || 60;
-      const linkEnabled = fps > 30;
+      const linkEnabled = fps > 20; // allow links even on somewhat slower devices
 
-      // Update positions
-      for (let i = 0; i < this.particles.length; i++) {
-        const p = this.particles[i];
-        p.step(dt, this.bounds, engine.state.mouse, cfg, now);
+      // update anomaly timer (random occasional flash)
+      this.anomalyTimer -= dt;
+      if (this.anomalyTimer <= 0) {
+        // schedule next in 6-22s
+        this.anomalyTimer = 6000 + Math.random() * 16000;
+        this._triggerAnomaly = now; // mark anomaly time
       }
 
-      // Draw particles with glow/core
+      // Update particle positions
       for (let i = 0; i < this.particles.length; i++) {
-        this.particles[i].draw(ctx, color, now);
+        this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
       }
 
-      // Build spatial grid for neighbor queries (only when links are enabled)
+      // Draw background trail (fade)
+      // base.tick already applies a fade; visuals draws on top
+
+      // Build spatial grid for links
+      if (linkEnabled) this.buildGrid();
+
+      // Offscreen bloom: draw glows into bloom canvas (sparser, cheaper)
+      if (this.bloom) {
+        const b = this.bloom;
+        b.frameCounter++;
+        // only update bloom texture every N frames to save perf
+        if (b.frameCounter % b.frameSkip === 0) {
+          const boc = b.ctx;
+          boc.clearRect(0,0, boc.canvas.width / (b.ctx.getTransform()?.a || 1), boc.canvas.height / (b.ctx.getTransform()?.d || 1));
+          boc.save();
+          boc.scale(b.down, b.down);
+          // subtle glows only (no core)
+          for (let i=0;i<this.particles.length;i++){
+            const p = this.particles[i];
+            // color temp mix between warm and cool
+            const warm = [255,200,140], cool = [120,170,255];
+            const depth = clamp((p.z - 0.6) / (1.6 - 0.6), 0, 1);
+            const mix = clamp(0.5 + p.tempBias * 0.35 + (depth * 0.25), 0, 1);
+            const r = Math.round(lerp(warm[0], cool[0], mix));
+            const g = Math.round(lerp(warm[1], cool[1], mix));
+            const bcol = Math.round(lerp(warm[2], cool[2], mix));
+            boc.fillStyle = `rgba(${r},${g},${bcol},${0.12 * p.z})`;
+            boc.beginPath();
+            boc.arc(p.x, p.y, Math.max(5, p.size * 3.0), 0, Math.PI*2);
+            boc.fill();
+          }
+          boc.restore();
+        }
+      }
+
+      // Draw main particle cores and local glow (sharp)
+      for (let i = 0; i < this.particles.length; i++) {
+        this.particles[i].drawCore(ctx, now);
+      }
+
+      // Draw links: more lines, slightly thicker, and depth-based strength
       if (linkEnabled) {
-        this.buildGrid();
-
-        ctx.lineWidth = 1;
-        // Link drawing: iterate particles and only compare to nearby bucket entries
+        ctx.save();
+        ctx.lineCap = 'round';
         for (let i = 0; i < this.particles.length; i++) {
           const a = this.particles[i];
           const neighbors = this.neighborsFor(a);
           for (let j = 0; j < neighbors.length; j++) {
             const b = neighbors[j];
             if (a === b) continue;
-            // avoid double-draw by simple index/proxy check (we don't have index in neighbors)
-            if (b.x < a.x - linkDist || b.y < a.y - linkDist) {
-              // cheap skip: heuristic to roughly avoid duplicate half pairs
-            }
             const dx = a.x - b.x, dy = a.y - b.y;
             const d2 = dx*dx + dy*dy;
-            if (d2 <= linkDist2) {
+            const maxD = cfg.linkDistance;
+            if (d2 <= maxD * maxD) {
               const d = Math.sqrt(d2);
-              // alpha and stroke scale by distance and average depth (nearer => stronger)
               const depthFactor = (a.z + b.z) * 0.5;
-              const alpha = Math.max(0, cfg.linkOpacity * (1 - d / linkDist) * depthFactor);
+              // make links more visible: increase base by small factor, but keep falloff
+              const alpha = Math.max(0, cfg.linkOpacity * 1.25 * (1 - d / maxD) * depthFactor);
               if (alpha > 0.02) {
-                ctx.strokeStyle = `rgba(132,197,255,${alpha})`;
+                // color varies slightly with depth; cold-blue core with faint purple tint for scariness
+                const r = Math.round(120 + 40 * (1 - depthFactor));
+                const g = Math.round(150 + 30 * depthFactor);
+                const bl = Math.round(200 + 55 * depthFactor);
+                ctx.strokeStyle = `rgba(${r},${g},${bl},${alpha})`;
+                ctx.lineWidth = 0.8 + (0.9 * depthFactor);
                 ctx.beginPath();
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
                 ctx.stroke();
+
+                // Occasional secondary faint "webbing" (short perpendicular flick) to add creepiness
+                if (Math.random() < 0.002) {
+                  ctx.globalAlpha = Math.min(0.08, alpha * 0.45);
+                  ctx.beginPath();
+                  const mx = (a.x + b.x)*0.5 + (Math.random()-0.5) * 8;
+                  const my = (a.y + b.y)*0.5 + (Math.random()-0.5) * 8;
+                  ctx.moveTo(mx, my);
+                  ctx.lineTo(mx + (Math.random()-0.5)*18, my + (Math.random()-0.5)*18);
+                  ctx.stroke();
+                  ctx.globalAlpha = 1;
+                }
               }
             }
           }
         }
+        ctx.restore();
       }
 
-      // occasional tiny "spark" when mouse clicks (visual feedback)
-      if (engine.state.mouse.down) {
-        // draw a faint pulse at pointer
+      // Composite bloom onto main canvas (blur when compositing)
+      if (this.bloom && this.bloom.canvas) {
+        ctx.save();
+        if (ctx.filter !== undefined) {
+          ctx.filter = `blur(${this.bloom.blurPx}px)`;
+        }
+        ctx.globalCompositeOperation = 'lighter';
+        // draw scaled bloom canvas to main canvas area
+        ctx.drawImage(this.bloom.canvas, 0, 0, this.bounds.w, this.bounds.h);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.filter = 'none';
+        ctx.restore();
+      }
+
+      // Draw per-particle sharper glows on top of core for contrast
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        const cool = [120,170,255], warm = [255,200,140];
+        const depth = clamp((p.z - 0.6) / (1.6 - 0.6), 0, 1);
+        const mix = clamp(0.5 + p.tempBias * 0.35 + (depth * 0.25), 0, 1);
+        const glowColor = [Math.round(lerp(warm[0], cool[0], mix)), Math.round(lerp(warm[1], cool[1], mix)), Math.round(lerp(warm[2], cool[2], mix))];
+        p.drawGlowTo(ctx, now, glowColor);
+      }
+
+      // Occasional anomaly flash (a sudden, ominous brightening that ripples)
+      if (this._triggerAnomaly && (now - this._triggerAnomaly) < 900) {
+        const t = (now - this._triggerAnomaly) / 900;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = `rgba(100,120,200,${0.08 * (1 - t)})`;
+        const cx = Math.random() * this.bounds.w;
+        const cy = Math.random() * this.bounds.h;
+        ctx.beginPath();
+        ctx.arc(cx, cy, (this.bounds.w + this.bounds.h) * (0.02 + 0.06 * (1 - t)), 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+        // expire anomaly after short window
+        if ((now - this._triggerAnomaly) > 800) this._triggerAnomaly = null;
+      }
+
+      // subtle click spark visual feedback
+      if (engine.state.mouse.down && engine.state.mouse.x != null) {
         const m = engine.state.mouse;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = 'rgba(180,210,255,0.04)';
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(132,197,255,0.06)';
-        ctx.arc(m.x, m.y, 28, 0, Math.PI * 2);
+        ctx.arc(m.x, m.y, 30, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
