@@ -4,16 +4,20 @@
     version: "1.0.0",
     t0: performance.now(),
     config: {
-      // Tune to taste
-      baseParticleDensity: 0.00008,  // particles per px^2
-      maxParticles: 220,
-      linkDistance: 110,
-      linkOpacity: 0.12,
-      particleSize: [1.0, 2.2],
-      speed: [0.15, 0.6],
+      // Tuned for slower, denser, ominous visuals
+      baseParticleDensity: 0.00012,  // particles per px^2 (increased to produce more lines)
+      maxParticles: 300,
+      linkDistance: 160,              // longer links to create an interconnected web
+      linkOpacity: 0.16,              // slightly stronger links
+      particleSize: [0.9, 2.6],       // keep size variety
+      speed: [0.06, 0.28],            // slower base speeds
       repelRadius: 120,
-      backgroundFade: 0.08, // motion trail strength
+      backgroundFade: 0.04,           // lower fade => longer trails (stronger motion blur)
       color: "#84c5ff",
+      bloomEnabled: true,             // optional offscreen bloom
+      bloomDownscale: 0.45,
+      bloomBlurPx: 10,
+      bloomFrameSkip: 3
     },
     state: {
       started: false,
@@ -96,7 +100,7 @@
       // Main loop
       let last = performance.now();
       function frame(now) {
-        const dt = Math.min(32, now - last); // cap delta
+        const dt = Math.min(48, now - last); // cap delta (allow slightly larger dt but still bounded)
         last = now;
         engine.modules.base.tick(dt);
         engine.modules.visuals.tick(dt);
