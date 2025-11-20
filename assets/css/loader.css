@@ -1,17 +1,22 @@
 :root {
   color-scheme: dark;
+  --mil-bg: #03130a;
+  --accent: #9fbf6f;
+  --muted: rgba(255,255,255,0.06);
 }
 
 * { box-sizing: border-box; }
 
 html, body {
-  margin: 0;
   height: 100%;
-  background: #0b0f16;
-  color: #c9d1d9;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  margin: 0;
+  background: var(--mil-bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #loader {
@@ -19,48 +24,50 @@ html, body {
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.36), rgba(11,15,22,0.98) 70%);
+  background: radial-gradient(1200px 800px at 50% 50%, rgba(8,22,12,0.46), rgba(2,6,4,0.98) 72%);
   z-index: 9999;
   opacity: 1;
-  transition: opacity 300ms ease, visibility 300ms ease;
+  transition: opacity 260ms linear, visibility 260ms linear;
 }
 
-#loader.fade-out { opacity: 0; pointer-events: none; }
+#loader.fade-out { opacity: 0; pointer-events: none; visibility: hidden; }
 #loader.removed { display: none; }
 
-.loader-wrap {
-  display: grid;
-  gap: 12px;
-  align-items: center;
-  justify-items: center;
-}
+.loader-wrap { display: grid; gap: 10px; align-items: center; justify-items: center; text-align: center; }
 
 .spinner {
-  width: 36px; height: 36px;
+  width: 40px; height: 40px;
   border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.12);
-  border-top-color: #5fb3ff;
-  animation: spin 800ms linear infinite;
-  box-shadow: 0 0 10px rgba(95,179,255,0.08);
+  border: 3px solid var(--muted);
+  border-top-color: var(--accent);
+  animation: spin 950ms linear infinite;
+  box-shadow: 0 0 16px rgba(160,200,120,0.06);
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .blink {
   font-size: 12px;
-  letter-spacing: 0.18em;
-  opacity: 0.85;
-  animation: blink 1.2s steps(2, start) infinite;
+  letter-spacing: .16em;
+  color: var(--accent);
+  opacity: 0.92;
+  animation: blink 1.4s steps(2, start) infinite;
 }
+@keyframes blink { 50% { opacity: 0.26; } }
 
-@keyframes blink { 50% { opacity: 0.22; } }
-
-/* Canvas base (hidden behind loader until start) */
+/* Canvas fills viewport */
 #constellationCanvas {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   display: block;
-  background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
+  background: linear-gradient(180deg, rgba(2,6,3,0.9) 0%, rgba(0,3,1,1) 100%);
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; transform: scale(.98); }
+  .blink { animation: none; }
+  #loader { transition: none; }
 }
