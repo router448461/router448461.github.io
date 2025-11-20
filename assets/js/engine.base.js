@@ -6,6 +6,7 @@
     dpr: Math.min(2, window.devicePixelRatio || 1),
     width: 0,
     height: 0,
+    _resizeRaf: null,
 
     init() {
       this.canvas = document.getElementById("constellationCanvas");
@@ -18,13 +19,33 @@
     },
 
     bindEvents() {
-      window.addEventListener("resize", () => this.resize(), { passive: true });
-      window.addEventListener("pointermove", (e) => {
+      // Debounced resize using rAF to avoid layout thrash
+      window.addEventListener("resize", () => {
+        if (this._resizeRaf) cancelAnimationFrame(this._resizeRaf);
+        this._resizeRaf = requestAnimationFrame(() => { this.resize(); this._resizeRaf = null; });
+      }, { passive: true });
+
+      // Pointer tracking with capture on down for consistent interaction and subtle parallax
+      this.canvas.addEventListener("pointermove", (e) => {
         engine.state.mouse.x = e.clientX;
         engine.state.mouse.y = e.clientY;
       }, { passive: true });
-      window.addEventListener("pointerdown", () => { engine.state.mouse.down = true; }, { passive: true });
+
+      this.canvas.addEventListener("pointerdown", (e) => {
+        engine.state.mouse.down = true;
+        try { e.target.setPointerCapture?.(e.pointerId); } catch (err) {}
+        engine.state.mouse.x = e.clientX;
+        engine.state.mouse.y = e.clientY;
+      }, { passive: true });
+
+      this.canvas.addEventListener("pointerup", (e) => {
+        engine.state.mouse.down = false;
+        try { e.target.releasePointerCapture?.(e.pointerId); } catch (err) {}
+      }, { passive: true });
+
+      // also observe global pointer up to ensure release
       window.addEventListener("pointerup", () => { engine.state.mouse.down = false; }, { passive: true });
+
       document.addEventListener("visibilitychange", () => {
         // Optionally handle pause/resume
       });
@@ -48,10 +69,10 @@
       const ctx = this.ctx;
       if (!ctx) return;
       if (hard) {
-        ctx.fillStyle = "#0a0d14";
+        ctx.fillStyle = "#020501";
         ctx.fillRect(0, 0, this.width, this.height);
       } else {
-        ctx.fillStyle = `rgba(10,13,20,${engine.config.backgroundFade})`;
+        ctx.fillStyle = `rgba(2,5,3,${engine.config.backgroundFade})`;
         ctx.fillRect(0, 0, this.width, this.height);
       }
     },
