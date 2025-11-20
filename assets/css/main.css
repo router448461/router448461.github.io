@@ -1,34 +1,30 @@
-/* Post-boot visuals and polish - tuned for ominous, slower atmosphere */
+/* Streamlined tactical look — olive greens, amber accents, subtle film grain */
 
 :root {
-  --star-color: #84c5ff;
-  --bg-top: #04060a;
-  --bg-bottom: #02030a;
+  --olive: #6f8b48;
+  --dark: #04110a;
+  --amber: #ffc87a;
+  --accent: #8fbf7a;
 }
 
-/* Slight canvas glow and vignette */
+/* Canvas base: heavier vignette and subtle grain for realism */
 #constellationCanvas {
-  filter: drop-shadow(0 0 8px rgba(80,160,255,0.03));
-  background: radial-gradient(1200px 700px at 20% 10%, rgba(6,10,18,0.55), rgba(2,4,8,0.98) 70%), linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-  box-shadow: inset 0 0 260px rgba(0,0,0,0.72);
   will-change: transform;
-  /* subtle film grain via tiny repeating radial gradient */
   background-image:
-    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.01) 0.5px, transparent 0.6px),
-    radial-gradient(circle at 70% 80%, rgba(0,0,0,0.02) 0.6px, transparent 0.7px),
-    radial-gradient(1200px 700px at 20% 10%, rgba(6,10,18,0.55), rgba(2,4,8,0.98) 70%),
-    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-  background-size: 6px 6px, 8px 8px, cover, cover;
+    radial-gradient(1200px 700px at 18% 12%, rgba(4,12,6,0.65), rgba(2,6,3,1) 70%),
+    linear-gradient(180deg, var(--dark) 0%, #020701 100%),
+    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.008) 0.5px, transparent 0.6px);
+  background-size: cover, cover, 6px 6px;
+  filter: drop-shadow(0 0 12px rgba(40,90,40,0.05));
 }
 
-/* Mode tokens for quick visual presets */
-:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(1.02); }
-:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.06) saturate(0.98); }
-:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(0.2) brightness(0.88); }
+/* Mode tokens retained but subdued */
+:root[data-mode="ambient"] #constellationCanvas { filter: brightness(1.02) saturate(.92); }
+:root[data-mode="ops"] #constellationCanvas { filter: contrast(1.05) saturate(1.01); }
+:root[data-mode="stealth"] #constellationCanvas { filter: grayscale(.26) brightness(.84); }
 
-/* Fade the loader fully out of flow after transition */
-#loader.fade-out { transition: opacity 300ms ease; }
-#loader.removed { display: none; }
+/* Prevent accidental gestures interfering with pointer moves */
+html, body { touch-action: none; }
 
-/* Small accessibility / UI niceties */
-html, body { touch-action: none; } /* prevent accidental gestures interfering with pointer moves */
+/* Focus outline if needed */
+:focus { outline: 2px solid rgba(127,155,87,0.12); outline-offset: 2px; }
