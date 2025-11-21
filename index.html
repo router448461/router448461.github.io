@@ -3,28 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Constellation — Tactical</title>
+  <title>Constellation — Tactical (Flight Overlay)</title>
 
   <!-- Boot visuals -->
   <link rel="stylesheet" href="assets/css/loader.css" />
 
-  <!-- Inline polyfill for window.styleMedia to avoid deprecation noise from third-party code.
-       This runs as early as possible (before engine.init.js) so other scripts won't trigger
-       a styleMedia warning when they access window.styleMedia. -->
+  <!-- Inline polyfill for window.styleMedia to avoid deprecation noise -->
   <script>
     (function () {
       if (!window.styleMedia) {
         try {
           window.styleMedia = {
             matchMedium(q) {
-              try {
-                return !!window.matchMedia && window.matchMedia(q).matches;
-              } catch (e) {
-                return false;
-              }
+              try { return !!window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; }
             }
           };
-        } catch (e) { /* safe noop */ }
+        } catch (e) {}
       }
     })();
   </script>
@@ -40,7 +34,10 @@
     </div>
   </div>
 
-  <!-- Single canvas — world is composited into canvas for an integrated, realistic overlay -->
+  <!-- Map container (Leaflet / MapKit can render here). Sits under the transparent canvas. -->
+  <div id="mapContainer" aria-hidden="true"></div>
+
+  <!-- Tactical canvas sits above the map -->
   <canvas id="constellationCanvas" aria-hidden="false"></canvas>
 </body>
 </html>
