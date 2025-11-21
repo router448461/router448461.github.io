@@ -1,7 +1,7 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.4.0-tac-flights",
+    version: "1.4.1-tac-flights",
     t0: performance.now(),
     config: {
       // visuals
@@ -37,7 +37,8 @@
       mouse: { x: null, y: null, down: false },
       fps: 0,
       domMapLoaded: false,
-      map: null
+      map: null,
+      mapReady: false
     },
     modules: {},
     _ready: new Set(),
@@ -63,7 +64,7 @@
     }
   });
 
-  // small polyfill for styleMedia deprecation callers
+  // small polyfill for styleMedia deprecation callers (harmless)
   if (!window.styleMedia) {
     window.styleMedia = {
       matchMedium: (q) => {
@@ -102,6 +103,11 @@
           const mapEl = document.getElementById('mapContainer');
           if (!mapEl) return resolve(false);
           mapEl.innerHTML = '';
+
+          // ensure container has proper sizing (set style in case)
+          mapEl.style.width = '100vw';
+          mapEl.style.height = '100vh';
+
           const map = L.map(mapEl, {
             center: [engine.config.initialCenter.lat, engine.config.initialCenter.lng],
             zoom: engine.config.initialZoom,
@@ -122,13 +128,26 @@
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
           }).addTo(map);
 
-          // Force Leaflet to compute sizes after CSS has been applied and tiles load.
-          // This avoids tiles / projections ending up at the top of the container.
-          function ensureMapSized() {
-            try { map.invalidateSize(); } catch (e) { /* ignore */ }
-          }
-          tile.on('load', () => { ensureMapSized(); });
-          requestAnimationFrame(() => { ensureMapSized(); setTimeout(ensureMapSized, 250); });
+          // When the first tile load completes, force a size calc and mark map ready.
+          tile.on('load', () => {
+            try { map.invalidateSize(true); } catch (e) {}
+            // small delay to make sure internal tile layout occurs
+            setTimeout(() => {
+              try { map.invalidateSize(true); } catch (e) {}
+              engine.state.mapReady = true;
+            }, 220);
+          });
+
+          // also when map is ready (Leaflet API)
+          try {
+            map.whenReady(() => {
+              try { map.invalidateSize(true); } catch (e) {}
+              engine.state.mapReady = true;
+            });
+          } catch (e) { /* ignore if older Leaflet */ }
+
+          // keep map sized if the window resizes
+          window.addEventListener('resize', () => { try { map.invalidateSize(); } catch (e) {} });
 
           engine.state.map = map;
           engine.state.domMapLoaded = true;
@@ -144,19 +163,31 @@
     });
   }
 
-  // loader fade
+  // loader fade — ensure map gets one last invalidate once loader removed
   function removeLoader() {
     const loader = document.getElementById("loader");
     if (!loader) return;
-    if (engine.config.reducedMotion) { loader.classList.add("removed"); return; }
+    if (engine.config.reducedMotion) {
+      loader.classList.add("removed");
+      if (engine.state.map) try { engine.state.map.invalidateSize(true); } catch (e) {}
+      return;
+    }
     loader.classList.add("fade-out");
-    loader.addEventListener("transitionend", () => loader.classList.add("removed"), { once: true });
+    loader.addEventListener("transitionend", () => {
+      loader.classList.add("removed");
+      // once loader hidden, force Leaflet reflow to ensure tiles & container compute
+      if (engine.state.map) {
+        try { engine.state.map.invalidateSize(true); } catch (e) {}
+        // small second pass
+        setTimeout(() => { try { engine.state.map.invalidateSize(true); } catch (e) {} }, 300);
+      }
+    }, { once: true });
   }
 
   window.addEventListener("DOMContentLoaded", () => {
     loadMainCss();
 
-    // attempt to init DOM map first (Leaflet fallback). visuals will skip in-canvas map if domMapLoaded == true.
+    // attempt to init DOM map first (Leaflet fallback)
     initDomMap().then(() => {
       // dynamically load modules after map attempt
       ["engine.base.js", "engine.visuals.js"].forEach(file => {
