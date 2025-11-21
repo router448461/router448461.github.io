@@ -65,7 +65,7 @@
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.beginPath();
-      // tighter olive/amber core
+      // olive/amber core tuned for readability and tactical feel
       ctx.fillStyle = `rgba(${150 + Math.round(30*(1-this.z))},${190 - Math.round(28*(1-this.z))},${100 - Math.round(12*(1-this.z))},${alpha})`;
       ctx.arc(this.x, this.y, this.size * (0.78 + 0.15 * this.z) * tw, 0, Math.PI * 2);
       ctx.fill();
@@ -98,6 +98,7 @@
     worldLoaded: false,
     mapBitmap: null,
     mapCanvas: null,
+    threats: [], // procedural "contacts" / threat blips
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
@@ -118,7 +119,7 @@
       // radar speed tuned for subtle scan
       this.radar.speed = 0.0007 + Math.random() * 0.0008;
 
-      // If remote URL set, try to load it; otherwise fallback to local attempt then procedural fallback
+      // If remote URL set, try to load it; otherwise procedural fallback
       const url = (engine.config && engine.config.worldUrl) ? engine.config.worldUrl : null;
       if (url) {
         this._loadWorld(url).catch((e) => {
@@ -127,7 +128,6 @@
           this._generateFallbackMap();
         });
       } else {
-        // no remote URL set: use procedural fallback so no external dependencies required
         this.worldLoaded = false;
         this._generateFallbackMap();
       }
@@ -192,22 +192,24 @@
             edge[i] = Math.sqrt(gx*gx + gy*gy);
           }
         }
-        // write colorized output
+        // write colorized output with stronger coastline emphasis
         const out = mctx.createImageData(w,h);
         const outd = out.data;
-        const baseR = 36, baseG = 58, baseB = 24;
-        const landR = 160, landG = 200, landB = 110;
+        const baseR = 26, baseG = 44, baseB = 18; // darker sea base
+        const landR = 170, landG = 210, landB = 120; // bright olive for land
         let emax = 0;
         for (let i=0;i<edge.length;i++) if (edge[i] > emax) emax = edge[i];
         const en = emax > 0 ? 1 / emax : 0;
         for (let p=0;p<w*h;p++){
           const L = lum[p] / 255;
-          const landFactor = clamp((L - 0.16) * 1.3, 0, 1);
-          const edgeStrength = clamp(edge[p] * en * 3.2, 0, 1);
+          const landFactor = clamp((L - 0.16) * 1.2, 0, 1);
+          const edgeStrength = clamp(edge[p] * en * 3.8, 0, 1); // stronger edge emphasis
+          // mix base + land
           const r = Math.round(lerp(baseR, landR, landFactor));
           const g = Math.round(lerp(baseG, landG, landFactor));
           const b = Math.round(lerp(baseB, landB, landFactor));
-          const alpha = 0.12 + 0.38 * landFactor + 0.42 * edgeStrength;
+          // alpha uses both land and edge so coastlines read crisp
+          const alpha = 0.08 + 0.40 * landFactor + 0.52 * edgeStrength;
           outd[p*4] = r; outd[p*4+1] = g; outd[p*4+2] = b; outd[p*4+3] = Math.round(clamp(alpha,0,1)*255);
         }
         mctx.putImageData(out, 0, 0);
@@ -255,6 +257,41 @@
         this.mapBitmap = c;
         this.mapCanvas = c;
       }
+    },
+
+    // sample processed map alpha at normalized coordinates (0..1) to bias threat placement to land
+    _sampleMapAlphaNorm(nx, ny) {
+      if (!this.mapCanvas) return 0;
+      const ctx = this.mapCanvas.getContext('2d');
+      try {
+        const x = Math.floor(clamp(nx,0,1) * (this.mapCanvas.width - 1));
+        const y = Math.floor(clamp(ny,0,1) * (this.mapCanvas.height - 1));
+        const d = ctx.getImageData(x, y, 1, 1).data;
+        return d[3] / 255;
+      } catch (e) {
+        return 0;
+      }
+    },
+
+    _spawnThreat() {
+      // try a few times to find a land-ish location if map exists
+      let x, y, tries = 0, alpha = 0;
+      do {
+        x = Math.random() * this.bounds.w;
+        y = Math.random() * this.bounds.h;
+        alpha = this._sampleMapAlphaNorm(x / this.bounds.w, y / this.bounds.h);
+        tries++;
+      } while (tries < 6 && alpha < 0.12); // prefer land/coast pixels
+      // threat object
+      this.threats.push({
+        x, y,
+        ttl: 2200 + Math.random() * 2400, // ms life
+        life: 0,
+        size: 4 + Math.random() * 6,
+        pulse: 0
+      });
+      // limit threats
+      if (this.threats.length > 12) this.threats.splice(0, this.threats.length - 12);
     },
 
     onResize(w, h, dpr) {
@@ -348,6 +385,9 @@
         this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
       }
 
+      // occasionally spawn a threat blip (biased to land when possible)
+      if (Math.random() < 0.008) this._spawnThreat();
+
       // draw processed map (if available)
       if (this.mapBitmap) {
         ctx.save();
@@ -355,14 +395,15 @@
         const my = (engine.state.mouse.y != null ? engine.state.mouse.y : this.bounds.h * 0.5);
         const ox = (mx - this.bounds.w * 0.5) / this.bounds.w * 22;
         const oy = (my - this.bounds.h * 0.5) / this.bounds.h * 10;
-        ctx.globalAlpha = 0.34;
-        ctx.globalCompositeOperation = 'screen';
+        ctx.globalAlpha = 0.46; // stronger so map is clearly visible
+        ctx.globalCompositeOperation = 'multiply'; // give it darker, tactical look
         try {
           ctx.drawImage(this.mapBitmap, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2);
         } catch (e) {
           try { ctx.drawImage(this.mapCanvas, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2); } catch (e2) {}
         }
-        ctx.fillStyle = 'rgba(14,28,10,0.12)';
+        // olive tint / darken seas slightly for mood
+        ctx.fillStyle = 'rgba(12,26,8,0.20)';
         ctx.fillRect(0,0,this.bounds.w,this.bounds.h);
         ctx.restore();
       }
@@ -372,8 +413,8 @@
       ctx.globalCompositeOperation = 'source-over';
       ctx.lineWidth = 0.36;
       ctx.strokeStyle = 'rgba(90,110,70,0.05)';
-      const cols = 8; // fewer vertical lines
-      const rows = 6; // fewer horizontal lines
+      const cols = 8;
+      const rows = 6;
       for (let i = 1; i < cols; i++) {
         const x = (this.bounds.w / cols) * i;
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.bounds.h); ctx.stroke();
@@ -392,7 +433,7 @@
       }
       ctx.restore();
 
-      // neighbor grid for links
+      // build grid for links
       if (linkEnabled) this.buildGrid();
 
       // bloom offscreen pass
@@ -421,7 +462,7 @@
         }
       }
 
-      // draw cores
+      // draw particle cores
       for (let i = 0; i < this.particles.length; i++) {
         this.particles[i].drawCore(ctx, now);
       }
@@ -482,12 +523,41 @@
         p.drawGlowTo(ctx, now, glowColor);
       }
 
+      // render threat blips (red, pulsing, ominous)
+      if (this.threats.length) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = this.threats.length - 1; i >= 0; i--) {
+          const t = this.threats[i];
+          t.life += dt;
+          t.pulse = Math.sin((t.life / t.ttl) * Math.PI * 4) * 0.6 + 1.0;
+          const lifeRatio = t.life / t.ttl;
+          // draw core
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,60,48,${0.9 * (1 - lifeRatio)})`;
+          ctx.arc(t.x, t.y, t.size * t.pulse, 0, Math.PI * 2);
+          ctx.fill();
+          // outer ring
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(255,80,70,${0.6 * (1 - lifeRatio)})`;
+          ctx.lineWidth = 1.2 * (1 - lifeRatio);
+          ctx.arc(t.x, t.y, t.size * 2.6 * t.pulse, 0, Math.PI * 2);
+          ctx.stroke();
+          if (t.life >= t.ttl) this.threats.splice(i, 1);
+        }
+        ctx.restore();
+      }
+
       // radar sweep (subtle)
       if (cfg.militaryMode) {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         const angle = this.radar.angle;
         const sweep = Math.PI * 0.09;
+        // ensure cx/cy/maxR defined
+        const cx = this.bounds.w * 0.5;
+        const cy = this.bounds.h * 0.5;
+        const maxR = Math.max(this.bounds.w, this.bounds.h) * 0.72;
         const g = ctx.createRadialGradient(cx, cy, maxR * 0.02, cx, cy, maxR);
         g.addColorStop(0, 'rgba(220,255,160,0.14)');
         g.addColorStop(1, 'rgba(18,26,10,0.0)');
@@ -507,7 +577,7 @@
         ctx.restore();
       }
 
-      // anomaly and click feedback (unchanged subtle)
+      // anomaly flash (subtle, ominous)
       if (this._triggerAnomaly && (now - this._triggerAnomaly) < 900) {
         const t = (now - this._triggerAnomaly) / 900;
         ctx.save();
@@ -522,13 +592,14 @@
         if ((now - this._triggerAnomaly) > 800) this._triggerAnomaly = null;
       }
 
+      // subtle click feedback
       if (engine.state.mouse.down && engine.state.mouse.x != null) {
         const m = engine.state.mouse;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = 'rgba(200,230,140,0.03)';
+        ctx.fillStyle = 'rgba(255,200,160,0.03)';
         ctx.beginPath();
-        ctx.arc(m.x, m.y, 28, 0, Math.PI * 2);
+        ctx.arc(m.x, m.y, 24, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
