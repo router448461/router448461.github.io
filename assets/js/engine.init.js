@@ -1,26 +1,31 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.2.0-tac",
+    version: "1.2.0-tac-remote",
     t0: performance.now(),
     config: {
-      // tuned for dense, ominous tactical visuals
-      baseParticleDensity: 0.00012,
-      maxParticles: 420,
-      linkDistance: 160,
-      linkOpacity: 0.14,
-      particleSize: [0.9, 2.6],
-      speed: [0.06, 0.34],
-      repelRadius: 120,
-      backgroundFade: 0.048,
+      // tuned for dense, ominous tactical visuals (you can reduce density if needed)
+      baseParticleDensity: 0.00008, // a bit lower for less clutter
+      maxParticles: 360,
+      linkDistance: 140,
+      linkOpacity: 0.12,
+      particleSize: [0.9, 2.2],
+      speed: [0.06, 0.32],
+      repelRadius: 110,
+      backgroundFade: 0.05,
       bloomEnabled: true,
-      bloomDownscale: 0.4,
-      bloomBlurPx: 10,
+      bloomDownscale: 0.45,
+      bloomBlurPx: 8,
       bloomFrameSkip: 3,
 
       // military forced
       militaryMode: true,
-      reducedMotion: false
+      reducedMotion: false,
+
+      // Remote map: set this to the full URL of a world map (SVG or PNG) that allows CORS.
+      // Example (replace with your chosen map): 'https://raw.githubusercontent.com/your/repo/branch/path/world-flat.svg'
+      // If left empty/null the engine will use a procedural fallback map.
+      worldUrl: "", 
     },
     state: {
       started: false,
@@ -53,7 +58,7 @@
     }
   });
 
-  // small polyfill for deprecated window.styleMedia usage (some libs call styleMedia.matchMedium)
+  // small polyfill for some legacy uses of window.styleMedia.matchMedium
   if (!window.styleMedia) {
     window.styleMedia = {
       matchMedium: (q) => {
