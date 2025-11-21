@@ -10,7 +10,8 @@
 
     init() {
       this.canvas = document.getElementById("constellationCanvas");
-      this.ctx = this.canvas.getContext("2d", { alpha: false, desynchronized: true });
+      // Use alpha:true so underlying DOM map remains visible
+      this.ctx = this.canvas.getContext("2d", { alpha: true, desynchronized: true });
       engine.state.canvas = this.canvas;
       engine.state.ctx = this.ctx;
       this.resize();
@@ -69,11 +70,15 @@
       const ctx = this.ctx;
       if (!ctx) return;
       if (hard) {
-        ctx.fillStyle = "#020501";
-        ctx.fillRect(0, 0, this.width, this.height);
+        // fully clear the canvas (transparent) to let the underlying map show through
+        ctx.clearRect(0, 0, this.width, this.height);
       } else {
+        // subtle fade trail by drawing a translucent rect (preserve transparency)
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
         ctx.fillStyle = `rgba(2,5,3,${engine.config.backgroundFade})`;
         ctx.fillRect(0, 0, this.width, this.height);
+        ctx.restore();
       }
     },
 
