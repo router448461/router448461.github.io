@@ -10,18 +10,24 @@
 /* full viewport map container sits under the canvas */
 #mapContainer {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 0;
   pointer-events: none; /* map interactions ignored; canvas handles pointer events */
   background: #03130a; /* fallback if map fails to load */
-  width: 100vw;
-  height: 100vh; /* ensure full viewport coverage top-to-bottom */
+  width: 100%;
+  height: 100%;
 }
 
 /* Canvas base: keep transparent so map is visible underlying it */
 #constellationCanvas {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1;
   will-change: transform;
   background: transparent; /* allow underlying map DOM to show through */
