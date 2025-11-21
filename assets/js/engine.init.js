@@ -1,12 +1,12 @@
 (() => {
   // Namespace and readiness gate
   const engine = (window.engine = {
-    version: "1.2.0-tac-remote",
+    version: "1.4.0-tac-flights",
     t0: performance.now(),
     config: {
-      // tuned for dense, ominous tactical visuals (reduced clutter)
-      baseParticleDensity: 0.00008,
-      maxParticles: 320,
+      // visuals
+      baseParticleDensity: 0.00006,
+      maxParticles: 260,
       linkDistance: 140,
       linkOpacity: 0.12,
       particleSize: [0.9, 2.0],
@@ -18,20 +18,30 @@
       bloomBlurPx: 8,
       bloomFrameSkip: 3,
 
-      // military forced
-      militaryMode: true,
-      reducedMotion: false,
+      // flight overlay: choose data source
+      // flightSource: 'opensky' (default), 'fr24' (requires server proxy + subscription)
+      flightEnabled: true,
+      flightSource: 'opensky',
+      // Poll interval in ms
+      flightPollInterval: 10000,
 
-      // Remote map URL (preselected a high-contrast Wikimedia world SVG that generally allows CORS).
-      // You can replace this with any CORS-enabled SVG/PNG URL you prefer.
-      worldUrl: "https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg",
+      // If your flight data provider blocks CORS (likely), set flightProxy to a server endpoint you control.
+      // The proxy should return JSON { states: [...] } where each state matches OpenSky state vector order:
+      // [icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, heading, vertical_rate, sensors, geo_altitude, squawk, spi, position_source]
+      flightProxy: '',
+
+      // Map options (Leaflet fallback)
+      initialCenter: { lat: 20.0, lng: 0.0 },
+      initialZoom: 2
     },
     state: {
       started: false,
       canvas: null,
       ctx: null,
       mouse: { x: null, y: null, down: false },
-      fps: 0
+      fps: 0,
+      domMapLoaded: false,
+      map: null
     },
     modules: {},
     _ready: new Set(),
@@ -57,24 +67,19 @@
     }
   });
 
-  // small polyfill for some legacy uses of window.styleMedia.matchMedium
+  // small polyfill for styleMedia deprecation callers
   if (!window.styleMedia) {
     window.styleMedia = {
       matchMedium: (q) => {
-        try {
-          return !!window.matchMedia && window.matchMedia(q).matches;
-        } catch (e) {
-          return false;
-        }
+        try { return !!window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; }
       }
     };
   }
 
   // respects reduced-motion preference
-  const prr = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prr) engine.config.reducedMotion = true;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) engine.config.reducedMotion = true;
 
-  // load main styles immediately (avoid preload warning)
+  // load main styles immediately
   function loadMainCss() {
     if (document.querySelector('link[href*="assets/css/main.css"]')) return;
     const link = document.createElement("link");
@@ -83,14 +88,62 @@
     document.head.appendChild(link);
   }
 
+  // Initialize a DOM map. If you have an Apple MapKit token you can implement it here;
+  // default is Leaflet + Carto Dark tiles (no key required).
+  function initDomMap() {
+    return new Promise((resolve) => {
+      // add Leaflet CSS if not present
+      if (!document.querySelector('link[href*="leaflet.css"]')) {
+        const lcss = document.createElement('link');
+        lcss.rel = 'stylesheet';
+        lcss.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(lcss);
+      }
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      s.defer = true;
+      s.onload = () => {
+        try {
+          const mapEl = document.getElementById('mapContainer');
+          if (!mapEl) return resolve(false);
+          mapEl.innerHTML = '';
+          const map = L.map(mapEl, {
+            center: [engine.config.initialCenter.lat, engine.config.initialCenter.lng],
+            zoom: engine.config.initialZoom,
+            dragging: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            touchZoom: false,
+            boxZoom: false,
+            keyboard: false,
+            zoomControl: false,
+            attributionControl: false,
+            interactive: false
+          });
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            subdomains: 'abcd',
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+          }).addTo(map);
+          engine.state.map = map;
+          engine.state.domMapLoaded = true;
+          engine.log('Leaflet/CARTO map loaded');
+          resolve(true);
+        } catch (e) {
+          console.warn('[engine] Leaflet init failed', e);
+          resolve(false);
+        }
+      };
+      s.onerror = () => resolve(false);
+      document.head.appendChild(s);
+    });
+  }
+
   // loader fade
   function removeLoader() {
     const loader = document.getElementById("loader");
     if (!loader) return;
-    if (engine.config.reducedMotion) {
-      loader.classList.add("removed");
-      return;
-    }
+    if (engine.config.reducedMotion) { loader.classList.add("removed"); return; }
     loader.classList.add("fade-out");
     loader.addEventListener("transitionend", () => loader.classList.add("removed"), { once: true });
   }
@@ -98,45 +151,48 @@
   window.addEventListener("DOMContentLoaded", () => {
     loadMainCss();
 
-    // dynamically load modules
-    ["engine.base.js", "engine.visuals.js"].forEach(file => {
-      const s = document.createElement("script");
-      s.src = `assets/js/${file}`;
-      s.async = true;
-      document.body.appendChild(s);
-    });
+    // attempt to init DOM map first (Leaflet fallback). visuals will skip in-canvas map if domMapLoaded == true.
+    initDomMap().then(() => {
+      // dynamically load modules after map attempt
+      ["engine.base.js", "engine.visuals.js"].forEach(file => {
+        const s = document.createElement("script");
+        s.src = `assets/js/${file}`;
+        s.async = true;
+        document.body.appendChild(s);
+      });
 
-    // optional intel module (keeps FPS tracking)
-    const intel = document.createElement("script");
-    intel.src = "assets/js/engine.intel.js";
-    intel.defer = true;
-    document.body.appendChild(intel);
+      // optional intel
+      const intel = document.createElement("script");
+      intel.src = "assets/js/engine.intel.js";
+      intel.defer = true;
+      document.body.appendChild(intel);
 
-    // start when base + visuals ready
-    engine.when(["base", "visuals"], () => {
-      if (engine.state.started) return;
-      engine.state.started = true;
+      // start when base + visuals ready
+      engine.when(["base", "visuals"], () => {
+        if (engine.state.started) return;
+        engine.state.started = true;
 
-      engine.modules.base.init();
-      engine.modules.visuals.init();
+        engine.modules.base.init();
+        engine.modules.visuals.init();
 
-      // main loop
-      let last = performance.now();
-      function frame(now) {
-        const dt = Math.min(48, now - last);
-        last = now;
-        engine.modules.base.tick(dt);
-        engine.modules.visuals.tick(dt);
+        // main loop
+        let last = performance.now();
+        function frame(now) {
+          const dt = Math.min(48, now - last);
+          last = now;
+          engine.modules.base.tick(dt);
+          engine.modules.visuals.tick(dt);
+          requestAnimationFrame(frame);
+        }
         requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
 
-      removeLoader();
-      engine.log(`Started in ${Math.round(performance.now() - engine.t0)}ms`);
-      if (engine.modules.intel?.start) engine.modules.intel.start();
+        removeLoader();
+        engine.log(`Started in ${Math.round(performance.now() - engine.t0)}ms`);
+        if (engine.modules.intel?.start) engine.modules.intel.start();
+      });
+
+      // Safety fade
+      setTimeout(() => { removeLoader(); }, 3500);
     });
-
-    // Safety fade
-    setTimeout(() => { removeLoader(); }, 3500);
   });
 })();
