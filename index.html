@@ -8,7 +8,28 @@
   <!-- Boot visuals -->
   <link rel="stylesheet" href="assets/css/loader.css" />
 
-  <!-- main.css is preloaded/applied by engine.init.js -->
+  <!-- Inline polyfill for window.styleMedia to avoid deprecation noise from third-party code.
+       This runs as early as possible (before engine.init.js) so other scripts won't trigger
+       a styleMedia warning when they access window.styleMedia. -->
+  <script>
+    (function () {
+      if (!window.styleMedia) {
+        try {
+          window.styleMedia = {
+            matchMedium(q) {
+              try {
+                return !!window.matchMedia && window.matchMedia(q).matches;
+              } catch (e) {
+                return false;
+              }
+            }
+          };
+        } catch (e) { /* safe noop */ }
+      }
+    })();
+  </script>
+
+  <!-- main.css is injected by engine.init.js -->
   <script src="assets/js/engine.init.js" defer></script>
 </head>
 <body>
