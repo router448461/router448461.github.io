@@ -69,13 +69,27 @@
     clear(hard = false) {
       const ctx = this.ctx;
       if (!ctx) return;
-      // Always fully clear the canvas to keep the DOM map visible underneath.
-      // This avoids cumulative semi-transparent fills that would eventually obscure the map.
-      ctx.clearRect(0, 0, this.width, this.height);
+
+      if (hard) {
+        // Full transparent clear so underlying map shows immediately
+        ctx.clearRect(0, 0, this.width, this.height);
+        return;
+      }
+
+      // Subtle non-destructive fade to create trails WITHOUT darkening the DOM map.
+      // We use destination-out with a low alpha rectangle to gently erase a bit of the previous frame.
+      // This produces soft motion trails while keeping the map visible below.
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      // trailAlpha controls how quickly trails fade (0.02..0.12 recommended). Tuned for subtlety.
+      const trailAlpha = (engine.config && typeof engine.config.trailAlpha === 'number') ? engine.config.trailAlpha : 0.06;
+      ctx.fillStyle = `rgba(0,0,0,${trailAlpha})`;
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.restore();
     },
 
     tick() {
-      // We clear fully each frame; visuals are fully redrawn.
+      // Apply fade/trail then visuals draw fully each frame.
       this.clear(false);
     }
   });
