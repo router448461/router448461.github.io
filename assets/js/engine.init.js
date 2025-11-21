@@ -4,12 +4,12 @@
     version: "1.2.0-tac-remote",
     t0: performance.now(),
     config: {
-      // tuned for dense, ominous tactical visuals (you can reduce density if needed)
-      baseParticleDensity: 0.00008, // a bit lower for less clutter
-      maxParticles: 360,
+      // tuned for dense, ominous tactical visuals (reduced clutter)
+      baseParticleDensity: 0.00008,
+      maxParticles: 320,
       linkDistance: 140,
       linkOpacity: 0.12,
-      particleSize: [0.9, 2.2],
+      particleSize: [0.9, 2.0],
       speed: [0.06, 0.32],
       repelRadius: 110,
       backgroundFade: 0.05,
@@ -22,10 +22,9 @@
       militaryMode: true,
       reducedMotion: false,
 
-      // Remote map: set this to the full URL of a world map (SVG or PNG) that allows CORS.
-      // Example (replace with your chosen map): 'https://raw.githubusercontent.com/your/repo/branch/path/world-flat.svg'
-      // If left empty/null the engine will use a procedural fallback map.
-      worldUrl: "", 
+      // Remote map URL (preselected a high-contrast Wikimedia world SVG that generally allows CORS).
+      // You can replace this with any CORS-enabled SVG/PNG URL you prefer.
+      worldUrl: "https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg",
     },
     state: {
       started: false,
@@ -109,7 +108,7 @@
       document.body.appendChild(s);
     });
 
-    // optional intel
+    // optional intel module (keeps FPS tracking)
     const intel = document.createElement("script");
     intel.src = "assets/js/engine.intel.js";
     intel.defer = true;
