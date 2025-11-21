@@ -98,7 +98,10 @@
     worldLoaded: false,
     mapBitmap: null,
     mapCanvas: null,
-    threats: [], // procedural "contacts" / threat blips
+
+    // weapon-style HUD/lock parameters
+    lockPulse: 0,
+    lockPulseStart: 0,
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
@@ -122,7 +125,9 @@
       // If remote URL set, try to load it; otherwise procedural fallback
       const url = (engine.config && engine.config.worldUrl) ? engine.config.worldUrl : null;
       if (url) {
-        this._loadWorld(url).catch((e) => {
+        this._loadWorld(url).then(() => {
+          console.log('[visuals] world map loaded');
+        }).catch((e) => {
           console.warn('[visuals] remote map load failed, falling back to procedural map', e);
           this.worldLoaded = false;
           this._generateFallbackMap();
@@ -259,41 +264,6 @@
       }
     },
 
-    // sample processed map alpha at normalized coordinates (0..1) to bias threat placement to land
-    _sampleMapAlphaNorm(nx, ny) {
-      if (!this.mapCanvas) return 0;
-      const ctx = this.mapCanvas.getContext('2d');
-      try {
-        const x = Math.floor(clamp(nx,0,1) * (this.mapCanvas.width - 1));
-        const y = Math.floor(clamp(ny,0,1) * (this.mapCanvas.height - 1));
-        const d = ctx.getImageData(x, y, 1, 1).data;
-        return d[3] / 255;
-      } catch (e) {
-        return 0;
-      }
-    },
-
-    _spawnThreat() {
-      // try a few times to find a land-ish location if map exists
-      let x, y, tries = 0, alpha = 0;
-      do {
-        x = Math.random() * this.bounds.w;
-        y = Math.random() * this.bounds.h;
-        alpha = this._sampleMapAlphaNorm(x / this.bounds.w, y / this.bounds.h);
-        tries++;
-      } while (tries < 6 && alpha < 0.12); // prefer land/coast pixels
-      // threat object
-      this.threats.push({
-        x, y,
-        ttl: 2200 + Math.random() * 2400, // ms life
-        life: 0,
-        size: 4 + Math.random() * 6,
-        pulse: 0
-      });
-      // limit threats
-      if (this.threats.length > 12) this.threats.splice(0, this.threats.length - 12);
-    },
-
     onResize(w, h, dpr) {
       this.bounds.w = w;
       this.bounds.h = h;
@@ -378,15 +348,14 @@
       if (this.anomalyTimer <= 0) {
         this.anomalyTimer = 9000 + Math.random() * 22000;
         this._triggerAnomaly = now;
+        // start a lock pulse when anomaly occurs
+        this.lockPulseStart = now;
       }
 
       // update particles
       for (let i = 0; i < this.particles.length; i++) {
         this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
       }
-
-      // occasionally spawn a threat blip (biased to land when possible)
-      if (Math.random() < 0.008) this._spawnThreat();
 
       // draw processed map (if available)
       if (this.mapBitmap) {
@@ -523,28 +492,63 @@
         p.drawGlowTo(ctx, now, glowColor);
       }
 
-      // render threat blips (red, pulsing, ominous)
-      if (this.threats.length) {
+      // HUD-style central reticle / lock pulse (weapon-like)
+      {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        for (let i = this.threats.length - 1; i >= 0; i--) {
-          const t = this.threats[i];
-          t.life += dt;
-          t.pulse = Math.sin((t.life / t.ttl) * Math.PI * 4) * 0.6 + 1.0;
-          const lifeRatio = t.life / t.ttl;
-          // draw core
+        const cx = this.bounds.w * 0.5;
+        const cy = this.bounds.h * 0.5;
+
+        // concentric target rings
+        ctx.strokeStyle = 'rgba(190,230,140,0.12)';
+        ctx.lineWidth = 1.0;
+        const rings = 3;
+        for (let i = 1; i <= rings; i++) {
           ctx.beginPath();
-          ctx.fillStyle = `rgba(255,60,48,${0.9 * (1 - lifeRatio)})`;
-          ctx.arc(t.x, t.y, t.size * t.pulse, 0, Math.PI * 2);
-          ctx.fill();
-          // outer ring
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(255,80,70,${0.6 * (1 - lifeRatio)})`;
-          ctx.lineWidth = 1.2 * (1 - lifeRatio);
-          ctx.arc(t.x, t.y, t.size * 2.6 * t.pulse, 0, Math.PI * 2);
+          ctx.arc(cx, cy, 18 + i * 22, 0, Math.PI * 2);
           ctx.stroke();
-          if (t.life >= t.ttl) this.threats.splice(i, 1);
         }
+
+        // crosshair
+        ctx.strokeStyle = 'rgba(200,230,150,0.18)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(cx - 36, cy);
+        ctx.lineTo(cx - 10, cy);
+        ctx.moveTo(cx + 10, cy);
+        ctx.lineTo(cx + 36, cy);
+        ctx.moveTo(cx, cy - 36);
+        ctx.lineTo(cx, cy - 10);
+        ctx.moveTo(cx, cy + 10);
+        ctx.lineTo(cx, cy + 36);
+        ctx.stroke();
+
+        // small tick markers (weapon ranging feel)
+        ctx.fillStyle = 'rgba(200,230,150,0.12)';
+        for (let i=0;i<8;i++) {
+          const a = (i / 8) * Math.PI * 2;
+          const rx = cx + Math.cos(a) * (18 + rings * 22 + 8);
+          const ry = cy + Math.sin(a) * (18 + rings * 22 + 8);
+          ctx.beginPath(); ctx.arc(rx, ry, 1.6, 0, Math.PI*2); ctx.fill();
+        }
+
+        // lock pulse if started recently
+        if (this.lockPulseStart) {
+          const dtp = (now - this.lockPulseStart);
+          const pulseDur = 1200;
+          if (dtp < pulseDur) {
+            const pT = dtp / pulseDur;
+            const pulseRadius = 18 + lerp(0, 220, pT);
+            const alpha = 0.45 * (1 - pT);
+            ctx.fillStyle = `rgba(220,255,160,${alpha})`;
+            ctx.beginPath();
+            ctx.arc(cx, cy, pulseRadius, 0, Math.PI*2);
+            ctx.fill();
+          } else {
+            this.lockPulseStart = 0;
+          }
+        }
+
         ctx.restore();
       }
 
@@ -554,7 +558,6 @@
         ctx.globalCompositeOperation = 'lighter';
         const angle = this.radar.angle;
         const sweep = Math.PI * 0.09;
-        // ensure cx/cy/maxR defined
         const cx = this.bounds.w * 0.5;
         const cy = this.bounds.h * 0.5;
         const maxR = Math.max(this.bounds.w, this.bounds.h) * 0.72;
@@ -577,16 +580,16 @@
         ctx.restore();
       }
 
-      // anomaly flash (subtle, ominous)
+      // anomaly flash (subtle, amber)
       if (this._triggerAnomaly && (now - this._triggerAnomaly) < 900) {
         const t = (now - this._triggerAnomaly) / 900;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = `rgba(180,200,100,${0.08 * (1 - t)})`;
+        ctx.fillStyle = `rgba(220,240,140,${0.08 * (1 - t)})`;
         const ax = Math.random() * this.bounds.w;
         const ay = Math.random() * this.bounds.h;
         ctx.beginPath();
-        ctx.arc(ax, ay, (this.bounds.w + this.bounds.h) * (0.02 + 0.06 * (1 - t)), 0, Math.PI*2);
+        ctx.arc(ax, ay, (this.bounds.w + this.bounds.h) * (0.02 + 0.04 * (1 - t)), 0, Math.PI*2);
         ctx.fill();
         ctx.restore();
         if ((now - this._triggerAnomaly) > 800) this._triggerAnomaly = null;
