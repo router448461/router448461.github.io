@@ -69,21 +69,13 @@
     clear(hard = false) {
       const ctx = this.ctx;
       if (!ctx) return;
-      if (hard) {
-        // fully clear the canvas (transparent) to let the underlying map show through
-        ctx.clearRect(0, 0, this.width, this.height);
-      } else {
-        // subtle fade trail by drawing a translucent rect (preserve transparency)
-        ctx.save();
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = `rgba(2,5,3,${engine.config.backgroundFade})`;
-        ctx.fillRect(0, 0, this.width, this.height);
-        ctx.restore();
-      }
+      // Always fully clear the canvas to keep the DOM map visible underneath.
+      // This avoids cumulative semi-transparent fills that would eventually obscure the map.
+      ctx.clearRect(0, 0, this.width, this.height);
     },
 
     tick() {
-      // Background trail pass
+      // We clear fully each frame; visuals are fully redrawn.
       this.clear(false);
     }
   });
