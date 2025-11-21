@@ -14,6 +14,8 @@
   z-index: 0;
   pointer-events: none; /* map interactions ignored; canvas handles pointer events */
   background: #03130a; /* fallback if map fails to load */
+  width: 100vw;
+  height: 100vh; /* ensure full viewport coverage top-to-bottom */
 }
 
 /* Canvas base: keep transparent so map is visible underlying it */
