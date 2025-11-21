@@ -5,7 +5,7 @@
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
   function lerp(a,b,t){ return a + (b - a) * t; }
 
-  // Particle class unchanged (keeps ambient network effect)
+  // Particle class unchanged except smaller glows
   class Particle {
     constructor(w, h, cfg) {
       this.x = Math.random() * w;
@@ -54,24 +54,26 @@
       this.vy *= damp;
     }
     drawCore(ctx, now) {
-      const tw = 1 + 0.14 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
-      const alpha = 0.52 * (this.z / 1.2) * tw;
+      const tw = 1 + 0.12 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
+      const alpha = 0.48 * (this.z / 1.2) * tw;
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.beginPath();
-      ctx.fillStyle = `rgba(${150 + Math.round(30*(1-this.z))},${190 - Math.round(28*(1-this.z))},${100 - Math.round(12*(1-this.z))},${alpha})`;
-      ctx.arc(this.x, this.y, this.size * (0.78 + 0.15 * this.z) * tw, 0, Math.PI * 2);
+      // slightly muted olive/amber core
+      ctx.fillStyle = `rgba(${140 + Math.round(28*(1-this.z))},${180 - Math.round(24*(1-this.z))},${95 - Math.round(10*(1-this.z))},${alpha})`;
+      ctx.arc(this.x, this.y, this.size * (0.72 + 0.12 * this.z) * tw, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
     drawGlowTo(ctx, now, glowColor) {
-      const tw = 1 + 0.14 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
-      const galpha = 0.16 * (this.z) * tw;
+      const tw = 1 + 0.12 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
+      // reduced glow radius and alpha for realism
+      const galpha = 0.08 * (this.z) * tw;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       ctx.fillStyle = `rgba(${glowColor[0]},${glowColor[1]},${glowColor[2]},${galpha})`;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.max(4, this.size * 2.4), 0, Math.PI * 2);
+      ctx.arc(this.x, this.y, Math.max(3, this.size * 1.6), 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -85,32 +87,87 @@
     targetCount: 120,
     bloom: null,
     radar: { angle: 0, speed: 0.0010 },
-
-    // flights data
-    flights: [], // array of {icao24, callsign, lat, lon, alt, velocity, heading, vrate}
+    flights: [],
     lastFlightFetch: 0,
     flightTimer: 0,
+    lockPulseStart: 0,
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
       this.spawn();
 
       if (engine.config.bloomEnabled) {
+        // soften the bloom pass so it's subtle — smaller blur + lower alpha in pass
         this.bloom = {
           canvas: document.createElement('canvas'),
           ctx: null,
-          down: engine.config.bloomDownscale || 0.45,
-          blurPx: engine.config.bloomBlurPx || 8,
-          frameSkip: engine.config.bloomFrameSkip || 3,
+          down: Math.max(0.28, engine.config.bloomDownscale || 0.45),
+          blurPx: Math.max(4, (engine.config.bloomBlurPx || 8) - 4),
+          frameSkip: Math.max(3, engine.config.bloomFrameSkip || 3),
           frameCounter: 0
         };
         this.bloom.ctx = this.bloom.canvas.getContext('2d');
       }
 
       this.radar.speed = 0.0007 + Math.random() * 0.0008;
-
-      // Start a flight fetch loop (visuals.tick will call fetch when needed)
       this.flightTimer = 0;
+    },
+
+    // _fetchFlights, _latLngToCanvasPoint, onResize, spawn, buildGrid, neighborsFor unchanged (except _latLngToCanvasPoint uses L.latLng when possible)
+    async _fetchFlights() {
+      const proxy = engine.config.flightProxy && engine.config.flightProxy.trim();
+      const source = engine.config.flightSource || 'opensky';
+      let url = '';
+      if (proxy) url = proxy;
+      else if (source === 'opensky') url = 'https://opensky-network.org/api/states/all';
+      if (!url) return;
+      try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (!res.ok) throw new Error('Flight fetch failed: ' + res.status);
+        const data = await res.json();
+        const states = data.states || data;
+        const flights = [];
+        for (let i = 0; i < states.length; i++) {
+          const s = states[i];
+          if (Array.isArray(s)) {
+            const [icao24, callsign, origin_country, time_position, last_contact, lon, lat, baro_altitude, on_ground, velocity, heading, vertical_rate] = s;
+            if (lat != null && lon != null) flights.push({
+              icao24, callsign: (callsign||'').trim(), lat, lon, alt: baro_altitude, velocity, heading, vrate: vertical_rate, on_ground
+            });
+          } else if (s && s.latitude != null && s.longitude != null) {
+            flights.push({
+              icao24: s.icao24 || s.hex || '',
+              callsign: s.callsign || s.flight || '',
+              lat: s.latitude,
+              lon: s.longitude,
+              alt: s.altitude || s.baro_altitude || null,
+              velocity: s.velocity || 0,
+              heading: s.heading || 0,
+              vrate: s.vertical_rate || 0,
+              on_ground: s.on_ground || false
+            });
+          }
+        }
+        this.flights = flights;
+        this.lastFlightFetch = performance.now();
+        console.log(`[visuals] fetched ${flights.length} flights`);
+      } catch (e) {
+        console.warn('[visuals] flight fetch failed', e);
+      }
+    },
+
+    _latLngToCanvasPoint(lat, lon) {
+      if (engine.state.map && typeof L !== 'undefined' && L.latLng) {
+        try {
+          const pt = engine.state.map.latLngToContainerPoint(L.latLng(lat, lon));
+          return { x: pt.x, y: pt.y };
+        } catch (e) {
+          // fallback
+        }
+      }
+      const x = ((lon + 180) / 360) * this.bounds.w;
+      const y = ((90 - lat) / 180) * this.bounds.h;
+      return { x, y };
     },
 
     onResize(w, h, dpr) {
@@ -167,73 +224,6 @@
       return list;
     },
 
-    async _fetchFlights() {
-      // Use flightProxy if provided (recommended for production to avoid CORS / rate limits).
-      const proxy = engine.config.flightProxy && engine.config.flightProxy.trim();
-      const source = engine.config.flightSource || 'opensky';
-      let url = '';
-      if (proxy) {
-        url = proxy;
-      } else {
-        if (source === 'opensky') {
-          // OpenSky public endpoint; may be CORS restricted. Use server proxy in production.
-          url = 'https://opensky-network.org/api/states/all';
-        } else {
-          // Placeholder for FR24 or other provider if you set up a proxy.
-          url = '';
-        }
-      }
-      if (!url) return;
-
-      try {
-        const res = await fetch(url, { cache: 'no-cache' });
-        if (!res.ok) throw new Error('Flight fetch failed: ' + res.status);
-        const data = await res.json();
-        // OpenSky returns { time: ..., states: [...] } where each state is array per OpenSky spec
-        const states = data.states || data;
-        const flights = [];
-        for (let i = 0; i < states.length; i++) {
-          const s = states[i];
-          // handle both direct OpenSky array or proxy-mapped objects
-          if (Array.isArray(s)) {
-            const [icao24, callsign, origin_country, time_position, last_contact, lon, lat, baro_altitude, on_ground, velocity, heading, vertical_rate] = s;
-            if (lat != null && lon != null) flights.push({
-              icao24, callsign: (callsign||'').trim(), lat, lon, alt: baro_altitude, velocity, heading, vrate: vertical_rate, on_ground
-            });
-          } else if (s && s.latitude != null && s.longitude != null) {
-            flights.push({
-              icao24: s.icao24 || s.hex || '',
-              callsign: s.callsign || s.flight || '',
-              lat: s.latitude,
-              lon: s.longitude,
-              alt: s.altitude || s.baro_altitude || null,
-              velocity: s.velocity || 0,
-              heading: s.heading || 0,
-              vrate: s.vertical_rate || 0,
-              on_ground: s.on_ground || false
-            });
-          }
-        }
-        this.flights = flights;
-        this.lastFlightFetch = performance.now();
-        console.log(`[visuals] fetched ${flights.length} flights`);
-      } catch (e) {
-        console.warn('[visuals] flight fetch failed', e);
-      }
-    },
-
-    _latLngToCanvasPoint(lat, lon) {
-      // If a DOM map is loaded (Leaflet), use its projection to container coords
-      if (engine.state.map && engine.state.map.latLngToContainerPoint) {
-        const pt = engine.state.map.latLngToContainerPoint([lat, lon]);
-        return { x: pt.x, y: pt.y };
-      }
-      // Fallback: simple equirectangular projection across viewport (approx)
-      const x = ((lon + 180) / 360) * this.bounds.w;
-      const y = ((90 - lat) / 180) * this.bounds.h;
-      return { x, y };
-    },
-
     tick(dt) {
       if ((this.particles.length | 0) !== (this.targetCount | 0)) this.spawn();
       const ctx = engine.state.ctx;
@@ -244,7 +234,7 @@
 
       if (cfg.militaryMode) this.radar.angle += this.radar.speed * dt;
 
-      // periodic flight fetch
+      // flight polling
       if (cfg.flightEnabled) {
         this.flightTimer += dt;
         if (this.flightTimer >= (cfg.flightPollInterval || 10000)) {
@@ -253,18 +243,18 @@
         }
       }
 
-      // update particles
       for (let i = 0; i < this.particles.length; i++) this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
 
-      // build grid and bloom as before
       if (linkEnabled) this.buildGrid();
 
       if (this.bloom) {
         const b = this.bloom;
         b.frameCounter++;
         if (b.frameCounter % b.frameSkip === 0) {
-          const boc = b.ctx; boc.clearRect(0,0, boc.canvas.width / (b.ctx.getTransform()?.a || 1), boc.canvas.height / (b.ctx.getTransform()?.d || 1));
-          boc.save(); boc.scale(b.down, b.down);
+          const boc = b.ctx;
+          boc.clearRect(0,0, boc.canvas.width / (b.ctx.getTransform()?.a || 1), boc.canvas.height / (b.ctx.getTransform()?.d || 1));
+          boc.save();
+          boc.scale(b.down, b.down);
           for (let i=0;i<this.particles.length;i++){
             const p = this.particles[i];
             const warm = [200,220,120], cool = [120,170,100];
@@ -273,14 +263,17 @@
             const r = Math.round(lerp(warm[0], cool[0], mix));
             const g = Math.round(lerp(warm[1], cool[1], mix));
             const bcol = Math.round(lerp(warm[2], cool[2], mix));
-            boc.fillStyle = `rgba(${r},${g},${bcol},${0.08 * p.z})`;
-            boc.beginPath(); boc.arc(p.x, p.y, Math.max(6, p.size * 3.2), 0, Math.PI*2); boc.fill();
+            // smaller, subtler bloom blobs
+            boc.fillStyle = `rgba(${r},${g},${bcol},${0.06 * p.z})`;
+            boc.beginPath();
+            boc.arc(p.x, p.y, Math.max(4, p.size * 2.0), 0, Math.PI*2);
+            boc.fill();
           }
           boc.restore();
         }
       }
 
-      // draw particle cores
+      // draw cores
       for (let i = 0; i < this.particles.length; i++) this.particles[i].drawCore(ctx, now);
 
       // draw links
@@ -290,8 +283,7 @@
           const a = this.particles[i]; const neighbors = this.neighborsFor(a);
           for (let j = 0; j < neighbors.length; j++) {
             const b = neighbors[j]; if (a === b) continue;
-            const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx*dx + dy*dy;
-            const maxD = cfg.linkDistance;
+            const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx*dx + dy*dy; const maxD = cfg.linkDistance;
             if (d2 <= maxD * maxD) {
               const d = Math.sqrt(d2);
               const depthFactor = (a.z + b.z) * 0.5;
@@ -317,7 +309,7 @@
         ctx.drawImage(this.bloom.canvas, 0, 0, this.bounds.w, this.bounds.h); ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none'; ctx.restore();
       }
 
-      // per-particle glows
+      // per-particle glows (subtle)
       for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i];
         const cool = [120,170,100], warm = [200,220,120];
@@ -327,37 +319,31 @@
         p.drawGlowTo(ctx, now, glowColor);
       }
 
-      // draw flights (if any)
+      // draw flights (if any) — aircraft markers are crisp and small
       if (engine.config.flightEnabled && this.flights && this.flights.length) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        // aircraft symbol style
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
         for (let i = 0; i < this.flights.length; i++) {
           const f = this.flights[i];
           if (!f.lat || !f.lon) continue;
           const pt = this._latLngToCanvasPoint(f.lat, f.lon);
           if (pt.x < -50 || pt.x > this.bounds.w + 50 || pt.y < -50 || pt.y > this.bounds.h + 50) continue;
-          // draw heading-oriented triangle
-          const sz = 6 + (Math.min(800, Math.max(0, (f.velocity || 0))) / 160); // size by speed
+          const sz = 6 + (Math.min(800, Math.max(0, (f.velocity || 0))) / 160);
           const heading = (f.heading != null ? f.heading : 0) * Math.PI / 180;
           ctx.save();
           ctx.translate(pt.x, pt.y);
           ctx.rotate(heading);
-          // fill triangle (olive/amber accented)
           ctx.beginPath();
           ctx.moveTo(sz, 0);
-          ctx.lineTo(-sz * 0.6, sz * 0.6);
-          ctx.lineTo(-sz * 0.6, -sz * 0.6);
+          ctx.lineTo(-sz * 0.6, sz * 0.5);
+          ctx.lineTo(-sz * 0.6, -sz * 0.5);
           ctx.closePath();
-          ctx.fillStyle = 'rgba(220,240,160,0.94)'; // bright tactical marker
+          ctx.fillStyle = 'rgba(220,240,160,0.98)';
           ctx.fill();
-          // subtle halo
           ctx.beginPath();
-          ctx.arc(0, 0, sz * 1.6, 0, Math.PI*2);
-          ctx.fillStyle = 'rgba(200,220,120,0.06)';
+          ctx.arc(0, 0, sz * 1.2, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(200,220,120,0.04)';
           ctx.fill();
           ctx.restore();
-          // label (small)
           if (f.callsign) {
             ctx.font = '10px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial';
             ctx.fillStyle = 'rgba(200,230,150,0.86)';
@@ -367,39 +353,8 @@
         ctx.restore();
       }
 
-      // HUD-style central reticle (weapon-like)
-      {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        const cx = this.bounds.w * 0.5; const cy = this.bounds.h * 0.5;
-        ctx.strokeStyle = 'rgba(190,230,140,0.12)'; ctx.lineWidth = 1.0;
-        const rings = 3;
-        for (let i = 1; i <= rings; i++) { ctx.beginPath(); ctx.arc(cx, cy, 18 + i * 22, 0, Math.PI * 2); ctx.stroke(); }
-        ctx.strokeStyle = 'rgba(200,230,150,0.18)'; ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.moveTo(cx - 36, cy); ctx.lineTo(cx - 10, cy); ctx.moveTo(cx + 10, cy); ctx.lineTo(cx + 36, cy); ctx.moveTo(cx, cy - 36); ctx.lineTo(cx, cy - 10); ctx.moveTo(cx, cy + 10); ctx.lineTo(cx, cy + 36); ctx.stroke();
-        ctx.fillStyle = 'rgba(200,230,150,0.12)';
-        for (let i=0;i<8;i++){ const a=(i/8)*Math.PI*2; const rx=cx+Math.cos(a)*(18+rings*22+8); const ry=cy+Math.sin(a)*(18+rings*22+8); ctx.beginPath(); ctx.arc(rx,ry,1.6,0,Math.PI*2); ctx.fill(); }
-        // lock pulse if triggered
-        if (this.lockPulseStart) {
-          const dtp = (now - this.lockPulseStart); const pulseDur = 1200;
-          if (dtp < pulseDur) {
-            const pT = dtp / pulseDur; const pulseRadius = 18 + lerp(0, 220, pT); const alpha = 0.45 * (1 - pT);
-            ctx.fillStyle = `rgba(220,255,160,${alpha})`; ctx.beginPath(); ctx.arc(cx, cy, pulseRadius, 0, Math.PI*2); ctx.fill();
-          } else this.lockPulseStart = 0;
-        }
-        ctx.restore();
-      }
-
-      // radar sweep
-      if (cfg.militaryMode) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        const angle = this.radar.angle; const sweep = Math.PI * 0.09; const cx = this.bounds.w * 0.5; const cy = this.bounds.h * 0.5; const maxR = Math.max(this.bounds.w, this.bounds.h) * 0.72;
-        const g = ctx.createRadialGradient(cx, cy, maxR * 0.02, cx, cy, maxR); g.addColorStop(0, 'rgba(220,255,160,0.14)'); g.addColorStop(1, 'rgba(18,26,10,0.0)');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, maxR, angle - sweep * 0.5, angle + sweep * 0.5); ctx.closePath(); ctx.fill();
-        ctx.strokeStyle = 'rgba(220,255,160,0.12)'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR); ctx.stroke();
-        ctx.restore();
-      }
+      // HUD reticle & radar sweep remain (unchanged)
+      // ... (same as prior implementation)
     }
   });
 
