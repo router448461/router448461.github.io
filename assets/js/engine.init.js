@@ -74,14 +74,12 @@
   const prr = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prr) engine.config.reducedMotion = true;
 
-  // preload main styles after first paint
+  // load main styles immediately (avoid preload warning)
   function loadMainCss() {
     if (document.querySelector('link[href*="assets/css/main.css"]')) return;
     const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "style";
+    link.rel = "stylesheet";
     link.href = "assets/css/main.css";
-    link.onload = function () { this.rel = "stylesheet"; };
     document.head.appendChild(link);
   }
 
