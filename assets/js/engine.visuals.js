@@ -61,25 +61,25 @@
 
     drawCore(ctx, now) {
       const tw = 1 + 0.14 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
-      const alpha = 0.55 * (this.z / 1.2) * tw;
+      const alpha = 0.52 * (this.z / 1.2) * tw;
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
       ctx.beginPath();
-      // olive / amber tinted cores for military feel
-      ctx.fillStyle = `rgba(${160 + Math.round(40*(1-this.z))},${200 - Math.round(30*(1-this.z))},${110 - Math.round(15*(1-this.z))},${alpha})`;
-      ctx.arc(this.x, this.y, this.size * (0.78 + 0.18 * this.z) * tw, 0, Math.PI * 2);
+      // tighter olive/amber core
+      ctx.fillStyle = `rgba(${150 + Math.round(30*(1-this.z))},${190 - Math.round(28*(1-this.z))},${100 - Math.round(12*(1-this.z))},${alpha})`;
+      ctx.arc(this.x, this.y, this.size * (0.78 + 0.15 * this.z) * tw, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
 
     drawGlowTo(ctx, now, glowColor) {
       const tw = 1 + 0.14 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
-      const galpha = 0.18 * (this.z) * tw;
+      const galpha = 0.16 * (this.z) * tw;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       ctx.fillStyle = `rgba(${glowColor[0]},${glowColor[1]},${glowColor[2]},${galpha})`;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.max(4, this.size * 2.8), 0, Math.PI * 2);
+      ctx.arc(this.x, this.y, Math.max(4, this.size * 2.4), 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -93,7 +93,7 @@
     targetCount: 120,
     bloom: null,
     anomalyTimer: 0,
-    radar: { angle: 0, speed: 0.0011 },
+    radar: { angle: 0, speed: 0.0010 },
     worldImg: null,
     worldLoaded: false,
     mapBitmap: null,
@@ -108,31 +108,34 @@
           canvas: document.createElement('canvas'),
           ctx: null,
           down: engine.config.bloomDownscale || 0.45,
-          blurPx: engine.config.bloomBlurPx || 10,
+          blurPx: engine.config.bloomBlurPx || 8,
           frameSkip: engine.config.bloomFrameSkip || 3,
           frameCounter: 0
         };
         this.bloom.ctx = this.bloom.canvas.getContext('2d');
       }
 
-      // radar speed variance
-      this.radar.speed = 0.0009 + Math.random() * 0.0012;
+      // radar speed tuned for subtle scan
+      this.radar.speed = 0.0007 + Math.random() * 0.0008;
 
-      // begin load of flat world map: try SVG then PNG fallback
-      this._loadWorld('assets/img/world-flat.svg').catch(() => {
-        // try png fallback if svg failed
-        return this._loadWorld('assets/img/world-flat.png');
-      }).catch(() => {
-        console.warn('[visuals] world image not available — using procedural fallback');
+      // If remote URL set, try to load it; otherwise fallback to local attempt then procedural fallback
+      const url = (engine.config && engine.config.worldUrl) ? engine.config.worldUrl : null;
+      if (url) {
+        this._loadWorld(url).catch((e) => {
+          console.warn('[visuals] remote map load failed, falling back to procedural map', e);
+          this.worldLoaded = false;
+          this._generateFallbackMap();
+        });
+      } else {
+        // no remote URL set: use procedural fallback so no external dependencies required
         this.worldLoaded = false;
         this._generateFallbackMap();
-      });
+      }
     },
 
-    // robust fetch -> blob -> objectURL load to avoid cross-origin taint where possible
     async _loadWorld(url) {
       try {
-        const res = await fetch(url, {cache: "no-cache"});
+        const res = await fetch(url, { cache: "no-cache" });
         if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
         const blob = await res.blob();
         const img = new Image();
@@ -145,7 +148,6 @@
         });
         this.worldImg = img;
         this.worldLoaded = true;
-        // create processed map now that image is loaded
         await this._processMapToBitmap();
         return true;
       } catch (err) {
@@ -154,18 +156,15 @@
       }
     },
 
-    // create an offscreen processed image (contrast + edge emphasis + colorize)
     async _processMapToBitmap() {
       if (!this.worldImg) return;
       const w = Math.max(512, this.bounds.w);
       const h = Math.max(256, this.bounds.h);
-      // create mapCanvas sized to viewport for best quality
       const mapCanvas = document.createElement('canvas');
       mapCanvas.width = w;
       mapCanvas.height = h;
       const mctx = mapCanvas.getContext('2d', { willReadFrequently: true });
-      // draw image to cover area (centered & cover)
-      // preserve aspect: draw image so entire canvas filled, cropping if necessary
+      // draw image cover
       const iw = this.worldImg.width;
       const ih = this.worldImg.height;
       const scale = Math.max(w / iw, h / ih);
@@ -176,68 +175,51 @@
       mctx.clearRect(0,0,w,h);
       mctx.drawImage(this.worldImg, ox, oy, dw, dh);
 
-      // get image data and run a lightweight enhancement
+      // Try to accentuate edges and colorize (graceful if blocked by CORS)
       try {
         const id = mctx.getImageData(0,0,w,h);
         const d = id.data;
-        // compute luminance and perform a high-contrast + edge-ish mask
         const lum = new Float32Array(w*h);
-        for (let i=0, p=0; i<d.length; i+=4, p++) {
-          // luminance
+        for (let i=0,p=0;i<d.length;i+=4,p++) {
           lum[p] = d[i]*0.2126 + d[i+1]*0.7152 + d[i+2]*0.0722;
         }
-        // simple gradient magnitude for edges
         const edge = new Float32Array(w*h);
-        for (let y=1; y<h-1; y++) {
-          for (let x=1; x<w-1; x++) {
+        for (let y=1;y<h-1;y++){
+          for (let x=1;x<w-1;x++){
             const i = x + y*w;
             const gx = -lum[i-w-1] - 2*lum[i-1] - lum[i+w-1] + lum[i-w+1] + 2*lum[i+1] + lum[i+w+1];
             const gy = -lum[i-w-1] - 2*lum[i-w] - lum[i-w+1] + lum[i+w-1] + 2*lum[i+w] + lum[i+w+1];
-            const mag = Math.sqrt(gx*gx + gy*gy);
-            edge[i] = mag;
+            edge[i] = Math.sqrt(gx*gx + gy*gy);
           }
         }
-        // normalize edge and write colorized result into new image
+        // write colorized output
         const out = mctx.createImageData(w,h);
         const outd = out.data;
-        // color tone for military (olive tint)
-        const baseR = 36, baseG = 58, baseB = 24; // dark olive base
-        const landR = 160, landG = 200, landB = 110; // lighter olive for land
-        // compute min/max edge to normalize
+        const baseR = 36, baseG = 58, baseB = 24;
+        const landR = 160, landG = 200, landB = 110;
         let emax = 0;
         for (let i=0;i<edge.length;i++) if (edge[i] > emax) emax = edge[i];
         const en = emax > 0 ? 1 / emax : 0;
-        for (let y=0, p=0; y<h; y++) {
-          for (let x=0; x<w; x++, p++) {
-            const L = lum[p] / 255;
-            // make land brighter where luminance high
-            const landFactor = clamp((L - 0.15) * 1.4, 0, 1);
-            // edge strength normalized
-            const edgeStrength = clamp(edge[p] * en * 3.5, 0, 1);
-            // color mix: base + land tint
-            const r = Math.round(lerp(baseR, landR, landFactor));
-            const g = Math.round(lerp(baseG, landG, landFactor));
-            const b = Math.round(lerp(baseB, landB, landFactor));
-            // alpha: preserve strong land but allow sea to be translucent
-            const alpha = 0.18 + 0.36 * landFactor + 0.42 * edgeStrength;
-            outd[p*4] = r;
-            outd[p*4+1] = g;
-            outd[p*4+2] = b;
-            outd[p*4+3] = Math.round(clamp(alpha, 0, 1) * 255);
-          }
+        for (let p=0;p<w*h;p++){
+          const L = lum[p] / 255;
+          const landFactor = clamp((L - 0.16) * 1.3, 0, 1);
+          const edgeStrength = clamp(edge[p] * en * 3.2, 0, 1);
+          const r = Math.round(lerp(baseR, landR, landFactor));
+          const g = Math.round(lerp(baseG, landG, landFactor));
+          const b = Math.round(lerp(baseB, landB, landFactor));
+          const alpha = 0.12 + 0.38 * landFactor + 0.42 * edgeStrength;
+          outd[p*4] = r; outd[p*4+1] = g; outd[p*4+2] = b; outd[p*4+3] = Math.round(clamp(alpha,0,1)*255);
         }
         mctx.putImageData(out, 0, 0);
       } catch (e) {
-        // if getImageData is blocked (CORS), just keep raw draw and warn
-        console.warn('[visuals] map processing skipped (possible CORS):', e);
+        console.warn('[visuals] map processing skipped (CORS or browser restriction)', e);
       }
 
-      // create an ImageBitmap for fast drawing
+      // produce ImageBitmap or use canvas fallback
       try {
         if (self.createImageBitmap) {
           this.mapBitmap = await createImageBitmap(mapCanvas);
         } else {
-          // fallback to using the canvas as source
           this.mapBitmap = mapCanvas;
         }
         this.mapCanvas = mapCanvas;
@@ -248,25 +230,23 @@
     },
 
     _generateFallbackMap() {
-      // create a simple stylized silhouette as fallback
       const w = Math.max(512, this.bounds.w);
       const h = Math.max(256, this.bounds.h);
       const c = document.createElement('canvas');
       c.width = w; c.height = h;
       const cx = c.getContext('2d');
-      cx.fillStyle = 'rgba(20,40,14,0.16)';
+      cx.fillStyle = 'rgba(18,36,12,0.14)';
       cx.fillRect(0,0,w,h);
       cx.fillStyle = '#e9f0d4';
       cx.beginPath();
-      cx.moveTo(w*0.05, h*0.45);
-      cx.bezierCurveTo(w*0.18,h*0.28, w*0.32,h*0.28, w*0.46,h*0.36);
-      cx.bezierCurveTo(w*0.6,h*0.44, w*0.68,h*0.62, w*0.78,h*0.6);
-      cx.bezierCurveTo(w*0.88,h*0.58, w*0.92,h*0.42, w*0.97,h*0.38);
-      cx.bezierCurveTo(w*0.8,h*0.44, w*0.6,h*0.48, w*0.44,h*0.6);
-      cx.bezierCurveTo(w*0.32,h*0.7, w*0.18,h*0.68, w*0.05,h*0.55);
+      cx.moveTo(w*0.06,h*0.48);
+      cx.bezierCurveTo(w*0.18,h*0.34, w*0.34,h*0.34, w*0.48,h*0.42);
+      cx.bezierCurveTo(w*0.62,h*0.5, w*0.72,h*0.66, w*0.82,h*0.64);
+      cx.bezierCurveTo(w*0.9,h*0.62, w*0.94,h*0.48, w*0.98,h*0.44);
+      cx.bezierCurveTo(w*0.78,h*0.5, w*0.6,h*0.54, w*0.46,h*0.66);
+      cx.bezierCurveTo(w*0.34,h*0.74, w*0.18,h*0.72, w*0.06,h*0.6);
       cx.closePath();
       cx.fill();
-      // produce bitmap
       try {
         if (self.createImageBitmap) this.mapBitmap = createImageBitmap(c);
         else this.mapBitmap = c;
@@ -282,8 +262,8 @@
       this.bounds.h = h;
       const area = w * h;
       const target = Math.min(engine.config.maxParticles, Math.ceil(area * engine.config.baseParticleDensity));
-      this.targetCount = target || 100;
-      this.cellSize = Math.max(56, Math.floor(engine.config.linkDistance * 0.9));
+      this.targetCount = target || 80;
+      this.cellSize = Math.max(72, Math.floor(engine.config.linkDistance * 0.95));
       this.grid = null;
 
       if (this.bloom) {
@@ -297,13 +277,11 @@
         this.bloom.ctx.setTransform(pdpr,0,0,pdpr,0,0);
       }
 
-      // if world image was loaded, reprocess to match new size
       if (this.worldLoaded) {
         this._processMapToBitmap().catch((e) => {
           console.warn('[visuals] reprocess map failed', e);
         });
       } else if (this.mapCanvas) {
-        // regenerate fallback to new size
         this._generateFallbackMap();
       }
     },
@@ -355,15 +333,13 @@
       const cfg = engine.config;
       const now = performance.now();
       const fps = engine.state.fps || 60;
-      const linkEnabled = fps > 18;
+      const linkEnabled = fps > 20;
 
-      // update radar angle
       if (cfg.militaryMode) this.radar.angle += this.radar.speed * dt;
 
-      // anomaly timer
       this.anomalyTimer -= dt;
       if (this.anomalyTimer <= 0) {
-        this.anomalyTimer = 7000 + Math.random() * 18000;
+        this.anomalyTimer = 9000 + Math.random() * 22000;
         this._triggerAnomaly = now;
       }
 
@@ -372,34 +348,32 @@
         this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
       }
 
-      // draw background world map (processed bitmap) with parallax and tint
+      // draw processed map (if available)
       if (this.mapBitmap) {
         ctx.save();
         const mx = (engine.state.mouse.x != null ? engine.state.mouse.x : this.bounds.w * 0.5);
         const my = (engine.state.mouse.y != null ? engine.state.mouse.y : this.bounds.h * 0.5);
-        const ox = (mx - this.bounds.w * 0.5) / this.bounds.w * 28; // parallax
-        const oy = (my - this.bounds.h * 0.5) / this.bounds.h * 12;
-        ctx.globalAlpha = 0.36;
+        const ox = (mx - this.bounds.w * 0.5) / this.bounds.w * 22;
+        const oy = (my - this.bounds.h * 0.5) / this.bounds.h * 10;
+        ctx.globalAlpha = 0.34;
         ctx.globalCompositeOperation = 'screen';
         try {
           ctx.drawImage(this.mapBitmap, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2);
         } catch (e) {
-          // fallback: draw canvas directly if mapBitmap is canvas
           try { ctx.drawImage(this.mapCanvas, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2); } catch (e2) {}
         }
-        // darken seas / tint
-        ctx.fillStyle = 'rgba(14,28,10,0.14)';
+        ctx.fillStyle = 'rgba(14,28,10,0.12)';
         ctx.fillRect(0,0,this.bounds.w,this.bounds.h);
         ctx.restore();
       }
 
-      // subtle tactical overlay: faint lat/lon-like grid and concentric rings centered on screen
+      // minimal tactical overlay: fewer grid lines, subtle rings
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
-      ctx.lineWidth = 0.4;
-      ctx.strokeStyle = 'rgba(90,110,70,0.06)';
-      const cols = 12;
-      const rows = 8;
+      ctx.lineWidth = 0.36;
+      ctx.strokeStyle = 'rgba(90,110,70,0.05)';
+      const cols = 8; // fewer vertical lines
+      const rows = 6; // fewer horizontal lines
       for (let i = 1; i < cols; i++) {
         const x = (this.bounds.w / cols) * i;
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.bounds.h); ctx.stroke();
@@ -408,21 +382,20 @@
         const y = (this.bounds.h / rows) * j;
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(this.bounds.w, y); ctx.stroke();
       }
-      // concentric rings for radar feel
       const cx = this.bounds.w * 0.5;
       const cy = this.bounds.h * 0.5;
-      const maxR = Math.max(this.bounds.w, this.bounds.h) * 0.78;
-      for (let r = maxR * 0.12; r < maxR; r += maxR * 0.18) {
+      const maxR = Math.max(this.bounds.w, this.bounds.h) * 0.72;
+      for (let r = maxR * 0.16; r < maxR; r += maxR * 0.24) {
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
       }
       ctx.restore();
 
-      // build grid if links enabled
+      // neighbor grid for links
       if (linkEnabled) this.buildGrid();
 
-      // bloom: render glows offscreen periodically
+      // bloom offscreen pass
       if (this.bloom) {
         const b = this.bloom;
         b.frameCounter++;
@@ -441,19 +414,19 @@
             const bcol = Math.round(lerp(warm[2], cool[2], mix));
             boc.fillStyle = `rgba(${r},${g},${bcol},${0.08 * p.z})`;
             boc.beginPath();
-            boc.arc(p.x, p.y, Math.max(6, p.size * 3.4), 0, Math.PI*2);
+            boc.arc(p.x, p.y, Math.max(6, p.size * 3.2), 0, Math.PI*2);
             boc.fill();
           }
           boc.restore();
         }
       }
 
-      // draw particle cores
+      // draw cores
       for (let i = 0; i < this.particles.length; i++) {
         this.particles[i].drawCore(ctx, now);
       }
 
-      // draw links between neighbors
+      // draw links
       if (linkEnabled) {
         ctx.save();
         ctx.lineCap = 'round';
@@ -469,15 +442,14 @@
             if (d2 <= maxD * maxD) {
               const d = Math.sqrt(d2);
               const depthFactor = (a.z + b.z) * 0.5;
-              const baseAlpha = cfg.linkOpacity * 1.4;
+              const baseAlpha = cfg.linkOpacity * 1.2;
               const alpha = Math.max(0, baseAlpha * (1 - d / maxD) * depthFactor);
               if (alpha > 0.02) {
-                // olive-ish line color
                 const r = Math.round(90 + 30 * (1 - depthFactor));
                 const g = Math.round(130 + 40 * depthFactor);
                 const bl = Math.round(60 + 30 * depthFactor);
                 ctx.strokeStyle = `rgba(${r},${g},${bl},${alpha})`;
-                ctx.lineWidth = 0.8 + (0.9 * depthFactor);
+                ctx.lineWidth = 0.7 + (0.8 * depthFactor);
                 ctx.beginPath();
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
@@ -489,7 +461,7 @@
         ctx.restore();
       }
 
-      // composite bloom onto main canvas for scary glow
+      // composite bloom
       if (this.bloom && this.bloom.canvas) {
         ctx.save();
         if (ctx.filter !== undefined) ctx.filter = `blur(${this.bloom.blurPx}px)`;
@@ -500,7 +472,7 @@
         ctx.restore();
       }
 
-      // sharp per-particle glows
+      // per-particle glows
       for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i];
         const cool = [120,170,100], warm = [200,220,120];
@@ -510,15 +482,15 @@
         p.drawGlowTo(ctx, now, glowColor);
       }
 
-      // radar sweep — pronounced, eerie, and centered
+      // radar sweep (subtle)
       if (cfg.militaryMode) {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         const angle = this.radar.angle;
-        const sweep = Math.PI * 0.10; // tighter sweep for tactical look
+        const sweep = Math.PI * 0.09;
         const g = ctx.createRadialGradient(cx, cy, maxR * 0.02, cx, cy, maxR);
-        g.addColorStop(0, 'rgba(220,255,160,0.16)');
-        g.addColorStop(1, 'rgba(20,30,10,0.0)');
+        g.addColorStop(0, 'rgba(220,255,160,0.14)');
+        g.addColorStop(1, 'rgba(18,26,10,0.0)');
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
@@ -526,9 +498,8 @@
         ctx.closePath();
         ctx.fill();
 
-        // sharper sweep line
-        ctx.strokeStyle = 'rgba(220,255,160,0.14)';
-        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = 'rgba(220,255,160,0.12)';
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
@@ -536,7 +507,7 @@
         ctx.restore();
       }
 
-      // anomaly flash (subtle, ominous)
+      // anomaly and click feedback (unchanged subtle)
       if (this._triggerAnomaly && (now - this._triggerAnomaly) < 900) {
         const t = (now - this._triggerAnomaly) / 900;
         ctx.save();
@@ -551,14 +522,13 @@
         if ((now - this._triggerAnomaly) > 800) this._triggerAnomaly = null;
       }
 
-      // click feedback (very subtle)
       if (engine.state.mouse.down && engine.state.mouse.x != null) {
         const m = engine.state.mouse;
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.fillStyle = 'rgba(200,230,140,0.04)';
+        ctx.fillStyle = 'rgba(200,230,140,0.03)';
         ctx.beginPath();
-        ctx.arc(m.x, m.y, 30, 0, Math.PI * 2);
+        ctx.arc(m.x, m.y, 28, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
