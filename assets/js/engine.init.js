@@ -53,6 +53,19 @@
     }
   });
 
+  // small polyfill for deprecated window.styleMedia usage (some libs call styleMedia.matchMedium)
+  if (!window.styleMedia) {
+    window.styleMedia = {
+      matchMedium: (q) => {
+        try {
+          return !!window.matchMedia && window.matchMedia(q).matches;
+        } catch (e) {
+          return false;
+        }
+      }
+    };
+  }
+
   // respects reduced-motion preference
   const prr = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prr) engine.config.reducedMotion = true;
