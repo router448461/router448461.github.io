@@ -7,14 +7,26 @@
   --accent: #8fbf7a;
 }
 
-/* Canvas base: heavier vignette and subtle grain for realism */
+/* full viewport map container sits under the canvas */
+#mapContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* map interactions ignored; canvas handles pointer events */
+  background: #03130a; /* fallback if map fails to load */
+}
+
+/* Canvas base: keep transparent so map is visible underlying it */
 #constellationCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   will-change: transform;
+  background: transparent; /* allow underlying map DOM to show through */
   background-image:
-    radial-gradient(1200px 700px at 18% 12%, rgba(4,12,6,0.65), rgba(2,6,3,1) 70%),
-    linear-gradient(180deg, var(--dark) 0%, #020701 100%),
-    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.008) 0.5px, transparent 0.6px);
-  background-size: cover, cover, 6px 6px;
+    radial-gradient(1200px 700px at 18% 12%, rgba(4,12,6,0.12), rgba(2,6,3,0.36) 70%),
+    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.003) 0.5px, transparent 0.6px);
+  background-size: cover, 6px 6px;
   filter: drop-shadow(0 0 12px rgba(40,90,40,0.05));
 }
 
@@ -24,7 +36,7 @@
 :root[data-mode="stealth"] #constellationCanvas { filter: grayscale(.26) brightness(.84); }
 
 /* Prevent accidental gestures interfering with pointer moves */
-html, body { touch-action: none; }
+html, body { touch-action: none; height: 100%; margin: 0; }
 
 /* Focus outline if needed */
 :focus { outline: 2px solid rgba(127,155,87,0.12); outline-offset: 2px; }
