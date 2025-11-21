@@ -96,6 +96,8 @@
     radar: { angle: 0, speed: 0.0011 },
     worldImg: null,
     worldLoaded: false,
+    mapBitmap: null,
+    mapCanvas: null,
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
@@ -116,15 +118,163 @@
       // radar speed variance
       this.radar.speed = 0.0009 + Math.random() * 0.0012;
 
-      // Try loading a flat world image (SVG/PNG). This is optional.
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
+      // begin load of flat world map: try SVG then PNG fallback
+      this._loadWorld('assets/img/world-flat.svg').catch(() => {
+        // try png fallback if svg failed
+        return this._loadWorld('assets/img/world-flat.png');
+      }).catch(() => {
+        console.warn('[visuals] world image not available — using procedural fallback');
+        this.worldLoaded = false;
+        this._generateFallbackMap();
+      });
+    },
+
+    // robust fetch -> blob -> objectURL load to avoid cross-origin taint where possible
+    async _loadWorld(url) {
+      try {
+        const res = await fetch(url, {cache: "no-cache"});
+        if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+        const blob = await res.blob();
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        const objectURL = URL.createObjectURL(blob);
+        await new Promise((resolve, reject) => {
+          img.onload = () => { resolve(); URL.revokeObjectURL(objectURL); };
+          img.onerror = (e) => { URL.revokeObjectURL(objectURL); reject(e); };
+          img.src = objectURL;
+        });
         this.worldImg = img;
         this.worldLoaded = true;
-      };
-      img.onerror = () => { this.worldLoaded = false; };
-      img.src = 'assets/img/world-flat.svg';
+        // create processed map now that image is loaded
+        await this._processMapToBitmap();
+        return true;
+      } catch (err) {
+        console.warn('[visuals] _loadWorld error', err);
+        throw err;
+      }
+    },
+
+    // create an offscreen processed image (contrast + edge emphasis + colorize)
+    async _processMapToBitmap() {
+      if (!this.worldImg) return;
+      const w = Math.max(512, this.bounds.w);
+      const h = Math.max(256, this.bounds.h);
+      // create mapCanvas sized to viewport for best quality
+      const mapCanvas = document.createElement('canvas');
+      mapCanvas.width = w;
+      mapCanvas.height = h;
+      const mctx = mapCanvas.getContext('2d', { willReadFrequently: true });
+      // draw image to cover area (centered & cover)
+      // preserve aspect: draw image so entire canvas filled, cropping if necessary
+      const iw = this.worldImg.width;
+      const ih = this.worldImg.height;
+      const scale = Math.max(w / iw, h / ih);
+      const dw = Math.round(iw * scale);
+      const dh = Math.round(ih * scale);
+      const ox = Math.round((w - dw) * 0.5);
+      const oy = Math.round((h - dh) * 0.5);
+      mctx.clearRect(0,0,w,h);
+      mctx.drawImage(this.worldImg, ox, oy, dw, dh);
+
+      // get image data and run a lightweight enhancement
+      try {
+        const id = mctx.getImageData(0,0,w,h);
+        const d = id.data;
+        // compute luminance and perform a high-contrast + edge-ish mask
+        const lum = new Float32Array(w*h);
+        for (let i=0, p=0; i<d.length; i+=4, p++) {
+          // luminance
+          lum[p] = d[i]*0.2126 + d[i+1]*0.7152 + d[i+2]*0.0722;
+        }
+        // simple gradient magnitude for edges
+        const edge = new Float32Array(w*h);
+        for (let y=1; y<h-1; y++) {
+          for (let x=1; x<w-1; x++) {
+            const i = x + y*w;
+            const gx = -lum[i-w-1] - 2*lum[i-1] - lum[i+w-1] + lum[i-w+1] + 2*lum[i+1] + lum[i+w+1];
+            const gy = -lum[i-w-1] - 2*lum[i-w] - lum[i-w+1] + lum[i+w-1] + 2*lum[i+w] + lum[i+w+1];
+            const mag = Math.sqrt(gx*gx + gy*gy);
+            edge[i] = mag;
+          }
+        }
+        // normalize edge and write colorized result into new image
+        const out = mctx.createImageData(w,h);
+        const outd = out.data;
+        // color tone for military (olive tint)
+        const baseR = 36, baseG = 58, baseB = 24; // dark olive base
+        const landR = 160, landG = 200, landB = 110; // lighter olive for land
+        // compute min/max edge to normalize
+        let emax = 0;
+        for (let i=0;i<edge.length;i++) if (edge[i] > emax) emax = edge[i];
+        const en = emax > 0 ? 1 / emax : 0;
+        for (let y=0, p=0; y<h; y++) {
+          for (let x=0; x<w; x++, p++) {
+            const L = lum[p] / 255;
+            // make land brighter where luminance high
+            const landFactor = clamp((L - 0.15) * 1.4, 0, 1);
+            // edge strength normalized
+            const edgeStrength = clamp(edge[p] * en * 3.5, 0, 1);
+            // color mix: base + land tint
+            const r = Math.round(lerp(baseR, landR, landFactor));
+            const g = Math.round(lerp(baseG, landG, landFactor));
+            const b = Math.round(lerp(baseB, landB, landFactor));
+            // alpha: preserve strong land but allow sea to be translucent
+            const alpha = 0.18 + 0.36 * landFactor + 0.42 * edgeStrength;
+            outd[p*4] = r;
+            outd[p*4+1] = g;
+            outd[p*4+2] = b;
+            outd[p*4+3] = Math.round(clamp(alpha, 0, 1) * 255);
+          }
+        }
+        mctx.putImageData(out, 0, 0);
+      } catch (e) {
+        // if getImageData is blocked (CORS), just keep raw draw and warn
+        console.warn('[visuals] map processing skipped (possible CORS):', e);
+      }
+
+      // create an ImageBitmap for fast drawing
+      try {
+        if (self.createImageBitmap) {
+          this.mapBitmap = await createImageBitmap(mapCanvas);
+        } else {
+          // fallback to using the canvas as source
+          this.mapBitmap = mapCanvas;
+        }
+        this.mapCanvas = mapCanvas;
+      } catch (e) {
+        this.mapBitmap = mapCanvas;
+        this.mapCanvas = mapCanvas;
+      }
+    },
+
+    _generateFallbackMap() {
+      // create a simple stylized silhouette as fallback
+      const w = Math.max(512, this.bounds.w);
+      const h = Math.max(256, this.bounds.h);
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const cx = c.getContext('2d');
+      cx.fillStyle = 'rgba(20,40,14,0.16)';
+      cx.fillRect(0,0,w,h);
+      cx.fillStyle = '#e9f0d4';
+      cx.beginPath();
+      cx.moveTo(w*0.05, h*0.45);
+      cx.bezierCurveTo(w*0.18,h*0.28, w*0.32,h*0.28, w*0.46,h*0.36);
+      cx.bezierCurveTo(w*0.6,h*0.44, w*0.68,h*0.62, w*0.78,h*0.6);
+      cx.bezierCurveTo(w*0.88,h*0.58, w*0.92,h*0.42, w*0.97,h*0.38);
+      cx.bezierCurveTo(w*0.8,h*0.44, w*0.6,h*0.48, w*0.44,h*0.6);
+      cx.bezierCurveTo(w*0.32,h*0.7, w*0.18,h*0.68, w*0.05,h*0.55);
+      cx.closePath();
+      cx.fill();
+      // produce bitmap
+      try {
+        if (self.createImageBitmap) this.mapBitmap = createImageBitmap(c);
+        else this.mapBitmap = c;
+        this.mapCanvas = c;
+      } catch (e) {
+        this.mapBitmap = c;
+        this.mapCanvas = c;
+      }
     },
 
     onResize(w, h, dpr) {
@@ -145,6 +295,16 @@
         this.bloom.canvas.style.width = bw + 'px';
         this.bloom.canvas.style.height = bh + 'px';
         this.bloom.ctx.setTransform(pdpr,0,0,pdpr,0,0);
+      }
+
+      // if world image was loaded, reprocess to match new size
+      if (this.worldLoaded) {
+        this._processMapToBitmap().catch((e) => {
+          console.warn('[visuals] reprocess map failed', e);
+        });
+      } else if (this.mapCanvas) {
+        // regenerate fallback to new size
+        this._generateFallbackMap();
       }
     },
 
@@ -212,25 +372,23 @@
         this.particles[i].step(dt, this.bounds, engine.state.mouse, cfg, now);
       }
 
-      // compose world map onto canvas first (subtle, colorized, parallax)
-      if (this.worldLoaded && this.worldImg) {
+      // draw background world map (processed bitmap) with parallax and tint
+      if (this.mapBitmap) {
         ctx.save();
-        // gentle parallax from mouse position
         const mx = (engine.state.mouse.x != null ? engine.state.mouse.x : this.bounds.w * 0.5);
         const my = (engine.state.mouse.y != null ? engine.state.mouse.y : this.bounds.h * 0.5);
-        const ox = (mx - this.bounds.w * 0.5) / this.bounds.w * 30; // +/- 30px parallax
-        const oy = (my - this.bounds.h * 0.5) / this.bounds.h * 18;
-        ctx.globalAlpha = 0.28;
-        ctx.globalCompositeOperation = 'multiply';
-        // draw world scaled to fill, offset slightly for parallax
+        const ox = (mx - this.bounds.w * 0.5) / this.bounds.w * 28; // parallax
+        const oy = (my - this.bounds.h * 0.5) / this.bounds.h * 12;
+        ctx.globalAlpha = 0.36;
+        ctx.globalCompositeOperation = 'screen';
         try {
-          ctx.drawImage(this.worldImg, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2);
+          ctx.drawImage(this.mapBitmap, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2);
         } catch (e) {
-          // fall back to simple draw if SVG can't be drawn cross-origin
-          ctx.globalCompositeOperation = 'source-over';
+          // fallback: draw canvas directly if mapBitmap is canvas
+          try { ctx.drawImage(this.mapCanvas, -ox, -oy, this.bounds.w + Math.abs(ox)*2, this.bounds.h + Math.abs(oy)*2); } catch (e2) {}
         }
-        // apply olive tint for military styling
-        ctx.fillStyle = 'rgba(20,40,14,0.16)';
+        // darken seas / tint
+        ctx.fillStyle = 'rgba(14,28,10,0.14)';
         ctx.fillRect(0,0,this.bounds.w,this.bounds.h);
         ctx.restore();
       }
