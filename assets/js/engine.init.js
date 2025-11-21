@@ -19,15 +19,10 @@
       bloomFrameSkip: 3,
 
       // flight overlay: choose data source
-      // flightSource: 'opensky' (default), 'fr24' (requires server proxy + subscription)
       flightEnabled: true,
       flightSource: 'opensky',
       // Poll interval in ms
       flightPollInterval: 10000,
-
-      // If your flight data provider blocks CORS (likely), set flightProxy to a server endpoint you control.
-      // The proxy should return JSON { states: [...] } where each state matches OpenSky state vector order:
-      // [icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, heading, vertical_rate, sensors, geo_altitude, squawk, spi, position_source]
       flightProxy: '',
 
       // Map options (Leaflet fallback)
@@ -88,8 +83,7 @@
     document.head.appendChild(link);
   }
 
-  // Initialize a DOM map. If you have an Apple MapKit token you can implement it here;
-  // default is Leaflet + Carto Dark tiles (no key required).
+  // Initialize a DOM map. Default is Leaflet + Carto Dark tiles (no key required).
   function initDomMap() {
     return new Promise((resolve) => {
       // add Leaflet CSS if not present
@@ -120,11 +114,24 @@
             attributionControl: false,
             interactive: false
           });
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+
+          const tile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
             subdomains: 'abcd',
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
           }).addTo(map);
+
+          // Force Leaflet to compute sizes after CSS has been applied and tiles load.
+          // This avoids tiles / projections ending up at the top of the container.
+          function ensureMapSized() {
+            try {
+              map.invalidateSize();
+            } catch (e) { /* ignore */ }
+          }
+          // run a few times: on tile load, shortly after, and on next paint
+          tile.on('load', () => { ensureMapSized(); });
+          requestAnimationFrame(() => { ensureMapSized(); setTimeout(ensureMapSized, 250); });
+
           engine.state.map = map;
           engine.state.domMapLoaded = true;
           engine.log('Leaflet/CARTO map loaded');
