@@ -13,7 +13,8 @@
       speed: [0.06, 0.32],
       repelRadius: 110,
       backgroundFade: 0.05,
-      bloomEnabled: true,
+      // disable heavy bloom/orb effects to keep visuals crisp and map visible
+      bloomEnabled: false,
       bloomDownscale: 0.45,
       bloomBlurPx: 8,
       bloomFrameSkip: 3,
@@ -124,11 +125,8 @@
           // Force Leaflet to compute sizes after CSS has been applied and tiles load.
           // This avoids tiles / projections ending up at the top of the container.
           function ensureMapSized() {
-            try {
-              map.invalidateSize();
-            } catch (e) { /* ignore */ }
+            try { map.invalidateSize(); } catch (e) { /* ignore */ }
           }
-          // run a few times: on tile load, shortly after, and on next paint
           tile.on('load', () => { ensureMapSized(); });
           requestAnimationFrame(() => { ensureMapSized(); setTimeout(ensureMapSized, 250); });
 
