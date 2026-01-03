@@ -60,20 +60,8 @@
       ctx.globalCompositeOperation = 'source-over';
       ctx.beginPath();
       // slightly muted olive/amber core
-      ctx.fillStyle = `rgba(${140 + Math.round(28*(1-this.z))},${180 - Math.round(24*(1-this.z))},${95 - Math.round(10*(1<this.z)?1:this.z)},${alpha})`;
-      ctx.arc(this.x, this.y, this.size * (0.72 + 0.12 * this.z) * tw, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-    drawGlowTo(ctx, now, glowColor) {
-      const tw = 1 + 0.12 * Math.sin((now * 0.00068 * this.twinkleSpeed) + this.twinklePhase);
-      // reduced glow radius and alpha for realism
-      const galpha = 0.08 * (this.z) * tw;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = `rgba(${glowColor[0]},${glowColor[1]},${glowColor[2]},${galpha})`;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, Math.max(3, this.size * 1.6), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${140 + Math.round(28*(1-this.z))},${180 - Math.round(24*(1-this.z))},${95 - Math.round(10*(1-this.z))},${alpha})`;
+      ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -86,48 +74,33 @@
     cellSize: 120,
     targetCount: 120,
     bloom: null,
-    radar: { angle: 0, speed: 0.0010 },
+    radar: { angle: 0, speed: 0.00010 },
     flights: [],
     lastFlightFetch: 0,
     flightTimer: 0,
     lockPulseStart: 0,
-    triedInitialFetch: false,
 
     init() {
       this.onResize(engine.modules.base.width, engine.modules.base.height, engine.modules.base.dpr);
       this.spawn();
 
-      // no bloom by default (keeps map legible)
-      if (engine.config.bloomEnabled) {
-        this.bloom = {
-          canvas: document.createElement('canvas'),
-          ctx: null,
-          down: Math.max(0.28, engine.config.bloomDownscale || 0.45),
-          blurPx: Math.max(4, (engine.config.bloomBlurPx || 8) - 4),
-          frameSkip: Math.max(3, engine.config.bloomFrameSkip || 3),
-          frameCounter: 0
-        };
-        this.bloom.ctx = this.bloom.canvas.getContext('2d');
-      }
-
-      this.radar.speed = 0.0007 + Math.random() * 0.0008;
-      this.flightTimer = 0;
-
-      // if map is ready now, start flight fetch immediately; otherwise wait until mapReady
-      if (engine.state.mapReady) {
-        this._fetchFlights().catch(()=>{});
-        this.triedInitialFetch = true;
-      } else {
-        // retry a couple times while waiting for map to settle
-        const waitForMapAndFetch = () => {
-          if (engine.state.mapReady) {
-            this._fetchFlights().catch(()=>{});
-            this.triedInitialFetch = true;
-          } else if (!this.triedInitialFetch) {
-            setTimeout(waitForMapAndFetch, 350);
-          }
-        };
-        setTimeout(waitForMapAndFetch, 350);
+      if (engine.config.flightEnabled) {
+        // initial fetch attempt
+        if (engine.state.mapReady) {
+          this._fetchFlights().catch(()=>{});
+          this.triedInitialFetch = true;
+        } else {
+          // retry a couple times while waiting for map to settle
+          const waitForMapAndFetch = () => {
+            if (engine.state.mapReady) {
+              this._fetchFlights().catch(()=>{});
+              this.triedInitialFetch = true;
+            } else if (!this.triedInitialFetch) {
+              setTimeout(waitForMapAndFetch, 350);
+            }
+          };
+          setTimeout(waitForMapAndFetch, 350);
+        }
       }
     },
 
