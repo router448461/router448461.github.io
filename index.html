@@ -14,9 +14,7 @@
       if (!window.styleMedia) {
         try {
           window.styleMedia = {
-            matchMedium(q) {
-              try { return !!window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; }
-            }
+            matchMedium: function(q) { try { return !!window.matchMedia && window.matchMedia(q).matches; } catch (e) { return false; } }
           };
         } catch (e) {}
       }
