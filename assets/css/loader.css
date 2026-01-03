@@ -1,22 +1,15 @@
 :root {
   color-scheme: dark;
-  --mil-bg: #03130a;
-  --accent: #9fbf6f;
-  --muted: rgba(255,255,255,0.06);
 }
 
 * { box-sizing: border-box; }
 
 html, body {
-  height: 100%;
   margin: 0;
-  background: var(--mil-bg);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+  height: 100%;
+  background: #0b0f16;
+  color: #c9d1d9;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 #loader {
@@ -24,50 +17,46 @@ html, body {
   inset: 0;
   display: grid;
   place-items: center;
-  background: radial-gradient(1200px 800px at 50% 50%, rgba(8,22,12,0.46), rgba(2,6,4,0.98) 72%);
+  background: radial-gradient(1200px 800px at 50% 50%, rgba(40,51,73,0.35), rgba(11,15,22,0.98) 70%);
   z-index: 9999;
   opacity: 1;
-  transition: opacity 260ms linear, visibility 260ms linear;
+  transition: opacity 300ms ease;
 }
 
-#loader.fade-out { opacity: 0; pointer-events: none; visibility: hidden; }
-#loader.removed { display: none; }
+#loader.fade-out { opacity: 0; pointer-events: none; }
 
-.loader-wrap { display: grid; gap: 10px; align-items: center; justify-items: center; text-align: center; }
+.loader-wrap {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+  justify-items: center;
+}
 
 .spinner {
-  width: 40px; height: 40px;
+  width: 36px; height: 36px;
   border-radius: 50%;
-  border: 3px solid var(--muted);
-  border-top-color: var(--accent);
-  animation: spin 950ms linear infinite;
-  box-shadow: 0 0 16px rgba(160,200,120,0.06);
+  border: 3px solid rgba(255,255,255,0.15);
+  border-top-color: #5fb3ff;
+  animation: spin 800ms linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .blink {
   font-size: 12px;
-  letter-spacing: .16em;
-  color: var(--accent);
-  opacity: 0.92;
-  animation: blink 1.4s steps(2, start) infinite;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+  animation: blink 1.2s steps(2, start) infinite;
 }
-@keyframes blink { 50% { opacity: 0.26; } }
 
-/* Canvas fills viewport (keep transparent so DOM map shows through during boot) */
+@keyframes blink { 50% { opacity: 0.2; } }
+
+/* Canvas base (hidden behind loader until start) */
 #constellationCanvas {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   display: block;
-  background: transparent; /* was an opaque gradient — make transparent so map beneath is visible */
-}
-
-/* reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .spinner { animation: none; transform: scale(.98); }
-  .blink { animation: none; }
-  #loader { transition: none; }
+  background: linear-gradient(180deg, #0b0f16 0%, #0a0d14 100%);
 }
