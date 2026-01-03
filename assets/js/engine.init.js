@@ -125,7 +125,7 @@
           const tile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
             subdomains: 'abcd',
             maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            attribution: '© OpenStreetMap contributors © CARTO'
           }).addTo(map);
 
           // When the first tile load completes, force a size calc and mark map ready.
