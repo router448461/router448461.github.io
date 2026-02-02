@@ -3,31 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Demo Styles</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/animations.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <title>Animated Lines and Dots</title>
+  <link rel="stylesheet" href="css/svg-lines.css" />
+  <link rel="stylesheet" href="css/canvas-lines.css" />
 </head>
 <body>
-  <main class="app">
-    <header class="brand">
-      <h1 class="brand__title">Brand</h1>
-    </header>
+  <main class="demo">
+    <section class="panel">
+      <h2>SVG CSS-only Lines with Moving Dots</h2>
+      <div class="svg-wrap">
+        <!-- SVG paths and dots -->
+        <svg id="svgLines" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#06b6d4"/>
+              <stop offset="1" stop-color="#4f46e5"/>
+            </linearGradient>
+          </defs>
 
-    <section class="card card--center">
-      <form class="form">
-        <label class="form__label">Username
-          <input class="form__input" type="text" />
-        </label>
-        <label class="form__label">Password
-          <input class="form__input" type="password" />
-        </label>
-        <button class="btn btn--primary" type="button" id="demoBtn">Sign in</button>
-      </form>
+          <!-- Example paths -->
+          <path id="p1" class="line" d="M20 160 C160 20, 320 20, 460 160" stroke="url(#g1)" stroke-width="3" fill="none"/>
+          <path id="p2" class="line" d="M60 120 C200 40, 360 40, 500 120" stroke="rgba(255,255,255,0.06)" stroke-width="2" fill="none"/>
+
+          <!-- moving dots use circle + animateMotion fallback to CSS -->
+          <circle class="dot dot--primary" r="6" />
+          <circle class="dot dot--secondary" r="4" />
+        </svg>
+      </div>
+      <div class="controls">
+        <label>Speed <input id="svgSpeed" type="range" min="0.2" max="3" step="0.1" value="1"></label>
+        <button id="svgRestart">Restart</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Canvas Particle Lines with Moving Dots</h2>
+      <div class="canvas-wrap">
+        <canvas id="linesCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label>Particle Count <input id="particleCount" type="range" min="10" max="200" step="1" value="60"></label>
+        <button id="canvasRestart">Restart</button>
+      </div>
     </section>
   </main>
 
-  <script src="js/utils.js"></script>
-  <script src="js/main.js"></script>
+  <script type="module" src="js/svg-lines.js"></script>
+  <script type="module" src="js/canvas-lines.js"></script>
 </body>
 </html>
