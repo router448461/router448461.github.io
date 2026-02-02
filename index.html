@@ -1,28 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Constellation</title>
-
-  <!-- Minimal, instant boot visuals -->
-  <link rel="stylesheet" href="assets/css/loader.css" />
-
-  <!-- Option A (faster boot): main.css is preloaded and applied by engine.init.js -->
-  <!-- Option B (simpler): uncomment the next line to load main.css immediately -->
-  <!-- <link rel="stylesheet" href="assets/css/main.css" /> -->
-
-  <!-- Orchestrator: sets namespace, loads modules, starts app -->
-  <script src="assets/js/engine.init.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo Styles</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
 </head>
 <body>
-  <div id="loader" aria-live="polite">
-    <div class="loader-wrap">
-      <div class="spinner" aria-hidden="true"></div>
-      <div class="blink">Booting...</div>
-    </div>
-  </div>
+  <main class="app">
+    <header class="brand">
+      <h1 class="brand__title">Brand</h1>
+    </header>
 
-  <canvas id="constellationCanvas"></canvas>
+    <section class="card card--center">
+      <form class="form">
+        <label class="form__label">Username
+          <input class="form__input" type="text" />
+        </label>
+        <label class="form__label">Password
+          <input class="form__input" type="password" />
+        </label>
+        <button class="btn btn--primary" type="button" id="demoBtn">Sign in</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/utils.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
