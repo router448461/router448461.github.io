@@ -1,0 +1,17 @@
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;
+  font-weight:600;color:#fff;background:transparent;transition:transform .12s, box-shadow .12s;
+}
+.btn--primary{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  box-shadow:0 6px 18px rgba(79,70,229,0.18);
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+/* small responsive */
+@media (max-width:420px){
+  .card{padding:20px}
+  .brand__title{font-size:18px}
+}
