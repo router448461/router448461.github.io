@@ -1,0 +1,21 @@
+/* motion utilities */
+@keyframes floatUp {
+  0%{transform:translateY(6px);opacity:0}
+  60%{opacity:1}
+  100%{transform:translateY(0);opacity:1}
+}
+
+@keyframes pulseAccent {
+  0%{box-shadow:0 0 0 0 rgba(79,70,229,0.18)}
+  70%{box-shadow:0 0 0 12px rgba(79,70,229,0)}
+  100%{box-shadow:0 0 0 0 rgba(79,70,229,0)}
+}
+
+/* small helpers */
+.animate-float{animation:floatUp .6s cubic-bezier(.2,.9,.2,1) both}
+.btn--primary{position:relative;overflow:visible}
+.btn--primary:active{transform:translateY(1px)}
+.btn--pulse::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  animation:pulseAccent 1.8s infinite;
+}
