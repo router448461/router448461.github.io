@@ -1,27 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet Random World Jump</title>
+  <title>Dark World Jumper</title>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    html, body, #map { height: 100%; margin: 0; padding: 0; }
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #111;
+    }
+    #coords {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #0f0;
+      padding: 6px 10px;
+      font-family: monospace;
+      font-size: 14px;
+      z-index: 1000;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
+  <div id="coords">Lat: 0.00, Lng: 0.00</div>
   <div id="map"></div>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([0, 0], 3);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap & CartoDB',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
+    const marker = L.circleMarker([0, 0], {
+      radius: 6,
+      color: '#0ff',
+      fillColor: '#0ff',
+      fillOpacity: 0.8
+    }).addTo(map);
+
+    let zoomIn = true;
+
     setInterval(() => {
-      const lat = (Math.random() * 180) - 90;
-      const lng = (Math.random() * 360) - 180;
-      map.setView([lat, lng], 3);
-    }, 3000);
+      const lat = (Math.random() * 180 - 90).toFixed(4);
+      const lng = (Math.random() * 360 - 180).toFixed(4);
+      const coords = [lat, lng];
+
+      map.setView(coords, zoomIn ? 5 : 3, { animate: true });
+      marker.setLatLng(coords);
+      document.getElementById("coords").innerText = `Lat: ${lat}, Lng: ${lng}`;
+      zoomIn = !zoomIn;
+    }, 2000);
   </script>
 </body>
 </html>
