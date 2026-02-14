@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DIRECT HIT Map</title>
+  <title>Battlefield Control</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -24,19 +24,20 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       color: #f33;
       font-family: monospace;
-      font-size: 20px;
-      padding: 6px 12px;
+      font-size: 18px;
+      padding: 6px 14px;
       border: 2px solid #f33;
       border-radius: 6px;
       z-index: 1000;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 <body>
-  <div id="label">DIRECT HIT</div>
+  <div id="label">ESTABLISHING BATTLEFIELD CONTROL… STANDBY</div>
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -59,12 +60,12 @@
     }).addTo(map);
 
     setInterval(() => {
-      const lat = (Math.random() * 180 - 90);
+      const lat = (Math.random() * 140 - 70);   // Avoid poles to reduce white tiles
       const lng = (Math.random() * 360 - 180);
       const coords = [lat, lng];
       map.setView(coords, 3, { animate: true });
       marker.setLatLng(coords);
-    }, 2000);
+    }, 1000);
   </script>
 </body>
 </html>
