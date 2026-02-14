@@ -1,8 +1,0 @@
-.canvas-wrap{width:100%;height:320px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#04101a,#071827);display:flex;align-items:center;justify-content:center}
-canvas{width:100%;height:100%;display:block}
-
-/* reuse controls style */
-.controls{display:flex;gap:12px;align-items:center;margin-top:12px}
-.controls label{font-size:13px;color:rgba(255,255,255,0.06);display:flex;gap:8px;align-items:center}
-.controls input[type="range"]{width:160px}
-.controls button{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,#4f46e5,#06b6d4);color:#fff;cursor:pointer}
