@@ -1,54 +1,27 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
+  <title>Leaflet Random World Jump</title>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Animated Lines and Dots</title>
-  <link rel="stylesheet" href="css/svg-lines.css" />
-  <link rel="stylesheet" href="css/canvas-lines.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; padding: 0; }
+  </style>
 </head>
 <body>
-  <main class="demo">
-    <section class="panel">
-      <h2>SVG CSS-only Lines with Moving Dots</h2>
-      <div class="svg-wrap">
-        <!-- SVG paths and dots -->
-        <svg id="svgLines" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0" stop-color="#06b6d4"/>
-              <stop offset="1" stop-color="#4f46e5"/>
-            </linearGradient>
-          </defs>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([0, 0], 3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-          <!-- Example paths -->
-          <path id="p1" class="line" d="M20 160 C160 20, 320 20, 460 160" stroke="url(#g1)" stroke-width="3" fill="none"/>
-          <path id="p2" class="line" d="M60 120 C200 40, 360 40, 500 120" stroke="rgba(255,255,255,0.06)" stroke-width="2" fill="none"/>
-
-          <!-- moving dots use circle + animateMotion fallback to CSS -->
-          <circle class="dot dot--primary" r="6" />
-          <circle class="dot dot--secondary" r="4" />
-        </svg>
-      </div>
-      <div class="controls">
-        <label>Speed <input id="svgSpeed" type="range" min="0.2" max="3" step="0.1" value="1"></label>
-        <button id="svgRestart">Restart</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2>Canvas Particle Lines with Moving Dots</h2>
-      <div class="canvas-wrap">
-        <canvas id="linesCanvas"></canvas>
-      </div>
-      <div class="controls">
-        <label>Particle Count <input id="particleCount" type="range" min="10" max="200" step="1" value="60"></label>
-        <button id="canvasRestart">Restart</button>
-      </div>
-    </section>
-  </main>
-
-  <script type="module" src="js/svg-lines.js"></script>
-  <script type="module" src="js/canvas-lines.js"></script>
+    setInterval(() => {
+      const lat = (Math.random() * 180) - 90;
+      const lng = (Math.random() * 360) - 180;
+      map.setView([lat, lng], 3);
+    }, 3000);
+  </script>
 </body>
 </html>
