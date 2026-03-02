@@ -1,71 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Battlefield Control</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Live Tactical Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    #map {
-      width: 800px;
-      height: 600px;
-      border: 2px solid #333;
-    }
-    #label {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
-      color: #f33;
-      font-family: monospace;
-      font-size: 18px;
-      padding: 6px 14px;
-      border: 2px solid #f33;
-      border-radius: 6px;
-      z-index: 1000;
-      letter-spacing: 1px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="label">ESTABLISHING BATTLEFIELD CONTROL… STANDBY</div>
   <div id="map"></div>
-
+  <div id="controls">
+    <button onclick="exportHistory()">Export CSV</button>
+    <button onclick="clearHistory()">Reset</button>
+  </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map', {
-      zoomControl: false,
-      attributionControl: false
-    }).setView([0, 0], 3);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
-
-    const marker = L.circleMarker([0, 0], {
-      radius: 8,
-      color: '#f33',
-      fillColor: '#f33',
-      fillOpacity: 0.9
-    }).addTo(map);
-
-    setInterval(() => {
-      const lat = (Math.random() * 140 - 70);   // Avoid poles to reduce white tiles
-      const lng = (Math.random() * 360 - 180);
-      const coords = [lat, lng];
-      map.setView(coords, 3, { animate: true });
-      marker.setLatLng(coords);
-    }, 1000);
-  </script>
+  <script src="categorize.js"></script>
+  <script src="latency.js"></script>
+  <script src="radar.js"></script>
+  <script src="export.js"></script>
+  <script src="reset.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
