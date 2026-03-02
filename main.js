@@ -16,16 +16,18 @@ new PerformanceObserver((list) => {
     const host = url.hostname;
     if (!seen.has(host)) {
       seen.add(host);
-      fetch(`https://ipinfo.io/${host}/json?token=YOUR_TOKEN`)
+      fetch(`https://ipinfo.io/${host}/json?token=20172c7fd830b9`)
         .then(res => res.json())
         .then(data => {
           const [lat, lon] = data.loc.split(',');
           const category = categorizeDomain(host);
-          const latency = measureLatency(`https://${host}`);
-          const conn = { host, lat, lon, category, time: Date.now(), latency };
-          drawConnection(conn);
-          saveToHistory(conn);
-        });
+          measureLatency(`https://${host}`).then(latency => {
+            const conn = { host, lat, lon, category, time: Date.now(), latency };
+            drawConnection(conn);
+            saveToHistory(conn);
+          });
+        })
+        .catch(err => console.log('Geolocation error for', host));
     }
   }
 }).observe({ entryTypes: ['resource'] });
