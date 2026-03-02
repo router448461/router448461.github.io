@@ -1,9 +1,14 @@
 function measureLatency(url) {
   const start = performance.now();
-  fetch(url, { method: 'HEAD', mode: 'no-cors' })
+  return fetch(url, { method: 'HEAD', mode: 'no-cors' })
     .then(() => {
       const end = performance.now();
-      return Math.round(end - start);
+      const latency = Math.round(end - start);
+      console.log(`Latency for ${url}: ${latency}ms`);
+      return latency;
     })
-    .catch(() => null);
+    .catch(() => {
+      console.log(`Latency measurement failed for ${url}`);
+      return null;
+    });
 }
