@@ -1,3 +1,2 @@
-// Tasmania map logic placeholder
-// Add region clicks later if you want interactive zones
+// Tasmania map overlay hook
 console.log("Tasmania map overlay loaded");
