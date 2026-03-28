@@ -62,21 +62,18 @@ h1 {
 .warn { color: #ffdd7b; }
 .danger { color: #ff6b6b; }
 
-button {
-  background: #0f141c;
-  border: 1px solid #2a3545;
-  color: #e8ecf3;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+#riskclock {
+  position: fixed;
+  top: 20px;
+  right: 20px;
   font-family: monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-right: 8px;
-}
-
-button:hover {
-  border-color: #6bc2ff;
+  font-size: 0.85rem;
+  color: #7bdcff;
+  opacity: 0.7;
+  background: rgba(10,12,18,0.6);
+  padding: 8px 12px;
+  border: 1px solid #1f2430;
+  border-radius: 6px;
 }
 
 @keyframes fadeIn {
