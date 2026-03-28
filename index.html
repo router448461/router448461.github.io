@@ -4,85 +4,10 @@
   <meta charset="UTF-8" />
   <title>Tasmania Survival Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      margin: 0;
-      background: #0b0d11;
-      color: #e8ecf3;
-      font-family: system-ui, sans-serif;
-      padding: 20px;
-    }
-    h1 {
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #7bdcff;
-      font-size: 1.4rem;
-      margin-bottom: 10px;
-    }
-    .subtitle {
-      color: #9aa3b5;
-      margin-bottom: 20px;
-      max-width: 600px;
-    }
-    .stream {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 800px;
-      margin-bottom: 20px;
-    }
-    .card {
-      background: #141820;
-      border: 1px solid #1f2430;
-      padding: 14px 16px;
-      border-radius: 10px;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeIn 0.5s forwards ease-out;
-    }
-    .card-title {
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9aa3b5;
-      margin-bottom: 6px;
-    }
-    .card-body {
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-    .risk {
-      margin-top: 10px;
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
-    .ok { color: #7bffb0; }
-    .warn { color: #ffd66b; }
-    .danger { color: #ff6b6b; }
 
-    button {
-      background: #1a2330;
-      border: 1px solid #3a4a5a;
-      color: #e8ecf3;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-right: 8px;
-    }
-    button:hover {
-      border-color: #7bdcff;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="map.css" />
 </head>
 
 <body>
@@ -97,94 +22,19 @@
   <button id="next">Next</button>
   <button id="all">Reveal All</button>
 
-  <script>
-    const INTERVAL = 9000; // 9 seconds auto‑reveal
+  <!-- Tasmania Map Overlay -->
+  <div id="tasmap">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Tasmania_map_blank.svg" />
+  </div>
 
-    const SECTIONS = [
-      {
-        title: "Vulnerability Map",
-        body: `
-<strong>Fuel:</strong> 100% shipped; short buffers; highest exposure.<br>
-<strong>Food:</strong> Net exporter; strong water; limited by fuel.<br>
-<strong>Medicine:</strong> Import‑dependent; weeks–months of stock.<br>
-<strong>Industry:</strong> Strong minerals; weak heavy steel; import‑linked.`,
-        risk: "warn"
-      },
-      {
-        title: "Survival Time If Cut Off",
-        body: `
-<strong>Fuel:</strong> Weeks before logistics degrade.<br>
-<strong>Food & Water:</strong> Months+ if distribution holds.<br>
-<strong>Medicine:</strong> Early stress; chronic care hit first.<br>
-<strong>Energy:</strong> Hydro + wind = medium‑term resilience.`,
-        risk: "warn"
-      },
-      {
-        title: "Order of Collapse",
-        body: `
-1. Fuel‑intensive logistics.<br>
-2. Medicine + import retail.<br>
-3. Advanced manufacturing.<br>
-4. Export industries.<br>
-5. Core food/water/power.`,
-        risk: "warn"
-      },
-      {
-        title: "WWII vs Modern Supply Chains",
-        body: `
-WWII: Tasmania was a support node (zinc, industry).<br>
-Modern: Globalised, fast, fragile; medicine + fuel highly exposed.`,
-        risk: "warn"
-      },
-      {
-        title: "Future Importance",
-        body: `
-<strong>Refuge strengths:</strong> water, food, renewables, distance.<br>
-<strong>Weakness:</strong> fuel, medicine, heavy industry.<br>
-Tasmania = resilient refuge, not sealed fortress.`,
-        risk: "warn"
-      }
-    ];
+  <!-- Global Risk Clock -->
+  <div id="riskclock"></div>
 
-    const stream = document.getElementById("stream");
-    const nextBtn = document.getElementById("next");
-    const allBtn = document.getElementById("all");
-
-    let index = 0;
-    let timer = setInterval(revealNext, INTERVAL);
-
-    function revealNext() {
-      if (index >= SECTIONS.length) {
-        clearInterval(timer);
-        return;
-      }
-      const s = SECTIONS[index++];
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="card-title">${s.title}</div>
-        <div class="card-body">${s.body}</div>
-        <div class="risk ${s.risk}">${s.risk.toUpperCase()} RISK</div>
-      `;
-      stream.appendChild(card);
-      stream.scrollTop = stream.scrollHeight;
-    }
-
-    function revealAll() {
-      clearInterval(timer);
-      while (index < SECTIONS.length) revealNext();
-    }
-
-    nextBtn.onclick = () => {
-      clearInterval(timer);
-      revealNext();
-    };
-
-    allBtn.onclick = revealAll;
-
-    // reveal first card immediately
-    revealNext();
-  </script>
+  <!-- Scripts -->
+  <script src="daily.js"></script>
+  <script src="riskclock.js"></script>
+  <script src="map.js"></script>
+  <script src="main.js"></script>
 
 </body>
 </html>
