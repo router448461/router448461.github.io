@@ -1,87 +1,18 @@
-body {
-  margin: 0;
-  background: #030406;
-  color: #dce2ea;
-  font-family: system-ui, sans-serif;
-  padding: 20px;
+#tasmap {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 180px;
+  opacity: 0.25;
+  transition: opacity 0.3s ease;
+  filter: drop-shadow(0 0 6px #000);
 }
 
-h1 {
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #6bc2ff;
-  font-size: 1.4rem;
-  margin-bottom: 10px;
+#tasmap:hover {
+  opacity: 0.9;
 }
 
-.subtitle {
-  color: #9aa3b5;
-  margin-bottom: 20px;
-  max-width: 600px;
-}
-
-.stream {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 800px;
-  margin-bottom: 20px;
-}
-
-.card {
-  background: #0c0f14;
-  border: 1px solid #1a1f27;
-  padding: 14px 16px;
-  border-radius: 10px;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeIn 0.5s forwards ease-out;
-  box-shadow: 0 0 12px rgba(0,0,0,0.4);
-}
-
-.card-title {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9aa3b5;
-  margin-bottom: 6px;
-}
-
-.card-body {
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.risk {
-  margin-top: 10px;
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.ok { color: #7bffb0; }
-.warn { color: #ffdd7b; }
-.danger { color: #ff6b6b; }
-
-button {
-  background: #0f141c;
-  border: 1px solid #2a3545;
-  color: #e8ecf3;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-right: 8px;
-}
-
-button:hover {
-  border-color: #6bc2ff;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+#tasmap img {
+  width: 100%;
+  pointer-events: none;
 }
