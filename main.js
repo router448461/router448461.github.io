@@ -49,53 +49,25 @@ Tasmania = resilient refuge, not sealed fortress.`,
 // --- DOM ---------------------------------------------------------------
 
 const stream = document.getElementById("stream");
-const nextBtn = document.getElementById("next");
-const allBtn = document.getElementById("all");
 
-const INTERVAL = 9000;
+// --- RENDER ------------------------------------------------------------
 
-// --- DAILY UNLOCK ------------------------------------------------------
-
-let index = dailyUnlockInit(SECTIONS.length);
-
-// Render initial unlocked cards
-for (let i = 0; i < index; i++) revealNext();
-
-// --- AUTO REVEAL -------------------------------------------------------
-
-let timer = setInterval(revealNext, INTERVAL);
-
-// --- FUNCTIONS ---------------------------------------------------------
-
-function revealNext() {
-  if (index >= SECTIONS.length) {
-    clearInterval(timer);
-    return;
-  }
-
-  const s = SECTIONS[index++];
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `
-    <div class="card-title">${s.title}</div>
-    <div class="card-body">${s.body}</div>
-    <div class="risk ${s.risk}">${s.risk.toUpperCase()} RISK</div>
-  `;
-
-  stream.appendChild(card);
-  stream.scrollTop = stream.scrollHeight;
+function renderAll() {
+  stream.innerHTML = "";
+  SECTIONS.forEach(s => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-title">${s.title}</div>
+      <div class="card-body">${s.body}</div>
+      <div class="risk ${s.risk}">${s.risk.toUpperCase()} RISK</div>
+    `;
+    stream.appendChild(card);
+  });
 }
 
-function revealAll() {
-  clearInterval(timer);
-  while (index < SECTIONS.length) revealNext();
-}
+renderAll();
 
-// --- EVENTS ------------------------------------------------------------
+// --- HOURLY REFRESH ----------------------------------------------------
 
-nextBtn.onclick = () => {
-  clearInterval(timer);
-  revealNext();
-};
-
-allBtn.onclick = revealAll;
+setInterval(renderAll, 3600000); // 1 hour
