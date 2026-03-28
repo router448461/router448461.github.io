@@ -5,6 +5,7 @@
   <title>Tasmania Survival Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Local styles only -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="map.css" />
 </head>
@@ -16,16 +17,18 @@
     Hourly‑updated assessment of Tasmania’s resilience: fuel, food, medicine, industry, history, and long‑horizon risk.
   </p>
 
+  <!-- Main content container -->
   <div class="stream" id="stream"></div>
 
   <!-- Tasmania Map Overlay -->
   <div id="tasmap">
-    <img src="tasmania.svg" />
+    <img src="tasmania.svg" alt="Tasmania Map Overlay" />
   </div>
 
   <!-- Global Risk Clock -->
   <div id="riskclock"></div>
 
+  <!-- Local scripts only -->
   <script src="riskclock.js"></script>
   <script src="map.js"></script>
   <script src="main.js"></script>
