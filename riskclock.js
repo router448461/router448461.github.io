@@ -1,10 +1,10 @@
 // --- GLOBAL RISK CLOCK -------------------------------------------------
 
-const LAST_EVENT = new Date("2025-01-01"); // change this
+const LAST_EVENT = new Date("2025-01-01"); // change this if you want
 
 function updateRiskClock() {
   const now = new Date();
-  const diff = Math.floor((now - LAST_EVENT) / (1000*60*60*24));
+  const diff = Math.floor((now - LAST_EVENT) / (1000 * 60 * 60 * 24));
   const risk = Math.min(100, Math.floor(diff / 3));
 
   document.getElementById("riskclock").innerHTML = `
