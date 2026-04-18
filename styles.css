@@ -1,126 +1,53 @@
 :root {
-  --bg: #020402;
-  --bg-soft: #071107;
-  --line: rgba(120, 255, 140, 0.14);
-  --text: #79ff8f;
-  --text-dim: #49ba62;
-  --text-bright: #caffd1;
-  --glow: rgba(121, 255, 143, 0.18);
+  --bg: #000000;
+  --fg: #00ff66;
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(20, 60, 20, 0.18), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(12, 30, 12, 0.16), transparent 28%),
-    var(--bg);
-  color: var(--text);
+  background: var(--bg);
+  color: var(--fg);
   font-family:
     ui-monospace,
     SFMono-Regular,
     Menlo,
     Monaco,
     Consolas,
-    "Liberation Mono",
     "Courier New",
     monospace;
 }
 
 body {
-  padding: 22px 20px 28px;
-  overflow-x: hidden;
-  position: relative;
+  padding: 12px 14px;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.02) 0,
-      rgba(255, 255, 255, 0.02) 1px,
-      transparent 1px,
-      transparent 3px
-    );
-  opacity: 0.12;
-  mix-blend-mode: screen;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.85);
-}
-
-.shell {
-  position: relative;
+.wrap {
   width: 100%;
-  max-width: none;
 }
 
-.topline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  align-items: center;
-  margin-bottom: 10px;
-  color: var(--text-bright);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  text-shadow: 0 0 12px var(--glow);
-}
-
-.prompt {
-  margin: 0 0 10px 0;
-  color: var(--text-bright);
-  white-space: pre-wrap;
-  text-shadow: 0 0 8px var(--glow);
-}
-
+.line,
 #terminal {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.45;
+  line-height: 1.35;
   font-size: 14px;
-  color: var(--text);
-  text-shadow: 0 0 8px var(--glow);
-  min-height: 60vh;
 }
 
-.tail {
+#terminal {
   margin-top: 10px;
+  min-height: 68vh;
 }
 
 .cursor {
-  display: inline-block;
   animation: blink 1s steps(1, end) infinite;
 }
 
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-@media (max-width: 640px) {
-  body {
-    padding: 16px 14px 22px;
-  }
-
-  #terminal {
-    font-size: 13px;
-  }
+  50% { opacity: 0; }
 }
