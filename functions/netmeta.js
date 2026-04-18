@@ -2,8 +2,13 @@ export function onRequest(context) {
   const request = context.request;
   const cf = request.cf || {};
 
+  const xff = request.headers.get("x-forwarded-for");
+  const ip =
+    request.headers.get("CF-Connecting-IP") ||
+    (xff ? xff.split(",")[0].trim() : null);
+
   const body = {
-    ip: request.headers.get("CF-Connecting-IP") || null,
+    ip,
     country: cf.country ?? null,
     region: cf.region ?? null,
     regionCode: cf.regionCode ?? null,
