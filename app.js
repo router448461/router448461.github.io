@@ -1,250 +1,509 @@
-const utcTime = document.getElementById("utc-time");
-const sessionState = document.getElementById("session-state");
-const transportState = document.getElementById("transport-state");
-const onlineState = document.getElementById("online-state");
-const browserEngine = document.getElementById("browser-engine");
-const cpuThreads = document.getElementById("cpu-threads");
-const deviceMemory = document.getElementById("device-memory");
-const riskState = document.getElementById("risk-state");
-const protocolNote = document.getElementById("protocol-note");
+const terminal = document.getElementById("terminal");
+const statusEl = document.getElementById("status");
 
-const sessionData = document.getElementById("session-data");
-const displayData = document.getElementById("display-data");
-const networkData = document.getElementById("network-data");
-const capabilityData = document.getElementById("capability-data");
-const incidentFeed = document.getElementById("incident-feed");
+const lines = [];
+const EDGE_ENDPOINT = "/netmeta"; // optional same-origin endpoint, see worker example below
 
-const incidentLog = [];
+function render() {
+  terminal.textContent = lines.join("\n");
+}
 
-function safeValue(value, fallback = "UNAVAILABLE") {
-  if (value === undefined || value === null || value === "") return fallback;
+function push(line = "") {
+  lines.push(line);
+  render();
+}
+
+function section(name) {
+  push(`[ ${String(name).toUpperCase()} ]`);
+}
+
+function item(label, value) {
+  const left = `${label}:`.padEnd(28, " ");
+  push(`${left}${value ?? "n/a"}`);
+}
+
+function bool(value) {
+  if (value === true) return "yes";
+  if (value === false) return "no";
+  return "n/a";
+}
+
+function safe(value) {
+  if (value === null || value === undefined || value === "") return "n/a";
+  if (Array.isArray(value)) return value.length ? value.join(", ") : "n/a";
   return String(value);
 }
 
-function addLog(title, desc) {
-  const time = new Date().toISOString().slice(11, 19) + "Z";
-  incidentLog.unshift({ time, title, desc });
-  incidentLog.splice(8);
-  renderLogs();
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) return "n/a";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let i = 0;
+  let n = bytes;
+  while (n >= 1024 && i < units.length - 1) {
+    n /= 1024;
+    i += 1;
+  }
+  return `${n.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
 }
 
-function renderLogs() {
-  incidentFeed.innerHTML = incidentLog
-    .map(
-      (item) => `
-        <li>
-          <span class="feed-time">${item.time}</span>
-          <div>
-            <div class="feed-title">${item.title}</div>
-            <div class="feed-desc">${item.desc}</div>
-          </div>
-        </li>
-      `
-    )
-    .join("");
-}
-
-function renderRows(container, rows) {
-  container.innerHTML = rows
-    .map(
-      (row) => `
-        <div class="data-row">
-          <div class="data-key">${row.key}</div>
-          <div class="data-value">${row.value}</div>
-        </div>
-      `
-    )
-    .join("");
-}
-
-function getBrowserEngine(userAgent) {
-  if (/Firefox\//i.test(userAgent)) return "GECKO";
-  if (/Edg\//i.test(userAgent)) return "BLINK / EDGE";
-  if (/Chrome\//i.test(userAgent) && !/Edg\//i.test(userAgent)) return "BLINK / CHROME";
-  if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent)) return "WEBKIT / SAFARI";
-  return "UNKNOWN";
-}
-
-function updateClock() {
-  const time = new Date().toISOString().slice(11, 19);
-  utcTime.textContent = `${time} UTC`;
-}
-
-function updateCoreStates() {
-  const ua = navigator.userAgent || "";
-  const engine = getBrowserEngine(ua);
-
-  sessionState.textContent = document.visibilityState === "visible" ? "ACTIVE" : "BACKGROUND";
-  transportState.textContent = location.protocol === "https:" ? "SECURE" : "INSECURE";
-  onlineState.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
-  onlineState.classList.toggle("ok", navigator.onLine);
-  browserEngine.textContent = engine;
-  cpuThreads.textContent = safeValue(navigator.hardwareConcurrency, "UNKNOWN");
-  deviceMemory.textContent = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "UNAVAILABLE";
-  protocolNote.textContent = location.protocol.toUpperCase().replace(":", "");
-
-  riskState.textContent = navigator.onLine ? "LOW" : "ELEVATED";
-  riskState.classList.toggle("ok", navigator.onLine);
-}
-
-function updateTelemetry() {
-  const ua = navigator.userAgent || "";
-  const platform =
-    navigator.userAgentData?.platform ||
-    navigator.platform ||
-    "UNAVAILABLE";
-
-  const viewport = `${window.innerWidth} × ${window.innerHeight}`;
-  const screenSize = `${window.screen.width} × ${window.screen.height}`;
-  const availableScreen = `${window.screen.availWidth} × ${window.screen.availHeight}`;
-
-  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-  const sessionRows = [
-    { key: "User Agent", value: safeValue(ua) },
-    { key: "Platform", value: safeValue(platform) },
-    { key: "Vendor", value: safeValue(navigator.vendor) },
-    { key: "Language", value: safeValue(navigator.language) },
-    { key: "Languages", value: Array.isArray(navigator.languages) ? navigator.languages.join(", ") : "UNAVAILABLE" },
-    { key: "Timezone", value: safeValue(Intl.DateTimeFormat().resolvedOptions().timeZone) },
-    { key: "Cookie Enabled", value: navigator.cookieEnabled ? "YES" : "NO" },
-    { key: "Do Not Track", value: safeValue(navigator.doNotTrack, "UNSET") },
-    { key: "PDF Viewer", value: navigator.pdfViewerEnabled ? "AVAILABLE" : "UNAVAILABLE" },
-    { key: "Java Enabled", value: typeof navigator.javaEnabled === "function" ? (navigator.javaEnabled() ? "YES" : "NO") : "UNAVAILABLE" }
-  ];
-
-  const displayRows = [
-    { key: "Viewport", value: viewport },
-    { key: "Screen", value: screenSize },
-    { key: "Available Screen", value: availableScreen },
-    { key: "Pixel Ratio", value: safeValue(window.devicePixelRatio) },
-    { key: "Color Depth", value: safeValue(window.screen.colorDepth) },
-    { key: "Pixel Depth", value: safeValue(window.screen.pixelDepth) },
-    { key: "Touch Points", value: safeValue(navigator.maxTouchPoints, "0") },
-    { key: "Orientation", value: safeValue(window.screen.orientation?.type) },
-    { key: "Viewport Scale", value: window.visualViewport ? `${window.visualViewport.scale}` : "UNAVAILABLE" }
-  ];
-
-  const networkRows = [
-    { key: "Protocol", value: location.protocol.toUpperCase() },
-    { key: "Host", value: location.host },
-    { key: "Path", value: location.pathname },
-    { key: "Online", value: navigator.onLine ? "YES" : "NO" },
-    { key: "Effective Type", value: safeValue(connection?.effectiveType) },
-    { key: "Downlink", value: connection?.downlink ? `${connection.downlink} Mbps` : "UNAVAILABLE" },
-    { key: "RTT", value: connection?.rtt ? `${connection.rtt} ms` : "UNAVAILABLE" },
-    { key: "Save Data", value: connection?.saveData === true ? "ENABLED" : "DISABLED / UNAVAILABLE" },
-    { key: "Referrer", value: document.referrer || "DIRECT / NONE" }
-  ];
-
-  const capabilityRows = [
-    { key: "Local Storage", value: testStorage("localStorage") },
-    { key: "Session Storage", value: testStorage("sessionStorage") },
-    { key: "IndexedDB", value: "indexedDB" in window ? "AVAILABLE" : "UNAVAILABLE" },
-    { key: "Service Worker", value: "serviceWorker" in navigator ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "Clipboard API", value: navigator.clipboard ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "Share API", value: navigator.share ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "Beacon API", value: navigator.sendBeacon ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "WebSocket", value: "WebSocket" in window ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "WebRTC", value: "RTCPeerConnection" in window ? "SUPPORTED" : "UNSUPPORTED" },
-    { key: "Geolocation", value: "BLOCKED BY PAGE POLICY" }
-  ];
-
-  renderRows(sessionData, sessionRows);
-  renderRows(displayData, displayRows);
-  renderRows(networkData, networkRows);
-  renderRows(capabilityData, capabilityRows);
-}
-
-function testStorage(type) {
+function match(name, query) {
   try {
-    const storage = window[type];
-    const key = "__r448461_test__";
-    storage.setItem(key, "1");
-    storage.removeItem(key);
-    return "AVAILABLE";
+    return window.matchMedia(query).matches ? "yes" : "no";
   } catch {
-    return "UNAVAILABLE";
+    return "n/a";
   }
 }
 
-async function updateBatteryInfo() {
-  if (!("getBattery" in navigator)) {
-    addLog("Battery telemetry unavailable", "Battery Status API not exposed in this environment.");
-    return;
-  }
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
 
+async function getPublicIp() {
   try {
+    // simple public IP lookup for static hosting
+    return await fetchJson("https://api64.ipify.org?format=json");
+  } catch {
+    return null;
+  }
+}
+
+async function getEdgeMeta() {
+  try {
+    const res = await fetch(EDGE_ENDPOINT, {
+      cache: "no-store",
+      headers: { accept: "application/json" }
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+async function getStorageInfo() {
+  try {
+    if (!navigator.storage?.estimate) return null;
+    const estimate = await navigator.storage.estimate();
+    return {
+      quota: estimate.quota,
+      usage: estimate.usage
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function getBatteryInfo() {
+  try {
+    if (!("getBattery" in navigator)) return null;
     const battery = await navigator.getBattery();
-    addLog(
-      "Battery telemetry acquired",
-      `Level ${Math.round(battery.level * 100)}%, charging ${battery.charging ? "yes" : "no"}.`
-    );
+    return {
+      charging: battery.charging,
+      level: typeof battery.level === "number"
+        ? `${Math.round(battery.level * 100)}%`
+        : "n/a",
+      chargingTime: battery.chargingTime,
+      dischargingTime: battery.dischargingTime
+    };
   } catch {
-    addLog("Battery telemetry failed", "Battery status could not be read.");
+    return null;
   }
 }
 
-function updatePermissionsSummary() {
-  if (!("permissions" in navigator) || typeof navigator.permissions.query !== "function") {
-    addLog("Permissions interface unavailable", "Navigator permissions query not supported.");
-    return;
+async function getPermissions() {
+  if (!navigator.permissions?.query) return {};
+  const names = [
+    "geolocation",
+    "notifications",
+    "camera",
+    "microphone",
+    "clipboard-read"
+  ];
+
+  const result = {};
+  for (const name of names) {
+    try {
+      const status = await navigator.permissions.query({ name });
+      result[name] = status.state;
+    } catch {
+      result[name] = "unsupported";
+    }
   }
+  return result;
+}
 
-  const names = ["notifications", "clipboard-read"];
-  Promise.allSettled(
-    names.map((name) => navigator.permissions.query({ name }))
-  ).then((results) => {
-    const summary = results
-      .map((result, index) => {
-        if (result.status === "fulfilled") {
-          return `${names[index]}=${result.value.state}`;
+async function getMediaDeviceInfo() {
+  try {
+    if (!navigator.mediaDevices?.enumerateDevices) return null;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const counts = devices.reduce(
+      (acc, d) => {
+        acc.total += 1;
+        acc[d.kind] = (acc[d.kind] || 0) + 1;
+        return acc;
+      },
+      { total: 0 }
+    );
+    return counts;
+  } catch {
+    return null;
+  }
+}
+
+function getWebGLInfo() {
+  try {
+    const canvas = document.createElement("canvas");
+    const gl =
+      canvas.getContext("webgl") ||
+      canvas.getContext("experimental-webgl");
+
+    if (!gl) {
+      return { supported: false };
+    }
+
+    const debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const vendor = debug
+      ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)
+      : "masked";
+    const renderer = debug
+      ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)
+      : "masked";
+
+    return {
+      supported: true,
+      vendor,
+      renderer
+    };
+  } catch {
+    return { supported: false };
+  }
+}
+
+async function getUAClientHints() {
+  try {
+    if (!navigator.userAgentData?.getHighEntropyValues) return null;
+    return await navigator.userAgentData.getHighEntropyValues([
+      "architecture",
+      "bitness",
+      "model",
+      "platform",
+      "platformVersion",
+      "uaFullVersion",
+      "fullVersionList"
+    ]);
+  } catch {
+    return null;
+  }
+}
+
+async function getIceHints(timeoutMs = 1800) {
+  const RTC =
+    window.RTCPeerConnection ||
+    window.webkitRTCPeerConnection ||
+    window.mozRTCPeerConnection;
+
+  if (!RTC) return [];
+
+  return new Promise((resolve) => {
+    const seen = new Set();
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      try {
+        pc.close();
+      } catch {}
+      resolve(Array.from(seen));
+    };
+
+    const addAddress = (value) => {
+      if (!value) return;
+      seen.add(String(value));
+    };
+
+    const extractFromCandidate = (candidate) => {
+      if (!candidate) return;
+      if (candidate.address) addAddress(candidate.address);
+
+      const raw = candidate.candidate || "";
+      const matches = raw.match(
+        /([a-f0-9]{0,4}:[a-f0-9:]+)|(\b\d{1,3}(?:\.\d{1,3}){3}\b)|([a-z0-9-]+\.local)/gi
+      );
+      if (matches) {
+        for (const m of matches) addAddress(m);
+      }
+    };
+
+    let pc;
+    try {
+      pc = new RTC({ iceServers: [] });
+      pc.createDataChannel("scan");
+
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          extractFromCandidate(event.candidate);
+        } else {
+          finish();
         }
-        return `${names[index]}=unsupported`;
-      })
-      .join(", ");
+      };
 
-    addLog("Permission state snapshot", summary);
+      pc.createOffer()
+        .then((offer) => pc.setLocalDescription(offer))
+        .catch(finish);
+
+      setTimeout(finish, timeoutMs);
+    } catch {
+      resolve([]);
+    }
   });
 }
 
-function bootLogs() {
-  addLog("Telemetry interface initialized", "Passive browser diagnostics console rendered.");
-  addLog("Client runtime detected", `${navigator.onLine ? "online" : "offline"} state confirmed.`);
-  addLog("Viewport telemetry captured", `${window.innerWidth}x${window.innerHeight} active viewport registered.`);
+function getNavigationTiming() {
+  try {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (!nav) return null;
+    return {
+      type: nav.type,
+      protocol: nav.nextHopProtocol || "n/a",
+      redirectCount: nav.redirectCount,
+      transferSize: nav.transferSize,
+      encodedBodySize: nav.encodedBodySize,
+      decodedBodySize: nav.decodedBodySize,
+      domComplete: Math.round(nav.domComplete),
+      loadEventEnd: Math.round(nav.loadEventEnd)
+    };
+  } catch {
+    return null;
+  }
 }
 
-window.addEventListener("online", () => {
-  updateCoreStates();
-  updateTelemetry();
-  addLog("Transport state changed", "Client reported online state.");
+function capabilityMap() {
+  return {
+    cookieEnabled: navigator.cookieEnabled,
+    onLine: navigator.onLine,
+    webdriver: navigator.webdriver,
+    javaScriptEnabled: true,
+    localStorage: "localStorage" in window,
+    sessionStorage: "sessionStorage" in window,
+    indexedDB: "indexedDB" in window,
+    serviceWorker: "serviceWorker" in navigator,
+    sharedWorker: "SharedWorker" in window,
+    webSocket: "WebSocket" in window,
+    webRTC: "RTCPeerConnection" in window || "webkitRTCPeerConnection" in window,
+    geolocation: "geolocation" in navigator,
+    bluetooth: "bluetooth" in navigator,
+    usb: "usb" in navigator,
+    serial: "serial" in navigator,
+    hid: "hid" in navigator,
+    clipboard: "clipboard" in navigator,
+    share: "share" in navigator,
+    canHover: match("canHover", "(hover: hover)") === "yes",
+    coarsePointer: match("coarsePointer", "(pointer: coarse)") === "yes",
+    reducedMotion: match("reducedMotion", "(prefers-reduced-motion: reduce)") === "yes",
+    darkMode: match("darkMode", "(prefers-color-scheme: dark)") === "yes"
+  };
+}
+
+async function boot() {
+  statusEl.textContent = "SCANNING";
+
+  push("VISITOR NETWORK / BROWSER TELEMETRY");
+  push("=".repeat(72));
+  push("");
+
+  section("request");
+  item("timestamp", new Date().toISOString());
+  item("url", location.href);
+  item("origin", location.origin);
+  item("protocol", location.protocol.replace(":", "").toUpperCase());
+  item("host", location.host);
+  item("path", location.pathname || "/");
+  item("query", location.search || "n/a");
+  item("hash", location.hash || "n/a");
+  item("referrer", document.referrer || "direct");
+  item("history length", history.length);
+  push("");
+
+  const [ipInfo, edgeInfo] = await Promise.all([
+    getPublicIp(),
+    getEdgeMeta()
+  ]);
+
+  section("internet");
+  item("public ip", ipInfo?.ip || "unavailable");
+  item("edge metadata", edgeInfo ? "same-origin endpoint detected" : "not present");
+  if (edgeInfo) {
+    item("country", safe(edgeInfo.country));
+    item("region", safe(edgeInfo.region));
+    item("city", safe(edgeInfo.city));
+    item("postal code", safe(edgeInfo.postalCode));
+    item("latitude", safe(edgeInfo.latitude));
+    item("longitude", safe(edgeInfo.longitude));
+    item("timezone", safe(edgeInfo.timezone));
+    item("asn", safe(edgeInfo.asn));
+    item("asn org", safe(edgeInfo.asOrganization));
+    item("colo", safe(edgeInfo.colo));
+    item("http protocol", safe(edgeInfo.httpProtocol));
+    item("tls version", safe(edgeInfo.tlsVersion));
+    item("client tcp rtt", safe(edgeInfo.clientTcpRtt));
+    item("client quic rtt", safe(edgeInfo.clientQuicRtt));
+  }
+  push("");
+
+  section("browser");
+  item("user agent", navigator.userAgent);
+  item("platform", safe(navigator.platform));
+  item("vendor", safe(navigator.vendor));
+  item("language", safe(navigator.language));
+  item("languages", safe(navigator.languages));
+  item("timezone", safe(Intl.DateTimeFormat().resolvedOptions().timeZone));
+  item("do not track", safe(navigator.doNotTrack));
+  item("pdf viewer", safe(navigator.pdfViewerEnabled));
+  item("hardware threads", safe(navigator.hardwareConcurrency));
+  item("device memory", navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "n/a");
+  item("max touch points", safe(navigator.maxTouchPoints));
+  item("webdriver", bool(navigator.webdriver));
+  push("");
+
+  const uaHints = await getUAClientHints();
+  if (uaHints) {
+    section("ua client hints");
+    item("mobile", safe(navigator.userAgentData?.mobile));
+    item("architecture", safe(uaHints.architecture));
+    item("bitness", safe(uaHints.bitness));
+    item("model", safe(uaHints.model));
+    item("platform", safe(uaHints.platform));
+    item("platform version", safe(uaHints.platformVersion));
+    item("ua full version", safe(uaHints.uaFullVersion));
+    item(
+      "brand list",
+      Array.isArray(uaHints.fullVersionList)
+        ? uaHints.fullVersionList.map((x) => `${x.brand} ${x.version}`).join(", ")
+        : "n/a"
+    );
+    push("");
+  }
+
+  section("display");
+  item("viewport", `${window.innerWidth} x ${window.innerHeight}`);
+  item("visual viewport", window.visualViewport
+    ? `${Math.round(window.visualViewport.width)} x ${Math.round(window.visualViewport.height)}`
+    : "n/a");
+  item("screen", `${screen.width} x ${screen.height}`);
+  item("avail screen", `${screen.availWidth} x ${screen.availHeight}`);
+  item("pixel ratio", safe(window.devicePixelRatio));
+  item("color depth", safe(screen.colorDepth));
+  item("orientation", safe(screen.orientation?.type));
+  item("dark mode", match("darkMode", "(prefers-color-scheme: dark)"));
+  item("reduced motion", match("reducedMotion", "(prefers-reduced-motion: reduce)"));
+  item("hover capable", match("canHover", "(hover: hover)"));
+  item("coarse pointer", match("coarsePointer", "(pointer: coarse)"));
+  push("");
+
+  section("network hints");
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  item("navigator online", bool(navigator.onLine));
+  item("connection api", conn ? "available" : "unavailable");
+  if (conn) {
+    item("type", safe(conn.type));
+    item("effective type", safe(conn.effectiveType));
+    item("downlink", conn.downlink ? `${conn.downlink} Mb/s` : "n/a");
+    item("rtt", conn.rtt ? `${conn.rtt} ms` : "n/a");
+    item("save data", bool(conn.saveData));
+  }
+  push("");
+
+  section("timing");
+  const navTiming = getNavigationTiming();
+  if (navTiming) {
+    item("navigation type", safe(navTiming.type));
+    item("next hop protocol", safe(navTiming.protocol));
+    item("redirect count", safe(navTiming.redirectCount));
+    item("transfer size", formatBytes(navTiming.transferSize));
+    item("encoded body size", formatBytes(navTiming.encodedBodySize));
+    item("decoded body size", formatBytes(navTiming.decodedBodySize));
+    item("dom complete", `${navTiming.domComplete} ms`);
+    item("load event end", `${navTiming.loadEventEnd} ms`);
+  } else {
+    item("timing", "unavailable");
+  }
+  push("");
+
+  section("storage");
+  const storageInfo = await getStorageInfo();
+  item("localStorage", bool("localStorage" in window));
+  item("sessionStorage", bool("sessionStorage" in window));
+  item("indexedDB", bool("indexedDB" in window));
+  item("cookies enabled", bool(navigator.cookieEnabled));
+  item("quota", storageInfo ? formatBytes(storageInfo.quota) : "n/a");
+  item("usage", storageInfo ? formatBytes(storageInfo.usage) : "n/a");
+  push("");
+
+  section("permissions");
+  const perms = await getPermissions();
+  item("geolocation", safe(perms.geolocation));
+  item("notifications", safe(perms.notifications));
+  item("camera", safe(perms.camera));
+  item("microphone", safe(perms.microphone));
+  item("clipboard-read", safe(perms["clipboard-read"]));
+  push("");
+
+  section("hardware / power");
+  const battery = await getBatteryInfo();
+  if (battery) {
+    item("battery level", safe(battery.level));
+    item("charging", bool(battery.charging));
+    item("charging time", Number.isFinite(battery.chargingTime) ? battery.chargingTime : "n/a");
+    item("discharging time", Number.isFinite(battery.dischargingTime) ? battery.dischargingTime : "n/a");
+  } else {
+    item("battery", "unavailable");
+  }
+  push("");
+
+  section("media devices");
+  const mediaInfo = await getMediaDeviceInfo();
+  if (mediaInfo) {
+    item("total devices", safe(mediaInfo.total));
+    item("audio inputs", safe(mediaInfo.audioinput));
+    item("audio outputs", safe(mediaInfo.audiooutput));
+    item("video inputs", safe(mediaInfo.videoinput));
+  } else {
+    item("devices", "unavailable");
+  }
+  push("");
+
+  section("graphics");
+  const webgl = getWebGLInfo();
+  item("webgl", bool(webgl.supported));
+  item("gpu vendor", safe(webgl.vendor));
+  item("gpu renderer", safe(webgl.renderer));
+  push("");
+
+  section("capabilities");
+  const caps = capabilityMap();
+  for (const [key, value] of Object.entries(caps)) {
+    item(key, typeof value === "boolean" ? bool(value) : safe(value));
+  }
+  push("");
+
+  section("webrtc host hints");
+  const iceHints = await getIceHints();
+  if (iceHints.length) {
+    item("candidates", iceHints.join(", "));
+  } else {
+    item("candidates", "none / blocked / masked");
+  }
+  push("");
+
+  statusEl.textContent = "READY";
+}
+
+boot().catch((error) => {
+  push("");
+  push("[ ERROR ]");
+  push(String(error?.message || error));
+  statusEl.textContent = "ERROR";
 });
-
-window.addEventListener("offline", () => {
-  updateCoreStates();
-  updateTelemetry();
-  addLog("Transport state changed", "Client reported offline state.");
-});
-
-window.addEventListener("resize", () => {
-  updateTelemetry();
-});
-
-document.addEventListener("visibilitychange", () => {
-  updateCoreStates();
-  addLog(
-    "Visibility state changed",
-    `Document now ${document.visibilityState}.`
-  );
-});
-
-updateClock();
-updateCoreStates();
-updateTelemetry();
-bootLogs();
-updateBatteryInfo();
-updatePermissionsSummary();
-
-setInterval(updateClock, 1000);
-setInterval(updateCoreStates, 5000);
-setInterval(updateTelemetry, 10000);
