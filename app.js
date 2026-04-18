@@ -18,7 +18,7 @@ function setText(el, lines) {
   el.textContent = Array.isArray(lines) ? lines.join("\n") : String(lines ?? "");
 }
 
-function pad(label, width = 26) {
+function pad(label, width = 28) {
   return `${label}:`.padEnd(width, " ");
 }
 
@@ -40,7 +40,7 @@ function bool(value) {
 
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes)) return "n/a";
-  const units = ["B", "KB", "MB", "GB", "TB"];
+  const units = ["b", "kb", "mb", "gb", "tb"];
   let i = 0;
   let n = bytes;
 
@@ -60,9 +60,18 @@ function mediaQuery(query) {
   }
 }
 
+function compactList(value, fallback = "n/a") {
+  if (!Array.isArray(value) || !value.length) return fallback;
+  return value.join(", ");
+}
+
+function lower(value) {
+  return safe(value).toLowerCase();
+}
+
 async function getJson(url) {
   const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`http ${res.status}`);
   return res.json();
 }
 
@@ -132,7 +141,6 @@ async function getPermissions() {
 async function getMediaDeviceInfo() {
   try {
     if (!navigator.mediaDevices?.enumerateDevices) return null;
-
     const devices = await navigator.mediaDevices.enumerateDevices();
 
     return devices.reduce(
@@ -286,6 +294,8 @@ function capabilityMap() {
     onLine: navigator.onLine,
     webdriver: navigator.webdriver,
     javaScriptEnabled: true,
+    isSecureContext: window.isSecureContext,
+    crossOriginIsolated: window.crossOriginIsolated,
     localStorage: "localStorage" in window,
     sessionStorage: "sessionStorage" in window,
     indexedDB: "indexedDB" in window,
@@ -302,6 +312,7 @@ function capabilityMap() {
     hid: "hid" in navigator,
     clipboard: "clipboard" in navigator,
     share: "share" in navigator,
+    mediaCapabilities: "mediaCapabilities" in navigator,
     canHover: mediaQuery("(hover: hover)") === "yes",
     coarsePointer: mediaQuery("(pointer: coarse)") === "yes",
     reducedMotion: mediaQuery("(prefers-reduced-motion: reduce)") === "yes",
@@ -311,48 +322,48 @@ function capabilityMap() {
 
 function detectBrowserClass(ua) {
   const s = String(ua || "");
-  if (/Edg\//i.test(s)) return "EDGE";
-  if (/OPR\//i.test(s) || /Opera/i.test(s)) return "OPERA";
-  if (/Chrome\//i.test(s) && !/Edg\//i.test(s)) return "CHROMIUM";
-  if (/Firefox\//i.test(s)) return "FIREFOX";
-  if (/Safari\//i.test(s) && /Version\//i.test(s)) return "SAFARI";
-  return "UNKNOWN";
+  if (/Edg\//i.test(s)) return "edge";
+  if (/OPR\//i.test(s) || /Opera/i.test(s)) return "opera";
+  if (/Chrome\//i.test(s) && !/Edg\//i.test(s)) return "chromium";
+  if (/Firefox\//i.test(s)) return "firefox";
+  if (/Safari\//i.test(s) && /Version\//i.test(s)) return "safari";
+  return "unknown";
 }
 
 function detectDeviceClass() {
   const width = Math.min(screen.width || 0, screen.height || 0);
   const touch = navigator.maxTouchPoints || 0;
 
-  if (touch > 0 && width <= 480) return "MOBILE";
-  if (touch > 0 && width <= 1024) return "TABLET";
-  return "DESKTOP";
+  if (touch > 0 && width <= 480) return "mobile";
+  if (touch > 0 && width <= 1024) return "tablet";
+  return "desktop";
 }
 
 function detectAddressFamily(ip) {
   const value = String(ip || "");
-  if (value.includes(":")) return "IPV6";
-  if (value.includes(".")) return "IPV4";
-  return "UNKNOWN";
+  if (value.includes(":")) return "ipv6";
+  if (value.includes(".")) return "ipv4";
+  return "unknown";
 }
 
 function detectWebRtcPosture(candidates) {
-  if (!Array.isArray(candidates) || !candidates.length) return "BLOCKED";
-  if (candidates.some((v) => String(v).includes(".local"))) return "MASKED";
-  if (candidates.some((v) => /\b\d{1,3}(?:\.\d{1,3}){3}\b/.test(String(v)))) return "EXPOSED";
-  if (candidates.some((v) => String(v).includes(":"))) return "EXPOSED";
-  return "LIMITED";
+  if (!Array.isArray(candidates) || !candidates.length) return "blocked";
+  if (candidates.some((v) => String(v).includes(".local"))) return "masked";
+  if (candidates.some((v) => /\b\d{1,3}(?:\.\d{1,3}){3}\b/.test(String(v)))) return "exposed";
+  if (candidates.some((v) => String(v).includes(":"))) return "exposed";
+  return "limited";
 }
 
 function detectTimezoneAlignment(edgeTz, browserTz) {
-  if (!edgeTz || !browserTz || edgeTz === "n/a" || browserTz === "n/a") return "UNKNOWN";
-  return edgeTz === browserTz ? "MATCH" : "MISMATCH";
+  if (!edgeTz || !browserTz || edgeTz === "n/a" || browserTz === "n/a") return "unknown";
+  return edgeTz === browserTz ? "match" : "mismatch";
 }
 
 function detectSignalCoverage(data) {
   let missing = 0;
 
   const checks = [
-    data.netmeta?.ip,
+    data.netmeta?.sourceIp,
     data.netmeta?.country,
     data.netmeta?.asn,
     data.conn ? "ok" : null,
@@ -367,9 +378,36 @@ function detectSignalCoverage(data) {
     if (!v) missing += 1;
   }
 
-  if (missing <= 2) return "HIGH";
-  if (missing <= 5) return "MODERATE";
-  return "LIMITED";
+  if (missing <= 2) return "high";
+  if (missing <= 5) return "moderate";
+  return "limited";
+}
+
+function splitCandidates(candidates) {
+  const result = {
+    mdns: [],
+    ipv4: [],
+    ipv6: [],
+    other: []
+  };
+
+  if (!Array.isArray(candidates)) return result;
+
+  for (const value of candidates) {
+    const v = String(value);
+
+    if (v.includes(".local")) {
+      result.mdns.push(v);
+    } else if (/\b\d{1,3}(?:\.\d{1,3}){3}\b/.test(v)) {
+      result.ipv4.push(v);
+    } else if (v.includes(":")) {
+      result.ipv6.push(v);
+    } else {
+      result.other.push(v);
+    }
+  }
+
+  return result;
 }
 
 function shouldHideValue(value) {
@@ -382,292 +420,336 @@ function buildEntries(data) {
   const edgeTz = safe(data.netmeta?.timezone);
   const browserClass = detectBrowserClass(navigator.userAgent);
   const deviceClass = detectDeviceClass();
-  const addressFamily = detectAddressFamily(data.netmeta?.ip);
+  const addressFamily = detectAddressFamily(data.netmeta?.sourceIp);
   const webRtcPosture = detectWebRtcPosture(data.iceHints);
   const tzAlignment = detectTimezoneAlignment(edgeTz, browserTz);
   const coverage = detectSignalCoverage(data);
+  const candidates = splitCandidates(data.iceHints);
+  const dns = data.netmeta?.dns || {};
 
   return {
-    derived: {
-      browserClass,
-      deviceClass,
-      addressFamily,
-      webRtcPosture,
-      tzAlignment,
-      coverage
-    },
-
     summary: [
-      line("EDGE STATUS", data.netmeta ? "LIVE [OK]" : "OFFLINE [FAIL]"),
-      line("SOURCE ADDRESS", `${safe(data.netmeta?.ip)} [${addressFamily}]`),
-      line("EDGE LINK", `${safe(data.netmeta?.colo)} / ${safe(data.netmeta?.httpProtocol)} [OK]`),
-      line(
-        "EDGE GEO",
-        `${safe(data.netmeta?.city)}, ${safe(data.netmeta?.region)}, ${safe(data.netmeta?.country)}`
-      ),
-      line("CLIENT CLASS", `${browserClass} / ${deviceClass}`),
-      line("SIGNAL COVERAGE", coverage),
-      line("TZ ALIGNMENT", tzAlignment),
-      line("WEBRTC POSTURE", webRtcPosture),
-      line("GPU PATH", data.webgl?.supported ? "WEBGL [OK]" : "UNAVAILABLE"),
-      line("SCAN MODE", state.rawView ? "RAW" : "OPERATOR")
+      line("edge status", data.netmeta ? "live / ok" : "offline / fail"),
+      line("source ip", safe(data.netmeta?.sourceIp)),
+      line("source family", addressFamily),
+      line("ip lookup", `${safe(data.netmeta?.city)}, ${safe(data.netmeta?.region)}, ${safe(data.netmeta?.country)}`),
+      line("edge link", `${safe(data.netmeta?.colo)} / ${safe(data.netmeta?.httpProtocol)}`),
+      line("client class", `${browserClass} / ${deviceClass}`),
+      line("signal coverage", coverage),
+      line("timezone alignment", tzAlignment),
+      line("webrtc posture", webRtcPosture),
+      line("reverse ptr", compactList(dns.sourcePtr))
     ],
 
     events: [
-      `INIT EDGE CHANNEL..................${data.netmeta ? "OK" : "FAIL"}`,
-      `RESOLVE SOURCE ADDRESS............${data.netmeta?.ip ? "OK" : "FAIL"}`,
-      `MAP EDGE GEO......................${data.netmeta?.country ? "OK" : "LIMITED"}`,
-      `ENUM CLIENT RUNTIME...............OK`,
-      `PROBE NETWORK HINTS...............${data.conn ? "OK" : "LIMITED"}`,
-      `QUERY POWER PROFILE...............${data.battery ? "OK" : "UNAVAILABLE"}`,
-      `ENUM MEDIA DEVICES................${data.mediaInfo ? "OK" : "LIMITED"}`,
-      `ACQUIRE GPU PATH..................${data.webgl?.supported ? "OK" : "LIMITED"}`,
-      `INSPECT WEBRTC HOSTS..............${webRtcPosture}`,
-      `ALIGN CLIENT EDGE TZ..............${tzAlignment}`
+      `init edge channel..................${data.netmeta ? "ok" : "fail"}`,
+      `resolve source address............${data.netmeta?.sourceIp ? "ok" : "fail"}`,
+      `map edge geo......................${data.netmeta?.country ? "ok" : "limited"}`,
+      `run reverse ptr...................${Array.isArray(dns.sourcePtr) && dns.sourcePtr.length ? "ok" : "limited"}`,
+      `resolve site aaaa/a...............${(dns.siteA?.length || dns.siteAAAA?.length) ? "ok" : "limited"}`,
+      `enum client runtime...............ok`,
+      `probe network hints...............${data.conn ? "ok" : "limited"}`,
+      `query power profile...............${data.battery ? "ok" : "unavailable"}`,
+      `acquire gpu path..................${data.webgl?.supported ? "ok" : "limited"}`,
+      `inspect webrtc hosts..............${webRtcPosture}`
     ],
 
     operatorSections: [
       {
-        title: "LINK",
+        title: "link",
         rows: [
-          ["SOURCE ADDRESS", safe(data.netmeta?.ip)],
-          ["ADDRESS FAMILY", addressFamily],
-          ["EDGE COLO", safe(data.netmeta?.colo)],
-          ["HTTP PROTOCOL", safe(data.netmeta?.httpProtocol)],
-          ["TLS VERSION", safe(data.netmeta?.tlsVersion)],
-          ["CF RAY", safe(data.netmeta?.rayId)]
+          ["source ip", safe(data.netmeta?.sourceIp)],
+          ["source ipv4", safe(data.netmeta?.sourceIpv4)],
+          ["source ipv6", safe(data.netmeta?.sourceIpv6)],
+          ["source family", addressFamily],
+          ["edge colo", safe(data.netmeta?.colo)],
+          ["http protocol", safe(data.netmeta?.httpProtocol)],
+          ["tls version", safe(data.netmeta?.tlsVersion)],
+          ["cf ray", safe(data.netmeta?.rayId)]
         ]
       },
       {
-        title: "EDGE",
+        title: "ip lookup",
         rows: [
-          ["COUNTRY", safe(data.netmeta?.country)],
-          ["REGION", safe(data.netmeta?.region)],
-          ["CITY", safe(data.netmeta?.city)],
-          ["POSTAL", safe(data.netmeta?.postalCode)],
-          ["TIMEZONE", edgeTz],
-          ["ASN", safe(data.netmeta?.asn)],
-          ["ASN ORG", safe(data.netmeta?.asOrganization)]
+          ["country", safe(data.netmeta?.country)],
+          ["region", safe(data.netmeta?.region)],
+          ["city", safe(data.netmeta?.city)],
+          ["postal code", safe(data.netmeta?.postalCode)],
+          ["latitude", safe(data.netmeta?.latitude)],
+          ["longitude", safe(data.netmeta?.longitude)],
+          ["timezone", safe(data.netmeta?.timezone)],
+          ["asn", safe(data.netmeta?.asn)],
+          ["asn org", safe(data.netmeta?.asOrganization)]
         ]
       },
       {
-        title: "CLIENT",
+        title: "dns",
         rows: [
-          ["BROWSER CLASS", browserClass],
-          ["DEVICE CLASS", deviceClass],
-          ["USER AGENT", navigator.userAgent],
-          ["PLATFORM", safe(navigator.platform)],
-          ["LANGUAGE", safe(navigator.language)],
-          ["BROWSER TZ", browserTz],
-          ["WEB DRIVER", bool(navigator.webdriver)]
+          ["source reverse ptr", compactList(dns.sourcePtr)],
+          ["site hostname", safe(dns.hostname)],
+          ["site ipv4", compactList(dns.siteA)],
+          ["site ipv6", compactList(dns.siteAAAA)],
+          ["site cname", compactList(dns.siteCNAME)],
+          ["site ns", compactList(dns.siteNS)],
+          ["site mx", compactList(dns.siteMX)],
+          ["site txt", compactList(dns.siteTXT)],
+          ["site dnssec ad", bool(dns.ad)],
+          ["client dns resolver", "not exposed by browser"]
         ]
       },
       {
-        title: "SURFACE",
+        title: "client",
         rows: [
-          ["VIEWPORT", `${window.innerWidth} x ${window.innerHeight}`],
-          ["SCREEN", `${screen.width} x ${screen.height}`],
-          ["PIXEL RATIO", safe(window.devicePixelRatio)],
-          ["COLOR DEPTH", safe(screen.colorDepth)],
-          ["ORIENTATION", safe(screen.orientation?.type)],
-          ["DARK MODE", mediaQuery("(prefers-color-scheme: dark)")],
-          ["HOVER", mediaQuery("(hover: hover)")]
+          ["browser class", browserClass],
+          ["device class", deviceClass],
+          ["user agent", navigator.userAgent],
+          ["platform", safe(navigator.platform)],
+          ["language", safe(navigator.language)],
+          ["browser timezone", browserTz],
+          ["webdriver", bool(navigator.webdriver)]
+        ]
+      },
+      {
+        title: "network surface",
+        rows: [
+          ["webrtc posture", webRtcPosture],
+          ["mdns host hints", compactList(candidates.mdns)],
+          ["webrtc ipv4 hints", compactList(candidates.ipv4)],
+          ["webrtc ipv6 hints", compactList(candidates.ipv6)],
+          ["navigator online", bool(navigator.onLine)],
+          ["connection api", data.conn ? "available" : "unavailable"]
+        ]
+      },
+      {
+        title: "surface",
+        rows: [
+          ["viewport", `${window.innerWidth} x ${window.innerHeight}`],
+          ["screen", `${screen.width} x ${screen.height}`],
+          ["pixel ratio", safe(window.devicePixelRatio)],
+          ["color depth", safe(screen.colorDepth)],
+          ["dark mode", mediaQuery("(prefers-color-scheme: dark)")],
+          ["hover", mediaQuery("(hover: hover)")],
+          ["coarse pointer", mediaQuery("(pointer: coarse)")]
         ]
       }
     ],
 
     rawSections: [
       {
-        title: "REQUEST",
+        title: "request",
         rows: [
-          ["TIMESTAMP", new Date().toISOString()],
-          ["URL", location.href],
-          ["ORIGIN", location.origin],
-          ["PROTOCOL", location.protocol.replace(":", "").toUpperCase()],
-          ["HOST", location.host],
-          ["PATH", location.pathname || "/"],
-          ["QUERY", location.search || "n/a"],
-          ["HASH", location.hash || "n/a"],
-          ["REFERRER", document.referrer || "direct"],
-          ["HISTORY LENGTH", history.length]
+          ["timestamp", new Date().toISOString()],
+          ["url", location.href],
+          ["origin", location.origin],
+          ["protocol", location.protocol.replace(":", "").toLowerCase()],
+          ["host", location.host],
+          ["path", location.pathname || "/"],
+          ["query", location.search || "n/a"],
+          ["hash", location.hash || "n/a"],
+          ["referrer", document.referrer || "direct"],
+          ["history length", history.length]
         ]
       },
       {
-        title: "INTERNET",
+        title: "internet",
         rows: [
-          ["PUBLIC IP", safe(data.netmeta?.ip)],
-          ["ADDRESS FAMILY", addressFamily],
-          ["COUNTRY", safe(data.netmeta?.country)],
-          ["REGION", safe(data.netmeta?.region)],
-          ["REGION CODE", safe(data.netmeta?.regionCode)],
-          ["CITY", safe(data.netmeta?.city)],
-          ["POSTAL CODE", safe(data.netmeta?.postalCode)],
-          ["LATITUDE", safe(data.netmeta?.latitude)],
-          ["LONGITUDE", safe(data.netmeta?.longitude)],
-          ["TIMEZONE", safe(data.netmeta?.timezone)],
-          ["CONTINENT", safe(data.netmeta?.continent)],
-          ["ASN", safe(data.netmeta?.asn)],
-          ["ASN ORG", safe(data.netmeta?.asOrganization)],
-          ["COLO", safe(data.netmeta?.colo)],
-          ["HTTP PROTOCOL", safe(data.netmeta?.httpProtocol)],
-          ["TLS VERSION", safe(data.netmeta?.tlsVersion)],
-          ["CLIENT TCP RTT", safe(data.netmeta?.clientTcpRtt)],
-          ["CLIENT QUIC RTT", safe(data.netmeta?.clientQuicRtt)],
-          ["REQUEST METHOD", safe(data.netmeta?.requestMethod)],
-          ["SCHEME", safe(data.netmeta?.scheme)],
-          ["HOST HEADER", safe(data.netmeta?.host)],
-          ["CF RAY", safe(data.netmeta?.rayId)]
+          ["source ip", safe(data.netmeta?.sourceIp)],
+          ["source ipv4", safe(data.netmeta?.sourceIpv4)],
+          ["source ipv6", safe(data.netmeta?.sourceIpv6)],
+          ["source family", addressFamily],
+          ["country", safe(data.netmeta?.country)],
+          ["region", safe(data.netmeta?.region)],
+          ["region code", safe(data.netmeta?.regionCode)],
+          ["city", safe(data.netmeta?.city)],
+          ["postal code", safe(data.netmeta?.postalCode)],
+          ["latitude", safe(data.netmeta?.latitude)],
+          ["longitude", safe(data.netmeta?.longitude)],
+          ["timezone", safe(data.netmeta?.timezone)],
+          ["continent", safe(data.netmeta?.continent)],
+          ["asn", safe(data.netmeta?.asn)],
+          ["asn org", safe(data.netmeta?.asOrganization)],
+          ["colo", safe(data.netmeta?.colo)],
+          ["http protocol", safe(data.netmeta?.httpProtocol)],
+          ["tls version", safe(data.netmeta?.tlsVersion)],
+          ["client tcp rtt", safe(data.netmeta?.clientTcpRtt)],
+          ["client quic rtt", safe(data.netmeta?.clientQuicRtt)],
+          ["request method", safe(data.netmeta?.requestMethod)],
+          ["scheme", safe(data.netmeta?.scheme)],
+          ["host header", safe(data.netmeta?.host)],
+          ["cf ray", safe(data.netmeta?.rayId)]
         ]
       },
       {
-        title: "BROWSER",
+        title: "dns",
         rows: [
-          ["USER AGENT", navigator.userAgent],
-          ["BROWSER CLASS", browserClass],
-          ["DEVICE CLASS", deviceClass],
-          ["PLATFORM", safe(navigator.platform)],
-          ["VENDOR", safe(navigator.vendor)],
-          ["LANGUAGE", safe(navigator.language)],
-          ["LANGUAGES", safe(navigator.languages)],
-          ["TIMEZONE", browserTz],
-          ["DO NOT TRACK", safe(navigator.doNotTrack)],
-          ["PDF VIEWER", safe(navigator.pdfViewerEnabled)],
-          ["HARDWARE THREADS", safe(navigator.hardwareConcurrency)],
-          ["DEVICE MEMORY", navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "n/a"],
-          ["MAX TOUCH POINTS", safe(navigator.maxTouchPoints)],
-          ["WEBDRIVER", bool(navigator.webdriver)]
+          ["source reverse ptr", compactList(dns.sourcePtr)],
+          ["site hostname", safe(dns.hostname)],
+          ["site a", compactList(dns.siteA)],
+          ["site aaaa", compactList(dns.siteAAAA)],
+          ["site cname", compactList(dns.siteCNAME)],
+          ["site ns", compactList(dns.siteNS)],
+          ["site mx", compactList(dns.siteMX)],
+          ["site txt", compactList(dns.siteTXT)],
+          ["site dns status", safe(dns.status)],
+          ["site dnssec ad", bool(dns.ad)],
+          ["client dns resolver", "not exposed by browser"]
         ]
       },
       {
-        title: "UA CLIENT HINTS",
+        title: "browser",
+        rows: [
+          ["user agent", navigator.userAgent],
+          ["browser class", browserClass],
+          ["device class", deviceClass],
+          ["platform", safe(navigator.platform)],
+          ["vendor", safe(navigator.vendor)],
+          ["language", safe(navigator.language)],
+          ["languages", safe(navigator.languages)],
+          ["timezone", browserTz],
+          ["do not track", safe(navigator.doNotTrack)],
+          ["pdf viewer", safe(navigator.pdfViewerEnabled)],
+          ["hardware threads", safe(navigator.hardwareConcurrency)],
+          ["device memory", navigator.deviceMemory ? `${navigator.deviceMemory} gb` : "n/a"],
+          ["max touch points", safe(navigator.maxTouchPoints)],
+          ["webdriver", bool(navigator.webdriver)],
+          ["plugin count", safe(navigator.plugins?.length)],
+          ["mime type count", safe(navigator.mimeTypes?.length)]
+        ]
+      },
+      {
+        title: "ua client hints",
         rows: data.uaHints ? [
-          ["ARCHITECTURE", safe(data.uaHints.architecture)],
-          ["BITNESS", safe(data.uaHints.bitness)],
-          ["MODEL", safe(data.uaHints.model)],
-          ["PLATFORM", safe(data.uaHints.platform)],
-          ["PLATFORM VERSION", safe(data.uaHints.platformVersion)],
-          ["UA FULL VERSION", safe(data.uaHints.uaFullVersion)],
+          ["architecture", safe(data.uaHints.architecture)],
+          ["bitness", safe(data.uaHints.bitness)],
+          ["model", safe(data.uaHints.model)],
+          ["platform", safe(data.uaHints.platform)],
+          ["platform version", safe(data.uaHints.platformVersion)],
+          ["ua full version", safe(data.uaHints.uaFullVersion)],
           [
-            "BRAND LIST",
+            "brand list",
             Array.isArray(data.uaHints.fullVersionList)
               ? data.uaHints.fullVersionList.map((x) => `${x.brand} ${x.version}`).join(", ")
               : "n/a"
           ]
         ] : [
-          ["STATUS", "unavailable"]
+          ["status", "unavailable"]
         ]
       },
       {
-        title: "DISPLAY",
+        title: "display",
         rows: [
-          ["VIEWPORT", `${window.innerWidth} x ${window.innerHeight}`],
+          ["viewport", `${window.innerWidth} x ${window.innerHeight}`],
           [
-            "VISUAL VIEWPORT",
+            "visual viewport",
             window.visualViewport
               ? `${Math.round(window.visualViewport.width)} x ${Math.round(window.visualViewport.height)}`
               : "n/a"
           ],
-          ["SCREEN", `${screen.width} x ${screen.height}`],
-          ["AVAIL SCREEN", `${screen.availWidth} x ${screen.availHeight}`],
-          ["PIXEL RATIO", safe(window.devicePixelRatio)],
-          ["COLOR DEPTH", safe(screen.colorDepth)],
-          ["ORIENTATION", safe(screen.orientation?.type)],
-          ["DARK MODE", mediaQuery("(prefers-color-scheme: dark)")],
-          ["REDUCED MOTION", mediaQuery("(prefers-reduced-motion: reduce)")],
-          ["HOVER CAPABLE", mediaQuery("(hover: hover)")],
-          ["COARSE POINTER", mediaQuery("(pointer: coarse)")]
+          ["screen", `${screen.width} x ${screen.height}`],
+          ["avail screen", `${screen.availWidth} x ${screen.availHeight}`],
+          ["pixel ratio", safe(window.devicePixelRatio)],
+          ["color depth", safe(screen.colorDepth)],
+          ["orientation", safe(screen.orientation?.type)],
+          ["dark mode", mediaQuery("(prefers-color-scheme: dark)")],
+          ["reduced motion", mediaQuery("(prefers-reduced-motion: reduce)")],
+          ["hover capable", mediaQuery("(hover: hover)")],
+          ["coarse pointer", mediaQuery("(pointer: coarse)")]
         ]
       },
       {
-        title: "NETWORK HINTS",
+        title: "network hints",
         rows: [
-          ["NAVIGATOR ONLINE", bool(navigator.onLine)],
-          ["CONNECTION API", data.conn ? "available" : "unavailable"],
-          ["TYPE", safe(data.conn?.type)],
-          ["EFFECTIVE TYPE", safe(data.conn?.effectiveType)],
-          ["DOWNLINK", data.conn?.downlink ? `${data.conn.downlink} Mb/s` : "n/a"],
-          ["RTT", data.conn?.rtt ? `${data.conn.rtt} ms` : "n/a"],
-          ["SAVE DATA", bool(data.conn?.saveData)]
+          ["navigator online", bool(navigator.onLine)],
+          ["connection api", data.conn ? "available" : "unavailable"],
+          ["type", safe(data.conn?.type)],
+          ["effective type", safe(data.conn?.effectiveType)],
+          ["downlink", data.conn?.downlink ? `${data.conn.downlink} mb/s` : "n/a"],
+          ["rtt", data.conn?.rtt ? `${data.conn.rtt} ms` : "n/a"],
+          ["save data", bool(data.conn?.saveData)]
         ]
       },
       {
-        title: "TIMING",
+        title: "timing",
         rows: data.navTiming ? [
-          ["NAVIGATION TYPE", safe(data.navTiming.type)],
-          ["NEXT HOP PROTOCOL", safe(data.navTiming.protocol)],
-          ["REDIRECT COUNT", safe(data.navTiming.redirectCount)],
-          ["TRANSFER SIZE", formatBytes(data.navTiming.transferSize)],
-          ["ENCODED BODY SIZE", formatBytes(data.navTiming.encodedBodySize)],
-          ["DECODED BODY SIZE", formatBytes(data.navTiming.decodedBodySize)],
-          ["DOM COMPLETE", `${data.navTiming.domComplete} ms`],
-          ["LOAD EVENT END", `${data.navTiming.loadEventEnd} ms`]
+          ["navigation type", safe(data.navTiming.type)],
+          ["next hop protocol", safe(data.navTiming.protocol)],
+          ["redirect count", safe(data.navTiming.redirectCount)],
+          ["transfer size", formatBytes(data.navTiming.transferSize)],
+          ["encoded body size", formatBytes(data.navTiming.encodedBodySize)],
+          ["decoded body size", formatBytes(data.navTiming.decodedBodySize)],
+          ["dom complete", `${data.navTiming.domComplete} ms`],
+          ["load event end", `${data.navTiming.loadEventEnd} ms`]
         ] : [
-          ["STATUS", "unavailable"]
+          ["status", "unavailable"]
         ]
       },
       {
-        title: "STORAGE",
+        title: "storage",
         rows: [
-          ["LOCAL STORAGE", bool("localStorage" in window)],
-          ["SESSION STORAGE", bool("sessionStorage" in window)],
-          ["INDEXED DB", bool("indexedDB" in window)],
-          ["COOKIES ENABLED", bool(navigator.cookieEnabled)],
-          ["QUOTA", data.storageInfo ? formatBytes(data.storageInfo.quota) : "n/a"],
-          ["USAGE", data.storageInfo ? formatBytes(data.storageInfo.usage) : "n/a"]
+          ["local storage", bool("localStorage" in window)],
+          ["session storage", bool("sessionStorage" in window)],
+          ["indexed db", bool("indexedDB" in window)],
+          ["cookies enabled", bool(navigator.cookieEnabled)],
+          ["quota", data.storageInfo ? formatBytes(data.storageInfo.quota) : "n/a"],
+          ["usage", data.storageInfo ? formatBytes(data.storageInfo.usage) : "n/a"]
         ]
       },
       {
-        title: "PERMISSIONS",
+        title: "permissions",
         rows: [
-          ["GEOLOCATION", safe(data.permissions.geolocation)],
-          ["NOTIFICATIONS", safe(data.permissions.notifications)],
-          ["CAMERA", safe(data.permissions.camera)],
-          ["MICROPHONE", safe(data.permissions.microphone)],
-          ["CLIPBOARD-READ", safe(data.permissions["clipboard-read"])]
+          ["geolocation", safe(data.permissions.geolocation)],
+          ["notifications", safe(data.permissions.notifications)],
+          ["camera", safe(data.permissions.camera)],
+          ["microphone", safe(data.permissions.microphone)],
+          ["clipboard-read", safe(data.permissions["clipboard-read"])]
         ]
       },
       {
-        title: "HARDWARE / POWER",
+        title: "hardware and power",
         rows: data.battery ? [
-          ["BATTERY LEVEL", safe(data.battery.level)],
-          ["CHARGING", bool(data.battery.charging)],
-          ["CHARGING TIME", Number.isFinite(data.battery.chargingTime) ? data.battery.chargingTime : "n/a"],
-          ["DISCHARGING TIME", Number.isFinite(data.battery.dischargingTime) ? data.battery.dischargingTime : "n/a"]
+          ["battery level", safe(data.battery.level)],
+          ["charging", bool(data.battery.charging)],
+          ["charging time", Number.isFinite(data.battery.chargingTime) ? data.battery.chargingTime : "n/a"],
+          ["discharging time", Number.isFinite(data.battery.dischargingTime) ? data.battery.dischargingTime : "n/a"]
         ] : [
-          ["BATTERY", "unavailable"]
+          ["battery", "unavailable"]
         ]
       },
       {
-        title: "MEDIA DEVICES",
+        title: "media devices",
         rows: data.mediaInfo ? [
-          ["TOTAL DEVICES", safe(data.mediaInfo.total)],
-          ["AUDIO INPUTS", safe(data.mediaInfo.audioinput)],
-          ["AUDIO OUTPUTS", safe(data.mediaInfo.audiooutput)],
-          ["VIDEO INPUTS", safe(data.mediaInfo.videoinput)]
+          ["total devices", safe(data.mediaInfo.total)],
+          ["audio inputs", safe(data.mediaInfo.audioinput)],
+          ["audio outputs", safe(data.mediaInfo.audiooutput)],
+          ["video inputs", safe(data.mediaInfo.videoinput)]
         ] : [
-          ["STATUS", "unavailable"]
+          ["status", "unavailable"]
         ]
       },
       {
-        title: "GRAPHICS",
+        title: "graphics",
         rows: [
-          ["WEBGL", bool(data.webgl?.supported)],
-          ["GPU VENDOR", safe(data.webgl?.vendor)],
-          ["GPU RENDERER", safe(data.webgl?.renderer)]
+          ["webgl", bool(data.webgl?.supported)],
+          ["gpu vendor", safe(data.webgl?.vendor)],
+          ["gpu renderer", safe(data.webgl?.renderer)]
         ]
       },
       {
-        title: "CAPABILITIES",
+        title: "capabilities",
         rows: Object.entries(data.capabilities).map(([key, value]) => [
-          key.toUpperCase(),
+          key.replace(/[A-Z]/g, (m) => ` ${m.toLowerCase()}`).trim(),
           typeof value === "boolean" ? bool(value) : safe(value)
         ])
       },
       {
-        title: "WEBRTC HOST HINTS",
+        title: "webrtc host hints",
         rows: [
-          ["POSTURE", webRtcPosture],
-          ["CANDIDATES", Array.isArray(data.iceHints) && data.iceHints.length ? data.iceHints.join(", ") : "none / blocked / masked"]
+          ["posture", webRtcPosture],
+          ["mdns host hints", compactList(candidates.mdns)],
+          ["ipv4 hints", compactList(candidates.ipv4)],
+          ["ipv6 hints", compactList(candidates.ipv6)],
+          ["other hints", compactList(candidates.other)],
+          ["all candidates", Array.isArray(data.iceHints) && data.iceHints.length ? data.iceHints.join(", ") : "none / blocked / masked"]
         ]
       }
     ]
@@ -686,7 +768,7 @@ function renderSections(sections) {
     }
 
     if (!visibleRows.length) {
-      lines.push(line("STATUS", "no visible fields"));
+      lines.push(line("status", "no visible fields"));
       lines.push("");
       continue;
     }
@@ -702,14 +784,16 @@ function renderSections(sections) {
 }
 
 function updateControls() {
-  modeLabelEl.textContent = state.rawView ? "RAW" : "OPERATOR";
-  filterLabelEl.textContent = state.showAllFields ? "FULL" : "COMPACT";
+  modeLabelEl.textContent = state.rawView ? "raw" : "operator";
+  filterLabelEl.textContent = state.showAllFields ? "full" : "compact";
+
   viewToggleBtn.textContent = state.rawView
-    ? "R :: SWITCH TO OPERATOR VIEW"
-    : "R :: SWITCH TO RAW VIEW";
+    ? "switch to operator view"
+    : "switch to raw view";
+
   filterToggleBtn.textContent = state.showAllFields
-    ? "F :: HIDE WEAK FIELDS"
-    : "F :: SHOW ALL FIELDS";
+    ? "hide weak fields"
+    : "show all fields";
 }
 
 function render() {
@@ -718,13 +802,13 @@ function render() {
   const built = buildEntries(snapshot);
 
   setText(summaryEl, [
-    "[ ASSESSMENT ]",
+    "[ assessment ]",
     ...built.summary,
     ""
   ]);
 
   setText(eventsEl, [
-    "[ EVENT LOG ]",
+    "[ event log ]",
     ...built.events,
     ""
   ]);
@@ -733,8 +817,7 @@ function render() {
   setText(terminalEl, renderSections(sections));
 
   updateControls();
-
-  statusEl.textContent = snapshot.netmeta ? "READY+EDGE" : "READY";
+  statusEl.textContent = snapshot.netmeta ? "ready+edge" : "ready";
 }
 
 async function gatherSnapshot() {
@@ -786,24 +869,10 @@ function attachEvents() {
     state.showAllFields = !state.showAllFields;
     render();
   });
-
-  window.addEventListener("keydown", (event) => {
-    const key = String(event.key || "").toLowerCase();
-
-    if (key === "r") {
-      state.rawView = !state.rawView;
-      render();
-    }
-
-    if (key === "f") {
-      state.showAllFields = !state.showAllFields;
-      render();
-    }
-  });
 }
 
 async function boot() {
-  statusEl.textContent = "SCANNING";
+  statusEl.textContent = "scanning";
   attachEvents();
 
   try {
@@ -811,23 +880,23 @@ async function boot() {
     render();
   } catch (error) {
     setText(summaryEl, [
-      "[ ASSESSMENT ]",
-      line("EDGE STATUS", "FAIL"),
+      "[ assessment ]",
+      line("edge status", "fail"),
       ""
     ]);
 
     setText(eventsEl, [
-      "[ EVENT LOG ]",
-      `BOOT..............................FAIL`,
+      "[ event log ]",
+      "boot..............................fail",
       ""
     ]);
 
     setText(terminalEl, [
-      "[ ERROR ]",
+      "[ error ]",
       String(error?.message || error)
     ]);
 
-    statusEl.textContent = "ERROR";
+    statusEl.textContent = "error";
   }
 }
 
