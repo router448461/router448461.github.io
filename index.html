@@ -1,37 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Tasmania Survival Map</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ROUTER448461 // Strategic Relay Command</title>
+    <meta
+      name="description"
+      content="ROUTER448461 Strategic Relay Command — hardened one-page command interface for private infrastructure monitoring."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grid-overlay" aria-hidden="true"></div>
 
-  <!-- Local styles only -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="map.css" />
-</head>
+    <main class="shell">
+      <header class="topbar panel">
+        <div class="brand">
+          <span class="status-light" aria-hidden="true"></span>
+          <div>
+            <div class="eyebrow">Strategic Relay Command</div>
+            <div class="brand-title">ROUTER448461</div>
+          </div>
+        </div>
 
-<body>
+        <div class="topbar-meta">
+          <div class="meta-chip">
+            <span class="chip-label">State</span>
+            <span class="chip-value ok">Operational</span>
+          </div>
+          <div class="meta-chip">
+            <span class="chip-label">Uplink</span>
+            <span class="chip-value">Stable</span>
+          </div>
+          <div class="meta-chip">
+            <span class="chip-label">Time</span>
+            <span class="chip-value" id="utc-time">--:--:-- UTC</span>
+          </div>
+        </div>
+      </header>
 
-  <h1>Tasmania Survival Field Map</h1>
-  <p class="subtitle">
-    Hourly‑updated assessment of Tasmania’s resilience: fuel, food, medicine, industry, history, and long‑horizon risk.
-  </p>
+      <section class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Private infrastructure interface</p>
+          <h1>
+            ROUTER448461
+            <span>Strategic Relay Command</span>
+          </h1>
+          <p class="hero-text">
+            Hardened one-page command interface for private network oversight,
+            relay awareness, and incident visibility. No public control surface.
+            No exposed administration. Read-only front layer only.
+          </p>
 
-  <!-- Main content container -->
-  <div class="stream" id="stream"></div>
+          <div class="hero-strip">
+            <span>AUTH STYLE INTERFACE</span>
+            <span class="divider">//</span>
+            <span>NO EXTERNAL CONTROL PATH</span>
+            <span class="divider">//</span>
+            <span>MONITORING MODE</span>
+          </div>
+        </div>
 
-  <!-- Tasmania Map Overlay -->
-  <div id="tasmap">
-    <img src="tasmania.svg" alt="Tasmania Map Overlay" />
-  </div>
+        <div class="hero-side">
+          <div class="radar">
+            <div class="radar-ring ring-1"></div>
+            <div class="radar-ring ring-2"></div>
+            <div class="radar-ring ring-3"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-center">
+              <div class="radar-number" id="threat-level">LOW</div>
+              <div class="radar-label">Incident state</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <!-- Global Risk Clock -->
-  <div id="riskclock"></div>
+      <section class="status-grid">
+        <article class="panel stat-card">
+          <div class="card-label">Relay Status</div>
+          <div class="card-value ok">Operational</div>
+          <div class="card-sub">Primary relay node responsive</div>
+        </article>
 
-  <!-- Local scripts only -->
-  <script src="riskclock.js"></script>
-  <script src="map.js"></script>
-  <script src="main.js"></script>
+        <article class="panel stat-card">
+          <div class="card-label">Uplink Integrity</div>
+          <div class="card-value">Stable</div>
+          <div class="card-sub">No active degradation detected</div>
+        </article>
 
-</body>
+        <article class="panel stat-card">
+          <div class="card-label">Secure Mesh</div>
+          <div class="card-value ok">Active</div>
+          <div class="card-sub">Protected overlay routes available</div>
+        </article>
+
+        <article class="panel stat-card">
+          <div class="card-label">External Probe Count</div>
+          <div class="card-value" id="probe-count">27</div>
+          <div class="card-sub">Rolling 24 hour observation window</div>
+        </article>
+      </section>
+
+      <section class="overview-grid">
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>Command Overview</h2>
+            <span class="section-tag">Live-style display</span>
+          </div>
+
+          <div class="command-grid">
+            <div class="mini-card">
+              <div class="mini-label">Node Count</div>
+              <div class="mini-value" id="node-count">06</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Encrypted Channels</div>
+              <div class="mini-value" id="channel-count">14</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Latency</div>
+              <div class="mini-value" id="latency">18 ms</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Uptime</div>
+              <div class="mini-value" id="uptime">99.98%</div>
+            </div>
+          </div>
+
+          <p class="section-text">
+            This interface is designed as a public-facing command shell for a
+            private infrastructure environment. It presents a hardened visual
+            layer without exposing administrative tooling, secrets, or direct
+            device management.
+          </p>
+        </article>
+
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>Mission Profile</h2>
+            <span class="section-tag">Read only</span>
+          </div>
+
+          <div class="stack-list">
+            <div class="stack-item">
+              <strong>Visibility</strong>
+              <span>Present a realistic command interface with credible network posture language.</span>
+            </div>
+            <div class="stack-item">
+              <strong>Isolation</strong>
+              <span>No direct router administration or backend control is exposed from this public page.</span>
+            </div>
+            <div class="stack-item">
+              <strong>Flexibility</strong>
+              <span>Ready to expand later into private dashboards, protected ops panels, or monitored status surfaces.</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="feed-grid">
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>Incident Feed</h2>
+            <span class="section-tag">Rolling log</span>
+          </div>
+
+          <ul class="incident-feed" id="incident-feed">
+            <li>
+              <span class="feed-time">03:14:22Z</span>
+              <div>
+                <div class="feed-title">Unauthorized enumeration attempt blocked</div>
+                <div class="feed-desc">Remote probe path rejected at edge inspection layer.</div>
+              </div>
+            </li>
+            <li>
+              <span class="feed-time">04:08:11Z</span>
+              <div>
+                <div class="feed-title">Relay path normalized</div>
+                <div class="feed-desc">Transient uplink jitter returned to baseline operational range.</div>
+              </div>
+            </li>
+            <li>
+              <span class="feed-time">05:41:03Z</span>
+              <div>
+                <div class="feed-title">DNS integrity verified</div>
+                <div class="feed-desc">Resolver chain remained consistent across current observation window.</div>
+              </div>
+            </li>
+            <li>
+              <span class="feed-time">06:12:47Z</span>
+              <div>
+                <div class="feed-title">Secure route re-established</div>
+                <div class="feed-desc">Protected transit profile restored after temporary path degradation.</div>
+              </div>
+            </li>
+          </ul>
+        </article>
+
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>System Notes</h2>
+            <span class="section-tag">Public layer</span>
+          </div>
+
+          <p class="section-text">
+            ROUTER448461 is a stylized command presence built for a hardened,
+            minimalist public front end. It is intended to look serious,
+            operational, and realistic while remaining static, safe, and clean.
+          </p>
+
+          <div class="notes-box">
+            <div class="notes-line">
+              <span class="notes-key">Surface</span>
+              <span class="notes-value">Static</span>
+            </div>
+            <div class="notes-line">
+              <span class="notes-key">Auth</span>
+              <span class="notes-value">Not exposed</span>
+            </div>
+            <div class="notes-line">
+              <span class="notes-key">Backend</span>
+              <span class="notes-value">None required</span>
+            </div>
+            <div class="notes-line">
+              <span class="notes-key">Purpose</span>
+              <span class="notes-value">Identity / presentation / future expansion</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="footer panel">
+        <div>ROUTER448461 // Strategic Relay Command</div>
+        <div class="footer-sub">
+          Public-facing command shell for private infrastructure branding and monitored presence.
+        </div>
+      </footer>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
 </html>
