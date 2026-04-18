@@ -1,152 +1,46 @@
 const terminal = document.getElementById("terminal");
 const statusEl = document.getElementById("status");
-
 const lines = [];
-const EDGE_ENDPOINT = "/netmeta"; // optional same-origin endpoint, see worker example below
-
-function render() {
-  terminal.textContent = lines.join("\n");
-}
 
 function push(line = "") {
   lines.push(line);
-  render();
-}
-
-function section(name) {
-  push(`[ ${String(name).toUpperCase()} ]`);
+  terminal.textContent = lines.join("\n");
 }
 
 function item(label, value) {
-  const left = `${label}:`.padEnd(28, " ");
-  push(`${left}${value ?? "n/a"}`);
+  const left = `${label}:`.padEnd(24, " ");
+  push(left + (value ?? "n/a"));
 }
 
-function bool(value) {
-  if (value === true) return "yes";
-  if (value === false) return "no";
+function safe(v) {
+  if (v === null || v === undefined || v === "") return "n/a";
+  if (Array.isArray(v)) return v.length ? v.join(", ") : "n/a";
+  return String(v);
+}
+
+function yesNo(v) {
+  if (v === true) return "yes";
+  if (v === false) return "no";
   return "n/a";
 }
 
-function safe(value) {
-  if (value === null || value === undefined || value === "") return "n/a";
-  if (Array.isArray(value)) return value.length ? value.join(", ") : "n/a";
-  return String(value);
-}
-
-function formatBytes(bytes) {
-  if (!Number.isFinite(bytes)) return "n/a";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let i = 0;
-  let n = bytes;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
-    i += 1;
-  }
-  return `${n.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
-}
-
-function match(name, query) {
-  try {
-    return window.matchMedia(query).matches ? "yes" : "no";
-  } catch {
-    return "n/a";
-  }
-}
-
-async function fetchJson(url) {
+async function getJson(url) {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
+async function getNetMeta() {
+  try {
+    return await getJson("/netmeta");
+  } catch {
+    return null;
+  }
+}
+
 async function getPublicIp() {
   try {
-    // simple public IP lookup for static hosting
-    return await fetchJson("https://api64.ipify.org?format=json");
-  } catch {
-    return null;
-  }
-}
-
-async function getEdgeMeta() {
-  try {
-    const res = await fetch(EDGE_ENDPOINT, {
-      cache: "no-store",
-      headers: { accept: "application/json" }
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-async function getStorageInfo() {
-  try {
-    if (!navigator.storage?.estimate) return null;
-    const estimate = await navigator.storage.estimate();
-    return {
-      quota: estimate.quota,
-      usage: estimate.usage
-    };
-  } catch {
-    return null;
-  }
-}
-
-async function getBatteryInfo() {
-  try {
-    if (!("getBattery" in navigator)) return null;
-    const battery = await navigator.getBattery();
-    return {
-      charging: battery.charging,
-      level: typeof battery.level === "number"
-        ? `${Math.round(battery.level * 100)}%`
-        : "n/a",
-      chargingTime: battery.chargingTime,
-      dischargingTime: battery.dischargingTime
-    };
-  } catch {
-    return null;
-  }
-}
-
-async function getPermissions() {
-  if (!navigator.permissions?.query) return {};
-  const names = [
-    "geolocation",
-    "notifications",
-    "camera",
-    "microphone",
-    "clipboard-read"
-  ];
-
-  const result = {};
-  for (const name of names) {
-    try {
-      const status = await navigator.permissions.query({ name });
-      result[name] = status.state;
-    } catch {
-      result[name] = "unsupported";
-    }
-  }
-  return result;
-}
-
-async function getMediaDeviceInfo() {
-  try {
-    if (!navigator.mediaDevices?.enumerateDevices) return null;
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const counts = devices.reduce(
-      (acc, d) => {
-        acc.total += 1;
-        acc[d.kind] = (acc[d.kind] || 0) + 1;
-        return acc;
-      },
-      { total: 0 }
-    );
-    return counts;
+    return await getJson("https://api64.ipify.org?format=json");
   } catch {
     return null;
   }
@@ -159,351 +53,105 @@ function getWebGLInfo() {
       canvas.getContext("webgl") ||
       canvas.getContext("experimental-webgl");
 
-    if (!gl) {
-      return { supported: false };
-    }
+    if (!gl) return { supported: false };
 
-    const debug = gl.getExtension("WEBGL_debug_renderer_info");
-    const vendor = debug
-      ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)
-      : "masked";
-    const renderer = debug
-      ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)
-      : "masked";
-
+    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
     return {
       supported: true,
-      vendor,
-      renderer
+      vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : "masked",
+      renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : "masked"
     };
   } catch {
     return { supported: false };
   }
 }
 
-async function getUAClientHints() {
-  try {
-    if (!navigator.userAgentData?.getHighEntropyValues) return null;
-    return await navigator.userAgentData.getHighEntropyValues([
-      "architecture",
-      "bitness",
-      "model",
-      "platform",
-      "platformVersion",
-      "uaFullVersion",
-      "fullVersionList"
-    ]);
-  } catch {
-    return null;
-  }
-}
-
-async function getIceHints(timeoutMs = 1800) {
-  const RTC =
-    window.RTCPeerConnection ||
-    window.webkitRTCPeerConnection ||
-    window.mozRTCPeerConnection;
-
-  if (!RTC) return [];
-
-  return new Promise((resolve) => {
-    const seen = new Set();
-    let done = false;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      try {
-        pc.close();
-      } catch {}
-      resolve(Array.from(seen));
-    };
-
-    const addAddress = (value) => {
-      if (!value) return;
-      seen.add(String(value));
-    };
-
-    const extractFromCandidate = (candidate) => {
-      if (!candidate) return;
-      if (candidate.address) addAddress(candidate.address);
-
-      const raw = candidate.candidate || "";
-      const matches = raw.match(
-        /([a-f0-9]{0,4}:[a-f0-9:]+)|(\b\d{1,3}(?:\.\d{1,3}){3}\b)|([a-z0-9-]+\.local)/gi
-      );
-      if (matches) {
-        for (const m of matches) addAddress(m);
-      }
-    };
-
-    let pc;
-    try {
-      pc = new RTC({ iceServers: [] });
-      pc.createDataChannel("scan");
-
-      pc.onicecandidate = (event) => {
-        if (event.candidate) {
-          extractFromCandidate(event.candidate);
-        } else {
-          finish();
-        }
-      };
-
-      pc.createOffer()
-        .then((offer) => pc.setLocalDescription(offer))
-        .catch(finish);
-
-      setTimeout(finish, timeoutMs);
-    } catch {
-      resolve([]);
-    }
-  });
-}
-
-function getNavigationTiming() {
-  try {
-    const nav = performance.getEntriesByType("navigation")[0];
-    if (!nav) return null;
-    return {
-      type: nav.type,
-      protocol: nav.nextHopProtocol || "n/a",
-      redirectCount: nav.redirectCount,
-      transferSize: nav.transferSize,
-      encodedBodySize: nav.encodedBodySize,
-      decodedBodySize: nav.decodedBodySize,
-      domComplete: Math.round(nav.domComplete),
-      loadEventEnd: Math.round(nav.loadEventEnd)
-    };
-  } catch {
-    return null;
-  }
-}
-
-function capabilityMap() {
-  return {
-    cookieEnabled: navigator.cookieEnabled,
-    onLine: navigator.onLine,
-    webdriver: navigator.webdriver,
-    javaScriptEnabled: true,
-    localStorage: "localStorage" in window,
-    sessionStorage: "sessionStorage" in window,
-    indexedDB: "indexedDB" in window,
-    serviceWorker: "serviceWorker" in navigator,
-    sharedWorker: "SharedWorker" in window,
-    webSocket: "WebSocket" in window,
-    webRTC: "RTCPeerConnection" in window || "webkitRTCPeerConnection" in window,
-    geolocation: "geolocation" in navigator,
-    bluetooth: "bluetooth" in navigator,
-    usb: "usb" in navigator,
-    serial: "serial" in navigator,
-    hid: "hid" in navigator,
-    clipboard: "clipboard" in navigator,
-    share: "share" in navigator,
-    canHover: match("canHover", "(hover: hover)") === "yes",
-    coarsePointer: match("coarsePointer", "(pointer: coarse)") === "yes",
-    reducedMotion: match("reducedMotion", "(prefers-reduced-motion: reduce)") === "yes",
-    darkMode: match("darkMode", "(prefers-color-scheme: dark)") === "yes"
-  };
-}
-
 async function boot() {
-  statusEl.textContent = "SCANNING";
+  statusEl.textContent = "scanning";
 
-  push("VISITOR NETWORK / BROWSER TELEMETRY");
-  push("=".repeat(72));
+  push("visitor telemetry");
   push("");
 
-  section("request");
-  item("timestamp", new Date().toISOString());
+  item("time", new Date().toISOString());
   item("url", location.href);
-  item("origin", location.origin);
-  item("protocol", location.protocol.replace(":", "").toUpperCase());
+  item("referrer", document.referrer || "direct");
   item("host", location.host);
   item("path", location.pathname || "/");
-  item("query", location.search || "n/a");
-  item("hash", location.hash || "n/a");
-  item("referrer", document.referrer || "direct");
-  item("history length", history.length);
   push("");
 
-  const [ipInfo, edgeInfo] = await Promise.all([
-    getPublicIp(),
-    getEdgeMeta()
+  const [netmeta, publicIp] = await Promise.all([
+    getNetMeta(),
+    getPublicIp()
   ]);
 
-  section("internet");
-  item("public ip", ipInfo?.ip || "unavailable");
-  item("edge metadata", edgeInfo ? "same-origin endpoint detected" : "not present");
-  if (edgeInfo) {
-    item("country", safe(edgeInfo.country));
-    item("region", safe(edgeInfo.region));
-    item("city", safe(edgeInfo.city));
-    item("postal code", safe(edgeInfo.postalCode));
-    item("latitude", safe(edgeInfo.latitude));
-    item("longitude", safe(edgeInfo.longitude));
-    item("timezone", safe(edgeInfo.timezone));
-    item("asn", safe(edgeInfo.asn));
-    item("asn org", safe(edgeInfo.asOrganization));
-    item("colo", safe(edgeInfo.colo));
-    item("http protocol", safe(edgeInfo.httpProtocol));
-    item("tls version", safe(edgeInfo.tlsVersion));
-    item("client tcp rtt", safe(edgeInfo.clientTcpRtt));
-    item("client quic rtt", safe(edgeInfo.clientQuicRtt));
-  }
+  push("[ internet ]");
+  item("public ip", netmeta?.ip || publicIp?.ip || "unavailable");
+  item("country", safe(netmeta?.country));
+  item("region", safe(netmeta?.region));
+  item("city", safe(netmeta?.city));
+  item("postal", safe(netmeta?.postalCode));
+  item("timezone", safe(netmeta?.timezone));
+  item("latitude", safe(netmeta?.latitude));
+  item("longitude", safe(netmeta?.longitude));
+  item("asn", safe(netmeta?.asn));
+  item("asn org", safe(netmeta?.asOrganization));
+  item("colo", safe(netmeta?.colo));
+  item("http protocol", safe(netmeta?.httpProtocol));
+  item("tls version", safe(netmeta?.tlsVersion));
+  item("tcp rtt", safe(netmeta?.clientTcpRtt));
+  item("quic rtt", safe(netmeta?.clientQuicRtt));
   push("");
 
-  section("browser");
+  push("[ browser ]");
   item("user agent", navigator.userAgent);
   item("platform", safe(navigator.platform));
   item("vendor", safe(navigator.vendor));
   item("language", safe(navigator.language));
   item("languages", safe(navigator.languages));
   item("timezone", safe(Intl.DateTimeFormat().resolvedOptions().timeZone));
+  item("online", yesNo(navigator.onLine));
+  item("cookies", yesNo(navigator.cookieEnabled));
   item("do not track", safe(navigator.doNotTrack));
-  item("pdf viewer", safe(navigator.pdfViewerEnabled));
-  item("hardware threads", safe(navigator.hardwareConcurrency));
-  item("device memory", navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "n/a");
-  item("max touch points", safe(navigator.maxTouchPoints));
-  item("webdriver", bool(navigator.webdriver));
+  item("threads", safe(navigator.hardwareConcurrency));
+  item("memory", navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "n/a");
+  item("touch points", safe(navigator.maxTouchPoints));
+  item("webdriver", yesNo(navigator.webdriver));
   push("");
 
-  const uaHints = await getUAClientHints();
-  if (uaHints) {
-    section("ua client hints");
-    item("mobile", safe(navigator.userAgentData?.mobile));
-    item("architecture", safe(uaHints.architecture));
-    item("bitness", safe(uaHints.bitness));
-    item("model", safe(uaHints.model));
-    item("platform", safe(uaHints.platform));
-    item("platform version", safe(uaHints.platformVersion));
-    item("ua full version", safe(uaHints.uaFullVersion));
-    item(
-      "brand list",
-      Array.isArray(uaHints.fullVersionList)
-        ? uaHints.fullVersionList.map((x) => `${x.brand} ${x.version}`).join(", ")
-        : "n/a"
-    );
-    push("");
-  }
-
-  section("display");
+  push("[ display ]");
   item("viewport", `${window.innerWidth} x ${window.innerHeight}`);
-  item("visual viewport", window.visualViewport
-    ? `${Math.round(window.visualViewport.width)} x ${Math.round(window.visualViewport.height)}`
-    : "n/a");
   item("screen", `${screen.width} x ${screen.height}`);
   item("avail screen", `${screen.availWidth} x ${screen.availHeight}`);
   item("pixel ratio", safe(window.devicePixelRatio));
   item("color depth", safe(screen.colorDepth));
   item("orientation", safe(screen.orientation?.type));
-  item("dark mode", match("darkMode", "(prefers-color-scheme: dark)"));
-  item("reduced motion", match("reducedMotion", "(prefers-reduced-motion: reduce)"));
-  item("hover capable", match("canHover", "(hover: hover)"));
-  item("coarse pointer", match("coarsePointer", "(pointer: coarse)"));
   push("");
 
-  section("network hints");
+  push("[ network hints ]");
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  item("navigator online", bool(navigator.onLine));
   item("connection api", conn ? "available" : "unavailable");
   if (conn) {
     item("type", safe(conn.type));
     item("effective type", safe(conn.effectiveType));
     item("downlink", conn.downlink ? `${conn.downlink} Mb/s` : "n/a");
     item("rtt", conn.rtt ? `${conn.rtt} ms` : "n/a");
-    item("save data", bool(conn.saveData));
+    item("save data", yesNo(conn.saveData));
   }
   push("");
 
-  section("timing");
-  const navTiming = getNavigationTiming();
-  if (navTiming) {
-    item("navigation type", safe(navTiming.type));
-    item("next hop protocol", safe(navTiming.protocol));
-    item("redirect count", safe(navTiming.redirectCount));
-    item("transfer size", formatBytes(navTiming.transferSize));
-    item("encoded body size", formatBytes(navTiming.encodedBodySize));
-    item("decoded body size", formatBytes(navTiming.decodedBodySize));
-    item("dom complete", `${navTiming.domComplete} ms`);
-    item("load event end", `${navTiming.loadEventEnd} ms`);
-  } else {
-    item("timing", "unavailable");
-  }
-  push("");
-
-  section("storage");
-  const storageInfo = await getStorageInfo();
-  item("localStorage", bool("localStorage" in window));
-  item("sessionStorage", bool("sessionStorage" in window));
-  item("indexedDB", bool("indexedDB" in window));
-  item("cookies enabled", bool(navigator.cookieEnabled));
-  item("quota", storageInfo ? formatBytes(storageInfo.quota) : "n/a");
-  item("usage", storageInfo ? formatBytes(storageInfo.usage) : "n/a");
-  push("");
-
-  section("permissions");
-  const perms = await getPermissions();
-  item("geolocation", safe(perms.geolocation));
-  item("notifications", safe(perms.notifications));
-  item("camera", safe(perms.camera));
-  item("microphone", safe(perms.microphone));
-  item("clipboard-read", safe(perms["clipboard-read"]));
-  push("");
-
-  section("hardware / power");
-  const battery = await getBatteryInfo();
-  if (battery) {
-    item("battery level", safe(battery.level));
-    item("charging", bool(battery.charging));
-    item("charging time", Number.isFinite(battery.chargingTime) ? battery.chargingTime : "n/a");
-    item("discharging time", Number.isFinite(battery.dischargingTime) ? battery.dischargingTime : "n/a");
-  } else {
-    item("battery", "unavailable");
-  }
-  push("");
-
-  section("media devices");
-  const mediaInfo = await getMediaDeviceInfo();
-  if (mediaInfo) {
-    item("total devices", safe(mediaInfo.total));
-    item("audio inputs", safe(mediaInfo.audioinput));
-    item("audio outputs", safe(mediaInfo.audiooutput));
-    item("video inputs", safe(mediaInfo.videoinput));
-  } else {
-    item("devices", "unavailable");
-  }
-  push("");
-
-  section("graphics");
+  push("[ graphics ]");
   const webgl = getWebGLInfo();
-  item("webgl", bool(webgl.supported));
+  item("webgl", yesNo(webgl.supported));
   item("gpu vendor", safe(webgl.vendor));
   item("gpu renderer", safe(webgl.renderer));
   push("");
 
-  section("capabilities");
-  const caps = capabilityMap();
-  for (const [key, value] of Object.entries(caps)) {
-    item(key, typeof value === "boolean" ? bool(value) : safe(value));
-  }
-  push("");
-
-  section("webrtc host hints");
-  const iceHints = await getIceHints();
-  if (iceHints.length) {
-    item("candidates", iceHints.join(", "));
-  } else {
-    item("candidates", "none / blocked / masked");
-  }
-  push("");
-
-  statusEl.textContent = "READY";
+  statusEl.textContent = netmeta ? "ready+edge" : "ready";
 }
 
-boot().catch((error) => {
+boot().catch((err) => {
   push("");
-  push("[ ERROR ]");
-  push(String(error?.message || error));
-  statusEl.textContent = "ERROR";
+  push("[ error ]");
+  push(String(err?.message || err));
+  statusEl.textContent = "error";
 });
