@@ -1,6 +1,9 @@
 :root {
   --bg: #000000;
   --fg: #00ff66;
+  --fg-dim: #00b34a;
+  --fg-soft: #008a36;
+  --line: rgba(0, 255, 102, 0.06);
 }
 
 * {
@@ -24,28 +27,97 @@ body {
 }
 
 body {
-  padding: 12px 14px;
+  padding: 10px 12px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.018) 0,
+      rgba(255, 255, 255, 0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity: 0.18;
 }
 
 .wrap {
   width: 100%;
+  max-width: none;
 }
 
 .line,
-#terminal {
+#summary,
+#events,
+#terminal,
+.controls {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.35;
+  line-height: 1.3;
   font-size: 14px;
 }
 
+.head {
+  color: var(--fg);
+}
+
+#summary,
+#events,
 #terminal {
   margin-top: 10px;
-  min-height: 68vh;
+}
+
+#summary {
+  min-height: 11lh;
+}
+
+#events {
+  min-height: 11lh;
+  color: var(--fg-dim);
+}
+
+#terminal {
+  min-height: 42vh;
+}
+
+.controls {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.controls button {
+  appearance: none;
+  border: 1px solid var(--fg-soft);
+  background: transparent;
+  color: var(--fg);
+  padding: 6px 10px;
+  font: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.controls button:hover,
+.controls button:focus-visible {
+  outline: none;
+  border-color: var(--fg);
+}
+
+.tail {
+  margin-top: 10px;
 }
 
 .cursor {
+  display: inline-block;
   animation: blink 1s steps(1, end) infinite;
 }
 
