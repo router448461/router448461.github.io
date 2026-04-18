@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ROUTER448461 // Strategic Relay Command</title>
+    <title>ROUTER448461 // Telemetry Console</title>
     <meta
       name="description"
-      content="ROUTER448461 Strategic Relay Command — hardened one-page command interface for private infrastructure monitoring."
+      content="ROUTER448461 visitor telemetry console."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -18,22 +18,22 @@
         <div class="brand">
           <span class="status-light" aria-hidden="true"></span>
           <div>
-            <div class="eyebrow">Strategic Relay Command</div>
+            <div class="eyebrow">Visitor Telemetry Interface</div>
             <div class="brand-title">ROUTER448461</div>
           </div>
         </div>
 
         <div class="topbar-meta">
           <div class="meta-chip">
-            <span class="chip-label">State</span>
-            <span class="chip-value ok">Operational</span>
+            <span class="chip-label">Session State</span>
+            <span class="chip-value ok" id="session-state">ACTIVE</span>
           </div>
           <div class="meta-chip">
-            <span class="chip-label">Uplink</span>
-            <span class="chip-value">Stable</span>
+            <span class="chip-label">Transport</span>
+            <span class="chip-value" id="transport-state">SECURE</span>
           </div>
           <div class="meta-chip">
-            <span class="chip-label">Time</span>
+            <span class="chip-label">UTC</span>
             <span class="chip-value" id="utc-time">--:--:-- UTC</span>
           </div>
         </div>
@@ -41,23 +41,23 @@
 
       <section class="hero panel">
         <div class="hero-copy">
-          <p class="eyebrow">Private infrastructure interface</p>
+          <p class="eyebrow">Live client-side diagnostics</p>
           <h1>
             ROUTER448461
-            <span>Strategic Relay Command</span>
+            <span>Telemetry Console</span>
           </h1>
           <p class="hero-text">
-            Hardened one-page command interface for private network oversight,
-            relay awareness, and incident visibility. No public control surface.
-            No exposed administration. Read-only front layer only.
+            Browser, device, display, network, and session data exposed by the
+            current environment. No prompts. No external dependencies. Static
+            front-end diagnostics only.
           </p>
 
           <div class="hero-strip">
-            <span>AUTH STYLE INTERFACE</span>
+            <span>PASSIVE COLLECTION</span>
             <span class="divider">//</span>
-            <span>NO EXTERNAL CONTROL PATH</span>
+            <span>LOCAL RENDER</span>
             <span class="divider">//</span>
-            <span>MONITORING MODE</span>
+            <span>RESEARCH MODE</span>
           </div>
         </div>
 
@@ -68,8 +68,8 @@
             <div class="radar-ring ring-3"></div>
             <div class="radar-sweep"></div>
             <div class="radar-center">
-              <div class="radar-number" id="threat-level">LOW</div>
-              <div class="radar-label">Incident state</div>
+              <div class="radar-number" id="risk-state">LOW</div>
+              <div class="radar-label">Exposure state</div>
             </div>
           </div>
         </div>
@@ -77,163 +77,109 @@
 
       <section class="status-grid">
         <article class="panel stat-card">
-          <div class="card-label">Relay Status</div>
-          <div class="card-value ok">Operational</div>
-          <div class="card-sub">Primary relay node responsive</div>
+          <div class="card-label">Online State</div>
+          <div class="card-value ok" id="online-state">ONLINE</div>
+          <div class="card-sub">Navigator connection state</div>
         </article>
 
         <article class="panel stat-card">
-          <div class="card-label">Uplink Integrity</div>
-          <div class="card-value">Stable</div>
-          <div class="card-sub">No active degradation detected</div>
+          <div class="card-label">Browser Engine</div>
+          <div class="card-value" id="browser-engine">--</div>
+          <div class="card-sub">Client rendering environment</div>
         </article>
 
         <article class="panel stat-card">
-          <div class="card-label">Secure Mesh</div>
-          <div class="card-value ok">Active</div>
-          <div class="card-sub">Protected overlay routes available</div>
+          <div class="card-label">CPU Threads</div>
+          <div class="card-value" id="cpu-threads">--</div>
+          <div class="card-sub">hardwareConcurrency</div>
         </article>
 
         <article class="panel stat-card">
-          <div class="card-label">External Probe Count</div>
-          <div class="card-value" id="probe-count">27</div>
-          <div class="card-sub">Rolling 24 hour observation window</div>
+          <div class="card-label">Device Memory</div>
+          <div class="card-value" id="device-memory">--</div>
+          <div class="card-sub">Approximate browser hint</div>
         </article>
       </section>
 
-      <section class="overview-grid">
+      <section class="telemetry-grid">
         <article class="panel section-card">
           <div class="section-head">
-            <h2>Command Overview</h2>
-            <span class="section-tag">Live-style display</span>
+            <h2>Session / Browser</h2>
+            <span class="section-tag">Navigator</span>
           </div>
-
-          <div class="command-grid">
-            <div class="mini-card">
-              <div class="mini-label">Node Count</div>
-              <div class="mini-value" id="node-count">06</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Encrypted Channels</div>
-              <div class="mini-value" id="channel-count">14</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Latency</div>
-              <div class="mini-value" id="latency">18 ms</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Uptime</div>
-              <div class="mini-value" id="uptime">99.98%</div>
-            </div>
-          </div>
-
-          <p class="section-text">
-            This interface is designed as a public-facing command shell for a
-            private infrastructure environment. It presents a hardened visual
-            layer without exposing administrative tooling, secrets, or direct
-            device management.
-          </p>
+          <div class="data-list" id="session-data"></div>
         </article>
 
         <article class="panel section-card">
           <div class="section-head">
-            <h2>Mission Profile</h2>
-            <span class="section-tag">Read only</span>
+            <h2>Display / Environment</h2>
+            <span class="section-tag">Screen</span>
           </div>
+          <div class="data-list" id="display-data"></div>
+        </article>
 
-          <div class="stack-list">
-            <div class="stack-item">
-              <strong>Visibility</strong>
-              <span>Present a realistic command interface with credible network posture language.</span>
-            </div>
-            <div class="stack-item">
-              <strong>Isolation</strong>
-              <span>No direct router administration or backend control is exposed from this public page.</span>
-            </div>
-            <div class="stack-item">
-              <strong>Flexibility</strong>
-              <span>Ready to expand later into private dashboards, protected ops panels, or monitored status surfaces.</span>
-            </div>
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>Network / Transport</h2>
+            <span class="section-tag">Connection</span>
           </div>
+          <div class="data-list" id="network-data"></div>
+        </article>
+
+        <article class="panel section-card">
+          <div class="section-head">
+            <h2>Capabilities / Policy</h2>
+            <span class="section-tag">Runtime</span>
+          </div>
+          <div class="data-list" id="capability-data"></div>
         </article>
       </section>
 
       <section class="feed-grid">
         <article class="panel section-card">
           <div class="section-head">
-            <h2>Incident Feed</h2>
-            <span class="section-tag">Rolling log</span>
+            <h2>Event Feed</h2>
+            <span class="section-tag">Runtime log</span>
           </div>
 
-          <ul class="incident-feed" id="incident-feed">
-            <li>
-              <span class="feed-time">03:14:22Z</span>
-              <div>
-                <div class="feed-title">Unauthorized enumeration attempt blocked</div>
-                <div class="feed-desc">Remote probe path rejected at edge inspection layer.</div>
-              </div>
-            </li>
-            <li>
-              <span class="feed-time">04:08:11Z</span>
-              <div>
-                <div class="feed-title">Relay path normalized</div>
-                <div class="feed-desc">Transient uplink jitter returned to baseline operational range.</div>
-              </div>
-            </li>
-            <li>
-              <span class="feed-time">05:41:03Z</span>
-              <div>
-                <div class="feed-title">DNS integrity verified</div>
-                <div class="feed-desc">Resolver chain remained consistent across current observation window.</div>
-              </div>
-            </li>
-            <li>
-              <span class="feed-time">06:12:47Z</span>
-              <div>
-                <div class="feed-title">Secure route re-established</div>
-                <div class="feed-desc">Protected transit profile restored after temporary path degradation.</div>
-              </div>
-            </li>
-          </ul>
+          <ul class="incident-feed" id="incident-feed"></ul>
         </article>
 
         <article class="panel section-card">
           <div class="section-head">
-            <h2>System Notes</h2>
-            <span class="section-tag">Public layer</span>
+            <h2>Interface Notes</h2>
+            <span class="section-tag">Static front end</span>
           </div>
-
-          <p class="section-text">
-            ROUTER448461 is a stylized command presence built for a hardened,
-            minimalist public front end. It is intended to look serious,
-            operational, and realistic while remaining static, safe, and clean.
-          </p>
 
           <div class="notes-box">
             <div class="notes-line">
-              <span class="notes-key">Surface</span>
-              <span class="notes-value">Static</span>
+              <span class="notes-key">Collection</span>
+              <span class="notes-value">Browser-exposed data only</span>
             </div>
             <div class="notes-line">
-              <span class="notes-key">Auth</span>
-              <span class="notes-value">Not exposed</span>
+              <span class="notes-key">Storage</span>
+              <span class="notes-value">None on-page</span>
             </div>
             <div class="notes-line">
-              <span class="notes-key">Backend</span>
-              <span class="notes-value">None required</span>
+              <span class="notes-key">Dependencies</span>
+              <span class="notes-value">Local CSS + JS</span>
             </div>
             <div class="notes-line">
-              <span class="notes-key">Purpose</span>
-              <span class="notes-value">Identity / presentation / future expansion</span>
+              <span class="notes-key">Mode</span>
+              <span class="notes-value">Passive diagnostics</span>
+            </div>
+            <div class="notes-line">
+              <span class="notes-key">Transport</span>
+              <span class="notes-value" id="protocol-note">HTTPS</span>
             </div>
           </div>
         </article>
       </section>
 
       <footer class="footer panel">
-        <div>ROUTER448461 // Strategic Relay Command</div>
+        <div>ROUTER448461 // LIVE TELEMETRY CONSOLE</div>
         <div class="footer-sub">
-          Public-facing command shell for private infrastructure branding and monitored presence.
+          Passive browser diagnostics rendered in a hardened command-style interface.
         </div>
       </footer>
     </main>
