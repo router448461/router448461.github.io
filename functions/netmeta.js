@@ -1,6 +1,7 @@
 export function onRequest(context) {
   const request = context.request;
   const cf = request.cf || {};
+  const url = new URL(request.url);
 
   const xff = request.headers.get("x-forwarded-for");
   const ip =
@@ -9,6 +10,10 @@ export function onRequest(context) {
 
   const body = {
     ip,
+    rayId: request.headers.get("cf-ray") || null,
+    requestMethod: request.method || null,
+    scheme: url.protocol.replace(":", "").toUpperCase(),
+    host: request.headers.get("host") || url.host,
     country: cf.country ?? null,
     region: cf.region ?? null,
     regionCode: cf.regionCode ?? null,
