@@ -3,7 +3,6 @@
   --fg: #00ff66;
   --fg-dim: #00b34a;
   --fg-soft: #008a36;
-  --line: rgba(0, 255, 102, 0.06);
 }
 
 * {
@@ -65,10 +64,6 @@ body::before {
   font-size: 14px;
 }
 
-.head {
-  color: var(--fg);
-}
-
 #summary,
 #events,
 #terminal {
@@ -76,7 +71,7 @@ body::before {
 }
 
 #summary {
-  min-height: 11lh;
+  min-height: 12lh;
 }
 
 #events {
@@ -85,7 +80,7 @@ body::before {
 }
 
 #terminal {
-  min-height: 42vh;
+  min-height: 44vh;
 }
 
 .controls {
@@ -103,7 +98,6 @@ body::before {
   padding: 6px 10px;
   font: inherit;
   cursor: pointer;
-  text-transform: uppercase;
 }
 
 .controls button:hover,
