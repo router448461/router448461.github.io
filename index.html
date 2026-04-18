@@ -3,17 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>router448461 // net-scan</title>
-  <meta name="description" content="Visitor network telemetry terminal." />
+  <title>router448461 // net-scan v2</title>
+  <meta name="description" content="Operator-style visitor network telemetry terminal." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <main class="wrap">
-    <div class="line">router448461.com :: visitor network scan</div>
-    <div class="line">status: <span id="status">booting</span></div>
-    <div class="line">$ ./net-scan --full --edge --browser --display --runtime</div>
-    <pre id="terminal" aria-live="polite"></pre>
-    <div class="line">$ <span class="cursor">█</span></div>
+    <div class="line head">ROUTER448461.COM :: OPERATOR CONSOLE</div>
+    <div class="line">STATUS: <span id="status">BOOTING</span></div>
+    <div class="line">MODE: <span id="modeLabel">OPERATOR</span> :: FILTER: <span id="filterLabel">COMPACT</span></div>
+    <div class="line">KEYS: [R] RAW VIEW  [F] FULL FIELDS</div>
+    <div class="line">$ ./net-scan --v2 --edge --client --display --runtime</div>
+
+    <pre id="summary" aria-live="polite"></pre>
+    <pre id="events"></pre>
+    <pre id="terminal"></pre>
+
+    <div class="controls">
+      <button id="viewToggle" type="button">R :: SWITCH TO RAW VIEW</button>
+      <button id="filterToggle" type="button">F :: SHOW ALL FIELDS</button>
+    </div>
+
+    <div class="line tail">$ <span class="cursor">█</span></div>
   </main>
 
   <script src="./app.js" defer></script>
