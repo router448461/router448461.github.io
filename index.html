@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>router448461 // net-scan</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="Visitor network telemetry terminal." />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <main class="wrap">
     <div class="line">router448461.com :: visitor network scan</div>
     <div class="line">status: <span id="status">booting</span></div>
-    <div class="line">$ ./net-scan --full</div>
+    <div class="line">$ ./net-scan --full --edge --browser --display --runtime</div>
     <pre id="terminal" aria-live="polite"></pre>
     <div class="line">$ <span class="cursor">█</span></div>
   </main>
-  <script src="app.js"></script>
+
+  <script src="./app.js" defer></script>
 </body>
 </html>
