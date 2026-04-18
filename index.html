@@ -1,189 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ROUTER448461 // Telemetry Console</title>
-    <meta
-      name="description"
-      content="ROUTER448461 visitor telemetry console."
-    />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <div class="grid-overlay" aria-hidden="true"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>router448461 // net-scan</title>
+  <meta
+    name="description"
+    content="Browser-exposed visitor telemetry terminal."
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <div class="topline">
+      <span>router448461.com</span>
+      <span id="status">BOOTING</span>
+    </div>
 
-    <main class="shell">
-      <header class="topbar panel">
-        <div class="brand">
-          <span class="status-light" aria-hidden="true"></span>
-          <div>
-            <div class="eyebrow">Visitor Telemetry Interface</div>
-            <div class="brand-title">ROUTER448461</div>
-          </div>
-        </div>
+    <div class="prompt">
+visitor@router448461:~$ ./net-scan --live --browser --display --transport --capabilities
+    </div>
 
-        <div class="topbar-meta">
-          <div class="meta-chip">
-            <span class="chip-label">Session State</span>
-            <span class="chip-value ok" id="session-state">ACTIVE</span>
-          </div>
-          <div class="meta-chip">
-            <span class="chip-label">Transport</span>
-            <span class="chip-value" id="transport-state">SECURE</span>
-          </div>
-          <div class="meta-chip">
-            <span class="chip-label">UTC</span>
-            <span class="chip-value" id="utc-time">--:--:-- UTC</span>
-          </div>
-        </div>
-      </header>
+    <pre id="terminal" aria-live="polite"></pre>
 
-      <section class="hero panel">
-        <div class="hero-copy">
-          <p class="eyebrow">Live client-side diagnostics</p>
-          <h1>
-            ROUTER448461
-            <span>Telemetry Console</span>
-          </h1>
-          <p class="hero-text">
-            Browser, device, display, network, and session data exposed by the
-            current environment. No prompts. No external dependencies. Static
-            front-end diagnostics only.
-          </p>
+    <div class="prompt tail">
+visitor@router448461:~$ <span class="cursor">█</span>
+    </div>
+  </main>
 
-          <div class="hero-strip">
-            <span>PASSIVE COLLECTION</span>
-            <span class="divider">//</span>
-            <span>LOCAL RENDER</span>
-            <span class="divider">//</span>
-            <span>RESEARCH MODE</span>
-          </div>
-        </div>
-
-        <div class="hero-side">
-          <div class="radar">
-            <div class="radar-ring ring-1"></div>
-            <div class="radar-ring ring-2"></div>
-            <div class="radar-ring ring-3"></div>
-            <div class="radar-sweep"></div>
-            <div class="radar-center">
-              <div class="radar-number" id="risk-state">LOW</div>
-              <div class="radar-label">Exposure state</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="status-grid">
-        <article class="panel stat-card">
-          <div class="card-label">Online State</div>
-          <div class="card-value ok" id="online-state">ONLINE</div>
-          <div class="card-sub">Navigator connection state</div>
-        </article>
-
-        <article class="panel stat-card">
-          <div class="card-label">Browser Engine</div>
-          <div class="card-value" id="browser-engine">--</div>
-          <div class="card-sub">Client rendering environment</div>
-        </article>
-
-        <article class="panel stat-card">
-          <div class="card-label">CPU Threads</div>
-          <div class="card-value" id="cpu-threads">--</div>
-          <div class="card-sub">hardwareConcurrency</div>
-        </article>
-
-        <article class="panel stat-card">
-          <div class="card-label">Device Memory</div>
-          <div class="card-value" id="device-memory">--</div>
-          <div class="card-sub">Approximate browser hint</div>
-        </article>
-      </section>
-
-      <section class="telemetry-grid">
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Session / Browser</h2>
-            <span class="section-tag">Navigator</span>
-          </div>
-          <div class="data-list" id="session-data"></div>
-        </article>
-
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Display / Environment</h2>
-            <span class="section-tag">Screen</span>
-          </div>
-          <div class="data-list" id="display-data"></div>
-        </article>
-
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Network / Transport</h2>
-            <span class="section-tag">Connection</span>
-          </div>
-          <div class="data-list" id="network-data"></div>
-        </article>
-
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Capabilities / Policy</h2>
-            <span class="section-tag">Runtime</span>
-          </div>
-          <div class="data-list" id="capability-data"></div>
-        </article>
-      </section>
-
-      <section class="feed-grid">
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Event Feed</h2>
-            <span class="section-tag">Runtime log</span>
-          </div>
-
-          <ul class="incident-feed" id="incident-feed"></ul>
-        </article>
-
-        <article class="panel section-card">
-          <div class="section-head">
-            <h2>Interface Notes</h2>
-            <span class="section-tag">Static front end</span>
-          </div>
-
-          <div class="notes-box">
-            <div class="notes-line">
-              <span class="notes-key">Collection</span>
-              <span class="notes-value">Browser-exposed data only</span>
-            </div>
-            <div class="notes-line">
-              <span class="notes-key">Storage</span>
-              <span class="notes-value">None on-page</span>
-            </div>
-            <div class="notes-line">
-              <span class="notes-key">Dependencies</span>
-              <span class="notes-value">Local CSS + JS</span>
-            </div>
-            <div class="notes-line">
-              <span class="notes-key">Mode</span>
-              <span class="notes-value">Passive diagnostics</span>
-            </div>
-            <div class="notes-line">
-              <span class="notes-key">Transport</span>
-              <span class="notes-value" id="protocol-note">HTTPS</span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <footer class="footer panel">
-        <div>ROUTER448461 // LIVE TELEMETRY CONSOLE</div>
-        <div class="footer-sub">
-          Passive browser diagnostics rendered in a hardened command-style interface.
-        </div>
-      </footer>
-    </main>
-
-    <script src="./app.js" defer></script>
-  </body>
+  <script src="app.js"></script>
+</body>
 </html>
