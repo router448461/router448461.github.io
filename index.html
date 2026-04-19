@@ -2,133 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
-    <meta
-      name="description"
-      content="router448461.com :: live operator console"
-    />
-    <title>router448461.com :: operator console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="router448461.com :: world sonar" />
+    <title>router448461.com :: world sonar</title>
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./app.js"></script>
   </head>
   <body>
-    <div class="noise"></div>
-    <div class="grid-glow"></div>
-
     <header class="topbar">
-      <div class="brand-wrap">
-        <div class="brand">router448461.com</div>
-        <div class="subbrand">operator console :: live surface</div>
+      <div class="brand">
+        <div class="title">router448461.com</div>
+        <div class="subtitle">world sonar</div>
       </div>
 
-      <div class="status-wrap">
-        <div class="status-line">
-          <span class="status-dot" id="status-dot"></span>
-          <span class="status-label">status</span>
-          <strong id="status-text">booting</strong>
-        </div>
-        <div class="boot-line" id="boot-line">initializing render surface</div>
+      <div class="status">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">initializing</span>
       </div>
 
-      <div class="clock-wrap">
-        <div class="clock-item">
-          <span class="clock-label">local</span>
-          <strong id="local-clock">--</strong>
-        </div>
-        <div class="clock-item">
-          <span class="clock-label">utc</span>
-          <strong id="utc-clock">--</strong>
-        </div>
-        <div class="clock-item">
-          <span class="clock-label">uptime</span>
-          <strong id="uptime-clock">0s</strong>
-        </div>
+      <div class="clocks">
+        <div><span>local</span><strong id="local-time">--</strong></div>
+        <div><span>utc</span><strong id="utc-time">--</strong></div>
       </div>
     </header>
 
-    <main class="console-grid">
-      <section class="panel wide" data-reveal>
-        <div class="panel-head">
-          <h2>request</h2>
-          <span class="panel-tag">live</span>
-        </div>
-        <div class="panel-body data-grid" id="request-data"></div>
+    <main class="layout">
+      <section class="map-panel">
+        <canvas id="world-canvas"></canvas>
       </section>
 
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>internet</h2>
-          <span class="panel-tag">edge</span>
+      <aside class="info-panel">
+        <div class="info-head">
+          <h2>viewer</h2>
+          <span id="source-tag">no fix</span>
         </div>
-        <div class="panel-body data-grid" id="internet-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>display</h2>
-          <span class="panel-tag">client</span>
-        </div>
-        <div class="panel-body data-grid" id="display-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>browser</h2>
-          <span class="panel-tag">runtime</span>
-        </div>
-        <div class="panel-body data-grid" id="browser-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>platform</h2>
-          <span class="panel-tag">env</span>
-        </div>
-        <div class="panel-body data-grid" id="platform-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>hardware</h2>
-          <span class="panel-tag">host</span>
-        </div>
-        <div class="panel-body data-grid" id="hardware-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>storage</h2>
-          <span class="panel-tag">quota</span>
-        </div>
-        <div class="panel-body data-grid" id="storage-data"></div>
-      </section>
-
-      <section class="panel" data-reveal>
-        <div class="panel-head">
-          <h2>capabilities</h2>
-          <span class="panel-tag">surface</span>
-        </div>
-        <div class="panel-body data-grid" id="capabilities-data"></div>
-      </section>
-
-      <section class="panel wide" data-reveal>
-        <div class="panel-head">
-          <h2>runtime</h2>
-          <span class="panel-tag">perf</span>
-        </div>
-        <div class="panel-body data-grid" id="runtime-data"></div>
-      </section>
-
-      <section class="panel wide tall" data-reveal>
-        <div class="panel-head">
-          <h2>event feed</h2>
-          <span class="panel-tag">rolling</span>
-        </div>
-        <div class="panel-body event-feed" id="event-feed"></div>
-      </section>
+        <div class="rows" id="info-rows"></div>
+      </aside>
     </main>
   </body>
 </html>
