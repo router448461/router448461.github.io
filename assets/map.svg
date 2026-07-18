@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500">
+
+<rect width="1000" height="500" fill="none"/>
+
+<g fill="none" stroke="#405448" stroke-width="1">
+
+<path d="M120 180 C200 100 300 120 380 160 C450 200 520 140 620 160 C720 190 800 150 900 210"/>
+
+<path d="M100 260 C250 220 340 300 480 260 C600 220 750 300 900 250"/>
+
+<path d="M200 80 C240 180 220 300 280 420"/>
+
+<path d="M450 60 C430 180 470 300 450 440"/>
+
+<path d="M700 70 C660 180 730 300 690 430"/>
+
+</g>
+
+
+<g fill="#738878">
+
+<circle cx="240" cy="210" r="4"/>
+<circle cx="480" cy="250" r="4"/>
+<circle cx="720" cy="190" r="4"/>
+<circle cx="820" cy="280" r="4"/>
+
+</g>
+
+
+<rect id="scan"
+x="0"
+y="0"
+width="1000"
+height="3"
+fill="#9eac9f"/>
+
+
+</svg>
