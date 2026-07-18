@@ -1,0 +1,335 @@
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    margin: 0;
+    background: #090d0b;
+    color: #e5e8e5;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 8%;
+    background: #070a08;
+    border-bottom: 1px solid #27322b;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+
+nav a {
+    color: #c5ccc7;
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+
+nav a:hover {
+    color: white;
+}
+
+
+
+
+.hero {
+
+    min-height: 85vh;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 8%;
+
+    background:
+    linear-gradient(
+    rgba(0,0,0,0.55),
+    rgba(0,0,0,0.85)
+    );
+
+}
+
+
+
+.hero-content {
+
+    max-width: 850px;
+
+}
+
+
+
+.tag {
+
+    letter-spacing: 3px;
+
+    color: #9eac9f;
+
+    font-size: 13px;
+
+}
+
+
+
+h1 {
+
+    font-size: clamp(42px, 7vw, 90px);
+
+    line-height: 1;
+
+    letter-spacing: 6px;
+
+    margin: 25px 0;
+
+}
+
+
+
+h2 {
+
+    font-size: 30px;
+
+    letter-spacing: 3px;
+
+    border-left: 4px solid #738878;
+
+    padding-left: 15px;
+
+    margin-bottom: 35px;
+
+}
+
+
+
+section {
+
+    padding: 80px 8%;
+
+}
+
+
+
+button {
+
+    margin-top: 30px;
+
+    padding: 15px 35px;
+
+    background: transparent;
+
+    color: white;
+
+    border: 1px solid #738878;
+
+    cursor: pointer;
+
+    letter-spacing: 2px;
+
+}
+
+
+
+button:hover {
+
+    background: #738878;
+
+}
+
+
+
+
+.panel {
+
+    background: #111713;
+
+    border: 1px solid #27322b;
+
+    padding: 30px;
+
+    margin-top: 30px;
+
+    letter-spacing: 1px;
+
+}
+
+
+
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 25px;
+
+}
+
+
+
+
+.card {
+
+    background: #111713;
+
+    border: 1px solid #27322b;
+
+    padding: 35px;
+
+    min-height: 260px;
+
+}
+
+
+
+.card span {
+
+    font-size: 40px;
+
+    color: #93a493;
+
+    font-weight: bold;
+
+}
+
+
+
+.card h3 {
+
+    letter-spacing: 2px;
+
+}
+
+
+
+.card p {
+
+    color: #b9c1bb;
+
+}
+
+
+
+
+
+.timeline {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 20px;
+
+}
+
+
+
+.timeline div {
+
+    background: #111713;
+
+    border-left: 3px solid #738878;
+
+    padding: 25px;
+
+    letter-spacing: 1px;
+
+}
+
+
+
+
+ul {
+
+    list-style: none;
+
+    padding: 0;
+
+}
+
+
+
+li {
+
+    background: #111713;
+
+    border-bottom: 1px solid #27322b;
+
+    padding: 15px;
+
+}
+
+
+
+
+footer {
+
+    text-align: center;
+
+    padding: 40px;
+
+    border-top: 1px solid #27322b;
+
+    color: #9aa39c;
+
+}
+
+
+
+
+@media(max-width:700px) {
+
+
+header {
+
+    flex-direction: column;
+
+}
+
+
+nav {
+
+    margin-top: 20px;
+
+}
+
+
+nav a {
+
+    margin: 10px;
+
+    display: inline-block;
+
+}
+
+
+h1 {
+
+    letter-spacing: 3px;
+
+}
+
+
+}
