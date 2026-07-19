@@ -11,3 +11,25 @@ function goFramework() {
     }
 
 }
+
+
+
+function updateStatus() {
+
+    const status = document.getElementById("system-status");
+
+    if (status) {
+
+        status.textContent = "ONLINE | READY FOR ASSESSMENT";
+
+    }
+
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    updateStatus();
+
+});
