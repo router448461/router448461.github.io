@@ -14,7 +14,7 @@ body {
 
     background: #080c0a;
 
-    color: #e5e8e5;
+    color: #e6e9e6;
 
     font-family: Arial, Helvetica, sans-serif;
 
@@ -34,15 +34,15 @@ header {
 
     padding: 25px 8%;
 
-    background: #060907;
+    background: #050706;
 
-    border-bottom: 1px solid #263229;
+    border-bottom: 1px solid #27332b;
 
     position: sticky;
 
     top: 0;
 
-    z-index: 20;
+    z-index: 100;
 
 }
 
@@ -55,16 +55,17 @@ header {
 
     font-weight: bold;
 
-    letter-spacing: 4px;
+    letter-spacing: 5px;
 
 }
 
 
 
 
+
 nav a {
 
-    color: #c3cbc5;
+    color: #bfc8c1;
 
     text-decoration: none;
 
@@ -72,7 +73,7 @@ nav a {
 
     font-size: 14px;
 
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 
 }
 
@@ -88,13 +89,10 @@ nav a:hover {
 
 
 
+
 .hero {
 
     min-height: 90vh;
-
-    position: relative;
-
-    overflow: hidden;
 
     display: flex;
 
@@ -102,18 +100,23 @@ nav a:hover {
 
     padding: 8%;
 
+    position: relative;
+
+    overflow: hidden;
+
 }
+
 
 
 
 
 .hero-content {
 
+    max-width: 800px;
+
     position: relative;
 
     z-index: 5;
-
-    max-width: 750px;
 
 }
 
@@ -125,11 +128,11 @@ nav a:hover {
 
     position: absolute;
 
-    right: 0;
+    right: -5%;
 
-    top: 10%;
+    top: 15%;
 
-    width: 65%;
+    width: 70%;
 
     opacity: 0.25;
 
@@ -140,37 +143,39 @@ nav a:hover {
 
 
 
+
 .map-container img {
 
     width: 100%;
 
-    animation: scanPulse 6s infinite;
+    animation: mapPulse 8s infinite;
 
 }
 
 
 
 
-@keyframes scanPulse {
+
+@keyframes mapPulse {
 
 
 0% {
 
-opacity:0.25;
+opacity:0.3;
 
 }
 
 
 50% {
 
-opacity:0.7;
+opacity:0.8;
 
 }
 
 
 100% {
 
-opacity:0.25;
+opacity:0.3;
 
 }
 
@@ -184,14 +189,13 @@ opacity:0.25;
 
 .tag {
 
-    color:#95a596;
-
-    letter-spacing:4px;
+    color:#9dac9d;
 
     font-size:13px;
 
-}
+    letter-spacing:4px;
 
+}
 
 
 
@@ -202,11 +206,12 @@ h1 {
 
     line-height:1;
 
-    letter-spacing:7px;
+    letter-spacing:8px;
 
-    margin:25px 0;
+    margin:30px 0;
 
 }
+
 
 
 
@@ -220,6 +225,8 @@ h2 {
     border-left:4px solid #738878;
 
     padding-left:15px;
+
+    margin-bottom:35px;
 
 }
 
@@ -257,6 +264,8 @@ button {
 
 
 
+
+
 button:hover {
 
     background:#738878;
@@ -267,16 +276,27 @@ button:hover {
 
 
 
-
 .panel {
 
     background:#101612;
 
-    border:1px solid #263229;
+    border:1px solid #27332b;
 
     padding:30px;
 
-    margin-top:30px;
+    margin-top:35px;
+
+    letter-spacing:1px;
+
+}
+
+
+
+
+
+.panel span {
+
+    color:#8fa58f;
 
 }
 
@@ -300,14 +320,13 @@ button:hover {
 
 .card {
 
-
     background:#101612;
 
-    border:1px solid #263229;
+    border:1px solid #27332b;
 
     padding:35px;
 
-    min-height:260px;
+    min-height:250px;
 
 }
 
@@ -319,11 +338,12 @@ button:hover {
 
     font-size:42px;
 
-    color:#91a493;
-
     font-weight:bold;
 
+    color:#8fa58f;
+
 }
+
 
 
 
@@ -340,7 +360,7 @@ button:hover {
 
 .card p {
 
-    color:#bac2bc;
+    color:#bcc5bd;
 
 }
 
@@ -365,13 +385,11 @@ button:hover {
 
 .timeline div {
 
-
     background:#101612;
 
     border-left:3px solid #738878;
 
     padding:25px;
-
 
 }
 
@@ -395,7 +413,7 @@ li {
 
     background:#101612;
 
-    border-bottom:1px solid #263229;
+    border-bottom:1px solid #27332b;
 
     padding:15px;
 
@@ -411,9 +429,9 @@ footer {
 
     padding:40px;
 
-    border-top:1px solid #263229;
+    border-top:1px solid #27332b;
 
-    color:#9da69f;
+    color:#9aa59d;
 
 }
 
@@ -421,7 +439,7 @@ footer {
 
 
 
-@media(max-width:800px){
+@media(max-width:800px) {
 
 
 header {
@@ -447,23 +465,22 @@ nav a {
 }
 
 
-
 .map-container {
 
     width:100%;
+
+    right:0;
 
     opacity:0.15;
 
 }
 
 
-
 h1 {
 
-    letter-spacing:3px;
+    letter-spacing:4px;
 
 }
-
 
 
 }
