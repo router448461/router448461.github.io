@@ -1,59 +1,22 @@
 # ROUTER 448461
 
-## Independent Research Assessment Framework
-
-ROUTER 448461 is an independent research and assessment project focused on understanding complex issues through evidence, structured analysis and accountability.
+Personal digital asset referral directory maintained by Joshua Esk.
 
 ## Purpose
 
-The framework examines areas including:
+A transparent directory for selected exchange referral links, referral codes and QR access. Referral relationships are disclosed openly, and official platform destinations are provided separately.
 
-• Public safety
+## Current system
 
-• Violence prevention
+- ROUTER 448461 public directory
+- Desktop and mobile interface
+- First-party QR assets
+- Public system dossier and security checklist
+- GitHub Pages custom domain: router448461.com
+- Cloudflare can be used as the DNS/edge layer when configured to point to the GitHub Pages origin
 
-• Disability inclusion
+## Important
 
-• Economic impact
+This site is independently operated. It is not affiliated with or endorsed by Binance, Coinbase, Crypto.com, any government, or any military organisation. The defence/aerospace styling is purely a visual design language.
 
-• Social cohesion
-
-• Community wellbeing
-
-## Research Approach
-
-The assessment process follows:
-
-1. Information collection
-
-2. Evidence review
-
-3. Impact analysis
-
-4. Recommendations
-
-## Core Principles
-
-Evidence First
-
-Integrity
-
-Transparency
-
-Accountability
-
-Respect for Law
-
-Responsible Research
-
-## Website
-
-https://router448461.com
-
-## Project Status
-
-Research Development Phase
-
-## Disclaimer
-
-ROUTER 448461 is an independent project and is not an Australian Government website or official government policy.
+The site does not request exchange credentials, seed phrases, private keys or deposits.
