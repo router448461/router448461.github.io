@@ -1,4 +1,4 @@
-/* ROUTER 448461 interaction engine: native cursor semantics + packet entropy, visual-only. */
+/* ROUTER 448461 interaction engine: native cursor semantics + fixed node geometry + packet entropy. */
 (()=>{
   if(window.__routerInteractionEngine)return;
   window.__routerInteractionEngine=true;
@@ -8,23 +8,36 @@
   const svg=document.querySelector('.scene svg');
   if(!svg)return;
 
-  // Use the browser's real pointer. No on-screen cursor is rendered.
+  // Native browser cursor only. No cursor graphic is drawn over the page.
   const nativeStyle=document.createElement('style');
   nativeStyle.textContent=`
-    .primary,.secondary,.qr,.copy,.inspect,.card,a,button{cursor:pointer}
-    .card{cursor:default}
-    .card .primary{cursor:pointer}
-    .card .secondary{cursor:pointer}
-    .card .qr{cursor:crosshair}
-    .card .copy{cursor:copy}
-    .card .inspect{cursor:crosshair}
+    .primary,.secondary,.qr,.copy,.inspect,button{cursor:pointer}
+    .copy{cursor:copy}
+    .inspect{cursor:help}
+    .qr{cursor:pointer}
+    .secondary{cursor:pointer}
+    .primary{cursor:pointer}
   `;
   document.head.appendChild(nativeStyle);
 
-  const packets=[...svg.querySelectorAll('#adaptive-bg .ab-packet')];
-  const routes=[...svg.querySelectorAll('#adaptive-bg .ab-route')];
-  const relays=[...svg.querySelectorAll('#adaptive-bg .ab-relay')];
-  if(!packets.length)return;
+  const adaptive=svg.querySelector('#adaptive-bg');
+  if(!adaptive)return;
+  const packets=[...adaptive.querySelectorAll('.ab-packet')];
+  const routes=[...adaptive.querySelectorAll('.ab-route')];
+  const relays=[...adaptive.querySelectorAll('.ab-relay')];
+  const links=[...adaptive.querySelectorAll('.ab-link')];
+  const NS='http://www.w3.org/2000/svg';
+  if(!packets.length||!relays.length)return;
+
+  // Freeze relay coordinates. They are infrastructure, not floating objects.
+  const fixed=relays.map(el=>({el,x:parseFloat(el.getAttribute('x')||0),y:parseFloat(el.getAttribute('y')||0)}));
+  const restore=()=>fixed.forEach(n=>{if(n.el.getAttribute('x')!==String(n.x)||n.el.getAttribute('y')!==String(n.y)){n.el.setAttribute('x',n.x.toFixed(1));n.el.setAttribute('y',n.y.toFixed(1))}});
+  const observer=new MutationObserver(muts=>{
+    let changed=false;
+    for(const m of muts){if(m.type==='attributes'&&(m.attributeName==='x'||m.attributeName==='y')){changed=true;break}}
+    if(changed){restore();rewire()}
+  });
+  relays.forEach(r=>observer.observe(r,{attributes:true,attributeFilter:['x','y']}));
 
   const routePaths=()=>routes.map(r=>r.getAttribute('d')).filter(Boolean);
   let knownPaths=routePaths();
@@ -32,35 +45,42 @@
     const motion=p.firstElementChild;
     if(!motion||!knownPaths.length)return;
     motion.setAttribute('path',knownPaths[Math.floor(rand()*knownPaths.length)]);
-    motion.setAttribute('begin',`${(rand()*3.4).toFixed(2)}s`);
-    motion.setAttribute('dur',`${(4.1+rand()*7.4).toFixed(1)}s`);
-    if(rand()>.55)p.style.opacity=(.24+rand()*.56).toFixed(2);
+    motion.setAttribute('begin',`${(rand()*3.8).toFixed(2)}s`);
+    motion.setAttribute('dur',`${(4.0+rand()*8.2).toFixed(1)}s`);
+    p.style.opacity=(.22+rand()*.6).toFixed(2);
   }
+
+  function rewire(){
+    if(!links.length)return;
+    const shuffled=fixed.slice().sort(()=>rand()-.5);
+    links.forEach((l,i)=>{
+      const a=shuffled[i%shuffled.length], b=shuffled[(i*7+3)%shuffled.length];
+      const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+      l.setAttribute('d',`M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${mx.toFixed(1)} ${(my-32-rand()*28).toFixed(1)} ${(mx+rand()*40-20).toFixed(1)} ${(my+32+rand()*28).toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);
+      l.classList.toggle('hot',rand()>.82);
+    });
+  }
+
   function packetDecision(){
     knownPaths=routePaths();
-    packets.forEach(p=>{if(rand()>.38)randomPacket(p)});
-    schedulePacketDecision();
+    packets.forEach(p=>{if(rand()>.34)randomPacket(p)});
+    setTimeout(packetDecision,2400+rand()*13500);
   }
-  let packetTimer;
-  function schedulePacketDecision(){clearTimeout(packetTimer);packetTimer=setTimeout(packetDecision,2600+rand()*12800)}
 
-  // Nearby background nodes may react to the pointer, but their coordinates never move.
-  addEventListener('pointermove',e=>{
-    if(e.pointerType==='touch'||reduced||!relays.length)return;
-    const x=e.clientX/innerWidth*1600,y=e.clientY/innerHeight*900;
-    relays.forEach(r=>{
-      const rx=parseFloat(r.getAttribute('x')||0),ry=parseFloat(r.getAttribute('y')||0);
-      const d=Math.hypot(rx-x,ry-y);
-      r.classList.toggle('hot',d<92);
-    });
-  },{passive:true});
+  function localRelayEvent(){
+    if(reduced||!relays.length)return;
+    const active=fixed[Math.floor(rand()*fixed.length)];
+    active.el.classList.add('hot');
+    setTimeout(()=>active.el.classList.remove('hot'),320+rand()*1250);
+    const nearby=fixed.filter(n=>n!==active&&Math.hypot(n.x-active.x,n.y-active.y)<210);
+    if(nearby.length&&rand()>.28){
+      const n=nearby[Math.floor(rand()*nearby.length)];n.el.classList.add('hot');setTimeout(()=>n.el.classList.remove('hot'),220+rand()*900);
+    }
+  }
 
-  // Independent packet events prevent a single visible master loop.
-  function packetPulse(){
-    if(reduced||!packets.length)return;
-    const p=packets[Math.floor(rand()*packets.length)];
-    randomPacket(p);
-    setTimeout(packetPulse,1800+rand()*11800);
+  function rewireEvent(){
+    rewire();
+    setTimeout(()=>rewire(),500+rand()*1400);
   }
 
   function splitEvent(){
@@ -68,40 +88,48 @@
     const source=packets[Math.floor(rand()*packets.length)];
     const clone=source.cloneNode(true);
     clone.classList.add('interaction-child');
-    clone.style.opacity='.26';
-    svg.querySelector('#adaptive-bg')?.appendChild(clone);
+    clone.style.opacity='.22';
+    adaptive.appendChild(clone);
     randomPacket(clone);
-    setTimeout(()=>clone.remove(),700+rand()*1700);
+    setTimeout(()=>clone.remove(),650+rand()*1800);
   }
 
-  function localRelayEvent(){
-    if(reduced||!relays.length)return;
-    const centre=relays[Math.floor(rand()*relays.length)];
-    centre.classList.add('hot');
-    setTimeout(()=>centre.classList.remove('hot'),350+rand()*1100);
-    const neighbours=[];
-    const cx=parseFloat(centre.getAttribute('x')||0),cy=parseFloat(centre.getAttribute('y')||0);
-    relays.forEach(r=>{
-      if(r===centre)return;
-      const rx=parseFloat(r.getAttribute('x')||0),ry=parseFloat(r.getAttribute('y')||0);
-      if(Math.hypot(rx-cx,ry-cy)<190)neighbours.push(r);
-    });
-    if(neighbours.length&&rand()>.35){
-      const n=neighbours[Math.floor(rand()*neighbours.length)];
-      n.classList.add('hot');setTimeout(()=>n.classList.remove('hot'),250+rand()*850);
+  function localLinkPulse(){
+    if(!links.length)return;
+    const count=1+Math.floor(rand()*4);
+    for(let i=0;i<count;i++){
+      const l=links[Math.floor(rand()*links.length)];
+      l.classList.add('hot');
+      setTimeout(()=>l.classList.remove('hot'),350+rand()*1600);
     }
   }
 
+  // Pointer affects only emphasis, never geometry.
+  addEventListener('pointermove',e=>{
+    if(e.pointerType==='touch'||reduced||!relays.length)return;
+    const x=e.clientX/innerWidth*1600,y=e.clientY/innerHeight*900;
+    relays.forEach(r=>{
+      const rx=parseFloat(r.getAttribute('x')||0),ry=parseFloat(r.getAttribute('y')||0);
+      const d=Math.hypot(rx-x,ry-y);
+      r.classList.toggle('hot',d<88);
+    });
+  },{passive:true});
+
   function idleEvent(){
     knownPaths=routePaths();
-    if(rand()>.28)packetPulse();
-    if(rand()>.52)splitEvent();
-    if(rand()>.36)localRelayEvent();
-    setTimeout(idleEvent,3800+rand()*17200);
+    const roll=rand();
+    if(roll>.18)packetDecision();
+    if(roll>.42)localRelayEvent();
+    if(roll>.58)localLinkPulse();
+    if(roll>.72)rewireEvent();
+    if(roll>.84)splitEvent();
+    setTimeout(idleEvent,2900+rand()*17800);
   }
 
+  restore();
+  rewire();
   if(!reduced){
-    setTimeout(idleEvent,1800+rand()*4500);
-    schedulePacketDecision();
+    setTimeout(idleEvent,1600+rand()*4500);
+    setTimeout(packetDecision,900+rand()*3200);
   }
 })();
