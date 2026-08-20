@@ -1,26 +1,25 @@
-/* ROUTER 448461 interaction compatibility layer: native browser controls only. */
+/* ROUTER 448461 interaction layer: native browser controls, fixed infrastructure, visible QR. */
 (()=>{
-  if(window.__routerInteractionEngineV2)return;
-  window.__routerInteractionEngineV2=true;
-  const cleanup=()=>{
-    document.querySelectorAll('.router-cursor,.ab-handoff-overlay,.ab-handoff-label').forEach(e=>e.remove());
-    document.querySelectorAll('.primary,.secondary,.qr,.copy,.inspect,button').forEach(el=>{el.style.cursor='';});
-  };
-  cleanup();
+  if(window.__routerInteractionEngineV3)return;
+  window.__routerInteractionEngineV3=true;
   const style=document.createElement('style');
   style.textContent=`
-    .primary,.secondary,.qr{cursor:pointer!important}
+    .primary,.secondary{cursor:pointer!important}
     .copy{cursor:copy!important}
     .inspect{cursor:help!important}
-    .card{cursor:default}
+    .qr{display:none!important}
+    .card{cursor:default!important}
+    .scene{transform:none!important}
+    .scene .node{animation:none!important;transform:none!important}
+    .mini-qr{width:58px;height:58px;display:block;flex:none;object-fit:contain;background:#fff;border:1px solid #34453b;padding:2px;border-radius:2px}
+    .row{align-items:center}
+    .row .code{min-width:0}
+    .row .mini-qr-wrap{display:flex;align-items:center;justify-content:center}
+    @media(max-width:740px){.mini-qr{width:50px;height:50px}}
   `;
   document.head.appendChild(style);
-  if(navigator.serviceWorker?.getRegistrations){
-    navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
-  }
-  if(window.caches?.keys){caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});}
   const cards=[...document.querySelectorAll('.card')];
-  cards.forEach((card,i)=>{
+  cards.forEach(card=>{
     const primary=card.querySelector('.primary');
     if(primary){
       primary.onclick=null;
@@ -29,13 +28,16 @@
       primary.rel='noopener noreferrer';
       primary.textContent='USE REFERRAL';
     }
-    const name=card.dataset.n||'';
-    if(name==='COINBASE ADVANCED'){
-      const foot=card.querySelector('.foot b');
-      if(foot)foot.textContent='COINBASE ADVANCED';
+    const codeRow=card.querySelector('.row');
+    const qrPath=card.dataset.q;
+    if(codeRow&&qrPath&&!codeRow.querySelector('.mini-qr')){
+      const wrap=document.createElement('span');wrap.className='mini-qr-wrap';
+      const img=document.createElement('img');img.className='mini-qr';img.src=qrPath;img.alt=`${card.dataset.n||'Referral'} QR code`;img.loading='lazy';
+      wrap.appendChild(img);codeRow.appendChild(wrap);
     }
-    card.addEventListener('mouseenter',()=>window.__routerSetFocus?.(i),{passive:true});
-    card.addEventListener('focusin',()=>window.__routerSetFocus?.(i),{passive:true});
-    card.addEventListener('mouseleave',()=>window.__routerSetFocus?.(-1),{passive:true});
+    if(card.dataset.n==='COINBASE ADVANCED'){
+      const foot=card.querySelector('.foot b');if(foot)foot.textContent='COINBASE ADVANCED';
+    }
   });
+  document.querySelectorAll('.router-cursor,.ab-handoff-overlay,.ab-handoff-label').forEach(e=>e.remove());
 })();
