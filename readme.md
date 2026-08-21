@@ -20,3 +20,5 @@ A transparent directory for selected exchange referral links, referral codes and
 This site is independently operated. It is not affiliated with or endorsed by Binance, Coinbase, Crypto.com, any government, or any military organisation. The defence/aerospace styling is purely a visual design language.
 
 The site does not request exchange credentials, seed phrases, private keys or deposits.
+
+<!-- Cloudflare deployment trigger: 2026-08-21T03:37:00Z -->
