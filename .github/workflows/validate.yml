@@ -1,0 +1,20 @@
+name: Validate referral directory
+
+on:
+  push:
+    branches:
+      - router448461.com
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run referral integrity check
+        run: node tools/validate.mjs
