@@ -95,3 +95,4 @@
   }
   setTimeout(pulse,900+rand()*2000);
 })();
+/* deployment marker: cloudflare-pages */
