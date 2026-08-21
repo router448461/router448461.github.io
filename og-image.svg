@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#050706"/>
+<g stroke="#34402b" stroke-width="1" opacity=".45">
+<path d="M80 120H1120M80 210H1120M80 300H1120M80 390H1120M80 480H1120"/>
+<path d="M160 80V550M320 80V550M480 80V550M640 80V550M800 80V550M960 80V550"/>
+</g>
+<g fill="none" stroke="#68774f" stroke-width="1.5" opacity=".38">
+<ellipse cx="600" cy="315" rx="470" ry="220"/>
+<ellipse cx="600" cy="315" rx="350" ry="165"/>
+<ellipse cx="600" cy="315" rx="230" ry="110"/>
+</g>
+<g stroke="#78845a" stroke-width="1.5" opacity=".7">
+<path d="M600 170V120M150 340H1050"/>
+<path d="M150 340L150 400M375 340L375 400M600 340L600 400M825 340L825 400M1050 340L1050 400"/>
+</g>
+<g fill="#78845a">
+<circle cx="600" cy="120" r="5"/><circle cx="150" cy="400" r="4"/><circle cx="375" cy="400" r="4"/><circle cx="600" cy="400" r="4"/><circle cx="825" cy="400" r="4"/><circle cx="1050" cy="400" r="4"/>
+</g>
+<g fill="#eef0e8" stroke="#526145" stroke-width="4">
+<rect x="93" y="420" width="114" height="114" rx="2"/><rect x="318" y="420" width="114" height="114" rx="2"/><rect x="543" y="420" width="114" height="114" rx="2"/><rect x="768" y="420" width="114" height="114" rx="2"/><rect x="993" y="420" width="114" height="114" rx="2"/>
+</g>
+<g fill="#050706" font-family="Menlo,Monaco,Consolas,monospace" font-size="44" font-weight="600" letter-spacing="6">
+<text x="600" y="90" text-anchor="middle">ROUTER 448461</text>
+</g>
+<g fill="#aeb995" font-family="Menlo,Monaco,Consolas,monospace" font-size="16" letter-spacing="5">
+<text x="600" y="112" text-anchor="middle">REFERRAL DIRECTORY</text>
+</g>
+<g fill="#d8dece" font-family="Menlo,Monaco,Consolas,monospace" font-size="13" letter-spacing="2" text-anchor="middle">
+<text x="150" y="560">BINANCE</text><text x="375" y="560">COINBASE</text><text x="600" y="560">ADVANCED</text><text x="825" y="560">CRYPTO.COM</text><text x="1050" y="560">STARLINK</text>
+</g>
+</svg>
