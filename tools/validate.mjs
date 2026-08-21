@@ -22,14 +22,16 @@ for (const [name, code, asset, url] of required) {
   if (!fs.existsSync(path.join(root, asset))) errors.push(`QR asset does not exist: ${asset}`);
 }
 
-if (!index.includes('src="/background.js"')) errors.push('background.js is not loaded externally');
-if (!index.includes('src="/copy.js"')) errors.push('copy.js is not loaded externally');
+for (const script of ['background.js','copy.js','card-network.js']) {
+  if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
+  if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
+}
+
 if (/<script(?![^>]*\bsrc=)[^>]*>/.test(index)) errors.push('Inline script detected in index.html');
 if (!index.includes('og:image')) errors.push('Open Graph image metadata missing');
 if (!fs.existsSync(path.join(root, '404.html'))) errors.push('404.html missing');
 if (!fs.existsSync(path.join(root, 'og-image.svg'))) errors.push('og-image.svg missing');
-if (!fs.existsSync(path.join(root, 'copy.js'))) errors.push('copy.js missing');
-if (!fs.existsSync(path.join(root, 'background.js'))) errors.push('background.js missing');
+if (!fs.existsSync(path.join(root, '.github/workflows/validate.yml'))) errors.push('Validation workflow missing');
 
 if (errors.length) {
   console.error('Referral integrity check FAILED');
@@ -38,4 +40,4 @@ if (errors.length) {
 }
 
 console.log('Referral integrity check PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, codes and URLs.`);
+console.log(`Verified ${required.length} referral cards, QR assets, codes, URLs and required scripts.`);
