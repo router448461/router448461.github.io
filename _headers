@@ -8,3 +8,9 @@
   Cross-Origin-Resource-Policy: same-origin
   X-Permitted-Cross-Domain-Policies: none
   X-XSS-Protection: 0
+
+/
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: no-store, max-age=0, must-revalidate
