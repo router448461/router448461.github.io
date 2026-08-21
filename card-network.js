@@ -10,31 +10,20 @@
   scene.appendChild(canvas);
 
   const domains=['binance.com','coinbase.com','advanced.coinbase.com','crypto.com','starlink.com'];
-  cards.forEach((card,i)=>{
-    card.dataset.providerDomain=domains[i]||'';
-    if(!card.querySelector('.destination')){
-      const label=document.createElement('span');
-      label.className='destination';
-      label.textContent=`OPENS · ${domains[i]||'provider'}`;
-      card.appendChild(label);
-    }
-  });
+  cards.forEach((card,i)=>{card.dataset.providerDomain=domains[i]||'';});
 
   const style=document.createElement('style');
   style.textContent=`
-    .branch{z-index:0;opacity:.92}
-    .inner{position:relative;z-index:2}
-    .destination{position:absolute;right:10px;top:10px;z-index:3;padding:4px 6px;border:1px solid rgba(82,97,69,.65);background:rgba(5,7,6,.9);color:#8d9878;font:6px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Courier New",monospace;letter-spacing:.08em;text-transform:uppercase;opacity:0;transform:translateY(-3px);transition:opacity .2s ease,transform .2s ease}
-    .card:hover .destination,.card.proximity .destination,.card:focus-visible .destination{opacity:1;transform:translateY(0)}
-    .card.proximity:before{animation:cardscan 1.8s ease-out}
-    .qrplate span:after{display:none!important}
-    .trustbar{white-space:nowrap;overflow:hidden;text-overflow:clip}
-    @media(max-width:920px){.trustbar{white-space:normal}}
-    @media(max-width:600px){.destination{position:static;display:block;width:max-content;max-width:calc(100% - 20px);margin:8px auto 0;opacity:.8;transform:none}.card:hover .destination,.card.proximity .destination,.card:focus-visible .destination{opacity:1}}
+    .branch{z-index:3!important;opacity:.96;top:-70px;bottom:auto!important;height:70px;}
+    .inner{position:relative;z-index:4}
+    .destination{display:none!important}
+    .card:hover .qrplate{transform:none!important}
+    .qrplate span,.qrplate span:after{display:none!important}
+    .network .card{will-change:transform}
   `;
   document.head.appendChild(style);
 
-  let dpr=1,w=0,h=0,last=0,pack=[];
+  let dpr=1,w=0,h=0,last=0,pack=[],startTime=performance.now();
   const resize=()=>{
     dpr=Math.min(devicePixelRatio||1,2);
     w=innerWidth;h=innerHeight;
@@ -43,26 +32,71 @@
   };
   const refresh=()=>{
     const now=performance.now();
-    if(now-last<180)return;
+    if(now-last<120)return;
     last=now;
     pack=cards.map((card,i)=>{
       const r=card.getBoundingClientRect();
-      return {x:r.left+r.width/2,top:r.top,phase:i*.73,speed:.00009+i*.000009};
+      return {x:r.left+r.width/2,top:r.top,phase:i*.16};
     });
+  };
+  const ease=p=>1-Math.pow(1-p,3);
+  const drawBranch=(x,start,end,p,active)=>{
+    if(p<=0)return;
+    const q=ease(Math.min(1,p));
+    const y=start+(end-start)*q;
+    ctx.beginPath();
+    ctx.moveTo(x,start);
+    ctx.lineTo(x,y);
+    ctx.strokeStyle=active?'rgba(140,157,103,.72)':'rgba(82,97,69,.46)';
+    ctx.lineWidth=active?1.2:1;
+    ctx.stroke();
+    if(q<1){
+      ctx.fillStyle='rgba(188,201,150,.78)';
+      ctx.shadowBlur=8;ctx.shadowColor='rgba(128,148,91,.34)';
+      ctx.fillRect(x-1.25,y-1.25,2.5,2.5);
+      ctx.shadowBlur=0;
+    }
   };
   const frame=(t)=>{
     refresh();
     ctx.clearRect(0,0,w,h);
-    if(!reduce){
-      for(const p of pack){
-        const start=p.top-66,end=p.top;
-        const q=(t*p.speed+p.phase)%1;
-        const y=start+(end-start)*q;
-        ctx.fillStyle='rgba(188,201,150,.72)';
-        ctx.shadowBlur=7;ctx.shadowColor='rgba(128,148,91,.35)';
-        ctx.fillRect(p.x-1,y-1,2,2);ctx.shadowBlur=0;
+    const elapsed=t-startTime;
+    const duration=1500;
+    const trunkP=reduce?1:Math.min(1,elapsed/500);
+    const branchStart=reduce?1:Math.max(0,(elapsed-350)/1150);
+
+    if(pack.length){
+      const first=pack[0].x,lastX=pack[pack.length-1].x,cy=pack[0].top-70;
+      const hubX=w/2;
+      ctx.beginPath();
+      ctx.moveTo(Math.min(first,hubX),cy);
+      ctx.lineTo(Math.max(lastX,hubX),cy);
+      ctx.strokeStyle='rgba(82,97,69,.46)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+
+      for(let i=0;i<pack.length;i++){
+        const p=reduce?1:Math.min(1,Math.max(0,(elapsed-350-i*85)/900));
+        const active=!reduce&&elapsed>1900&&i===Math.floor((elapsed/850)%pack.length);
+        drawBranch(pack[i].x,cy,pack[i].top,p,active);
+      }
+
+      ctx.beginPath();ctx.arc(hubX,cy,3.5,0,Math.PI*2);
+      ctx.strokeStyle='rgba(120,132,90,.86)';ctx.stroke();
+      ctx.fillStyle='rgba(5,7,6,1)';ctx.fill();
+      ctx.beginPath();ctx.arc(hubX,cy,1.5,0,Math.PI*2);ctx.fillStyle='rgba(157,174,119,.82)';ctx.fill();
+
+      if(!reduce && elapsed>1900){
+        const pulseIndex=Math.floor(elapsed/5200)%pack.length;
+        const s=pack[pulseIndex];
+        const q=((elapsed%1200)/1200);
+        const y=cy+(s.top-cy)*q;
+        ctx.fillStyle='rgba(198,210,160,.85)';
+        ctx.shadowBlur=10;ctx.shadowColor='rgba(128,148,91,.38)';
+        ctx.fillRect(s.x-1.5,y-1.5,3,3);ctx.shadowBlur=0;
       }
     }
+
     requestAnimationFrame(frame);
   };
   addEventListener('resize',resize);
