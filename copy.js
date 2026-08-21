@@ -1,6 +1,5 @@
 (()=>{
   const copyCode=async(button)=>{
-    const card=button.closest('.card');
     const code=(button.dataset.code||button.textContent||'').trim();
     if(!code)return;
     let ok=false;
@@ -31,21 +30,10 @@
     button.classList.toggle('copied',ok);
     button.classList.toggle('copy-failed',!ok);
     button.textContent=ok?'COPIED':'COPY FAILED';
-    if(card){
-      card.classList.toggle('copied',ok);
-      card.classList.toggle('copy-failed',!ok);
-      const status=card.querySelector('.copy-status');
-      if(status){status.textContent=ok?'COPIED':'COPY FAILED';}
-    }
     clearTimeout(button._copyTimer);
     button._copyTimer=setTimeout(()=>{
       button.textContent=original;
       button.classList.remove('copied','copy-failed');
-      if(card){
-        card.classList.remove('copied','copy-failed');
-        const status=card.querySelector('.copy-status');
-        if(status)status.textContent='COPIED';
-      }
     },1600);
   };
   document.addEventListener('click',(event)=>{
