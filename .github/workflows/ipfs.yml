@@ -23,33 +23,73 @@ jobs:
           cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
           cp qr/* ipfs-site/qr/
 
-      - name: Upload website folder to Pinata
+      - name: Install Pinata folder-upload SDK
+        run: npm install --no-save pinata-web3
+
+      - name: Upload website folder to public IPFS via Pinata
         env:
           PINATA_JWT: ${{ secrets.PINATA_JWT }}
         run: |
           set -euo pipefail
           test -n "$PINATA_JWT" || { echo "PINATA_JWT secret is missing"; exit 1; }
-          args=(--request POST --url https://api.pinata.cloud/pinning/pinFileToIPFS --header "Authorization: Bearer $PINATA_JWT" --form 'pinataMetadata={"name":"router448461-'"$GITHUB_SHA"'"}' --form 'pinataOptions={"cidVersion":1}' --write-out '\nHTTP_STATUS:%{http_code}\n' --output pinata-response.json)
-          while IFS= read -r -d '' file; do
-            relative="${file#ipfs-site/}"
-            args+=(--form "file=@${file};filename=${relative}")
-          done < <(find ipfs-site -type f -print0 | sort -z)
-          http_output="$(curl --silent --show-error "${args[@]}" 2>&1)"
-          curl_exit=$?
-          printf '%s\n' "$http_output"
-          echo "Pinata response body:"
-          cat pinata-response.json || true
-          test "$curl_exit" -eq 0 || { echo "Pinata upload request failed at curl level (exit $curl_exit)"; exit "$curl_exit"; }
-          http_status="$(printf '%s\n' "$http_output" | sed -n 's/^HTTP_STATUS://p' | tail -n1)"
-          case "$http_status" in 2*) ;; *) echo "Pinata HTTP error: $http_status"; exit 1 ;; esac
-          cid="$(jq -r '.IpfsHash // empty' pinata-response.json 2>/dev/null || true)"
-          test -n "$cid" || { echo "Pinata response did not contain IpfsHash"; exit 1; }
-          echo "IPFS_CID=$cid" >> "$GITHUB_ENV"
-          echo "IPFS CID: $cid"
-          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$cid/"
+
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const { PinataSDK } = require('pinata-web3');
+
+          const root = path.resolve('ipfs-site');
+          const files = [];
+
+          function walk(dir) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else files.push(full);
+            }
+          }
+
+          walk(root);
+
+          const toMime = (file) => {
+            const ext = path.extname(file).toLowerCase();
+            return ({
+              '.html': 'text/html',
+              '.css': 'text/css',
+              '.js': 'application/javascript',
+              '.svg': 'image/svg+xml',
+              '.png': 'image/png'
+            })[ext] || 'application/octet-stream';
+          };
+
+          (async () => {
+            const pinata = new PinataSDK({
+              pinataJwt: process.env.PINATA_JWT
+            });
+
+            const uploadFiles = files.map((full) => {
+              const relative = path.relative(root, full).split(path.sep).join('/');
+              const data = fs.readFileSync(full);
+              return new File([data], relative, { type: toMime(full) });
+            });
+
+            console.log(`Uploading ${uploadFiles.length} files as one public IPFS directory...`);
+            const result = await pinata.upload.public.fileArray(uploadFiles);
+            const cid = result?.cid || result?.IpfsHash;
+            if (!cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
+
+            console.log(`IPFS CID: ${cid}`);
+            console.log(`Gateway URL: https://ipfs.router448461.com/ipfs/${cid}/`);
+            fs.writeFileSync('ipfs-result.json', JSON.stringify({ cid, commit: process.env.GITHUB_SHA }, null, 2));
+          })().catch((error) => {
+            console.error(error?.stack || error);
+            process.exit(1);
+          });
+          NODE
 
       - name: Verify CID metadata
         run: |
+          jq -e '.cid | strings | length > 0' ipfs-result.json >/dev/null
           echo "Published commit: $GITHUB_SHA"
-          echo "IPFS CID: $IPFS_CID"
-          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$IPFS_CID/"
+          echo "IPFS CID: $(jq -r '.cid' ipfs-result.json)"
+          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$(jq -r '.cid' ipfs-result.json)/"
