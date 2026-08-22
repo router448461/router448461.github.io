@@ -34,11 +34,13 @@ jobs:
             sha256sum "$file" | awk -v p="$relative" '{print p"  "$1}'
           done > ipfs-release/SHA256SUMS
 
-          jq -Rn \
+          hashes_json="$(jq -R -s 'split("\n") | map(select(length > 0))' ipfs-release/SHA256SUMS)"
+          jq -n \
             --arg commit "$GITHUB_SHA" \
             --arg generated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --slurpfile hashes <(jq -R -s 'split("\n") | map(select(length > 0))' ipfs-release/SHA256SUMS) \
-            '{commit:$commit, generated_utc:$generated, files:$hashes[0]}' > ipfs-release/manifest.json
+            --argjson hashes "$hashes_json" \
+            '{commit:$commit, generated_utc:$generated, files:$hashes}' \
+            > ipfs-release/manifest.json
 
           echo "Release manifest created:"
           cat ipfs-release/manifest.json
@@ -143,8 +145,9 @@ jobs:
             --arg commit "$GITHUB_SHA" \
             --arg generated "$generated" \
             --arg gateway "https://ipfs.router448461.com/" \
-            '{cid:$cid, commit:$commit, generated_utc:$generated, gateway:$gateway, manifest:(input)}' \
-            ipfs-release/manifest.json \
+            --slurpfile manifest ipfs-release/manifest.json \
+            '{cid:$cid, commit:$commit, generated_utc:$generated, gateway:$gateway, manifest:$manifest[0]}' \
+            /dev/null \
             > ".ipfs-history/releases/${release_id}.json"
 
           cat > .ipfs-history/latest.json <<EOF
