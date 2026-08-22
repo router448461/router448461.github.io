@@ -38,6 +38,21 @@ if (/<style\b/i.test(errorPage)) errors.push('Inline style block detected in 404
 if (!errorPage.includes('<link rel="stylesheet" href="/404.css">')) errors.push('External 404 stylesheet link missing');
 if (!fs.existsSync(path.join(root, '404.css'))) errors.push('404.css missing');
 
+const idMatches = [...index.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+const duplicateIds = idMatches.filter((id, i) => idMatches.indexOf(id) !== i);
+if (duplicateIds.length) errors.push(`Duplicate HTML id detected: ${[...new Set(duplicateIds)].join(', ')}`);
+
+if (!/<html\slang="[^"]+"/i.test(index)) errors.push('Document language is missing');
+if (!/<meta\s+name="viewport"\s+content="[^"]+"/i.test(index)) errors.push('Viewport metadata is missing');
+if (!/<h1\s+[^>]*id="directory-title"[^>]*>/i.test(index)) errors.push('Primary h1 is missing');
+if (!/<ul\s+class="cards"/i.test(index)) errors.push('Provider collection should use an unordered list');
+if ((index.match(/<li\s+class="card"/g) || []).length !== required.length) errors.push(`Expected ${required.length} provider list items`);
+if (!/aria-live="polite"/i.test(index) || !/class="sr-status"/i.test(index)) errors.push('Accessible copy status region is missing');
+if ((index.match(/<img\b[^>]*\balt="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected ${required.length} QR images with alt text`);
+if ((index.match(/<img\b[^>]*\bwidth="[^"]+"[^>]*\bheight="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected dimensions on all ${required.length} QR images`);
+if ((index.match(/<a\b[^>]*aria-label="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected accessible names on all ${required.length} provider links`);
+if ((index.match(/<button\b[^>]*aria-label="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected accessible names on all ${required.length} copy buttons`);
+
 for (const token of ['unsafe-inline', 'unsafe-eval']) {
   if (headers.includes(token)) errors.push(`Forbidden CSP token detected: ${token}`);
 }
@@ -95,11 +110,11 @@ if (!fs.existsSync(path.join(root, 'og-image.svg'))) errors.push('og-image.svg m
 if (!fs.existsSync(path.join(root, '.github/workflows/validate.yml'))) errors.push('Validation workflow missing');
 
 if (errors.length) {
-  console.error('Referral integrity, hygiene and security validation FAILED');
+  console.error('Referral integrity, accessibility, hygiene and security validation FAILED');
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log('Referral integrity, hygiene and security validation PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, error page and security controls.`);
+console.log('Referral integrity, accessibility, hygiene and security validation PASSED');
+console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, accessibility controls and security controls.`);
 console.log('Verified legacy/unused files are absent and mutable assets are not cached as immutable.');
