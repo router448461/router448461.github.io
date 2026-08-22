@@ -41,3 +41,4 @@ if (errors.length) {
 
 console.log('Referral integrity check PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, codes, URLs and required scripts.`);
+console.log('Validated consolidated renderer: background.js + copy.js');
