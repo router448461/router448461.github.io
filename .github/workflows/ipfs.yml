@@ -36,7 +36,6 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const path = require('path');
-          const { File } = require('buffer');
           const { PinataSDK } = require('pinata');
 
           const root = path.resolve('ipfs-site');
@@ -64,28 +63,22 @@ jobs:
           };
 
           (async () => {
-            const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
+            const pinata = new PinataSDK({
+              pinataJwt: process.env.PINATA_JWT
+            });
+
             const uploadFiles = files.map((full) => {
               const relative = path.relative(root, full).split(path.sep).join('/');
               return new File([fs.readFileSync(full)], relative, { type: mime(full) });
             });
 
             console.log(`Uploading ${uploadFiles.length} files as one public IPFS directory...`);
-            const result = await pinata.upload.public
-              .fileArray(uploadFiles)
-              .name(`router448461-${process.env.GITHUB_SHA}`)
-              .keyvalues({
-                deployment: 'github-actions',
-                repository: process.env.GITHUB_REPOSITORY,
-                commit: process.env.GITHUB_SHA,
-                branch: process.env.GITHUB_REF_NAME
-              });
-
+            const result = await pinata.upload.public.fileArray(uploadFiles).name(`router448461-${process.env.GITHUB_SHA}`);
             const cid = result?.cid;
             if (!cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
 
             console.log(`IPFS CID: ${cid}`);
-            console.log(`Gateway URL: https://ipfs.router448461.com/ipfs/${cid}/`);
+            console.log(`Gateway URL: https://ipfs.router448461.com/`);
             fs.writeFileSync('ipfs-result.json', JSON.stringify({ cid, commit: process.env.GITHUB_SHA }, null, 2));
           })().catch((error) => {
             console.error(error?.stack || error);
@@ -98,4 +91,4 @@ jobs:
           jq -e '.cid | strings | length > 0' ipfs-result.json >/dev/null
           echo "Published commit: $GITHUB_SHA"
           echo "IPFS CID: $(jq -r '.cid' ipfs-result.json)"
-          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$(jq -r '.cid' ipfs-result.json)/"
+          echo "Gateway URL: https://ipfs.router448461.com/"
