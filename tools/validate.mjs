@@ -28,11 +28,12 @@ for (const [name, code, asset, url] of required) {
 }
 
 for (const script of ['background.js', 'copy.js']) {
-  if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
+  const scriptPattern = new RegExp(`src=["']/${script}(?:[?][^"']*)?["']`, 'i');
+  if (!scriptPattern.test(index)) errors.push(`${script} is not loaded externally`);
   if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
 }
 
-if (!index.includes('<link rel="stylesheet" href="/style.css">')) errors.push('External stylesheet link missing');
+if (!/<link\s+rel=["']stylesheet["']\s+href=["']\/style\.css(?:\?[^"']*)?["']/i.test(index)) errors.push('External stylesheet link missing');
 if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
 if (!/<section[^>]*aria-labelledby="directory-title"/i.test(index)) errors.push('Primary referral section missing aria-labelledby');
 if (!/<h1[^>]*id="directory-title"/i.test(index)) errors.push('Primary h1 missing or incorrectly identified');
@@ -45,7 +46,7 @@ if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.h
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
 if (/<style\b/i.test(errorPage)) errors.push('Inline style block detected in 404.html');
-if (!errorPage.includes('<link rel="stylesheet" href="/404.css">')) errors.push('External 404 stylesheet link missing');
+if (!/<link\s+rel=["']stylesheet["']\s+href=["']\/404\.css(?:\?[^"']*)?["']/i.test(errorPage)) errors.push('External 404 stylesheet link missing');
 if (!fs.existsSync(path.join(root, '404.css'))) errors.push('404.css missing');
 
 const ids = [...index.matchAll(/\bid="([^"]+)"/gi)].map(m => m[1]);
@@ -139,7 +140,7 @@ if (errors.length) {
 
 console.log('Referral integrity, accessibility, hygiene and security validation PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, semantics, accessibility controls and security headers.`);
-console.log('Verified legacy/unused files are absent and mutable assets are not cached as immutable.');
+console.log('Verified cache-busted assets, legacy/unused file absence and safe mutable-asset caching.');
 if (warnings.length) {
   console.warn('Warnings:');
   for (const warning of warnings) console.warn(`- ${warning}`);
