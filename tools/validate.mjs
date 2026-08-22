@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
 
 const required = [
   ['BINANCE', 'CPA_00JMQBCCFX', 'qr/binance.png', 'https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00JMQBCCFX&utm_medium=app_share_link_sms'],
@@ -28,17 +29,31 @@ for (const script of ['background.js', 'copy.js']) {
 }
 
 if (/<script(?![^>]*\bsrc=)[^>]*>/.test(index)) errors.push('Inline script detected in index.html');
+if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/.test(index)) errors.push('Unexpected service worker registration in index.html');
+if (/unsafe-eval/.test(headers)) errors.push('Unsafe-eval detected in security headers');
+if (!headers.includes('Content-Security-Policy:')) errors.push('Content-Security-Policy header missing');
+if (!headers.includes("object-src 'none'")) errors.push('CSP object-src protection missing');
+if (!headers.includes("base-uri 'none'")) errors.push('CSP base-uri protection missing');
+if (!headers.includes("script-src-attr 'none'")) errors.push('CSP inline event-handler protection missing');
+if (!headers.includes("style-src-attr 'none'")) errors.push('CSP inline style-attribute protection missing');
+if (!headers.includes('Strict-Transport-Security:')) errors.push('HSTS header missing');
+if (!headers.includes('X-Content-Type-Options: nosniff')) errors.push('nosniff header missing');
+if (!headers.includes('X-Frame-Options: DENY')) errors.push('frame protection header missing');
+if (!headers.includes('Referrer-Policy: strict-origin-when-cross-origin')) errors.push('Referrer-Policy missing');
+if (!headers.includes('Cross-Origin-Opener-Policy: same-origin')) errors.push('COOP header missing');
+if (!headers.includes('Cross-Origin-Resource-Policy: same-origin')) errors.push('CORP header missing');
 if (!index.includes('og:image')) errors.push('Open Graph image metadata missing');
 if (!fs.existsSync(path.join(root, '404.html'))) errors.push('404.html missing');
 if (!fs.existsSync(path.join(root, 'og-image.svg'))) errors.push('og-image.svg missing');
 if (!fs.existsSync(path.join(root, '.github/workflows/validate.yml'))) errors.push('Validation workflow missing');
 
 if (errors.length) {
-  console.error('Referral integrity check FAILED');
+  console.error('Referral integrity and security validation FAILED');
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log('Referral integrity check PASSED');
+console.log('Referral integrity and security validation PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, codes, URLs and required scripts.`);
 console.log('Validated consolidated renderer: background.js + copy.js');
+console.log('Validated hardened HTTP security headers and service-worker absence.');
