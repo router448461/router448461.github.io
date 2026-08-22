@@ -25,13 +25,11 @@ jobs:
 
       - name: Upload website folder to Pinata
         env:
-          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
-          PINATA_SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
+          PINATA_JWT: ${{ secrets.PINATA_JWT }}
         run: |
           set -euo pipefail
 
-          test -n "$PINATA_API_KEY" || { echo "PINATA_API_KEY secret is missing"; exit 1; }
-          test -n "$PINATA_SECRET_API_KEY" || { echo "PINATA_SECRET_API_KEY secret is missing"; exit 1; }
+          test -n "$PINATA_JWT" || { echo "PINATA_JWT secret is missing"; exit 1; }
 
           args=(
             --silent
@@ -39,8 +37,7 @@ jobs:
             --fail-with-body
             --request POST
             --url https://api.pinata.cloud/pinning/pinFileToIPFS
-            --header "pinata_api_key: $PINATA_API_KEY"
-            --header "pinata_secret_api_key: $PINATA_SECRET_API_KEY"
+            --header "Authorization: Bearer $PINATA_JWT"
             --form 'pinataMetadata={"name":"router448461-'"$GITHUB_SHA"'"}'
             --form 'pinataOptions={"cidVersion":1}'
           )
