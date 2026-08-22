@@ -43,7 +43,7 @@ for (const token of ['unsafe-inline', 'unsafe-eval']) {
 }
 
 const requiredHeaders = [
-  'default-src \'none\'',
+  "default-src 'none'",
   'Content-Security-Policy:',
   "style-src 'self'",
   "style-src-elem 'self'",
@@ -71,9 +71,10 @@ for (const token of requiredHeaders) {
   if (!headers.includes(token)) errors.push(`Required security header/token missing: ${token}`);
 }
 
-if (/\/\*\.css|\/\*\.js/.test(headers) && /immutable/.test(headers)) {
-  errors.push('Mutable CSS/JS must not use immutable caching without content-hashed filenames');
-}
+const cssRule = headers.match(/\/\*\.css[\s\S]*?(?=\n\/\*|\s*$)/)?.[0] ?? '';
+const jsRule = headers.match(/\/\*\.js[\s\S]*?(?=\n\/\*|\s*$)/)?.[0] ?? '';
+if (/\bimmutable\b/i.test(cssRule)) errors.push('Mutable CSS must not use immutable caching without content-hashed filenames');
+if (/\bimmutable\b/i.test(jsRule)) errors.push('Mutable JavaScript must not use immutable caching without content-hashed filenames');
 
 const forbiddenLegacyFiles = [
   'background-engine.js',
