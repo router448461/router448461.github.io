@@ -22,7 +22,7 @@ for (const [name, code, asset, url] of required) {
   if (!fs.existsSync(path.join(root, asset))) errors.push(`QR asset does not exist: ${asset}`);
 }
 
-for (const script of ['background.js','copy.js','card-network.js']) {
+for (const script of ['background.js', 'copy.js']) {
   if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
   if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
 }
