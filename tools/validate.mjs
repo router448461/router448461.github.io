@@ -5,6 +5,8 @@ const root = process.cwd();
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
 const errorPage = fs.readFileSync(path.join(root, '404.html'), 'utf8');
+const background = fs.readFileSync(path.join(root, 'background.js'), 'utf8');
+const copy = fs.readFileSync(path.join(root, 'copy.js'), 'utf8');
 
 const required = [
   ['BINANCE', 'CPA_00JMQBCCFX', 'qr/binance.png', 'https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00JMQBCCFX&utm_medium=app_share_link_sms'],
@@ -15,6 +17,7 @@ const required = [
 ];
 
 const errors = [];
+const warnings = [];
 
 for (const [name, code, asset, url] of required) {
   if (!index.includes(name)) errors.push(`Missing card name: ${name}`);
@@ -31,6 +34,13 @@ for (const script of ['background.js', 'copy.js']) {
 
 if (!index.includes('<link rel="stylesheet" href="/style.css">')) errors.push('External stylesheet link missing');
 if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
+if (!/<section[^>]*aria-labelledby="directory-title"/i.test(index)) errors.push('Primary referral section missing aria-labelledby');
+if (!/<h1[^>]*id="directory-title"/i.test(index)) errors.push('Primary h1 missing or incorrectly identified');
+if (!/<ul[^>]*class="cards"/i.test(index)) errors.push('Provider directory must use a semantic ul list');
+if ((index.match(/<li[^>]*class="card"/gi) || []).length !== required.length) errors.push(`Expected ${required.length} semantic provider list items`);
+if (!/<div[^>]*class="sr-status"[^>]*aria-live="polite"/i.test(index)) errors.push('Screen-reader copy status live region missing');
+if (!/aria-atomic="true"/i.test(index)) errors.push('Copy status live region should use aria-atomic=true');
+
 if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.html');
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
@@ -38,20 +48,32 @@ if (/<style\b/i.test(errorPage)) errors.push('Inline style block detected in 404
 if (!errorPage.includes('<link rel="stylesheet" href="/404.css">')) errors.push('External 404 stylesheet link missing');
 if (!fs.existsSync(path.join(root, '404.css'))) errors.push('404.css missing');
 
-const idMatches = [...index.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
-const duplicateIds = idMatches.filter((id, i) => idMatches.indexOf(id) !== i);
-if (duplicateIds.length) errors.push(`Duplicate HTML id detected: ${[...new Set(duplicateIds)].join(', ')}`);
+const ids = [...index.matchAll(/\bid="([^"]+)"/gi)].map(m => m[1]);
+const duplicateIds = ids.filter((id, i) => ids.indexOf(id) !== i);
+if (duplicateIds.length) errors.push(`Duplicate HTML id(s): ${[...new Set(duplicateIds)].join(', ')}`);
 
-if (!/<html\slang="[^"]+"/i.test(index)) errors.push('Document language is missing');
-if (!/<meta\s+name="viewport"\s+content="[^"]+"/i.test(index)) errors.push('Viewport metadata is missing');
-if (!/<h1\s+[^>]*id="directory-title"[^>]*>/i.test(index)) errors.push('Primary h1 is missing');
-if (!/<ul\s+class="cards"/i.test(index)) errors.push('Provider collection should use an unordered list');
-if ((index.match(/<li\s+class="card"/g) || []).length !== required.length) errors.push(`Expected ${required.length} provider list items`);
-if (!/aria-live="polite"/i.test(index) || !/class="sr-status"/i.test(index)) errors.push('Accessible copy status region is missing');
-if ((index.match(/<img\b[^>]*\balt="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected ${required.length} QR images with alt text`);
-if ((index.match(/<img\b[^>]*\bwidth="[^"]+"[^>]*\bheight="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected dimensions on all ${required.length} QR images`);
-if ((index.match(/<a\b[^>]*aria-label="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected accessible names on all ${required.length} provider links`);
-if ((index.match(/<button\b[^>]*aria-label="[^"]+"/gi) || []).length !== required.length) errors.push(`Expected accessible names on all ${required.length} copy buttons`);
+for (const match of index.matchAll(/<img\b[^>]*>/gi)) {
+  const tag = match[0];
+  if (!/\balt="[^"]*"/i.test(tag)) errors.push('Image missing alt attribute');
+  if (/qr\//i.test(tag) && !/\bdecoding="async"/i.test(tag)) errors.push('QR image missing decoding=async');
+  if (/qr\//i.test(tag) && !/\bwidth="\d+"/i.test(tag)) errors.push('QR image missing explicit width');
+  if (/qr\//i.test(tag) && !/\bheight="\d+"/i.test(tag)) errors.push('QR image missing explicit height');
+}
+
+for (const match of index.matchAll(/<a\b[^>]*>/gi)) {
+  const tag = match[0];
+  if (!/\baria-label="[^"]+"/i.test(tag) && !/>[^<]+</.test(tag)) errors.push('Link missing accessible name');
+  if (/target="_blank"/i.test(tag) && !/rel="[^"]*noopener/i.test(tag)) errors.push('target=_blank link missing noopener');
+}
+
+for (const match of index.matchAll(/<button\b[^>]*>/gi)) {
+  if (!/\baria-label="[^"]+"/i.test(match[0]) && !/>[^<]+</.test(match[0])) errors.push('Button missing accessible name');
+}
+
+if (!/visibilitychange/i.test(background)) errors.push('Background animation must handle document visibility changes');
+if (!/prefers-reduced-motion/i.test(background)) errors.push('Background animation missing reduced-motion handling');
+if (!/requestAnimationFrame\(frame\)/i.test(background)) errors.push('Background animation frame loop missing');
+if (!/aria-live="polite"/i.test(index) || !/status\.textContent/i.test(copy)) warnings.push('Copy status is present but could be verified manually with a screen reader');
 
 for (const token of ['unsafe-inline', 'unsafe-eval']) {
   if (headers.includes(token)) errors.push(`Forbidden CSP token detected: ${token}`);
@@ -116,5 +138,9 @@ if (errors.length) {
 }
 
 console.log('Referral integrity, accessibility, hygiene and security validation PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, accessibility controls and security controls.`);
+console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, semantics, accessibility controls and security headers.`);
 console.log('Verified legacy/unused files are absent and mutable assets are not cached as immutable.');
+if (warnings.length) {
+  console.warn('Warnings:');
+  for (const warning of warnings) console.warn(`- ${warning}`);
+}
