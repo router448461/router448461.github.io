@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Stage website files
         run: |
@@ -92,3 +92,37 @@ jobs:
           echo "Published commit: $GITHUB_SHA"
           echo "IPFS CID: $(jq -r '.cid' ipfs-result.json)"
           echo "Gateway URL: https://ipfs.router448461.com/"
+
+      - name: Update Cloudflare DNSLink
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] && [ -z "${CLOUDFLARE_ZONE_ID:-}" ]; then
+            echo "Cloudflare secrets not configured; skipping DNSLink update."
+            exit 0
+          fi
+          test -n "${CLOUDFLARE_API_TOKEN:-}" || { echo "CLOUDFLARE_API_TOKEN secret is missing"; exit 1; }
+          test -n "${CLOUDFLARE_ZONE_ID:-}" || { echo "CLOUDFLARE_ZONE_ID secret is missing"; exit 1; }
+
+          cid="$(jq -r '.cid' ipfs-result.json)"
+          echo "Looking up Web3 gateway hostname ipfs.router448461.com..."
+          hostnames="$(curl --silent --show-error --fail \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/web3/hostnames" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json")"
+
+          identifier="$(printf '%s' "$hostnames" | jq -r '.result[] | select(.name == "ipfs.router448461.com") | .id' | head -n1)"
+          test -n "$identifier" || { echo "Could not find Web3 hostname ipfs.router448461.com"; exit 1; }
+
+          response="$(curl --silent --show-error --fail \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/web3/hostnames/${identifier}" \
+            -X PATCH \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -nc --arg dnslink "/ipfs/${cid}" '{dnslink:$dnslink}')")"
+
+          printf '%s\n' "$response" | jq '{success, result: {name: .result.name, target: .result.target, dnslink: .result.dnslink, status: .result.status}}'
+          test "$(printf '%s' "$response" | jq -r '.success')" = "true" || { echo "Cloudflare DNSLink update failed"; exit 1; }
+          echo "Cloudflare DNSLink updated to /ipfs/${cid}"
