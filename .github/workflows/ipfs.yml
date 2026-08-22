@@ -1,0 +1,29 @@
+name: Publish site to IPFS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - router448461.com
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish static site to IPFS via Pinata
+        run: npx --yes @agentofuser/ipfs-deploy -p pinata -C -O .
+        env:
+          IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.PINATA_API_KEY }}
+          IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
+
+      - name: Record deployment details
+        run: |
+          echo "IPFS deployment completed for commit $GITHUB_SHA"
+          echo "Use the CID printed by ipfs-deploy in the workflow log."
