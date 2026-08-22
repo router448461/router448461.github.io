@@ -5,9 +5,11 @@ on:
   push:
     branches:
       - router448461.com
+    paths-ignore:
+      - '.ipfs-history/**'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   deploy:
@@ -22,6 +24,24 @@ jobs:
           mkdir -p ipfs-site/qr
           cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
           cp qr/* ipfs-site/qr/
+
+      - name: Build release manifest
+        run: |
+          set -euo pipefail
+          mkdir -p ipfs-release
+          find ipfs-site -type f -print0 | sort -z | while IFS= read -r -d '' file; do
+            relative="${file#ipfs-site/}"
+            sha256sum "$file" | awk -v p="$relative" '{print p"  "$1}'
+          done > ipfs-release/SHA256SUMS
+
+          jq -Rn \
+            --arg commit "$GITHUB_SHA" \
+            --arg generated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --slurpfile hashes <(jq -R -s 'split("\n") | map(select(length > 0))' ipfs-release/SHA256SUMS) \
+            '{commit:$commit, generated_utc:$generated, files:$hashes[0]}' > ipfs-release/manifest.json
+
+          echo "Release manifest created:"
+          cat ipfs-release/manifest.json
 
       - name: Install current Pinata SDK
         run: npm install --no-save pinata
@@ -78,7 +98,6 @@ jobs:
             if (!cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
 
             console.log(`IPFS CID: ${cid}`);
-            console.log(`Gateway URL: https://ipfs.router448461.com/`);
             fs.writeFileSync('ipfs-result.json', JSON.stringify({ cid, commit: process.env.GITHUB_SHA }, null, 2));
           })().catch((error) => {
             console.error(error?.stack || error);
@@ -86,12 +105,66 @@ jobs:
           });
           NODE
 
-      - name: Verify CID metadata
+      - name: Verify IPFS publication
         run: |
-          jq -e '.cid | strings | length > 0' ipfs-result.json >/dev/null
-          echo "Published commit: $GITHUB_SHA"
-          echo "IPFS CID: $(jq -r '.cid' ipfs-result.json)"
-          echo "Gateway URL: https://ipfs.router448461.com/"
+          set -euo pipefail
+          cid="$(jq -r '.cid' ipfs-result.json)"
+          test -n "$cid" && test "$cid" != "null"
+
+          echo "Published CID: $cid"
+          echo "Checking public IPFS retrieval..."
+          curl --silent --show-error --fail --location \
+            --retry 3 --retry-delay 2 \
+            "https://ipfs.io/ipfs/${cid}/index.html" \
+            -o ipfs-index.html
+
+          grep -q "ROUTER 448461" ipfs-index.html
+          echo "Verified index.html through a public IPFS gateway."
+
+          for asset in qr/binance.png qr/coinbase.png qr/coinbase-advanced.png qr/crypto-com.png qr/starlink.svg; do
+            curl --silent --show-error --fail --location \
+              --retry 3 --retry-delay 2 \
+              "https://ipfs.io/ipfs/${cid}/${asset}" \
+              -o /dev/null
+            echo "Verified ${asset}"
+          done
+
+      - name: Record IPFS release history
+        run: |
+          set -euo pipefail
+          cid="$(jq -r '.cid' ipfs-result.json)"
+          generated="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          release_id="$(date -u +%Y%m%dT%H%M%SZ)-${GITHUB_SHA:0:12}"
+
+          mkdir -p .ipfs-history/releases
+
+          jq \
+            --arg cid "$cid" \
+            --arg commit "$GITHUB_SHA" \
+            --arg generated "$generated" \
+            --arg gateway "https://ipfs.router448461.com/" \
+            '{cid:$cid, commit:$commit, generated_utc:$generated, gateway:$gateway, manifest:(input)}' \
+            ipfs-release/manifest.json \
+            > ".ipfs-history/releases/${release_id}.json"
+
+          cat > .ipfs-history/latest.json <<EOF
+          {
+            "cid": "$cid",
+            "commit": "$GITHUB_SHA",
+            "generated_utc": "$generated",
+            "gateway": "https://ipfs.router448461.com/"
+          }
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .ipfs-history
+          if git diff --cached --quiet; then
+            echo "No release-history changes to commit."
+          else
+            git commit -m "Record IPFS release ${release_id} [skip ipfs]"
+            git push origin HEAD:router448461.com
+          fi
 
       - name: Update Cloudflare DNSLink
         env:
