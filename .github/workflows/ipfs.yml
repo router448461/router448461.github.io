@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  statuses: write
 
 jobs:
   deploy:
@@ -24,13 +23,45 @@ jobs:
           cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
           cp qr/* ipfs-site/qr/
 
-      - name: Publish static site to IPFS via Pinata
-        run: npx --yes @agentofuser/ipfs-deploy -p pinata -C -O ipfs-site
+      - name: Upload website folder to Pinata
         env:
-          IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.PINATA_API_KEY }}
-          IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
-
-      - name: Record deployment details
+          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+          PINATA_SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
         run: |
-          echo "IPFS deployment completed for commit $GITHUB_SHA"
-          echo "Use the CID printed by ipfs-deploy in the workflow log."
+          set -euo pipefail
+
+          test -n "$PINATA_API_KEY" || { echo "PINATA_API_KEY secret is missing"; exit 1; }
+          test -n "$PINATA_SECRET_API_KEY" || { echo "PINATA_SECRET_API_KEY secret is missing"; exit 1; }
+
+          args=(
+            --silent
+            --show-error
+            --fail-with-body
+            --request POST
+            --url https://api.pinata.cloud/pinning/pinFileToIPFS
+            --header "pinata_api_key: $PINATA_API_KEY"
+            --header "pinata_secret_api_key: $PINATA_SECRET_API_KEY"
+            --form 'pinataMetadata={"name":"router448461-'"$GITHUB_SHA"'"}'
+            --form 'pinataOptions={"cidVersion":1}'
+          )
+
+          while IFS= read -r -d '' file; do
+            relative="${file#ipfs-site/}"
+            args+=(--form "file=@${file};filename=${relative}")
+          done < <(find ipfs-site -type f -print0 | sort -z)
+
+          response="$(curl "${args[@]}")"
+          echo "$response" | tee ipfs-upload-response.json
+
+          cid="$(printf '%s' "$response" | jq -r '.IpfsHash // empty')"
+          test -n "$cid" || { echo "Pinata did not return an IpfsHash"; exit 1; }
+
+          echo "IPFS_CID=$cid" >> "$GITHUB_ENV"
+          echo "IPFS CID: $cid"
+          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$cid/"
+
+      - name: Verify CID metadata
+        run: |
+          echo "Published commit: $GITHUB_SHA"
+          echo "IPFS CID: $IPFS_CID"
+          echo "Gateway URL: https://ipfs.router448461.com/ipfs/$IPFS_CID/"
