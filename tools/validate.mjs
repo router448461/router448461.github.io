@@ -17,25 +17,29 @@ const errors = [];
 
 for (const [name, code, asset, url] of required) {
   if (!index.includes(`>${name}<`)) errors.push(`Missing card name: ${name}`);
-  if (!index.includes(`data-code="${code}"`)) errors.push(`Missing referral code: ${code}`);
-  if (!index.includes(`src="${asset}"`)) errors.push(`Missing QR asset reference: ${asset}`);
+  if (!index.includes(`data-code=\"${code}\"`)) errors.push(`Missing referral code: ${code}`);
+  if (!index.includes(`src=\"${asset}\"`)) errors.push(`Missing QR asset reference: ${asset}`);
   if (!index.includes(url)) errors.push(`Missing referral URL for ${name}`);
   if (!fs.existsSync(path.join(root, asset))) errors.push(`QR asset does not exist: ${asset}`);
 }
 
 for (const script of ['background.js', 'copy.js']) {
-  if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
+  if (!index.includes(`src=\"/${script}\"`)) errors.push(`${script} is not loaded externally`);
   if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
 }
 
-if (/<script(?![^>]*\bsrc=)[^>]*>/.test(index)) errors.push('Inline script detected in index.html');
+if (!index.includes('<link rel=\"stylesheet\" href=\"/style.css\">')) errors.push('External stylesheet link missing');
+if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
+if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.html');
+if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/.test(index)) errors.push('Unexpected service worker registration in index.html');
-if (/unsafe-eval/.test(headers)) errors.push('Unsafe-eval detected in security headers');
+if (/unsafe-eval|unsafe-inline/.test(headers)) errors.push('Unsafe CSP exception detected in security headers');
 if (!headers.includes('Content-Security-Policy:')) errors.push('Content-Security-Policy header missing');
-if (!headers.includes("object-src 'none'")) errors.push('CSP object-src protection missing');
-if (!headers.includes("base-uri 'none'")) errors.push('CSP base-uri protection missing');
-if (!headers.includes("script-src-attr 'none'")) errors.push('CSP inline event-handler protection missing');
-if (!headers.includes("style-src-attr 'none'")) errors.push('CSP inline style-attribute protection missing');
+if (!headers.includes(\"style-src 'self'\")) errors.push('Strict style-src CSP missing');
+if (!headers.includes(\"object-src 'none'\")) errors.push('CSP object-src protection missing');
+if (!headers.includes(\"base-uri 'none'\")) errors.push('CSP base-uri protection missing');
+if (!headers.includes(\"script-src-attr 'none'\")) errors.push('CSP inline event-handler protection missing');
+if (!headers.includes(\"style-src-attr 'none'\")) errors.push('CSP inline style-attribute protection missing');
 if (!headers.includes('Strict-Transport-Security:')) errors.push('HSTS header missing');
 if (!headers.includes('X-Content-Type-Options: nosniff')) errors.push('nosniff header missing');
 if (!headers.includes('X-Frame-Options: DENY')) errors.push('frame protection header missing');
@@ -56,4 +60,4 @@ if (errors.length) {
 console.log('Referral integrity and security validation PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, codes, URLs and required scripts.`);
 console.log('Validated consolidated renderer: background.js + copy.js');
-console.log('Validated hardened HTTP security headers and service-worker absence.');
+console.log('Validated strict external stylesheet CSP and service-worker absence.');
