@@ -4,6 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
+const errorPage = fs.readFileSync(path.join(root, '404.html'), 'utf8');
 
 const required = [
   ['BINANCE', 'CPA_00JMQBCCFX', 'qr/binance.png', 'https://www.binance.com/activity/referral-entry/CPA?ref=CPA_00JMQBCCFX&utm_medium=app_share_link_sms'],
@@ -33,9 +34,11 @@ if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing
 if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.html');
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
+if (/<style\b/i.test(errorPage)) errors.push('Inline style block detected in 404.html');
+if (!errorPage.includes('<link rel="stylesheet" href="/404.css">')) errors.push('External 404 stylesheet link missing');
+if (!fs.existsSync(path.join(root, '404.css'))) errors.push('404.css missing');
 
-const forbiddenCsp = ["unsafe-inline", "unsafe-eval"];
-for (const token of forbiddenCsp) {
+for (const token of ['unsafe-inline', 'unsafe-eval']) {
   if (headers.includes(token)) errors.push(`Forbidden CSP token detected: ${token}`);
 }
 
@@ -58,16 +61,30 @@ for (const token of requiredHeaders) {
   if (!headers.includes(token)) errors.push(`Required security header/token missing: ${token}`);
 }
 
+const forbiddenLegacyFiles = [
+  'background-engine.js',
+  'sw.js',
+  'sw-kill.js',
+  'social-preview.svg',
+  'manifest.webmanifest',
+  'CNAME'
+];
+
+for (const file of forbiddenLegacyFiles) {
+  if (fs.existsSync(path.join(root, file))) errors.push(`Legacy/unused file still present: ${file}`);
+}
+
 if (!index.includes('og:image')) errors.push('Open Graph image metadata missing');
 if (!fs.existsSync(path.join(root, '404.html'))) errors.push('404.html missing');
 if (!fs.existsSync(path.join(root, 'og-image.svg'))) errors.push('og-image.svg missing');
 if (!fs.existsSync(path.join(root, '.github/workflows/validate.yml'))) errors.push('Validation workflow missing');
 
 if (errors.length) {
-  console.error('Referral integrity and security validation FAILED');
+  console.error('Referral integrity, hygiene and security validation FAILED');
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log('Referral integrity and security validation PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts and security controls.`);
+console.log('Referral integrity, hygiene and security validation PASSED');
+console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, error page and security controls.`);
+console.log('Verified legacy/unused files are absent.');
