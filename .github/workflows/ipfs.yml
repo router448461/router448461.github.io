@@ -28,31 +28,22 @@ jobs:
           PINATA_JWT: ${{ secrets.PINATA_JWT }}
         run: |
           set -euo pipefail
-
           test -n "$PINATA_JWT" || { echo "PINATA_JWT secret is missing"; exit 1; }
-
-          args=(
-            --silent
-            --show-error
-            --fail-with-body
-            --request POST
-            --url https://api.pinata.cloud/pinning/pinFileToIPFS
-            --header "Authorization: Bearer $PINATA_JWT"
-            --form 'pinataMetadata={"name":"router448461-'"$GITHUB_SHA"'"}'
-            --form 'pinataOptions={"cidVersion":1}'
-          )
-
+          args=(--request POST --url https://api.pinata.cloud/pinning/pinFileToIPFS --header "Authorization: Bearer $PINATA_JWT" --form 'pinataMetadata={"name":"router448461-'"$GITHUB_SHA"'"}' --form 'pinataOptions={"cidVersion":1}' --write-out '\nHTTP_STATUS:%{http_code}\n' --output pinata-response.json)
           while IFS= read -r -d '' file; do
             relative="${file#ipfs-site/}"
             args+=(--form "file=@${file};filename=${relative}")
           done < <(find ipfs-site -type f -print0 | sort -z)
-
-          response="$(curl "${args[@]}")"
-          echo "$response" | tee ipfs-upload-response.json
-
-          cid="$(printf '%s' "$response" | jq -r '.IpfsHash // empty')"
-          test -n "$cid" || { echo "Pinata did not return an IpfsHash"; exit 1; }
-
+          http_output="$(curl --silent --show-error "${args[@]}" 2>&1)"
+          curl_exit=$?
+          printf '%s\n' "$http_output"
+          echo "Pinata response body:"
+          cat pinata-response.json || true
+          test "$curl_exit" -eq 0 || { echo "Pinata upload request failed at curl level (exit $curl_exit)"; exit "$curl_exit"; }
+          http_status="$(printf '%s\n' "$http_output" | sed -n 's/^HTTP_STATUS://p' | tail -n1)"
+          case "$http_status" in 2*) ;; *) echo "Pinata HTTP error: $http_status"; exit 1 ;; esac
+          cid="$(jq -r '.IpfsHash // empty' pinata-response.json 2>/dev/null || true)"
+          test -n "$cid" || { echo "Pinata response did not contain IpfsHash"; exit 1; }
           echo "IPFS_CID=$cid" >> "$GITHUB_ENV"
           echo "IPFS CID: $cid"
           echo "Gateway URL: https://ipfs.router448461.com/ipfs/$cid/"
