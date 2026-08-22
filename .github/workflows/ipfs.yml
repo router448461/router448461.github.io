@@ -2,9 +2,6 @@ name: Publish site to IPFS
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - router448461.com
 
 permissions:
   contents: read
