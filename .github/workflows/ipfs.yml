@@ -17,8 +17,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Stage website files
+        run: |
+          rm -rf ipfs-site
+          mkdir -p ipfs-site/qr
+          cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
+          cp qr/* ipfs-site/qr/
+
       - name: Publish static site to IPFS via Pinata
-        run: npx --yes @agentofuser/ipfs-deploy -p pinata -C -O .
+        run: npx --yes @agentofuser/ipfs-deploy -p pinata -C -O ipfs-site
         env:
           IPFS_DEPLOY_PINATA__API_KEY: ${{ secrets.PINATA_API_KEY }}
           IPFS_DEPLOY_PINATA__SECRET_API_KEY: ${{ secrets.PINATA_SECRET_API_KEY }}
