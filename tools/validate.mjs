@@ -43,12 +43,22 @@ for (const token of ['unsafe-inline', 'unsafe-eval']) {
 }
 
 const requiredHeaders = [
+  'default-src \'none\'',
   'Content-Security-Policy:',
   "style-src 'self'",
+  "style-src-elem 'self'",
+  "style-src-attr 'none'",
+  "script-src 'self'",
+  "script-src-elem 'self'",
+  "script-src-attr 'none'",
   "object-src 'none'",
   "base-uri 'none'",
-  "script-src-attr 'none'",
-  "style-src-attr 'none'",
+  "frame-src 'none'",
+  "frame-ancestors 'none'",
+  "child-src 'none'",
+  "form-action 'none'",
+  "worker-src 'none'",
+  "manifest-src 'none'",
   'Strict-Transport-Security:',
   'X-Content-Type-Options: nosniff',
   'X-Frame-Options: DENY',
@@ -59,6 +69,10 @@ const requiredHeaders = [
 
 for (const token of requiredHeaders) {
   if (!headers.includes(token)) errors.push(`Required security header/token missing: ${token}`);
+}
+
+if (/\/\*\.css|\/\*\.js/.test(headers) && /immutable/.test(headers)) {
+  errors.push('Mutable CSS/JS must not use immutable caching without content-hashed filenames');
 }
 
 const forbiddenLegacyFiles = [
@@ -87,4 +101,4 @@ if (errors.length) {
 
 console.log('Referral integrity, hygiene and security validation PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, error page and security controls.`);
-console.log('Verified legacy/unused files are absent.');
+console.log('Verified legacy/unused files are absent and mutable assets are not cached as immutable.');
