@@ -23,8 +23,8 @@ jobs:
           cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
           cp qr/* ipfs-site/qr/
 
-      - name: Install Pinata folder-upload SDK
-        run: npm install --no-save pinata-web3
+      - name: Install current Pinata SDK
+        run: npm install --no-save pinata
 
       - name: Upload website folder to public IPFS via Pinata
         env:
@@ -36,7 +36,8 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const path = require('path');
-          const { PinataSDK } = require('pinata-web3');
+          const { File } = require('buffer');
+          const { PinataSDK } = require('pinata');
 
           const root = path.resolve('ipfs-site');
           const files = [];
@@ -51,7 +52,7 @@ jobs:
 
           walk(root);
 
-          const toMime = (file) => {
+          const mime = (file) => {
             const ext = path.extname(file).toLowerCase();
             return ({
               '.html': 'text/html',
@@ -63,19 +64,24 @@ jobs:
           };
 
           (async () => {
-            const pinata = new PinataSDK({
-              pinataJwt: process.env.PINATA_JWT
-            });
-
+            const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
             const uploadFiles = files.map((full) => {
               const relative = path.relative(root, full).split(path.sep).join('/');
-              const data = fs.readFileSync(full);
-              return new File([data], relative, { type: toMime(full) });
+              return new File([fs.readFileSync(full)], relative, { type: mime(full) });
             });
 
             console.log(`Uploading ${uploadFiles.length} files as one public IPFS directory...`);
-            const result = await pinata.upload.public.fileArray(uploadFiles);
-            const cid = result?.cid || result?.IpfsHash;
+            const result = await pinata.upload.public
+              .fileArray(uploadFiles)
+              .name(`router448461-${process.env.GITHUB_SHA}`)
+              .keyvalues({
+                deployment: 'github-actions',
+                repository: process.env.GITHUB_REPOSITORY,
+                commit: process.env.GITHUB_SHA,
+                branch: process.env.GITHUB_REF_NAME
+              });
+
+            const cid = result?.cid;
             if (!cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
 
             console.log(`IPFS CID: ${cid}`);
