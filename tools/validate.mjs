@@ -5,6 +5,7 @@ const root = process.cwd();
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
 const errorPage = fs.readFileSync(path.join(root, '404.html'), 'utf8');
+const style = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
 const background = fs.readFileSync(path.join(root, 'background.js'), 'utf8');
 const copy = fs.readFileSync(path.join(root, 'copy.js'), 'utf8');
 
@@ -71,6 +72,11 @@ for (const match of index.matchAll(/<button\b[^>]*>/gi)) {
   if (!/\baria-label="[^"]+"/i.test(match[0]) && !/>[^<]+</.test(match[0])) errors.push('Button missing accessible name');
 }
 
+for (const animation of ['settle', 'draw', 'pulse']) {
+  if (!new RegExp(`@keyframes\\s+${animation}\\b`, 'i').test(style)) errors.push(`Required CSS keyframes missing: ${animation}`);
+}
+if (!/animation:settle\b/i.test(style)) errors.push('Card settle animation rule missing');
+if (!/opacity:0\b/i.test(style) && /animation:settle\b/i.test(style)) warnings.push('Card settle animation has no initial opacity transition');
 if (!/visibilitychange/i.test(background)) errors.push('Background animation must handle document visibility changes');
 if (!/prefers-reduced-motion/i.test(background)) errors.push('Background animation missing reduced-motion handling');
 if (!/requestAnimationFrame\(frame\)/i.test(background)) errors.push('Background animation frame loop missing');
@@ -140,7 +146,7 @@ if (errors.length) {
 
 console.log('Referral integrity, accessibility, hygiene and security validation PASSED');
 console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, semantics, accessibility controls and security headers.`);
-console.log('Verified cache-busted assets, legacy/unused file absence and safe mutable-asset caching.');
+console.log('Verified cache-busted assets, required keyframes, legacy/unused file absence and safe mutable-asset caching.');
 if (warnings.length) {
   console.warn('Warnings:');
   for (const warning of warnings) console.warn(`- ${warning}`);
