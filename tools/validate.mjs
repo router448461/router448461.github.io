@@ -16,36 +16,48 @@ const required = [
 const errors = [];
 
 for (const [name, code, asset, url] of required) {
-  if (!index.includes(`>${name}<`)) errors.push(`Missing card name: ${name}`);
-  if (!index.includes(`data-code=\"${code}\"`)) errors.push(`Missing referral code: ${code}`);
-  if (!index.includes(`src=\"${asset}\"`)) errors.push(`Missing QR asset reference: ${asset}`);
+  if (!index.includes(name)) errors.push(`Missing card name: ${name}`);
+  if (!index.includes(`data-code="${code}"`)) errors.push(`Missing referral code: ${code}`);
+  if (!index.includes(`src="${asset}"`)) errors.push(`Missing QR asset reference: ${asset}`);
   if (!index.includes(url)) errors.push(`Missing referral URL for ${name}`);
   if (!fs.existsSync(path.join(root, asset))) errors.push(`QR asset does not exist: ${asset}`);
 }
 
 for (const script of ['background.js', 'copy.js']) {
-  if (!index.includes(`src=\"/${script}\"`)) errors.push(`${script} is not loaded externally`);
+  if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
   if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
 }
 
-if (!index.includes('<link rel=\"stylesheet\" href=\"/style.css\">')) errors.push('External stylesheet link missing');
+if (!index.includes('<link rel="stylesheet" href="/style.css">')) errors.push('External stylesheet link missing');
 if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
 if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.html');
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
-if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/.test(index)) errors.push('Unexpected service worker registration in index.html');
-if (/unsafe-eval|unsafe-inline/.test(headers)) errors.push('Unsafe CSP exception detected in security headers');
-if (!headers.includes('Content-Security-Policy:')) errors.push('Content-Security-Policy header missing');
-if (!headers.includes(\"style-src 'self'\")) errors.push('Strict style-src CSP missing');
-if (!headers.includes(\"object-src 'none'\")) errors.push('CSP object-src protection missing');
-if (!headers.includes(\"base-uri 'none'\")) errors.push('CSP base-uri protection missing');
-if (!headers.includes(\"script-src-attr 'none'\")) errors.push('CSP inline event-handler protection missing');
-if (!headers.includes(\"style-src-attr 'none'\")) errors.push('CSP inline style-attribute protection missing');
-if (!headers.includes('Strict-Transport-Security:')) errors.push('HSTS header missing');
-if (!headers.includes('X-Content-Type-Options: nosniff')) errors.push('nosniff header missing');
-if (!headers.includes('X-Frame-Options: DENY')) errors.push('frame protection header missing');
-if (!headers.includes('Referrer-Policy: strict-origin-when-cross-origin')) errors.push('Referrer-Policy missing');
-if (!headers.includes('Cross-Origin-Opener-Policy: same-origin')) errors.push('COOP header missing');
-if (!headers.includes('Cross-Origin-Resource-Policy: same-origin')) errors.push('CORP header missing');
+if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
+
+const forbiddenCsp = ["unsafe-inline", "unsafe-eval"];
+for (const token of forbiddenCsp) {
+  if (headers.includes(token)) errors.push(`Forbidden CSP token detected: ${token}`);
+}
+
+const requiredHeaders = [
+  'Content-Security-Policy:',
+  "style-src 'self'",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "script-src-attr 'none'",
+  "style-src-attr 'none'",
+  'Strict-Transport-Security:',
+  'X-Content-Type-Options: nosniff',
+  'X-Frame-Options: DENY',
+  'Referrer-Policy: strict-origin-when-cross-origin',
+  'Cross-Origin-Opener-Policy: same-origin',
+  'Cross-Origin-Resource-Policy: same-origin'
+];
+
+for (const token of requiredHeaders) {
+  if (!headers.includes(token)) errors.push(`Required security header/token missing: ${token}`);
+}
+
 if (!index.includes('og:image')) errors.push('Open Graph image metadata missing');
 if (!fs.existsSync(path.join(root, '404.html'))) errors.push('404.html missing');
 if (!fs.existsSync(path.join(root, 'og-image.svg'))) errors.push('og-image.svg missing');
@@ -58,6 +70,4 @@ if (errors.length) {
 }
 
 console.log('Referral integrity and security validation PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, codes, URLs and required scripts.`);
-console.log('Validated consolidated renderer: background.js + copy.js');
-console.log('Validated strict external stylesheet CSP and service-worker absence.');
+console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts and security controls.`);
