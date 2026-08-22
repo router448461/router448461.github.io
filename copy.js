@@ -1,36 +1,26 @@
 (()=>{
-  const copyCode=async(button)=>{
-    const code=(button.dataset.code||button.textContent||'').trim();
-    if(!code)return;
-    let ok=false;
+const status=document.querySelector('.sr-status');
+const copyCode=async(button)=>{
+  const code=(button.dataset.code||button.textContent||'').trim();
+  if(!code)return;
+  const label=button.getAttribute('aria-label')||'Referral code';
+  let ok=false;
+  try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);ok=true}}catch{}
+  if(!ok){
     try{
-      if(navigator.clipboard&&window.isSecureContext){
-        await navigator.clipboard.writeText(code);ok=true;
-      }
+      const area=document.createElement('textarea');
+      area.value=code;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';area.style.pointerEvents='none';
+      document.body.appendChild(area);area.focus();area.select();area.setSelectionRange(0,area.value.length);
+      ok=document.execCommand('copy');area.remove();
     }catch{}
-    if(!ok){
-      try{
-        const area=document.createElement('textarea');
-        area.value=code;area.setAttribute('readonly','');
-        area.style.position='fixed';area.style.opacity='0';area.style.pointerEvents='none';
-        document.body.appendChild(area);area.focus();area.select();area.setSelectionRange(0,area.value.length);
-        ok=document.execCommand('copy');area.remove();
-      }catch{}
-    }
-    const original=button.dataset.original||code;
-    button.dataset.original=original;
-    button.classList.toggle('copied',ok);
-    button.classList.toggle('copy-failed',!ok);
-    button.textContent=ok?'✓ COPIED':'COPY FAILED';
-    clearTimeout(button._copyTimer);
-    button._copyTimer=setTimeout(()=>{
-      button.textContent=original;
-      button.classList.remove('copied','copy-failed');
-    },1600);
-  };
-  document.addEventListener('click',event=>{
-    const button=event.target.closest('.code');
-    if(!button)return;
-    event.preventDefault();event.stopPropagation();copyCode(button);
-  },true);
+  }
+  const original=button.dataset.original||code;
+  button.dataset.original=original;
+  button.classList.toggle('copied',ok);button.classList.toggle('copy-failed',!ok);
+  button.textContent=ok?'✓ COPIED':'COPY FAILED';
+  if(status)status.textContent=ok?`${label.replace(/^Copy /i,'').replace(/ referral code$/i,'')} referral code copied`:`Unable to copy ${label.replace(/^Copy /i,'').replace(/ referral code$/i,'')} referral code`;
+  clearTimeout(button._copyTimer);
+  button._copyTimer=setTimeout(()=>{button.textContent=original;button.classList.remove('copied','copy-failed')},1600);
+};
+document.addEventListener('click',event=>{const button=event.target.closest('.code');if(!button)return;event.preventDefault();event.stopPropagation();copyCode(button)},true);
 })();
