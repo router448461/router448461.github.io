@@ -30,7 +30,12 @@ for (const script of ['background.js', 'copy.js']) {
 }
 
 if (!index.includes('<link rel="stylesheet" href="/style.css">')) errors.push('External stylesheet link missing');
+if (!index.includes('<link rel="stylesheet" href="/advanced.css">')) errors.push('Advanced stylesheet link missing');
+if (!index.includes('<link rel="manifest" href="/site.webmanifest">')) errors.push('Application manifest link missing');
 if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
+if (!fs.existsSync(path.join(root, 'advanced.css'))) errors.push('advanced.css missing');
+if (!fs.existsSync(path.join(root, 'site.webmanifest'))) errors.push('site.webmanifest missing');
+if (!fs.existsSync(path.join(root, 'icon-maskable.svg'))) errors.push('icon-maskable.svg missing');
 if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.html');
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
@@ -58,7 +63,7 @@ const requiredHeaders = [
   "child-src 'none'",
   "form-action 'none'",
   "worker-src 'none'",
-  "manifest-src 'none'",
+  "manifest-src 'self'",
   'Strict-Transport-Security:',
   'X-Content-Type-Options: nosniff',
   'X-Frame-Options: DENY',
@@ -101,5 +106,5 @@ if (errors.length) {
 }
 
 console.log('Referral integrity, hygiene and security validation PASSED');
-console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, error page and security controls.`);
+console.log(`Verified ${required.length} referral cards, QR assets, URLs, scripts, icon manifest, error page and security controls.`);
 console.log('Verified legacy/unused files are absent and mutable assets are not cached as immutable.');
