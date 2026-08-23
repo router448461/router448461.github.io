@@ -1,10 +1,9 @@
 /*
-  Production security headers for a static Cloudflare Pages site.
-  CSP intentionally disallows inline CSS/JS, plugins, framing and workers.
+  Production security and cache headers for the static site.
 */
 
 /
-  Content-Security-Policy: default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; child-src 'none'; form-action 'none'; script-src 'self' https://static.cloudflareinsights.com; script-src-elem 'self' https://static.cloudflareinsights.com; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self' https://cloudflareinsights.com https://*.cloudflareinsights.com; worker-src 'none'; manifest-src 'none'; media-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; child-src 'none'; form-action 'none'; script-src 'self' https://static.cloudflareinsights.com; script-src-elem 'self' https://static.cloudflareinsights.com; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self' https://cloudflareinsights.com https://*.cloudflareinsights.com; worker-src 'none'; manifest-src 'self'; media-src 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
@@ -33,4 +32,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /*.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.webmanifest
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
