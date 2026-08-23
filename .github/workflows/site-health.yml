@@ -15,8 +15,10 @@ jobs:
       - name: Check primary site
         run: |
           set -euo pipefail
-          curl --silent --show-error --fail --location --retry 3 --retry-delay 2 \
-            -H 'User-Agent: router448461-health/1.0' \
+          curl --silent --show-error --fail --location \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 10 --max-time 30 \
+            -H 'User-Agent: router448461-health/1.1' \
             https://router448461.com/ -o primary.html
           grep -q 'ROUTER 448461' primary.html
           echo 'Primary site: OK'
@@ -24,32 +26,48 @@ jobs:
       - name: Check latest IPFS release record
         run: |
           set -euo pipefail
-          curl --silent --show-error --fail --location --retry 3 --retry-delay 2 \
+          curl --silent --show-error --fail --location \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 10 --max-time 30 \
             https://raw.githubusercontent.com/router448461/router448461.github.io/router448461.com/.ipfs-history/latest.json \
             -o latest.json
           jq -e '.cid | strings | test("^bafy")' latest.json >/dev/null
-          jq -r '"Latest IPFS CID: " + .cid' latest.json
+          jq -e '.gateway | strings | test("^https://")' latest.json >/dev/null
+          echo "Latest IPFS CID: $(jq -r '.cid' latest.json)"
+          echo "IPFS gateway: $(jq -r '.gateway' latest.json)"
 
       - name: Check IPFS site and QR assets
         run: |
           set -euo pipefail
           cid="$(jq -r '.cid' latest.json)"
-          curl --silent --show-error --fail --location --retry 3 --retry-delay 2 \
-            "https://ipfs.io/ipfs/${cid}/index.html" -o ipfs-index.html
+          gateway="$(jq -r '.gateway' latest.json | sed 's:/*$::')"
+          base="${gateway}/ipfs/${cid}"
+
+          curl --silent --show-error --fail --location \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 10 --max-time 30 \
+            "${base}/index.html" -o ipfs-index.html
           grep -q 'ROUTER 448461' ipfs-index.html
           echo 'IPFS index: OK'
+
           for asset in qr/binance.png qr/coinbase.png qr/coinbase-advanced.png qr/crypto-com.png qr/starlink.svg; do
-            curl --silent --show-error --fail --location --retry 3 --retry-delay 2 \
-              "https://ipfs.io/ipfs/${cid}/${asset}" -o /dev/null
+            curl --silent --show-error --fail --location \
+              --retry 5 --retry-all-errors --retry-delay 3 \
+              --connect-timeout 10 --max-time 30 \
+              "${base}/${asset}" -o /dev/null
             echo "IPFS ${asset}: OK"
           done
 
       - name: Check canonical redirect target
         run: |
           set -euo pipefail
-          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --location=false https://www.router448461.com/ || true)"
+          status="$(curl --silent --show-error --output /dev/null \
+            --write-out '%{http_code}' --location=false \
+            --retry 5 --retry-all-errors --retry-delay 3 \
+            --connect-timeout 10 --max-time 30 \
+            https://www.router448461.com/ || true)"
           case "$status" in
-            301|302|308) echo "www redirect: OK (${status})" ;;
-            200) echo 'www redirect: not active or www is serving directly';;
-            *) echo "Unexpected www status: ${status}"; exit 1;;
+            301|302|307|308) echo "www redirect: OK (${status})" ;;
+            200) echo 'www redirect: not active or www is serving directly' ;;
+            *) echo "Unexpected www status: ${status}"; exit 1 ;;
           esac
