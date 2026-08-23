@@ -19,19 +19,20 @@ const errors = [];
 for (const [name, code, asset, url] of required) {
   if (!index.includes(name)) errors.push(`Missing card name: ${name}`);
   if (!index.includes(`data-code="${code}"`)) errors.push(`Missing referral code: ${code}`);
-  if (!index.includes(`src="${asset}"`)) errors.push(`Missing QR asset reference: ${asset}`);
+  const assetPattern = new RegExp(`src="${asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\?[^"]*)?"`);
+  if (!assetPattern.test(index)) errors.push(`Missing QR asset reference: ${asset}`);
   if (!index.includes(url)) errors.push(`Missing referral URL for ${name}`);
   if (!fs.existsSync(path.join(root, asset))) errors.push(`QR asset does not exist: ${asset}`);
 }
 
 for (const script of ['background.js', 'copy.js']) {
-  if (!index.includes(`src="/${script}"`)) errors.push(`${script} is not loaded externally`);
+  if (!new RegExp(`src="/${script}(?:\\?[^"]*)?"`).test(index)) errors.push(`${script} is not loaded externally`);
   if (!fs.existsSync(path.join(root, script))) errors.push(`${script} missing`);
 }
 
-if (!index.includes('<link rel="stylesheet" href="/style.css">')) errors.push('External stylesheet link missing');
-if (!index.includes('<link rel="stylesheet" href="/advanced.css">')) errors.push('Advanced stylesheet link missing');
-if (!index.includes('<link rel="manifest" href="/site.webmanifest">')) errors.push('Application manifest link missing');
+if (!/href="\/style\.css(?:\?[^"]*)?"/.test(index)) errors.push('External stylesheet link missing');
+if (!/href="\/advanced\.css(?:\?[^"]*)?"/.test(index)) errors.push('Advanced stylesheet link missing');
+if (!/href="\/site\.webmanifest(?:\?[^"]*)?"/.test(index)) errors.push('Application manifest link missing');
 if (!fs.existsSync(path.join(root, 'style.css'))) errors.push('style.css missing');
 if (!fs.existsSync(path.join(root, 'advanced.css'))) errors.push('advanced.css missing');
 if (!fs.existsSync(path.join(root, 'site.webmanifest'))) errors.push('site.webmanifest missing');
@@ -40,7 +41,7 @@ if (/<style\b/i.test(index)) errors.push('Inline style block detected in index.h
 if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(index)) errors.push('Inline script detected in index.html');
 if (/navigator\.serviceWorker|serviceWorker\.register\s*\(/i.test(index)) errors.push('Unexpected service worker registration in index.html');
 if (/<style\b/i.test(errorPage)) errors.push('Inline style block detected in 404.html');
-if (!errorPage.includes('<link rel="stylesheet" href="/404.css">')) errors.push('External 404 stylesheet link missing');
+if (!/href="\/404\.css(?:\?[^"]*)?"/.test(errorPage)) errors.push('External 404 stylesheet link missing');
 if (!fs.existsSync(path.join(root, '404.css'))) errors.push('404.css missing');
 
 for (const token of ['unsafe-inline', 'unsafe-eval']) {
