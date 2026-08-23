@@ -18,13 +18,65 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Stage website files
+      - name: Validate and stage website files
         run: |
           set -euo pipefail
           rm -rf ipfs-site
-          mkdir -p ipfs-site/qr
-          cp index.html style.css background.js copy.js icon.svg og-image.svg 404.html 404.css _headers ipfs-site/
-          cp qr/* ipfs-site/qr/
+          mkdir -p ipfs-site
+
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const repoRoot = process.cwd();
+          const stageRoot = path.join(repoRoot, 'ipfs-site');
+          const publicRootFiles = ['index.html', '404.html', '404.css', '_headers', '_redirects'];
+          const refs = new Set();
+
+          function addRef(value) {
+            if (!value) return;
+            let ref = value.trim();
+            if (!ref || ref.startsWith('#')) return;
+            if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(ref)) return;
+            ref = ref.split('#')[0].split('?')[0];
+            ref = ref.replace(/^\.\//, '');
+            if (ref.startsWith('/')) ref = ref.slice(1);
+            if (ref) refs.add(ref);
+          }
+
+          const html = fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8');
+          for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/gi)) addRef(match[1]);
+          for (const match of html.matchAll(/(?:src|href)=([^\s>]+)/gi)) addRef(match[1]);
+
+          const cssFiles = [...refs].filter((ref) => ref.toLowerCase().endsWith('.css'));
+          for (const cssRef of cssFiles) {
+            const cssPath = path.join(repoRoot, cssRef);
+            if (!fs.existsSync(cssPath)) throw new Error(`Referenced CSS file is missing: ${cssRef}`);
+            const css = fs.readFileSync(cssPath, 'utf8');
+            for (const match of css.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) addRef(match[1]);
+          }
+
+          const required = new Set([...publicRootFiles, ...refs]);
+          required.delete('');
+
+          for (const rel of required) {
+            const full = path.join(repoRoot, rel);
+            if (!fs.existsSync(full) || !fs.statSync(full).isFile()) {
+              throw new Error(`Referenced website asset is missing: ${rel}`);
+            }
+            const dest = path.join(stageRoot, rel);
+            fs.mkdirSync(path.dirname(dest), { recursive: true });
+            fs.copyFileSync(full, dest);
+          }
+
+          const qrDir = path.join(repoRoot, 'qr');
+          if (fs.existsSync(qrDir)) {
+            fs.cpSync(qrDir, path.join(stageRoot, 'qr'), { recursive: true });
+          }
+
+          console.log(`Validated and staged ${required.size} website files plus QR assets.`);
+          console.log([...required].sort().join('\n'));
+          NODE
 
       - name: Build release manifest
         run: |
@@ -78,7 +130,14 @@ jobs:
               '.css': 'text/css',
               '.js': 'application/javascript',
               '.svg': 'image/svg+xml',
-              '.png': 'image/png'
+              '.png': 'image/png',
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.webp': 'image/webp',
+              '.woff': 'font/woff',
+              '.woff2': 'font/woff2',
+              '.ttf': 'font/ttf',
+              '.otf': 'font/otf'
             })[ext] || 'application/octet-stream';
           };
 
@@ -128,13 +187,16 @@ jobs:
 
           test -n "$active" || { echo "No public IPFS gateway served the new CID."; exit 1; }
 
-          for asset in qr/binance.png qr/coinbase.png qr/coinbase-advanced.png qr/crypto-com.png qr/starlink.svg; do
+          while IFS= read -r asset; do
+            case "$asset" in
+              index.html|404.html|_headers|_redirects) continue ;;
+            esac
             curl --silent --show-error --fail --location \
               --retry 5 --retry-all-errors --retry-delay 3 \
               --connect-timeout 10 --max-time 30 \
               "${active}/ipfs/${cid}/${asset}" -o /dev/null
             echo "Verified ${asset}"
-          done
+          done < <(find ipfs-site -type f -printf '%P\n' | sort)
 
       - name: Record IPFS release history
         run: |
