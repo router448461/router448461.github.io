@@ -16,66 +16,61 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Validate and stage website files
+      - name: Validate and stage website
         run: |
           set -euo pipefail
           rm -rf ipfs-site
           mkdir -p ipfs-site
 
           node <<'NODE'
-          const fs = require('fs');
-          const path = require('path');
+          const fs = require('node:fs');
+          const path = require('node:path');
 
-          const repoRoot = process.cwd();
-          const stageRoot = path.join(repoRoot, 'ipfs-site');
-          const publicRootFiles = ['index.html', '404.html', '404.css', '_headers', '_redirects'];
-          const refs = new Set();
+          const root = process.cwd();
+          const stage = path.join(root, 'ipfs-site');
+          const requiredRoot = ['index.html', '404.html', '404.css', '_headers', '_redirects'];
+          const refs = new Set(requiredRoot);
 
-          function addRef(value) {
+          const addRef = (value) => {
             if (!value) return;
-            let ref = value.trim();
+            let ref = value.trim().replace(/^\.\//, '');
             if (!ref || ref.startsWith('#')) return;
             if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(ref)) return;
             ref = ref.split('#')[0].split('?')[0];
-            ref = ref.replace(/^\.\//, '');
             if (ref.startsWith('/')) ref = ref.slice(1);
             if (ref) refs.add(ref);
+          };
+
+          const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+          for (const m of index.matchAll(/(?:src|href)=["']([^"']+)["']/gi)) addRef(m[1]);
+
+          for (const css of [...refs].filter(x => x.endsWith('.css'))) {
+            const file = path.join(root, css);
+            if (!fs.existsSync(file)) throw new Error(`Missing CSS: ${css}`);
+            const text = fs.readFileSync(file, 'utf8');
+            for (const m of text.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) addRef(m[1]);
           }
 
-          const html = fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8');
-          for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/gi)) addRef(match[1]);
-          for (const match of html.matchAll(/(?:src|href)=([^\s>]+)/gi)) addRef(match[1]);
-
-          const cssFiles = [...refs].filter((ref) => ref.toLowerCase().endsWith('.css'));
-          for (const cssRef of cssFiles) {
-            const cssPath = path.join(repoRoot, cssRef);
-            if (!fs.existsSync(cssPath)) throw new Error(`Referenced CSS file is missing: ${cssRef}`);
-            const css = fs.readFileSync(cssPath, 'utf8');
-            for (const match of css.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) addRef(match[1]);
-          }
-
-          const required = new Set([...publicRootFiles, ...refs]);
-          required.delete('');
-
-          for (const rel of required) {
-            const full = path.join(repoRoot, rel);
-            if (!fs.existsSync(full) || !fs.statSync(full).isFile()) {
+          for (const rel of refs) {
+            const source = path.join(root, rel);
+            if (!fs.existsSync(source) || !fs.statSync(source).isFile()) {
               throw new Error(`Referenced website asset is missing: ${rel}`);
             }
-            const dest = path.join(stageRoot, rel);
+            const dest = path.join(stage, rel);
             fs.mkdirSync(path.dirname(dest), { recursive: true });
-            fs.copyFileSync(full, dest);
+            fs.copyFileSync(source, dest);
           }
 
-          const qrDir = path.join(repoRoot, 'qr');
-          if (fs.existsSync(qrDir)) {
-            fs.cpSync(qrDir, path.join(stageRoot, 'qr'), { recursive: true });
-          }
+          const qr = path.join(root, 'qr');
+          if (fs.existsSync(qr)) fs.cpSync(qr, path.join(stage, 'qr'), { recursive: true });
 
-          console.log(`Validated and staged ${required.size} website files plus QR assets.`);
-          console.log([...required].sort().join('\n'));
+          const manifestPath = path.join(stage, 'site.webmanifest');
+          if (fs.existsSync(manifestPath)) console.log('Validated site.webmanifest');
+          if (fs.existsSync(path.join(root, 'icon-maskable.svg'))) fs.copyFileSync(path.join(root, 'icon-maskable.svg'), path.join(stage, 'icon-maskable.svg'));
+
+          console.log(`Staged ${refs.size} referenced files plus QR assets.`);
           NODE
 
       - name: Build release manifest
@@ -83,22 +78,22 @@ jobs:
           set -euo pipefail
           mkdir -p ipfs-release
           find ipfs-site -type f -print0 | sort -z | while IFS= read -r -d '' file; do
-            relative="${file#ipfs-site/}"
-            sha256sum "$file" | awk -v p="$relative" '{print p"  "$1}'
+            rel="${file#ipfs-site/}"
+            sha256sum "$file" | awk -v p="$rel" '{print p"  "$1}'
           done > ipfs-release/SHA256SUMS
 
-          hashes_json="$(jq -R -s 'split("\n") | map(select(length > 0))' ipfs-release/SHA256SUMS)"
+          jq -R -s 'split("\n") | map(select(length > 0))' ipfs-release/SHA256SUMS > ipfs-release/hashes.json
           jq -n \
             --arg commit "$GITHUB_SHA" \
             --arg generated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --argjson hashes "$hashes_json" \
-            '{commit:$commit, generated_utc:$generated, files:$hashes}' \
+            --slurpfile hashes ipfs-release/hashes.json \
+            '{commit:$commit, generated_utc:$generated, files:$hashes[0]}' \
             > ipfs-release/manifest.json
 
-      - name: Install current Pinata SDK
+      - name: Install Pinata SDK
         run: npm install --no-save pinata@latest
 
-      - name: Upload website folder to public IPFS via Pinata
+      - name: Publish directory to public IPFS
         env:
           PINATA_JWT: ${{ secrets.PINATA_JWT }}
         run: |
@@ -106,8 +101,9 @@ jobs:
           test -n "$PINATA_JWT" || { echo "PINATA_JWT secret is missing"; exit 1; }
 
           node <<'NODE'
-          const fs = require('fs');
-          const path = require('path');
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { File } = require('node:buffer');
           const { PinataSDK } = require('pinata');
 
           const root = path.resolve('ipfs-site');
@@ -120,91 +116,68 @@ jobs:
               else files.push(full);
             }
           }
-
           walk(root);
 
-          const mime = (file) => {
-            const ext = path.extname(file).toLowerCase();
-            return ({
-              '.html': 'text/html',
-              '.css': 'text/css',
-              '.js': 'application/javascript',
-              '.svg': 'image/svg+xml',
-              '.png': 'image/png',
-              '.jpg': 'image/jpeg',
-              '.jpeg': 'image/jpeg',
-              '.webp': 'image/webp',
-              '.woff': 'font/woff',
-              '.woff2': 'font/woff2',
-              '.ttf': 'font/ttf',
-              '.otf': 'font/otf'
-            })[ext] || 'application/octet-stream';
-          };
+          const mime = (file) => ({
+            '.html':'text/html', '.css':'text/css', '.js':'application/javascript',
+            '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg',
+            '.jpeg':'image/jpeg', '.webp':'image/webp', '.json':'application/json',
+            '.woff':'font/woff', '.woff2':'font/woff2', '.ttf':'font/ttf', '.otf':'font/otf'
+          })[path.extname(file).toLowerCase()] || 'application/octet-stream';
 
           (async () => {
             const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
-            const uploadFiles = files.map((full) => {
+            const uploadFiles = files.map(full => {
               const relative = path.relative(root, full).split(path.sep).join('/');
               return new File([fs.readFileSync(full)], relative, { type: mime(full) });
             });
 
-            console.log(`Uploading ${uploadFiles.length} files as one public IPFS directory...`);
+            console.log(`Uploading ${uploadFiles.length} files...`);
             const result = await pinata.upload.public.fileArray(uploadFiles)
-              .name(`router448461-${process.env.GITHUB_SHA}`)
-              .execute();
+              .name(`router448461-${process.env.GITHUB_SHA}`);
 
-            const cid = result?.cid;
-            if (!cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
-
-            console.log(`IPFS CID: ${cid}`);
-            fs.writeFileSync('ipfs-result.json', JSON.stringify({ cid, commit: process.env.GITHUB_SHA }, null, 2));
-          })().catch((error) => {
-            console.error(error?.stack || error);
-            process.exit(1);
-          });
+            if (!result?.cid) throw new Error(`Pinata returned no CID: ${JSON.stringify(result)}`);
+            console.log(`IPFS CID: ${result.cid}`);
+            fs.writeFileSync('ipfs-result.json', JSON.stringify({ cid: result.cid, commit: process.env.GITHUB_SHA }, null, 2));
+          })().catch(err => { console.error(err?.stack || err); process.exit(1); });
           NODE
 
       - name: Verify IPFS publication
         run: |
           set -euo pipefail
           cid="$(jq -r '.cid' ipfs-result.json)"
-          test -n "$cid" && test "$cid" != "null"
+          test -n "$cid" && test "$cid" != null
 
           gateways=("https://ipfs.io" "https://ipfs.router448461.com")
           active=""
           for gateway in "${gateways[@]}"; do
-            echo "Testing ${gateway}..."
             if curl --silent --show-error --fail --location \
-              --retry 5 --retry-all-errors --retry-delay 3 \
+              --retry 5 --retry-all-errors --retry-delay 2 \
               --connect-timeout 10 --max-time 30 \
               "${gateway}/ipfs/${cid}/index.html" -o ipfs-index.html && \
               grep -q "ROUTER 448461" ipfs-index.html; then
               active="$gateway"
-              echo "Verified IPFS publication through ${active}"
               break
             fi
           done
 
           test -n "$active" || { echo "No public IPFS gateway served the new CID."; exit 1; }
+          echo "Verified ${cid} through ${active}"
 
           while IFS= read -r asset; do
-            case "$asset" in
-              index.html|404.html|_headers|_redirects) continue ;;
-            esac
+            case "$asset" in index.html|404.html|_headers|_redirects) continue;; esac
             curl --silent --show-error --fail --location \
-              --retry 5 --retry-all-errors --retry-delay 3 \
+              --retry 5 --retry-all-errors --retry-delay 2 \
               --connect-timeout 10 --max-time 30 \
               "${active}/ipfs/${cid}/${asset}" -o /dev/null
-            echo "Verified ${asset}"
           done < <(find ipfs-site -type f -printf '%P\n' | sort)
 
-      - name: Record IPFS release history
+      - name: Record IPFS release
         run: |
           set -euo pipefail
           cid="$(jq -r '.cid' ipfs-result.json)"
           generated="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          release_id="$(date -u +%Y%m%dT%H%M%SZ)-${GITHUB_SHA:0:12}"
-
+          release="$(date -u +%Y%m%dT%H%M%SZ)-${GITHUB_SHA:0:12}"
           mkdir -p .ipfs-history/releases
 
           jq -n \
@@ -214,55 +187,36 @@ jobs:
             --arg gateway "https://ipfs.router448461.com/" \
             --slurpfile manifest ipfs-release/manifest.json \
             '{cid:$cid, commit:$commit, generated_utc:$generated, gateway:$gateway, manifest:$manifest[0]}' \
-            > ".ipfs-history/releases/${release_id}.json"
+            > ".ipfs-history/releases/${release}.json"
 
-          cat > .ipfs-history/latest.json <<EOF
-          {
-            "cid": "$cid",
-            "commit": "$GITHUB_SHA",
-            "generated_utc": "$generated",
-            "gateway": "https://ipfs.router448461.com/"
-          }
-          EOF
+          printf '{\n  "cid": "%s",\n  "commit": "%s",\n  "generated_utc": "%s",\n  "gateway": "https://ipfs.router448461.com/"\n}\n' "$cid" "$GITHUB_SHA" "$generated" > .ipfs-history/latest.json
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .ipfs-history
-          if git diff --cached --quiet; then
-            echo "No release-history changes to commit."
-          else
-            git commit -m "Record IPFS release ${release_id} [skip ipfs]"
+          if ! git diff --cached --quiet; then
+            git commit -m "Record IPFS release ${release} [skip ipfs]"
             git push origin HEAD:router448461.com
           fi
 
       - name: Update Cloudflare DNSLink
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ZONE_ID != '' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
         run: |
           set -euo pipefail
-          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] && [ -z "${CLOUDFLARE_ZONE_ID:-}" ]; then
-            echo "Cloudflare secrets not configured; skipping DNSLink update."
-            exit 0
-          fi
-          test -n "${CLOUDFLARE_API_TOKEN:-}" || { echo "CLOUDFLARE_API_TOKEN secret is missing"; exit 1; }
-          test -n "${CLOUDFLARE_ZONE_ID:-}" || { echo "CLOUDFLARE_ZONE_ID secret is missing"; exit 1; }
-
           cid="$(jq -r '.cid' ipfs-result.json)"
-          hostnames="$(curl --silent --show-error --fail \
+          data="$(curl --silent --show-error --fail \
             "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/web3/hostnames" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json")"
-
-          identifier="$(printf '%s' "$hostnames" | jq -r '.result[] | select(.name == "ipfs.router448461.com") | .id' | head -n1)"
-          test -n "$identifier" || { echo "Could not find Web3 hostname ipfs.router448461.com"; exit 1; }
-
-          response="$(curl --silent --show-error --fail \
-            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/web3/hostnames/${identifier}" \
+          id="$(printf '%s' "$data" | jq -r '.result[] | select(.name=="ipfs.router448461.com") | .id' | head -n1)"
+          test -n "$id" || { echo "Web3 hostname ipfs.router448461.com not found"; exit 1; }
+          curl --silent --show-error --fail \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/web3/hostnames/${id}" \
             -X PATCH \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            --data "$(jq -nc --arg dnslink "/ipfs/${cid}" '{dnslink:$dnslink}')")"
-
-          printf '%s\n' "$response" | jq '{success, result: {name: .result.name, target: .result.target, dnslink: .result.dnslink, status: .result.status}}'
-          test "$(printf '%s' "$response" | jq -r '.success')" = "true" || { echo "Cloudflare DNSLink update failed"; exit 1; }
+            --data "$(jq -nc --arg dnslink "/ipfs/${cid}" '{dnslink:$dnslink}')" \
+            | jq '{success, result: {name: .result.name, dnslink: .result.dnslink, status: .result.status}}'
