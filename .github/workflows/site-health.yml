@@ -1,6 +1,9 @@
 name: Site Health
 
 on:
+  push:
+    branches:
+      - router448461.com
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
