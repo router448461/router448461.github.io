@@ -21,7 +21,7 @@ jobs:
           curl --silent --show-error --fail --location \
             --retry 5 --retry-all-errors --retry-delay 3 \
             --connect-timeout 10 --max-time 30 \
-            -H 'User-Agent: router448461-health/1.1' \
+            -H 'User-Agent: router448461-health/1.2' \
             https://router448461.com/ -o primary.html
           grep -q 'ROUTER 448461' primary.html
           echo 'Primary site: OK'
@@ -37,27 +37,44 @@ jobs:
           jq -e '.cid | strings | test("^bafy")' latest.json >/dev/null
           jq -e '.gateway | strings | test("^https://")' latest.json >/dev/null
           echo "Latest IPFS CID: $(jq -r '.cid' latest.json)"
-          echo "IPFS gateway: $(jq -r '.gateway' latest.json)"
+          echo "Preferred IPFS gateway: $(jq -r '.gateway' latest.json)"
 
       - name: Check IPFS site and QR assets
         run: |
           set -euo pipefail
           cid="$(jq -r '.cid' latest.json)"
-          gateway="$(jq -r '.gateway' latest.json | sed 's:/*$::')"
-          base="${gateway}/ipfs/${cid}"
+          preferred="$(jq -r '.gateway' latest.json | sed 's:/*$::')"
 
-          curl --silent --show-error --fail --location \
-            --retry 5 --retry-all-errors --retry-delay 3 \
-            --connect-timeout 10 --max-time 30 \
-            "${base}/index.html" -o ipfs-index.html
-          grep -q 'ROUTER 448461' ipfs-index.html
-          echo 'IPFS index: OK'
+          gateways=(
+            "${preferred}"
+            "https://ipfs.io"
+          )
+
+          active=""
+          for gateway in "${gateways[@]}"; do
+            echo "Testing IPFS gateway: ${gateway}"
+            if curl --silent --show-error --fail --location \
+              --retry 3 --retry-all-errors --retry-delay 2 \
+              --connect-timeout 8 --max-time 20 \
+              "${gateway}/ipfs/${cid}/index.html" -o ipfs-index.html && \
+              grep -q 'ROUTER 448461' ipfs-index.html; then
+              active="${gateway}"
+              echo "IPFS gateway selected: ${active}"
+              break
+            fi
+            echo "Gateway unavailable: ${gateway}"
+          done
+
+          if [ -z "${active}" ]; then
+            echo 'No IPFS gateway successfully served the release CID.'
+            exit 1
+          fi
 
           for asset in qr/binance.png qr/coinbase.png qr/coinbase-advanced.png qr/crypto-com.png qr/starlink.svg; do
             curl --silent --show-error --fail --location \
-              --retry 5 --retry-all-errors --retry-delay 3 \
-              --connect-timeout 10 --max-time 30 \
-              "${base}/${asset}" -o /dev/null
+              --retry 3 --retry-all-errors --retry-delay 2 \
+              --connect-timeout 8 --max-time 20 \
+              "${active}/ipfs/${cid}/${asset}" -o /dev/null
             echo "IPFS ${asset}: OK"
           done
 
